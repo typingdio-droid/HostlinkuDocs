@@ -1,11 +1,11 @@
 const CONFIG = {
-  note: { color: "#3b82f6", label: "Catatan", icon: "info" },
-  info: { color: "#3b82f6", label: "Info", icon: "info" },
-  tip: { color: "#10b981", label: "Tips", icon: "tip" },
-  important: { color: "#8b5cf6", label: "Penting", icon: "important" },
-  warning: { color: "#eab308", label: "Peringatan", icon: "warning" },
-  caution: { color: "#ef4444", label: "Hati-hati", icon: "warning" },
-  error: { color: "#ef4444", label: "Error", icon: "warning" },
+  note: { color: "#8a8a8a", label: "Catatan", icon: "info" },
+  info: { color: "#8a8a8a", label: "Info", icon: "info" },
+  tip: { color: "#a0a0a0", label: "Tips", icon: "tip" },
+  important: { color: "#6f6f6f", label: "Penting", icon: "important" },
+  warning: { color: "#bdbdbd", label: "Peringatan", icon: "warning" },
+  caution: { color: "#6f6f6f", label: "Hati-hati", icon: "warning" },
+  error: { color: "#6f6f6f", label: "Error", icon: "warning" },
 };
 
 const PATHS = {
