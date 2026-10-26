@@ -1,0 +1,173 @@
+---
+title: "Chat Completions"
+description: "エンドポイント POST /v1/chat/completions のリファレンス。パラメータ、SSE ストリーミング、および curl と Python のサンプルを含みます。"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinkuのメインエンドポイント。 リクエストおよびレスポンスのフォーマットは[OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat)と互換性があるため、`base_url`を`https://api.hostlinku.com/v1`に置き換えるだけで、公式のOpenAI SDKを使用することができます。
+
+```http
+POST https://api.hostlinku.com/v1/chat/completions
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+すべてのレスポンスには、ヘッダー `x-request-id`（リクエスト ID Hostlinku）が含まれており、非ストリーミングの成功レスポンスには、ヘッダー `x-model`（リクエストを処理したモデルのパブリックslug）も含まれます。
+
+## bodyパラメータ
+
+| パラメータ | タイプ | デフォルト | 説明 |
+|---|---|---|---|
+| `model` | `string` | ない | **必須。** slugモデル（例：`gpt-5-5`）。[モデル](/ja/models)を参照してください。 |
+| `messages` | `array` | ない | **必須。** 最低1件の注文が必要です。各項目：`{ role, content, name? }`および`role`に加え、`system`、`user`、`assistant`、`tool`のいずれか1つ。 |
+| `temperature` | `number` | プロバイダーのデフォルト設定 | 範囲：`0`～`2`。数値が高いほどランダム性が高くなる。 |
+| `top_p` | `number` | プロバイダーのデフォルト設定 | 範囲 `0`–`1`。`temperature` からの _nucleus sampling_ の代替案。 |
+| `n` | `integer` | `1` | 回答選択肢の数、`1`～`8`。 |
+| `stream` | `boolean` | `false` | `true`：SSEストリーミング応答用（下記参照）。 |
+| `stop` | `string` \| `string[]` | ない | 生成を停止させる1つまたは複数のテキストシーケンス。 |
+| `max_tokens` | `integer` | モデルの仕様 | 出力トークンの上限（正）。 |
+| `max_completion_tokens` | `integer` | ない | `max_tokens`の現代的な代替案（一部のプロバイダーで使用されている）。 |
+| `presence_penalty` | `number` | `0` | 範囲：`-2`～`2`。 |
+| `frequency_penalty` | `number` | `0` | 範囲 `-2`～`2`。 |
+| `user` | `string` | ない | 不正利用の追跡のためのエンドユーザー識別子。 |
+| `tools` | `array` | ない | ツール／関数呼び出しの定義（形式 OpenAI）。 |
+| `tool_choice` | `any` | ない | ツールの選択制御（`"auto"`、`"none"`、`{...}`）。 |
+| `response_format` | `any` | ない | 例：`{ "type": "json_object" }`（JSON出力用、モデルの対応状況による）。 |
+| `seed` | `integer` | ない | シード決定論（ベストエフォート、プロバイダによる）。 |
+
+<Callout type="note" title="処理されるのは上記のパラメータのみです">
+ボディは、プロバイダーに転送される前に厳格なスキーマに基づいて検証されます。上記のリストに含まれていないフィールドは**無視**され（ボディから削除されます）、無効なボディは`422 VALIDATION_FAILED`エラーとともに、フィールドごとの詳細情報とともに拒否されます。 `messages[].content`は、モデルが対応している限り、マルチモーダルコンテンツの文字列および配列（OpenAI形式）を受け付けます。
+</Callout>
+
+## 例：非ストリーミングリクエスト（curl）
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
+      { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
+    ],
+    "temperature": 0.7,
+    "max_tokens": 256
+  }'
+```
+
+回答（抜粋）：
+
+```json
+{
+  "id": "cmpl_…",
+  "object": "chat.completion",
+  "created": 1770000000,
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "API gateway adalah …" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 30, "completion_tokens": 55, "total_tokens": 85 },
+  "hostlinku": {
+    "cost": 0.00021,
+    "latencyMs": 940
+  }
+}
+```
+
+フィールド `model` には常にパブリックslug Hostlinku（内部 ID ではない）が含まれており、追加ブロック `hostlinku` は成功レスポンスに必ず存在し、リクエストのコストとレイテンシのみが含まれています：
+
+| フィールド | 意味 |
+|---|---|
+| `cost` | リクエストの費用（米ドル、高精度の小数表示）。 |
+| `latencyMs` | ゲートウェイでの受信から完了までのリクエストの合計レイテンシ（ミリ秒）。 |
+
+## ストリーミング (`stream: true`)
+
+`stream: true` に対して、ゲートウェイは `Content-Type: text/event-stream` (SSE) で応答し、OpenAI 互換のフォーマットでチャンクをストリーミングします（各チャンクは、Hostlinku のパブリック `id` および同じモデルのslugを使用します）。 その後、`data: [DONE]`でストリームを閉じます：
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
+    "stream": true
+  }'
+```
+
+```text
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"1"}}]}
+
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":", 2"}}]}
+
+data: [DONE]
+```
+
+重要な注意事項：
+
+- ストリームの途中で障害が発生した場合、ゲートウェイは1つのエラーイベント（`data: {"error": { "code": …, "message": … }}`）を送信し、偽の`[DONE]`は**送信しない**。切断されたストリームは、正常に終了したストリームのように見えることは決してない。
+- 固定料金は、ストリーミング終了後の実際の使用量に基づいて計算されます。使用量が確認できない場合は、リクエスト受付時に予約された推定値に基づいて請求されます。
+- ヘッダー `x-request-id` は、コンソールのログと関連付けるために、ストリーミング応答にも送信されます。
+
+## 例：Python（OpenAI公式SDK）
+
+`base_url`以外のコードに変更はありません。OpenAIのSDKはそのまま使用可能です：
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key="sk-isi-api-key-kamu",
+)
+
+# Non-streaming
+response = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[
+        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
+        {"role": "user", "content": "Halo dari SDK OpenAI!"},
+    ],
+)
+print(response.choices[0].message.content)
+
+# Streaming
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+<Callout type="tip" title="他のライブラリで base_url を変更する">
+同様のパターンは、`openai-node`（`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`）、LangChain（`baseURL`/`openai_api_base`）、およびOpenAI互換のエンドポイントをサポートするその他のツールにも当てはまります。
+</Callout>
+
+## このエンドポイントでよく発生するエラー
+
+| 事例 | HTTP | `error.code` |
+|---|---|---|
+| 本文が検証に合格しませんでした（フィールドエラー／型エラー／`messages`が空欄） | 422 | `VALIDATION_FAILED` |
+| APIキーが無効です／有効期限が切れています | 401 | `UNAUTHORIZED` |
+| APIキーの残高または利用限度額が不足しています | 402 | `PAYMENT_REQUIRED` |
+| カタログにこのモデルのslugがありません | 404 | `MODEL_NOT_FOUND` |
+| `max_tokens`はモデルの出力上限を超えています | 400 | `BAD_REQUEST` |
+| 非推奨モデル／現在利用不可 | 503 | `MODEL_UNAVAILABLE` |
+| APIキーごとのレート制限を超過しました | 429 | `RATE_LIMITED` |
+| アップストリームが利用不可／一時的な障害（再試行可能） | 503 | `UPSTREAM_ERROR` |
+
+エラーエンベロープの完全な形式については、[エラー](/ja/errors)を参照してください。

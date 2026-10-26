@@ -1,0 +1,49 @@
+---
+title: "サポート"
+description: "Hostlinkuチームへの連絡方法および報告時に記載すべき情報"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+ゲートウェイ、アカウント、APIキー、または請求についてサポートが必要ですか？以下のサポートチャネルをご利用ください。
+
+## サポートチャネル
+
+| チャンネル | 用途 |
+|---|---|
+| **メールアドレス**: [halo@hostlinku.com](mailto:halo@hostlinku.com) | すべての質問：技術、アカウント、請求 |
+| **コンソール**: [console.hostlinku.com](https://console.hostlinku.com) | 報告を行う前に、残高、APIキー、リクエストログ、および監査内容を確認してください |
+| **ステータス**: [status.hostlinku.com](https://status.hostlinku.com) | 現在発生中の障害やインシデントを確認する |
+
+## 報告の際は、以下を添付してください
+
+チームがより迅速に調査できるよう、以下の資料を添付してください：
+
+1. 問題のあるレスポンスの**`x-request-id`**（レスポンスヘッダー；コンソールログにも記載されています）。
+2. **発生時刻**（タイムゾーン付き）および使用された**slugモデル**。
+3. エラー応答（例：`429 RATE_LIMITED`）の**HTTPステータス + `error.code`**。
+4. **再現可能な最小限のリクエスト例**（シークレットは含まない）。APIキーの全文を誰にも送信しないでください。最初の8文字だけで十分です。
+
+良い報告書の例：
+
+```text
+Waktu     : 2026-10-08 14:32 WIB
+Request ID: cmpl_mfx1a2b3c4
+Model     : gpt-5-5
+Status    : 503 UPSTREAM_ERROR ("Terjadi gangguan saat memproses permintaan. Coba lagi.")
+Akun      : user@contoh.com
+Catatan   : terjadi 3x dalam 10 menit terakhir, endpoint /v1/chat/completions
+```
+
+## 応答時間
+
+サポートは少人数のチームによって運営されています。メールへの返信は**平日にはできるだけ早く**行います（ベストエフォート）。広範囲に影響を及ぼすインシデントについては、ステータスページをご確認ください。最新情報はそちらで発表されます。
+
+## セキュリティ
+
+セキュリティ上の問題（例：APIキーの漏洩の可能性やゲートウェイの脆弱性など）を発見した場合は、その詳細を[halo@hostlinku.com](mailto:halo@hostlinku.com)宛てに、件名を「`[SECURITY]`」として非公開で送信してください。対応が完了するまでは、その詳細を公表しないでください。
+
+<Callout type="warning" title="secretを送らないでください">
+サポートチームが、APIキー、パスワード、またはOTPコードを尋ねることは決してありません。Hostlinkuを名乗る者からそのような要求があった場合は、無視し、通報してください。
+</Callout>

@@ -1,0 +1,63 @@
+---
+title: "キロコード"
+description: "Kilo Code で、プロバイダー OpenAI（カスタムベース URL）、OpenAI（互換）、または Anthropic を使用して、構成プロファイル Hostlinku を作成してください。"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Kilo Code](https://kilocode.ai) — VS Code および JetBrains 用のコーディングエージェント拡張機能（Cline/Roo Code のフォーク） — は、**Configuration Profile** ごとにプロバイダーの設定を保存します。 Hostlinkuプロファイルを他のプロファイルとは別に作成し、ワンクリックで切り替えることができます。
+
+**前提条件：** Kilo Code 拡張機能がインストールされており、[コンソール](https://console.hostlinku.com) → **API Keys** から API キー Hostlinku (`sk-…`) が取得されていること。
+
+<Steps>
+
+### プロフィールを作成する
+
+「Kilo Code」パネルを開き、歯車アイコン（**設定**）→ **プロバイダー** の順に選択します。**構成プロファイル** で **+** をクリックし、プロファイルに名前を付けます（例：`Hostlinku`）。
+
+### プロバイダーとベースURLを入力してください
+
+| フィールド | 値 |
+|---|---|
+| **APIプロバイダー** | `OpenAI` |
+| **カスタムベースURLを使用する** | チェックマークが付いている |
+| **ベースURL** | `https://api.hostlinku.com/v1` |
+| **OpenAI APIキー** | `sk-…`（APIキー Hostlinku） |
+| **モデル** | [カタログ](/ja/models)のslug、例：`gpt-5-5` |
+
+![Kilo Code：プロバイダー OpenAI、カスタムベースURL https://api.hostlinku.com/v1](/images/integrations/kilo-code-openai.webp "「Use custom base URL」にチェックを入れ、https://api.hostlinku.com/v1 と入力してください。")
+
+プロバイダー `OpenAI` では、Kilo Code で認識されているモデルのみが表示されます。 その他のslug（Claude、DeepSeek、GLM、Kimi、Qwen）については、**OpenAI Compatible** を選択してください。ベースURLとAPIキーは同じですので、**Model ID** にslugを入力してください。
+
+### 保存して試してみてください
+
+**「Save」**をクリックし、簡単なタスク（*「このリポジトリのREADMEを要約する」*）を送信します。リクエストがコンソールに表示されます → **リクエストログ**。
+
+</Steps>
+
+## 代替案：プロバイダー Anthropic
+
+**APIプロバイダー**を選択してください `Anthropic`、**「カスタムベースURLを使用」**にチェックを入れ、`https://api.hostlinku.com`（**`/v1`を除く**）を入力し、APIキーHostlinkuを**Anthropic APIキー**に貼り付けます。 利用可能なモデルは、Kilo Codeが提供するClaudeモデルに限定されています。カタログHostlinkuとslugが同一のもの（例：`claude-sonnet-4-6`、`claude-haiku-4-5`）を選択してください。
+
+![Kilo Code：プロバイダー Anthropic、カスタムベースURL https://api.hostlinku.com](/images/integrations/kilo-code-anthropic.png "ルート Anthropic：ベースURL https://api.hostlinku.com（/v1 を除く）。")
+
+<Callout type="note" title="プロンプトのキャッシュ">
+Anthropic ルートを通じて、Kilo Code が `cache_control` を送信し、Hostlinku がそれを転送しました。キャッシュトークンは `cache_read_input_tokens` で報告され、モデルキャッシュ価格に基づいて課金されました。 [プロンプト・キャッシング](/ja/prompt-caching)を参照してください。
+</Callout>
+
+## 知っておくべきこと
+
+- **モードごとに1つのプロファイル。** Kilo Codeでは、*Architect*、*Code*、*Debug*の各モードで異なるプロファイルを使用できます。節約例：Architect = `claude-opus-4-6`、Code = `claude-sonnet-4-6`。
+- **カスタムヘッダーは不要です。** Hostlinku では API キーを使用するだけで十分です。カスタムヘッダーの欄は空欄のままにしてください。
+- **インラインオートコンプリート** Kilo Code は、Hostlinku でサポートされていない FIM エンドポイントを使用しています。この機能は、デフォルトのプロバイダーのままにしておいてください（[概要](/ja/integrations#masalah-umum) を参照）。
+
+## トラブルシューティング
+
+| 症状 | Solusi |
+|---|---|
+| `401` | キーが間違っている、または取り外されている、あるいは別のプロフィールに登録されている — **Hostlinku**のプロフィールがアクティブになっていることを確認してください。 |
+| すべてのリクエストにおける`404` | ベースURLに`/v1`（OpenAIルート）が含まれていないか、あるいはAnthropicルートで`/v1`が使用されている。上のスクリーンショットと比較してください。 |
+| `404 model_not_found` | モデルIDの入力ミス；`GET /v1/models`からコピーしてください。 |
+| モデル「Claude/DeepSeek」がドロップダウンメニューに表示されません | プロバイダー `OpenAI` では、モデル OpenAI のみが表示されています — **OpenAI 互換** をご使用ください。 |
+| Agentはツールを呼び出さずに停止した | *ツール呼び出し*のないモデル。[概要](/ja/integrations) の推奨事項に従ってください。 |

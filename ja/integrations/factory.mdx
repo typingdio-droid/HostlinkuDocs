@@ -1,0 +1,84 @@
+---
+title: "ファクトリー・ドロイド"
+description: "~/.factory/settings.json に Hostlinku モデルを customModels として追加し、Droid CLI および Factory デスクトップアプリで使用してください"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Droid](https://docs.factory.ai/cli/byok/overview) — Factoryのコーディングエージェント — は、**BYOKカスタムモデル**に対応しています。 カスタムモデルは`~/.factory/settings.json`から読み込まれ、Droid CLIおよびFactoryデスクトップアプリで利用可能です（FactoryのWeb/モバイルプラットフォームでは利用できません）。APIキーはローカルに保持され、Factoryサーバーには送信されません。
+
+<Steps>
+
+### APIキーを環境変数に保存する
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+`~/.zshrc` / `~/.bashrc` に追加して永続化してください。Droid は `settings.json` から `${HOSTLINKU_API_KEY}` の参照を読み取ります。
+
+### settings.json にモデルを登録する
+
+`~/.factory/settings.json` を開く（または作成する）し、`customModels` を追加します：
+
+```json
+{
+  "customModels": [
+    {
+      "model": "claude-sonnet-4-6",
+      "displayName": "Claude Sonnet 4.6 (Hostlinku)",
+      "baseUrl": "https://api.hostlinku.com",
+      "apiKey": "${HOSTLINKU_API_KEY}",
+      "provider": "anthropic",
+      "maxOutputTokens": 64000
+    },
+    {
+      "model": "gpt-5-5",
+      "displayName": "GPT-5.5 (Hostlinku)",
+      "baseUrl": "https://api.hostlinku.com/v1",
+      "apiKey": "${HOSTLINKU_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 64000
+    },
+    {
+      "model": "deepseek-v4-flash",
+      "displayName": "DeepSeek V4 Flash (Hostlinku)",
+      "baseUrl": "https://api.hostlinku.com/v1",
+      "apiKey": "${HOSTLINKU_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 32000
+    }
+  ]
+}
+```
+
+| `provider` | APIの形式 | ベースURL Hostlinku |
+|---|---|---|
+| `anthropic` | Anthropic Messages | `https://api.hostlinku.com`（`/v1`を除く） |
+| `generic-chat-completion-api` | OpenAI Chat Completions | `https://api.hostlinku.com/v1` |
+
+### Droidでモデルを選択
+
+`droid`を実行し、`/model`と入力してから、**Custom models** のセクションでモデルを選択します（`displayName` と同じ名前）。最初のリクエストがコンソールに表示されます → **リクエストログ**。
+
+</Steps>
+
+## 知っておくべきこと
+
+<Callout type="tip" title="Anthropic社のモデル「Claude」">
+プロバイダー `anthropic` は Messages API を使用しているため、`cache_control` は転送され、プロンプトのキャッシュが完全に機能します。Droid の `/cost` またはリクエストログの *cache* 列で、その節約効果を確認してください。
+</Callout>
+
+- **GPTslugおよびその他のモデル**（DeepSeek、GLM、Qwen、Kimi）は、`generic-chat-completion-api`を介して最も互換性が高くなります。Droidの`openai`プロバイダーはResponses APIを使用しています。 HostlinkuはResponsesに対して*ステートレス*でサービスを提供します（[詳細](/ja/responses)）、そのため、迷った場合はChat Completionsを選択してください。
+- **`maxOutputTokens`** [カタログ](/ja/models)に記載されているモデルの出力上限を超えないでください。
+- **ジェネリックプロバイダーのプロンプトキャッシュ**は、ターゲットモデルによって異なります。
+
+## トラブルシューティング
+
+| 症状 | Solusi |
+|---|---|
+| `/model`にモデルが表示されない | JSONが無効、または`provider`の入力ミス — `jq . ~/.factory/settings.json`で確認してください。 |
+| 変数が見つかりませんというエラー | `HOSTLINKU_API_KEY`は、`droid`を実行しているシェルではまだエクスポートされていません。 |
+| すべてのリクエストにおける`404` | ベースURLが入れ替わっています：`anthropic`と`/v1`、`generic-chat-completion-api`と`/v1`。 |
+| `404 model_not_found` | `model`のslugは、`GET /v1/models`と完全に一致している必要があります。 |

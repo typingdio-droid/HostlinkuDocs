@@ -1,0 +1,104 @@
+---
+title: "認証"
+description: "APIキー「Hostlinku」の使用方法、有効期間、APIキーごとのクレジット制限、およびセキュリティ対策"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Gateway Hostlinku は、`sk-…` 形式の API キーを用いた **Bearer トークン** 認証を採用しています。`/v1/*` エンドポイントへのすべてのリクエストに、API キーを含めてください：
+
+```http
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+エンドポイント [Anthropic Messages](/ja/anthropic-messages) については、ヘッダー `x-api-key: sk-…` も受け入れられます。
+
+APIキーは、[console.hostlinku.com](https://console.hostlinku.com)の**API Keys**メニューで作成・管理します。
+
+<Callout type="important" title="APIキーは /v1/* でのみ有効です">
+APIキーは、エンドポイント「`/v1/chat/completions`」、「`/v1/messages`」、「`/v1/responses`」、および「`/v1/models`」でのみ有効です。 コンソールのアカウントエンドポイント（`/api/*` — プロフィール、APIキー一覧、ログ、残高、管理）は、`403 API_KEY_NOT_ALLOWED`のAPIキーを**拒否**し、コンソールのログインセッションを介してのみアクセス可能です。 一方、ログインセッション（クッキー）は `/v1/*` では**無効**であり、ゲートウェイは常に API キー（`401`）を要求します。 したがって、漏洩したAPIキーはモデルの呼び出し（残高、与信限度額、レートリミットに制限あり）にのみ使用でき、アカウントデータの読み取り、新しいAPIキーの作成、または設定の変更はできません。
+</Callout>
+
+## APIキーの作成
+
+1. コンソールを開く → **APIキー** → **APIキーを作成**。
+2. **名前**、任意の**有効期限**、および任意の**与信限度額**を入力してください。
+3. 表示されているシークレットをコピーしてください。シークレットは一度しか表示されません。
+
+APIキーはSHA-256ハッシュとしてサーバーに保存されます。元の値は一切保存されず、復元することもできません。レガシー形式（`hl_live_…`）の古いAPIキーも、認証ではプレフィックスではなくハッシュに基づいて照合されるため、引き続き機能します。
+
+## APIキーの有効期間
+
+APIキーの作成時のオプションの有効期限：
+
+| 選択肢 | 行動 |
+|---|---|
+| 一度も | APIキーは取り消されるまで有効です |
+| 30日／90日／365日 | その期間が過ぎると、APIキーは自動的に無効になります |
+| カスタム日付 | 選択した日付に有効期限が切れます |
+
+有効期限が切れたAPIキーは、以下の理由で拒否されます：
+
+```json
+{
+  "status": "error",
+  "error": { "code": "UNAUTHORIZED", "message": "API key sudah kedaluwarsa." }
+}
+```
+
+## APIキーごとのクレジット上限
+
+各APIキーには、**USD単位の利用制限**（`creditLimit`）を設定でき、リセット期間は以下の通りです：
+
+| リセット | 計算ウィンドウ（UTCカレンダー） |
+|---|---|
+| 日刊紙 (`daily`) | 当日の00:00 UTC以降 |
+| 週刊（`weekly`） | 今週の月曜日 00:00 UTC から |
+| 月刊（`monthly`） | 今月の1日 00:00 UTC 以降 |
+| リセットなし | APIキーの有効期間中の合計 |
+
+使用量は、そのAPIキーに対して記録された実際のリクエスト費用（`requests.customer_cost`）に基づいて計算されます。累積費用が上限に達すると、それ以降のリクエストは**402 PAYMENT_REQUIRED**として拒否されます：
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "PAYMENT_REQUIRED",
+    "message": "Limit kredit API key tercapai (🪙10.0000 dari 🪙10 total)."
+  }
+}
+```
+
+クレジットの限度額は**アカウント残高**とは異なります。限度額は1つのAPIキーごとに設定されるのに対し、アカウント残高はすべてのAPIキーの資金源となります。リクエストを実行するには、両方が十分な額である必要があります。[課金と残高](/ja/billing)をご覧ください。
+
+## レート制限
+
+与信限度額に加え、ゲートウェイではAPIキーごとにレート制限が適用されます：
+
+- **[`POST /v1/chat/completions`](/ja/chat-completions)**: APIキーあたり1分あたり600リクエスト。
+- コンソール／パブリックエンドポイント（クッキーセッション）：IPアドレスあたり1分間に120リクエスト。
+- 認証エンドポイント（ログイン、登録、パスワードリセット）：IPアドレスあたり15分間に30回の試行。
+
+制限を超えると、**429 RATE_LIMITED** が発生します。詳細は [使用状況と制限](/ja/usage-and-limits) をご覧ください。
+
+## 一般的な認証エラー
+
+| 状況 | HTTP | `error.code` | メッセージ |
+|---|---|---|---|
+| ヘッダー「`Authorization`」が存在しないか、Bearer ではない | 401 | `UNAUTHORIZED` | `Endpoint ini memerlukan API key Hostlinku: kirim header Authorization: Bearer sk-… (atau x-api-key). …` |
+| APIキーが認識されない、入力ミスがある、または無効化されている | 401 | `UNAUTHORIZED` | `API key tidak valid atau sudah dicabut.` |
+| APIキーの有効期限が切れています | 401 | `UNAUTHORIZED` | `API key sudah kedaluwarsa.` |
+| APIキーは、`/api/*`コンソールのエンドポイントで使用されます。 | 403 | `API_KEY_NOT_ALLOWED` | `API key hanya berlaku untuk endpoint gateway /v1/* …` |
+| APIキーがクレジット制限に達しました | 402 | `PAYMENT_REQUIRED` | `Limit kredit API key tercapai (…)` |
+| 予約リクエストを行うには、アカウントの残高が不足しています | 402 | `PAYMENT_REQUIRED` | `Saldo kredit tidak cukup untuk request ini.` |
+| レート制限を超過 | 429 | `RATE_LIMITED` | `Rate limit terlampaui. …` |
+
+<Callout type="important" title="APIキーのセキュリティ">
+  - ブラウザ上で実行されるクライアントサイドのコードや、公開リポジトリにAPIキーを記載しないでください。 - サーバー上の環境変数（例：`HOSTLINKU_API_KEY`）を使用し、そこから読み込んでください。 - アプリケーションや環境ごとに個別のAPIキーを作成し、他のキーに影響を与えることなく個別に無効化できるようにしてください。- APIキーが漏洩した場合の防御策として、**有効期限**と**クレジット制限**を活用してください。 - 不要になったAPIキーは、コンソールから**失効**（無効化、履歴は残る）または**削除**（完全に削除）することができます。
+</Callout>
+
+<Callout type="note" title="APIキーのローテーション">
+推奨される手順：新しいAPIキーを作成 → アプリケーションに設定 → リクエストの検証に成功 → 古いAPIキーを無効化。両方が同時に有効であるため、ダウンタイムは発生しません。
+</Callout>

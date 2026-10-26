@@ -1,0 +1,124 @@
+---
+title: "クイックスタート"
+description: "アカウント登録から、Hostlinkuゲートウェイへの最初のリクエストまで5分以内"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+このページでは、Hostlinku を使用してチャット補完のリクエストを 1 件送信できるようになるまで、ゼロから順を追って解説します。
+
+## 前提条件
+
+- **アカウント Hostlinku**：[auth.hostlinku.com](https://auth.hostlinku.com) から無料で登録してください。
+- **クレジット残高**：ゲートウェイはトークンごとに残高を差し引きます。本番環境でのリクエストを行う前に、コンソールで残高を補充してください。テストリクエストの料金は通常1セント未満ですが、残高がゼロになってはいけません。[課金と残高](/ja/billing)をご参照ください。
+- **テストツール**：curl だけで十分です。より高度な例については、OpenAI（`pip install openai`）の公式 SDK または Node（`npm install openai`）を、コードを変更することなく使用できます。
+
+## 手順
+
+<Steps>
+
+### 登録またはログイン
+
+[auth.hostlinku.com](https://auth.hostlinku.com) にアクセスし、新規アカウントを作成するか、既存のアカウントでログインしてください（管理者が有効にしている場合は、SSOログインも利用可能です）。
+
+### APIキーを作成する
+
+[console.hostlinku.com](https://console.hostlinku.com) にアクセスし、**API Keys** メニュー → **APIキーの作成** を選択します。APIキー作成ダイアログでは、以下の設定を行うことができます：
+
+- **名称**：識別用。例：`produksi-aplikasi-kamu`。
+- **有効期限**：オプション。「無期限」、「30日」「90日」「365日」、または「カスタム日付」から選択してください。
+- **クレジット上限**：オプション。ウィンドウごとに**毎日／毎週／毎月**のキー使用上限（例：10ドル）を設定するか、リセットなし（総上限）に設定できます。
+
+<Callout type="warning" title="「シークレット」は一度だけ表示されます">
+APIキーの作成後、`sk-…`という形式のシークレットがコンソールに**1回だけ**表示されます。これをコピーして安全な場所に保管してください。サーバーはこれをSHA-256ハッシュとして保存しており、再度表示することはできません。シークレットを紛失した場合は、そのAPIキーを無効にして、新しいものを作成してください。
+</Callout>
+
+### 最初のリクエストを送信する
+
+すべてのゲートウェイエンドポイントは `https://api.hostlinku.com` にあり、認証は `Authorization: Bearer sk-…` で行われます。非ストリーミングのリクエストの例：
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "user", "content": "Halo! Perkenalkan dirimu singkat saja." }
+    ]
+  }'
+```
+
+すべてが正しければ、OpenAI形式のJSONレスポンスに加え、リクエストのコストとレイテンシを含む`hostlinku`ブロックを受け取ります：
+
+```json
+{
+  "id": "cmpl_…",
+  "object": "chat.completion",
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "Halo! Saya adalah …" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60 },
+  "hostlinku": {
+    "cost": 0.000123,
+    "latencyMs": 812
+  }
+}
+```
+
+上記のslugモデルはあくまで一例です。ご自身のアカウントで有効なslugの一覧は、コンソール（**モデル**メニュー）または [エンドポイント `GET /v1/models`](/ja/models) から確認できます。
+
+### おすすめ：ストリーミングを利用しましょう
+
+チャットアプリでは、`"stream": true`を送信してください。モデルが回答を開始するとすぐに（通常1～2秒以内）、回答がすべて完了するのを待たずに最初の単語が表示されます。所要時間は同じですが、ユーザーにとってはアプリがはるかに高速に感じられます。
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key=os.environ["HOSTLINKU_API_KEY"],
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Halo!"}],
+    stream=True,
+)
+for chunk in stream:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+```
+
+curl を使用する場合、出力がバッファに蓄積されないように `-N` を追加してください：
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
+```
+
+### 残高と取引履歴を確認する
+
+コンソールで、**クレジット/残高**メニューを開くと現在の残高を確認でき、**リクエストログ**メニューを開くと、トークン、費用、レイテンシを含むリクエストの完全な履歴を確認できます。 コンソールセッション用の対応するエンドポイントは [`GET /api/wallet/account`](/ja/billing) にあり、パブリック API（API キー `sk-…`）では `/v1/*` が使用されます。
+
+</Steps>
+
+## 次のステップ
+
+- [認証](/ja/authentication)：APIキーの詳細、有効期限、およびクレジットの制限。
+- [Chat Completions](/ja/chat-completions)：すべてのパラメータ、SSEストリーミング、およびPythonのサンプル。
+- [モデル](/ja/models)：モデルカタログと適切なモデルの選び方。
+- [エラー](/ja/errors)：各エラーコードの意味と対処方法。
+
+<Callout type="note" title="注記">
+お困りですか？ [halo@hostlinku.com](mailto:halo@hostlinku.com) までお問い合わせください。また、[サポート](/ja/support) もご参照ください。
+</Callout>

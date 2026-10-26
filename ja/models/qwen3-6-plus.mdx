@@ -1,0 +1,76 @@
+---
+title: "Qwen 3.6 Plus"
+description: "Qwen3.6-Plus は、エージェント型コーディング、マルチモーダル知覚と推論、道具の使用、および実世界のビジネスタスクの実行を目的とした、Alibaba Cloud Model Studio のホスト型モデルです..."
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 概要
+
+Qwen3.6-Plusは、エージェント型コーディング、マルチモーダル知覚と推論、道具の使用、および実世界のビジネスタスクの実行を目的とした、Alibaba Cloud Model Studioのホスト型モデルです。
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | Alibaba |
+| slug | `qwen3-6-plus` |
+| コンテキスト | 1,000,000トークン |
+| 最大出力 | 非公開 |
+| 入力 | テキスト、画像 |
+| 出力 | text |
+| リリース | 2026-06-14 |
+
+## 機能
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+- `agentic`
+- `long-context`
+
+## 価格
+
+| 項目 | 価格 |
+|---|---|
+| 入力（プロンプト） | $0.294 |
+| 出力（補完） | $1.765 |
+| キャッシュ読み取り | $0.029 |
+| キャッシュ書き込み | $0.367 |
+
+価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに準じ、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | サポート |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+
+エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+
+## リクエストの例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen3-6-plus",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 関連モデル
+
+- [Qwen 3.7 Max](/ja/models/qwen3-7-max)
+
+[← モデル一覧に戻る](/ja/models)

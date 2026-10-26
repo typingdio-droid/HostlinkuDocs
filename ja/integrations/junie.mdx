@@ -1,0 +1,85 @@
+---
+title: "Junie CLI"
+description: "JetBrainsのJunie CLIを、カスタムモデルプロファイル（Chat CompletionsまたはAnthropic Messages）を介してHostlinkuに接続する"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) — JetBrainsが提供するターミナル用エージェント — は、JSONファイル形式の**カスタムモデルプロファイル**に対応しています。1つのプロファイルには、エンドポイント、API形式、APIキー、および軽めのタスク向けのメインモデルと高速モデル（*faster model*）が含まれます。
+
+JetBrains IDE内のAIアシスタントについては、[JetBrains AIアシスタント](/ja/integrations/jetbrains)をご覧ください。
+
+<Steps>
+
+### Junie CLI をインストールし、API キーを保存する
+
+```bash
+curl -fsSL https://junie.jetbrains.com/install.sh | bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+### Hostlinkuのプロフィールを作成する
+
+Junieは、`~/.junie/models/*.json`（ユーザーレベル）および`.junie/models/*.json`（プロジェクトレベル）のプロフィールを検索しました。`.json`を除いたファイル名がプロファイルIDとなります。`~/.junie/models/hostlinku.json`を作成してください：
+
+```json
+{
+  "displayName": "Hostlinku",
+  "id": "claude-sonnet-4-6",
+  "baseUrl": "https://api.hostlinku.com/v1/chat/completions",
+  "apiType": "OpenAICompletion",
+  "apiKey": "${HOSTLINKU_API_KEY}",
+  "maxContextLength": 1000000,
+  "fasterModel": {
+    "id": "claude-haiku-4-5",
+    "maxContextLength": 200000
+  }
+}
+```
+
+<Callout type="important" title="baseUrl は完全なエンドポイントの URL です">
+Junieは`baseUrl`にパスを**追加しなかった**。`OpenAICompletion`については`/v1/chat/completions`まで、`Anthropic`については`/v1/messages`まで記述する。
+</Callout>
+
+### プロファイルで実行する
+
+```bash
+junie --model custom:hostlinku
+```
+
+プロファイルは、TUIのモデル一覧の**「カスタム」**タブや、`/model`コマンドでも表示されます。最初のリクエストはコンソールの**「リクエストログ」**に表示されます。
+
+</Steps>
+
+## バリエーション：Anthropic形式
+
+Messages API（フルプロンプトキャッシュ）を使用したClaudeモデルの場合、2つ目のプロファイル（例：`~/.junie/models/hostlinku-claude.json`）を作成します：
+
+```json
+{
+  "displayName": "Hostlinku (Anthropic)",
+  "id": "claude-sonnet-4-6",
+  "baseUrl": "https://api.hostlinku.com/v1/messages",
+  "apiType": "Anthropic",
+  "apiKey": "${HOSTLINKU_API_KEY}",
+  "fasterModel": { "id": "claude-haiku-4-5" }
+}
+```
+
+次に、`junie --model custom:hostlinku-claude`を実行してください。
+
+## 知っておくべきこと
+
+- **`${HOSTLINKU_API_KEY}`** は、プロファイルの読み込み時に環境変数から読み込まれます。変数が設定されていない場合、プロファイルの読み込みは失敗し、Junie は欠落している変数の名前を通知します。これは、リポジトリにコミットされるプロファイルにおいても安全です（`.junie/models/`）。
+- **メインモデル対高速モデル。** メインモデル（`claude-sonnet-4-6`、`gpt-5-5`）には、強力な*ツール呼び出し*機能を備えたモデルを選択してください。ファスターモデル（要約および分類）には、`claude-haiku-4-5`や`deepseek-v4-flash`のような低コストなモデルで十分です。
+- **Responses API (`OpenAIResponses`)** は `https://api.hostlinku.com/v1/responses` でも利用可能ですが、*ステートレス*です ([詳細](/ja/responses))。`OpenAICompletion` が最も安全な選択肢です。
+
+## トラブルシューティング
+
+| 症状 | Solusi |
+|---|---|
+| `404` | `baseUrl` は不完全です — `/v1/chat/completions` または `/v1/messages` で終わる必要があります。 |
+| プロフィールが表示されない | ファイル名またはファイルの場所が間違っているか、JSONが無効です。プロファイル = `.json`を含まないファイル名。 |
+| 環境変数のエラー | `junie` を実行しているシェルで、`HOSTLINKU_API_KEY` をエクスポートします。 |
+| ツール呼び出しに失敗した／エージェントがループしている | このモデルはエージェント型コーディングには小さすぎます — メインのモデルを[概要](/ja/integrations)の推奨モデルに変更してください。 |

@@ -1,0 +1,72 @@
+---
+title: "カーソル"
+description: "CursorでHostlinkuモデルを使用するには、OpenAIのベースURLをオーバーライドしてください — チャット、Cmd-K、およびエージェントで、ご自身のAPIキーを使用してください"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Cursor](https://cursor.com) では、*Override OpenAI Base URL* を使用して独自の API キーを許可できます。 これをHostlinkuに設定すると、チャット、Cmd-K（インライン編集）、およびエージェントはHostlinkuカタログのモデルを使用し、Cursorのクォータではなく、お客様の残高から課金されます。
+
+<Steps>
+
+### モデル設定を開く
+
+`Cursor Settings` (⌘/Ctrl + Shift + J) → **Models** タブ。
+
+### APIキーとベースURLを入力してください
+
+**API Keys** のセクションで：
+
+1. **OpenAI APIキー**を有効にし、APIキーHostlinku（`sk-…`）を貼り付けてください。
+2. **「OpenAI ベース URL の上書き」** を有効にし、以下を入力してください：
+
+```text
+https://api.hostlinku.com/v1
+```
+
+![「カーソル設定」→「モデル」：OpenAI ベース URL の「オーバーライド」欄には、https://api.hostlinku.com/v1 と記載されています。](/images/integrations/cursor-openai-base-url.jpg "「OpenAI Base URL」の「Override」欄に「https://api.hostlinku.com/v1」と入力し、「Save」をクリックします。")
+
+末尾に「`/chat/completions`」を追加しないでください。Cursorが自動的にパスを追加します。**Save**をクリックし、APIキーの欄の横にある**Verify**をクリックしてください。Cursorがゲートウェイにテストリクエストを1件送信します。
+
+### モデル Hostlinku を追加する
+
+引き続き**Models** → **Add Custom Model**タブで、[カタログ](/ja/models)のslugを、一つずつ正確に入力してください：
+
+```text
+claude-sonnet-4-6
+gpt-5-5
+deepseek-v4-flash
+```
+
+使用しないデフォルトのモデルは無効にして、モデルのリストをコンパクトに保ちましょう。
+
+### チャットでモデルを選択してください
+
+「チャット/エージェント」パネルで、モデルのドロップダウンから新しく追加されたモデルを選択してください。最初のリクエストはコンソールの「**リクエストログ**」に表示されます。
+
+</Steps>
+
+## 知っておくべきこと
+
+<Callout type="warning" title="オーバーライドはグローバルです">
+**Override OpenAI Base URL** が有効な間、Cursor 上の OpenAI ファミリーのすべてのモデル（Cursor が管理するモデルを含む）は、Hostlinku にリダイレクトされます。 すべてに「Hostlinku」のslugを使用するか、Cursorのデフォルトモデルに戻したい場合は、オーバーライドのトグルをオフにしてください。
+</Callout>
+
+- **リクエストはCursorのサーバーから送信されます**。あなたのコンピュータからではありません。そのため、ベースURLは公開されている必要があります。`https://api.hostlinku.com`はこの条件を満たしています（`localhost`のアドレスはCursorによって拒否されました）。
+- **CursorのTab機能（オートコンプリート）は影響を受けません。** Tab機能はCursor独自のインフラストラクチャを使用しており、どのプロバイダーにも切り替えることはできません。Hostlinkuは、チャット、Cmd-K、およびエージェントに対応しています。
+- **エージェントモード**では、*ツール呼び出し*および*ストリーミング*機能を備えたモデルが必要です。 [概要](/ja/integrations) で推奨されているすべてのモデルが、この要件を満たしています。 エージェントが *BAD_MODEL_NAME* を理由に拒否した場合は、slugを再確認し、**OpenAI API キー** のトグルが有効になっていることを確認してください。
+- **接続が応答しない／プロトコルエラー** — 同じ設定で、*HTTP Compatibility Mode* を **HTTP/1.1** に変更してください。
+
+<Callout type="tip" title="モデル「クロード」、ルートOpenAI経由">
+「*Anthropic API Key*」の欄には入力する必要はありません。slug「`claude-sonnet-4-6`」は、OpenAIおよびChat Completionsという同じ経路を通じて呼び出され、ゲートウェイがAnthropicプロトコルに変換します。
+</Callout>
+
+## トラブルシューティング
+
+| 症状 | Solusi |
+|---|---|
+| *Verify* が失敗しました `401` | APIキーが間違っている、または無効になっているか、スペースが誤ってコピーされてしまった可能性があります。 |
+| *モデルが見つかりません* | slugの誤入力 — `GET /v1/models`からコピーしました。 |
+| 回答が途切れています | このモデルの出力上限は、カーソルで指定された値よりも小さいです。別のモデル、または異なるService Modeをお試しください。 |
+| エージェントが途中で停止しました（`429`） | エージェントは多数のリクエストを並行して送信しています。[使用状況と制限](/ja/usage-and-limits)をご確認ください。 |

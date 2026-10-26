@@ -1,0 +1,81 @@
+---
+title: "Kimi K3"
+description: "Kimi K3 是 Kimi 的旗舰机型，专为长距离编程和端到端知识工作而设计；它具备 100 万Token的上下文窗口，并提供……"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 摘要
+
+Kimi K3 是 Kimi 的旗舰机型，专为长距离编程和端到端知识工作而设计；它具备 100 万Token的上下文窗口，并提供领先的综合智能能力。
+
+| 属性 | 值 |
+|---|---|
+| 提供商 | Moonshot |
+| Slug | `kimi-k3` |
+| 上下文 | 1,000,000 个Token |
+| 最大输出 | 64,000 个Token |
+| 输入 | 文本、图片 |
+| 输出 | 文本 |
+| 发布日期 | 2026-07-16 |
+| 标签 | 旗舰 |
+
+## 能力
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## 价格
+
+| 项目 | 价格 |
+|---|---|
+| 输入（提示词） | $2.941 |
+| 输出（补全） | $14.706 |
+| 缓存读取 | $0.2941 |
+| 缓存写入 | — |
+
+该价格为API密钥Hostlinku的**100万个Token**的客户单价，其中1 <CreditIcon /> = 1美元。 每次请求的实际价格仍遵循 Service Mode API key，且可能会发生变化；请查看 [控制台](https://console.hostlinku.com/models) 或 `GET /v1/models` 以获取当前有效的价格。
+
+## 支持的端点
+
+| 端点 | 格式 | 支持 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
+| `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
+| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+
+端点和模型的可用性遵循目录以及所使用的Service Mode API key规范。如果该模式下没有可用模型，则可能以`400 MODEL_NOT_IN_SERVICE_MODE`为由拒绝该请求。
+
+## 请求示例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kimi-k3",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 相关模型
+
+- [Kimi K2.6](/zh/models/kimi-k2-6)
+- [Kimi K2.7 Code](/zh/models/kimi-k2-7-code)
+- [Kimi K3 Hyper](/zh/models/kimi-k3-hyper)
+- [Kimi K3 Hyper Chat](/zh/models/kimi-k3-hyper-chat)
+- [Kimi K3 Turbo](/zh/models/kimi-k3-turbo)
+
+[← 返回模型目录](/zh/models)

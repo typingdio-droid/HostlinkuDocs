@@ -1,0 +1,79 @@
+---
+title: "Kimi K2.6"
+description: "Kimi K2.6は、Kimiの最新かつ最も高性能なモデルであり、強化され、より安定した長距離コーディング機能を備え、指示処理能力も大幅に向上しています..."
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 概要
+
+Kimi K2.6は、Kimiの最新かつ最も高度なモデルであり、強化され、より安定した長距離コーディング機能を備え、指示の遂行能力や自己修正能力が大幅に向上しています。また、「思考」モードと非思考モードの両方をサポートし、会話型インタラクションやエージェントタスクにも対応しています。
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | Moonshot |
+| slug | `kimi-k2-6` |
+| コンテキスト | 256,000トークン |
+| 最大出力 | 32,000トークン |
+| 入力 | テキスト、画像 |
+| 出力 | text |
+| リリース | 2026-07-13 |
+
+## 機能
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## 価格
+
+| 項目 | 価格 |
+|---|---|
+| 入力（プロンプト） | $0.956 |
+| 出力（補完） | $3.971 |
+| キャッシュ読み取り | $0.162 |
+| キャッシュ書き込み | — |
+
+価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | サポート |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+
+エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+
+## リクエストの例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kimi-k2-6",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 関連モデル
+
+- [Kimi K2.7 Code](/ja/models/kimi-k2-7-code)
+- [Kimi K3](/ja/models/kimi-k3)
+- [Kimi K3 Hyper](/ja/models/kimi-k3-hyper)
+- [Kimi K3 Hyper Chat](/ja/models/kimi-k3-hyper-chat)
+- [Kimi K3 Turbo](/ja/models/kimi-k3-turbo)
+
+[← モデル一覧に戻る](/ja/models)

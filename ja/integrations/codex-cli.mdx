@@ -1,0 +1,98 @@
+---
+title: "Codex CLI"
+description: "~/.codex/config.toml にカスタムプロバイダー（wire_api = \"responses\"）を設定し、Hostlinku 経由で OpenAI Codex CLI を実行する"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Codex CLI](https://developers.openai.com/codex/cli) は、**OpenAI Responses** プロトコルのみを扱います。 Hostlinkuは[`POST /v1/responses`](/ja/responses)でこれを提供しています。これはステートレスであり、`reasoning.encrypted_content`のサポート、関数呼び出し、およびストリーミング機能を備えており、まさにCodexが期待する通りの仕様です。設定は、カスタムプロバイダーを1つ用意するだけで済みます。
+
+<Steps>
+
+### Codex CLI をインストールする
+
+```bash
+npm install -g @openai/codex
+# atau: brew install codex
+```
+
+### プロバイダー Hostlinku を追加する
+
+`~/.codex/config.toml` を編集してください（存在しない場合は作成してください）。このユーザーファイルではプロバイダを**必ず**定義する必要があります。セキュリティ上の理由から、プロジェクト内の `.codex/config.toml` が `model_providers` を上書きしてはなりません。
+
+```toml
+model = "gpt-5-3-codex"
+model_provider = "hostlinku"
+model_reasoning_effort = "medium"
+
+[model_providers.hostlinku]
+name = "Hostlinku"
+base_url = "https://api.hostlinku.com/v1"
+env_key = "HOSTLINKU_API_KEY"
+wire_api = "responses"
+```
+
+### APIキーを設定して実行する
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu   # simpan di ~/.zshrc / ~/.bashrc
+codex
+```
+
+Codexは、`env_key`で指定された変数からキーを読み取ります。このキーは、`config.toml`には決して書き込まれません。
+
+### 確認
+
+簡単な指示を1つ送信してください（例：*「このリポジトリの構造を説明してください」*）。リクエストはコンソールの → **リクエストログ** に、モデル `gpt-5-3-codex` として表示されます。Codex を開く前にエンドポイントを確認したい場合は：
+
+```bash
+curl https://api.hostlinku.com/v1/responses \
+  -H "Authorization: Bearer $HOSTLINKU_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "model": "gpt-5-3-codex", "input": "Halo" }'
+```
+
+</Steps>
+
+## プロフィールに表示されるいくつかのモデル
+
+設定を変更せずにモデルやプロバイダーを切り替えるには、`[profiles.*]` を使用してください：
+
+```toml
+[profiles.cepat]
+model = "gpt-5-6-luna"
+model_provider = "hostlinku"
+model_reasoning_effort = "low"
+
+[profiles.kuat]
+model = "gpt-6-astra"
+model_provider = "hostlinku"
+```
+
+```bash
+codex --profile kuat
+codex --profile cepat "tulis unit test untuk utils/date.ts"
+```
+
+<Callout type="warning" title="CodexはOpenAIモデルのみに対応しています">
+Codexは独自のツール（シェル、パッチファイルなど）を送信します。OpenAI以外のモデルは、この種のツールを拒否し、`The requested tool type is not supported by this model`を返します。つまり、`claude-*`、`deepseek-*`、 `glm-*`、`qwen*`、`kimi-*`、および`minimax-*`は、Codex経由では**使用できません**。`gpt-*`モデルを使用してください。 その他のモデルについては、AnthropicまたはChat Completionsの方言に対応したクライアント（Claude Code、Cline、OpenCode、Aider）を使用してください。
+
+**Responses-native**（Codexツールをそのまま引き継いだ）`gpt-*`モデル： `gpt-5-3-codex`、`gpt-5-6-sol`、`gpt-5-6-luna`、`gpt-5-5`、`gpt-6-1-sol`、`gpt-6-sol`、`gpt-6-luna`、および`gpt-6-astra`。 `gpt-5-6-terra`はChat Completionsのみをサポートしているため、Codexのシェルツールを実行することは**できません**。
+</Callout>
+
+<Callout type="note" title="ステートレス、まさにCodexのデフォルト通り">
+Codex CLIは、各ターンで`input`および`store: false`の会話履歴全体を送信し、推論項目を再送信できるよう`include: ["reasoning.encrypted_content"]`に要求します。 Hostlinkuはこのフローをそのままサポートしています。`previous_response_id`はCodexでは使用されないため、ステートレスゲートウェイの特性は影響しません。[Responses API](/ja/responses)を参照してください。
+</Callout>
+
+<Callout type="tip" title="デフォルトのOpenAIエンドポイントのみを変更したいのですか？">
+新しいプロバイダーを使用しない代替案：`config.toml` および `OPENAI_API_KEY=sk-…` で `openai_base_url = "https://api.hostlinku.com/v1"` を設定する（API キー Hostlinku）。 カスタムプロバイダーは、UI上でその名称が明確であり、キーが元のOpenAIキーとは別になっているため、引き続き推奨されます。
+</Callout>
+
+## トラブルシューティング
+
+- **`401`** — `env_key` の変数が、`codex` が実行されているシェルにはエクスポートされていません。
+- **モデルが「シェルを実行できない」と回答し、出力をでっち上げた** — このモデルはResponsesネイティブではないため、モデルに到達する前にCodexツールが除外されてしまいます。上記のCodex対応モデル一覧からモデルを選択してください。Codexには`gpt-5-6-terra`を使用しないでください。
+- **`400 previous_response_id tidak didukung`** — *stored responses* モードを強制するプラグインやスクリプトが存在する場合にのみ発生します。`store` が `true` を強制していないことを確認してください。
+- **モデルが表示されない / `404`** — slugが間違っています。`/v1/models` には、あなたのキーに対応する有効なリストが表示されます。
+- **旧バージョンのCodexでは`wire_api = "chat"`が必要** — Hostlinkuも[`/v1/chat/completions`](/ja/chat-completions)に対応していますが、Codexの推論機能は`responses`で最も良好に動作します。

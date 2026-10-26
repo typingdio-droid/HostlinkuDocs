@@ -1,0 +1,87 @@
+---
+title: "Claude Fable 5"
+description: "Claude Fable 5 是 Anthropic 的旗舰 Mythos 级模型，专为长时域推理、代理编码和自主工作流进行了优化。它支持文本和..."
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 摘要
+
+Claude Fable 5 是 Anthropic 的旗舰级 Mythos 类模型，专为长时域推理、代理编码和自主工作流进行了优化。它支持文本和图像输入，并生成文本输出，具有 100 万Token的上下文窗口和 12.8 万的最大输出容量。
+
+| 属性 | 值 |
+|---|---|
+| 提供商 | Anthropic |
+| Slug | `claude-fable-5` |
+| 上下文 | 1,000,000 个Token |
+| 最大输出 | 128,000 个Token |
+| 输入 | 文本、图片 |
+| 输出 | 文本 |
+| 发布日期 | 2026-06-09 |
+| 标签 | 创意 |
+
+## 能力
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## 价格
+
+| 项目 | 价格 |
+|---|---|
+| 输入（提示词） | $10 |
+| 输出（补全） | $50 |
+| 缓存读取 | $1 |
+| 缓存写入 | $12.5 |
+
+价格是指API密钥Hostlinku的每**100万个Token**的客户价格，其中1 <CreditIcon /> = 1美元。 每次请求的实际价格仍以 Service Mode API key 为准，且可能会发生变化；请查看 [控制台](https://console.hostlinku.com/models) 或 `GET /v1/models` 以获取当前适用值。
+
+## 支持的端点
+
+| 端点 | 格式 | 支持 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
+| `POST /v1/messages` | Anthropic Messages | 原生 |
+| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+
+端点和模型的可用性取决于所使用的目录及Service Mode API key。如果该模式下没有可用模型，则可能以`400 MODEL_NOT_IN_SERVICE_MODE`为由拒绝该请求。
+
+## 请求示例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-fable-5",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 相关模型
+
+- [Claude Fable 5.1](/zh/models/claude-fable-5-1)
+- [Claude Haiku 4.5](/zh/models/claude-haiku-4-5)
+- [Claude Opus 4.6](/zh/models/claude-opus-4-6)
+- [Claude Opus 4.7](/zh/models/claude-opus-4-7)
+- [Claude Opus 4.8](/zh/models/claude-opus-4-8)
+- [Claude Opus 5](/zh/models/claude-opus-5)
+
+[← 返回模型目录](/zh/models)

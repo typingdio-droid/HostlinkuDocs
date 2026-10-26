@@ -1,0 +1,73 @@
+---
+title: "Qwen 3.7 Max"
+description: "Qwen3.7-Maxは、Qwen3.7シリーズのフラッグシップモデルであり、エージェントのワークロード、長鎖推論、コード理解、本番性向上、および複雑なタスクに対応するように設計されています..."
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 概要
+
+Qwen3.7-Maxは、Qwen3.7シリーズのフラッグシップモデルであり、エージェントのワークロード、長鎖推論、コード理解、本番性向上、および複雑なタスクの実行を目的として設計されています。
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | Alibaba |
+| slug | `qwen3-7-max` |
+| コンテキスト | 1,000,000トークン |
+| 最大出力 | 非公開 |
+| 入力 | text |
+| 出力 | text |
+| リリース | 2026-06-14 |
+
+## 機能
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `agentic`
+- `long-context`
+
+## 価格
+
+| 項目 | 価格 |
+|---|---|
+| 入力（プロンプト） | $1.765 |
+| 出力（補完） | $5.294 |
+| キャッシュ読み取り | $0.176 |
+| キャッシュ書き込み | $2.206 |
+
+価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | サポート |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+
+エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+
+## リクエストの例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen3-7-max",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 関連モデル
+
+- [Qwen 3.6 Plus](/ja/models/qwen3-6-plus)
+
+[← モデルカタログに戻る](/ja/models)

@@ -1,0 +1,83 @@
+---
+title: "GPT-5.6 Terra"
+description: "在性能、速度和成本之间实现了最佳平衡，因此是企业和开发者的理想默认机型。"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| 属性 | 值 |
+|---|---|
+| 提供商 | OpenAI |
+| Slug | `gpt-5-6-terra` |
+| 上下文 | 1,050,000 个Token |
+| 最大输出 | 64,000 个Token |
+| 输入 | 文本、图片 |
+| 输出 | 文本 |
+| 发布日期 | 2026-07-09 |
+| 标签 | 生产 |
+
+## 能力
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## 价格
+
+| 项目 | 价格 |
+|---|---|
+| 输入（提示词） | $2 |
+| 输出（补全） | $12 |
+| 缓存读取 | $0.2 |
+| 缓存写入 | $2.5 |
+
+该价格为API密钥Hostlinku的**100万个Token**的客户单价，其中1 <CreditIcon /> = 1美元。 每次请求的实际价格仍遵循 Service Mode API key，且可能会发生变化；请查看 [控制台](https://console.hostlinku.com/models) 或 `GET /v1/models` 以获取当前有效的价格。
+
+## 支持的端点
+
+| 端点 | 格式 | 支持 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
+| `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
+| `POST /v1/responses` | OpenAI Responses | 原生 |
+
+端点和模型的可用性遵循目录以及所使用的Service Mode API key规范。如果该模式下没有可用模型，则可能以`400 MODEL_NOT_IN_SERVICE_MODE`为由拒绝该请求。
+
+## 请求示例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5-6-terra",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 相关模型
+
+- [GPT 5.3 Codex](/zh/models/gpt-5-3-codex)
+- [GPT-5.5](/zh/models/gpt-5-5)
+- [GPT-5.6 Luna](/zh/models/gpt-5-6-luna)
+- [GPT-5.6 Sol](/zh/models/gpt-5-6-sol)
+- [GPT-6 Astra](/zh/models/gpt-6-astra)
+- [GPT-6 Luna](/zh/models/gpt-6-luna)
+
+[← 返回模型目录](/zh/models)

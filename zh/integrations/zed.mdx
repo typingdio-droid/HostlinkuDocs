@@ -1,0 +1,90 @@
+---
+title: "泽德"
+description: "在 Zed 的 settings.json 文件中将 Hostlinku 添加为 openai_compatible 提供商，并在 Agent Panel 中使用任意模型"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Zed](https://zed.dev/docs/ai/use-api-access) 通过 `settings.json` 支持 **与 OpenAI 兼容** 的自定义提供商。 必须显式声明该模型（Zed不会自动发现），然后通过Agent Panel或环境变量一次性输入API密钥。
+
+<Steps>
+
+### 声明提供者和模型
+
+打开 `zed: open settings`（⌘/Ctrl + ,），然后添加：
+
+```json
+{
+  "language_models": {
+    "openai_compatible": {
+      "hostlinku": {
+        "api_url": "https://api.hostlinku.com/v1",
+        "available_models": [
+          {
+            "name": "claude-sonnet-4-6",
+            "display_name": "Claude Sonnet 4.6 (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": true, "parallel_tool_calls": true }
+          },
+          {
+            "name": "gpt-5-5",
+            "display_name": "GPT-5.5 (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": true, "parallel_tool_calls": true }
+          },
+          {
+            "name": "deepseek-v4-flash",
+            "display_name": "DeepSeek V4 Flash (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": false }
+          }
+        ]
+      }
+    }
+  },
+  "agent": {
+    "default_model": { "provider": "hostlinku", "model": "claude-sonnet-4-6" }
+  }
+}
+```
+
+`api_url` 应以 `/v1` 结尾，且不带结尾斜杠。 `max_tokens` 是模型上下文的度量（参见 [目录](/zh/models) 中的 `context_window`）；`name` 的 slug 必须完全一致。
+
+### 输入 API 密钥
+
+请选择其中一项：
+
+- **代理面板** → 设置图标 (`agent: open settings`) → 查找提供商 **hostlinku** → 粘贴 API 密钥 `sk-…`。Zed 将其保存在系统密钥链中，而非 `settings.json` 中。
+- 名称为“ID provider”（大写）+ `_API_KEY` 的**环境变量**：
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+在已导出该变量的shell中运行Zed（或将其添加到shell配置文件中，然后重新登录）。
+
+### 在代理面板中选择模型
+
+打开代理面板（⌘/Ctrl + ?）→ 模型选择器 → **hostlinku** 组。发送一条消息，并在控制台中查看其请求 → **请求日志**。
+
+</Steps>
+
+## 高级模型选项
+
+| Field | 何时使用 |
+|---|---|
+| `reasoning_effort` (`"low"`/`"medium"`/`"high"`) | 推理模型（GPT-5.x、Claude 4.6、DeepSeek V4）。 |
+| `capabilities.max_tokens_parameter: true` | 只有当模型拒绝 `max_completion_tokens` 时；若 Hostlinku 同时接受两者，则保持默认设置。 |
+| `capabilities.chat_completions: false` | 将模型切换至 Responses API（`/v1/responses`）——Hostlinku 同样支持，但默认的 Chat Completions 在 Zed 中经过了更充分的测试。 |
+
+<Callout type="note" title="“编辑预测”不包括在内">
+Zed 的 *编辑预测*（内联自动完成）功能在 `edit_predictions` 中单独配置，并使用 `/v1/completions`（FIM）端点，而 Hostlinku 并未提供该端点。 请使用 Hostlinku 用于代理面板、内联助手和线程；将“编辑预测”功能保留在默认提供程序中。
+</Callout>
+
+## 故障排除
+
+- **未显示提供商** — `settings.json` 无效（逗号/括号）。请检查 `zed: open log`。
+- **`401`** — 尚未为提供程序 `hostlinku` 输入密钥，或者环境变量是在 Zed 启动后导出的；请重启 Zed。
+- **忽略工具调用** — 请确保该模型的`capabilities.tools: true`。
+- **完整上下文显示过快** — `max_tokens` 与 `context_window` 模型相比尺寸过小；请按产品目录调整。

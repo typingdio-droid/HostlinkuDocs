@@ -1,0 +1,93 @@
+---
+title: "OpenCode"
+description: "opencode.json で Hostlinku を OpenAI 互換のカスタムプロバイダーとして登録し、/models 経由でモデルを選択してください"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[OpenCode](https://opencode.ai/docs/providers/) は AI SDK を採用しているため、OpenAI 互換のあらゆるプロバイダーを `opencode.json` を通じて追加できます。認証情報は、`/connect` コマンドによって個別に保存されます。
+
+<Steps>
+
+### 認証情報を保存する
+
+OpenCode内で`/connect`を実行し、**Other**までスクロールして、プロバイダーIDとして`hostlinku`を入力し、APIキーとして`sk-…`を貼り付けてください。キーは`~/.local/share/opencode/auth.json`に保存されています。
+
+```text
+/connect  →  Other  →  provider id: hostlinku  →  API key: sk-…
+```
+
+### プロバイダーを定義する
+
+プロジェクトのルートディレクトリで `opencode.json` を作成／変更します（グローバルの場合は `~/.config/opencode/opencode.json`）：
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1"
+      },
+      "models": {
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "gpt-5-5": {
+          "name": "GPT-5.5",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash",
+          "limit": { "context": 1000000, "output": 32000 }
+        }
+      }
+    }
+  },
+  "model": "hostlinku/claude-sonnet-4-6",
+  "small_model": "hostlinku/deepseek-v4-flash"
+}
+```
+
+`opencode.json`のIDプロバイダーは、`/connect`で入力したものと**同一でなければならない**。`models`のキーはHostlinkuのslugである。`limit`は、OpenCodeが残りのコンテキストを計算する際に役立つ。
+
+### モデルを選択
+
+`/models` を実行すると、登録したモデルを含むグループ **Hostlinku** が表示されます。`small_model` は軽微なタスク（セッションのタイトル、要約など）に使用されるため、長時間のセッションをより効率的に行うことができます。
+
+</Steps>
+
+## 構成のバリエーション
+
+**環境変数からのAPIキー**（`/connect`を除く）：
+
+```json
+{
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1",
+        "apiKey": "{env:HOSTLINKU_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+**Responses API 経由** — `npm` を `@ai-sdk/openai` に変更してください。OpenCode では [`/v1/responses`](/ja/responses) を使用します。 GPT-5.xモデルで*推論サマリー*を取得したい場合に便利です。ほとんどのユーザーにとっては、`@ai-sdk/openai-compatible` (Chat Completions) で十分です。
+
+<Callout type="note" title="推論がインターリーブされたモデル">
+`reasoning_content` を返すモデル（例：DeepSeek V4、GLM 5）については、OpenCode がその推論経路を表示するように、モデル定義に `"reasoning": true` および `"interleaved": { "field": "reasoning_content" }` のオプションを指定することができます。
+</Callout>
+
+## トラブルシューティング
+
+- **`/models`にプロバイダーが表示されない** — `/connect`および`opencode.json`のIDが異なるか、JSONが無効です。`opencode auth list`を確認してください。
+- **`401`** — そのIDに対応するキーが保存されていません。`/connect`を再度実行してください。
+- **`404 model_not_found`** — `models`のキーは、`GET /v1/models`のslugと完全に一致する必要があります。

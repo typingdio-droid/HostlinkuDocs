@@ -1,0 +1,124 @@
+---
+title: "快速入门"
+description: "从账户注册到向Hostlinku网关发送首个请求仅需五分钟"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+本页面将引导你从零开始，成功通过 Hostlinku 发送一条聊天补全请求。
+
+## 先决条件
+
+- **Hostlinku 账户**：请在 [auth.hostlinku.com](https://auth.hostlinku.com) 免费注册。
+- **余额**：网关会按每个Token扣除余额。在提交生产请求前，请在控制台中充值。测试请求的费用通常低于一分钱，但余额仍不得为零。请参阅 [计费与余额](/zh/billing)。
+- **测试工具**：仅需 curl 即可。对于高级示例，可直接使用官方 SDK OpenAI（`pip install openai`）或 Node（`npm install openai`），无需修改代码。
+
+## 步骤
+
+<Steps>
+
+### 注册或登录
+
+访问 [auth.hostlinku.com](https://auth.hostlinku.com)：注册新账户，或使用现有账户登录（包括单点登录（SSO），前提是管理员已启用该功能）。
+
+### 创建 API 密钥
+
+进入 [console.hostlinku.com](https://console.hostlinku.com) → **API 密钥** 菜单 → **创建 API 密钥**。在创建 API 密钥的对话框中，您可以设置：
+
+- **名称**：用于识别，例如 `produksi-aplikasi-kamu`。
+- **过期**：可选，可选择“永不过期”、“30/90/365天”或自定义日期。
+- **额度**：可选，按**每日/每周/每月**为周期设置的密钥使用上限（例如 10 美元），或不重置（总额度）。
+
+<Callout type="warning" title="密钥只显示过一次">
+API密钥创建后，格式为`sk-…`的密钥密文**仅在控制台中显示一次**。请将其复制并保存在安全的地方：服务器会将其以SHA-256哈希值的形式存储，且无法再次显示。如果密钥密文丢失，请撤销该API密钥，然后创建一个新的。
+</Callout>
+
+### 发送第一个请求
+
+所有网关端点均位于 `https://api.hostlinku.com`，采用 `Authorization: Bearer sk-…` 进行身份验证。非流式请求示例：
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "user", "content": "Halo! Perkenalkan dirimu singkat saja." }
+    ]
+  }'
+```
+
+如果一切正常，你将收到类似 OpenAI 格式的 JSON 响应，以及包含请求费用和延迟的 `hostlinku` 数据块：
+
+```json
+{
+  "id": "cmpl_…",
+  "object": "chat.completion",
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "Halo! Saya adalah …" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60 },
+  "hostlinku": {
+    "cost": 0.000123,
+    "latencyMs": 812
+  }
+}
+```
+
+上述模型 slug仅供示例。您可以在控制台（**模型**菜单）或通过 [端点 `GET /v1/models`](/zh/models) 查看您账户的有效别名列表。
+
+### 建议：使用流式传输
+
+对于聊天应用，请发送 `"stream": true`。当模型开始响应时（通常在1–2秒内），第一个词就会显示出来，无需等待整个回答完成。虽然总耗时相同，但对你的用户而言，应用的响应速度会感觉快得多。
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key=os.environ["HOSTLINKU_API_KEY"],
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Halo!"}],
+    stream=True,
+)
+for chunk in stream:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+```
+
+使用 curl 时，添加 `-N` 以防止输出被缓冲：
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
+```
+
+### 查询余额和交易记录
+
+在控制台中，打开**“Credits/余额”**菜单可查看当前余额，打开**“请求日志”**菜单可查看包含Token、费用和延迟的完整请求历史记录。 控制台会话的等效端点可在 [`GET /api/wallet/account`](/zh/billing) 中找到，而公共 API（API 密钥 `sk-…`）则使用 `/v1/*`。
+
+</Steps>
+
+## 下一步
+
+- [身份验证](/zh/authentication)：API密钥详情、有效期和额度限制。
+- [Chat Completions](/zh/chat-completions)：所有参数、SSE流处理以及Python示例。
+- [模型](/zh/models)：模型目录及如何选择合适的模型。
+- [错误](/zh/errors)：各错误代码的含义及处理方法。
+
+<Callout type="note" title="注释">
+需要帮助吗？请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)，另请参阅 [支持](/zh/support)。
+</Callout>

@@ -1,0 +1,79 @@
+---
+title: "Xum"
+description: "在 Xum（原 Mux）中将 Hostlinku 注册为自定义提供商，以便使用一个 API 密钥并行运行多个编码代理"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Xum](https://xum.cdr.dev/config/providers)（原名**Mux**）可在桌面或浏览器上并行运行多个编码代理，每个代理均拥有独立的工作区。 Xum 支持采用自选 API 格式的 **自定义提供程序** —— 这是在不修改内置的 OpenAI/Anthropic 提供程序的情况下，添加 Hostlinku 的最简洁方式。
+
+<Steps>
+
+### 将 API 密钥保存到文件中
+
+```bash
+mkdir -p ~/.config/hostlinku
+printf '%s' 'sk-isi-api-key-kamu' > ~/.config/hostlinku/api-key
+chmod 600 ~/.config/hostlinku/api-key
+```
+
+### 添加提供商 Hostlinku
+
+编辑 `~/.xum/providers.jsonc` 并添加新的服务提供商：
+
+```jsonc
+{
+  // Semua model katalog lewat Chat Completions
+  "hostlinku": {
+    "providerType": "openai-compatible",
+    "displayName": "Hostlinku",
+    "baseUrl": "https://api.hostlinku.com/v1",
+    "apiKeyFile": "~/.config/hostlinku/api-key",
+    "models": ["claude-sonnet-4-6", "gpt-5-5", "deepseek-v4-flash"],
+  },
+  // Opsional: model Claude lewat Anthropic Messages (prompt caching penuh)
+  "hostlinku-claude": {
+    "providerType": "anthropic-messages",
+    "displayName": "Hostlinku (Anthropic)",
+    "baseUrl": "https://api.hostlinku.com",
+    "apiKeyFile": "~/.config/hostlinku/api-key",
+    "models": ["claude-sonnet-4-6", "claude-haiku-4-5"],
+  },
+}
+```
+
+对于 `anthropic-messages`，Xum 自行添加了 `/v1`，因此基础 URL 书写时**不包含** `/v1`。 提供商 ID（`hostlinku`、`hostlinku-claude`）必须使用小写字母，且不得与默认提供商名称相同。
+
+### 选择模型
+
+打开模型选择器（或 `/model`），并从 **Hostlinku** 组中选择模型。`models` 仅提供建议列表——[目录](/zh/models) 中的其他 slug 仍可直接输入。 请求显示在控制台 → **请求日志** 中。
+
+</Steps>
+
+## 备选方案：内置提供商 OpenAI
+
+如果您更倾向于仅使用一个服务提供商，请将默认的**OpenAI**服务提供商重定向至Hostlinku，并采用Chat Completions的线缆格式 （**设置 → 提供商 → OpenAI**，或在 `providers.jsonc` 中）：
+
+```jsonc
+{
+  "openai": {
+    "apiKey": "sk-isi-api-key-kamu",
+    "baseUrl": "https://api.hostlinku.com/v1",
+    "wireFormat": "chatCompletions",
+  },
+}
+```
+
+<Callout type="note" title="为什么是 chatCompletions？">
+OpenAI 的默认数据格式提供程序是 Responses API，而 Responses 和 Hostlinku 则属于 *无状态* 类型 ([详情](/zh/responses))。 Chat Completions 支持所有目录模型——包括 Claude——且不受上述限制。
+</Callout>
+
+## 故障排除
+
+| 症状 | Solusi |
+|---|---|
+| `401` | `apiKeyFile` 文件内容有误（存在换行符/空格），或密钥已被撤销。 |
+| `404` | `anthropic-messages` 与 `/v1` 重复 — 请填写基础 URL `https://api.hostlinku.com`。 |
+| 运营商未显示 | ID 提供商名称中包含大写字母或句点，或者与系统默认的提供商名称冲突。 |
+| `404 model_not_found` | Slug 拼写错误——复制自 `GET /v1/models`。 |

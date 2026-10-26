@@ -1,0 +1,78 @@
+---
+title: "GLM 5.1"
+description: "GLM-5.1 是 Zhipu 的旗舰文本模型，具备 20 万上下文容量和 12.8 万最大输出长度，在长时序规划、代理编码、工具使用、结构化……等方面得到了强化。"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 摘要
+
+GLM-5.1 是 Zhipu 的旗舰文本模型，具备 20 万词的上下文容量和 12.8 万词的最大输出长度，在长时规划、代理编码、工具使用、结构化输出、上下文缓存以及 MCP 方面得到了强化。
+
+| 属性 | 值 |
+|---|---|
+| 提供商 | Zhipu |
+| Slug | `glm-5-1` |
+| 上下文 | 200,000 个Token |
+| 最大输出 | 128,000 个Token |
+| 输入 | 文本 |
+| 输出 | 文本 |
+| 发布日期 | 2026-06-14 |
+
+## 能力
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+
+## 价格
+
+| 项目 | 价格 |
+|---|---|
+| 输入（提示词） | $0.882 |
+| 输出（补全） | $3.529 |
+| 缓存读取 | $0.191 |
+| 缓存写入 | — |
+
+该价格为API密钥Hostlinku的**100万个Token**的客户单价，其中1 <CreditIcon /> = 1美元。 每次请求的实际价格仍以 Service Mode API key 为准，且可能会发生变化；请查看 [控制台](https://console.hostlinku.com/models) 或 `GET /v1/models` 以获取当前有效的价格。
+
+## 支持的端点
+
+| 端点 | 格式 | 支持 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
+| `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
+| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+
+端点和模型的可用性遵循目录以及所使用的Service Mode API key规范。如果该模式下没有可用模型，则可能以`400 MODEL_NOT_IN_SERVICE_MODE`为由拒绝该请求。
+
+## 请求示例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "glm-5-1",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 相关模型
+
+- [GLM 5](/zh/models/glm-5)
+- [GLM 5.2](/zh/models/glm-5-2)
+- [GLM 5.3](/zh/models/glm-5-3)
+- [GLM 5.3 Hyper Chat](/zh/models/glm-5-3-hyper-chat)
+- [GLM-5.3 Flash](/zh/models/glm-5-3-flash)
+- [GLM-5.3 Flash Hyper](/zh/models/glm-5-3-flash-hyper)
+
+[← 返回模型目录](/zh/models)

@@ -1,0 +1,141 @@
+---
+title: "OpenAI エージェント SDK"
+description: "OpenAI Agents SDK（Python および TypeScript）を、Responses API 経由で Hostlinku と併用する — set_default_openai_client、トレーシングは無効化、ツールおよびハンドオフは引き続き動作"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) は、デフォルトで [`POST /v1/responses`](/ja/responses) の Hostlinku によって提供される **Responses API** を使用します。 OpenAIクライアントに`base_url` Hostlinkuを指定し、トレースを無効にしてください（トレースはゲートウェイを経由せず、OpenAIプラットフォームにエクスポートされます）。
+
+<Steps>
+
+### インストール
+
+```bash
+pip install openai-agents            # Python
+npm install @openai/agents openai    # TypeScript / Node.js
+```
+
+### Python
+
+```python
+import os
+from openai import AsyncOpenAI
+from agents import Agent, Runner, function_tool, set_default_openai_client, set_tracing_disabled
+
+client = AsyncOpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key=os.environ["HOSTLINKU_API_KEY"],
+)
+set_default_openai_client(client, use_for_tracing=False)
+set_tracing_disabled(True)
+
+
+@function_tool
+def cuaca(kota: str) -> str:
+    """Cuaca saat ini di sebuah kota."""
+    return f"Cuaca di {kota}: cerah, 31°C"
+
+
+agent = Agent(
+    name="Asisten",
+    instructions="Jawab singkat dalam bahasa Indonesia.",
+    model="claude-sonnet-4-6",
+    tools=[cuaca],
+)
+
+result = Runner.run_sync(agent, "Bagaimana cuaca di Jakarta hari ini?")
+print(result.final_output)
+```
+
+### TypeScript
+
+```ts
+import OpenAI from "openai";
+import { Agent, run, tool, setDefaultOpenAIClient, setTracingDisabled } from "@openai/agents";
+import { z } from "zod";
+
+setDefaultOpenAIClient(
+  new OpenAI({ baseURL: "https://api.hostlinku.com/v1", apiKey: process.env.HOSTLINKU_API_KEY })
+);
+setTracingDisabled(true);
+
+const cuaca = tool({
+  name: "cuaca",
+  description: "Cuaca saat ini di sebuah kota",
+  parameters: z.object({ kota: z.string() }),
+  execute: async ({ kota }) => `Cuaca di ${kota}: cerah, 31°C`,
+});
+
+const agent = new Agent({
+  name: "Asisten",
+  instructions: "Jawab singkat dalam bahasa Indonesia.",
+  model: "gpt-5-5",
+  tools: [cuaca],
+});
+
+const result = await run(agent, "Bagaimana cuaca di Jakarta hari ini?");
+console.log(result.finalOutput);
+```
+
+### 確認
+
+スクリプトを実行すると、コンソールに2つのリクエスト（ツール呼び出しと応答）が表示されます → **リクエストログ**（ID：`resp_…`）。
+
+</Steps>
+
+## エージェントループの仕組み
+
+*エージェントループ*の1サイクルは、Hostlinkuゲートウェイへの1回のリクエストに相当します。エージェントがプロンプトを送信すると、モデルが*ツール呼び出し*で応答し、エージェントがローカルでツールを実行（ファイルの読み書き、コマンドの実行）して、その結果を返します。このプロセスは、モデルが最終的な回答を返すまで繰り返されます。 ゲートウェイは各ループをアップストリームのモデルにルーティングし、そのすべてがコンソールに個別に記録されます → **リクエストログ**には、トークンと費用の詳細が記載されています。
+
+![エージェントループの図：Hostlinku：IDE／コーディングエージェント、Hostlinku：ゲートウェイ、アップストリームモデル、Hostlinku：コンソール、およびローカルワークスペース](/images/integrations/agent-loop-detailed.webp "Hostlinku 経由のエージェントループ：エージェントがゲートウェイにプロンプトを送信し、ゲートウェイがそれをアップストリームモデルにルーティングし、ツールがローカルで実行され、各リクエストがコンソールに記録される。")
+
+## コードを変更せずに：環境変数
+
+SDK OpenAI は `OPENAI_BASE_URL` および `OPENAI_API_KEY` を読み取るため、コードを変更することなく Agents SDK を Hostlinku にリダイレクトできます。環境変数でトレースを無効にするだけで済みます：
+
+```bash
+export OPENAI_BASE_URL=https://api.hostlinku.com/v1
+export OPENAI_API_KEY=sk-isi-api-key-kamu          # API key Hostlinku
+export OPENAI_AGENTS_DISABLE_TRACING=1
+python agent.py
+```
+
+## Responses API か、それとも Chat Completions か？
+
+デフォルトのSDKはResponses API（`/v1/responses`）です。`reasoning`の項目に対応しており、最も充実したツールフローを備えているため、こちらを推奨します。Chat Completions（`/v1/chat/completions`）を使用する場合は：
+
+```python
+from agents import set_default_openai_api
+set_default_openai_api("chat_completions")
+```
+
+```ts
+import { setOpenAIAPI } from "@openai/agents";
+setOpenAIAPI("chat_completions");
+```
+
+両者とも、同じAPIキー、残高、およびリクエストログを使用しています。
+
+<Callout type="important" title="Stateless：previous_response_id / conversation を使用しないでください">
+Hostlinkuはレスポンスを保存しません。履歴の管理は`Runner`/`run`に任せてください（デフォルトのSDKでは、各ターンごとに`input`に履歴全体を送信します）。 `previous_response_id`、`conversation_id`、または`OpenAIConversationsSession`を設定しないでください。ゲートウェイはこれらを`400 invalid_request_error`で拒否します。`SQLiteSession`のようなローカルセッションは、履歴がユーザー側で保存されるため、引き続き使用可能です。
+</Callout>
+
+## ゲートウェイ経由でサポートされるもの
+
+| Agents SDKの機能 | ステータス |
+|---|---|
+| `function_tool` / `tool()`、並列ツール呼び出し | はい |
+| エージェント間のハンドオフ（エージェントごとに異なるモデルを含む） | はい――`claude-sonnet-4-6`と`gpt-5-5`を1つのフローで組み合わせてください |
+| 構造化出力 (`output_type` / Zod) | はい、JSONスキーマに対応しているモデルでは |
+| ストリーミング (`Runner.run_streamed`、`run(..., { stream: true })`) | はい |
+| `reasoning={"effort": …}` 経由 `ModelSettings` | はい、モデルに引き継ぎます |
+| ホスト型ツール OpenAI (`WebSearchTool`、`FileSearchTool`、`CodeInterpreterTool`) | 目的のモデルに応じて、利用できない場合は`function_tool`としてツールを単独で実行してください |
+| OpenAIプラットフォームへのトレース | ゲートウェイを経由しない — 無効にするか、サードパーティ製のトレースプロセッサを使用する |
+
+## トラブルシューティング
+
+- **エラーログ *tracing export 401* が満杯です*** — トレースがまだ無効化されていません。`set_tracing_disabled(True)` / `setTracingDisabled(true)` を呼び出すか、`OPENAI_AGENTS_DISABLE_TRACING=1` を設定してください。
+- **`400 previous_response_id tidak didukung`** — `previous_response_id` / `conversation_id` の使用を削除してください。上記の注記を参照してください。
+- **`404 model_not_found`** — `model=`のslugはHostlinkuとするべきであり、元のモデル名であるOpenAI/Anthropicではない。

@@ -1,0 +1,149 @@
+---
+title: "モデル"
+description: "エンドポイント GET /v1/models、カタログのデータ形式、および適切なモデルの選択方法"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku は、一元化されたモデルカタログを提供します。 各モデルには、[Chat Completions](/ja/chat-completions)の`model`パラメータで使用される一意の**slug**があり、コンテキストサイズ、機能、トークンあたりの価格も記載されています。
+
+## `GET /v1/models`
+
+ステータスが `available` で、まだ非推奨になっておらず、使用中の **Service Mode API key**（Performance または Low-Cost）で利用可能なすべてのモデル、およびそのモードにおける 1M トークンあたりの <CreditIcon /> の価格を一覧表示します。
+
+```http
+GET https://api.hostlinku.com/v1/models
+Authorization: Bearer sk-isi-api-key-kamu
+```
+
+例：
+
+```bash
+curl https://api.hostlinku.com/v1/models \
+  -H "Authorization: Bearer sk-isi-api-key-kamu"
+```
+
+レスポンス（例は一部省略されています。お客様のアカウントの正確な値は、このエンドポイントから取得されます）：
+
+```json
+{
+  "object": "list",
+  "service_mode": "performance",
+  "data": [
+    {
+      "id": "claude-haiku-4-5",
+      "object": "model",
+      "created": 1791380432,
+      "owned_by": "hostlinku",
+      "context_window": 200000,
+      "capabilities": ["text", "tool-calling", "function-calling", "structured-outputs", "json-mode", "streaming", "code-generation", "long-context", "multilingual"],
+      "service_mode": "performance",
+      "pricing": {
+        "input": 0.8,
+        "output": 4,
+        "cache_read": 0.08,
+        "cache_write": 1,
+        "unit": "1M_tokens",
+        "currency": "🪙"
+      }
+    }
+  ]
+}
+```
+
+| フィールド | 意味 |
+|---|---|
+| `service_mode`（レベル一覧および項目） | Service Mode API keyで使用されるモデル：`performance`または`low_cost`。モデル一覧はモードごとに異なります。 |
+| `id` | slugモデル。`/v1/chat/completions`、`/v1/messages`、および`/v1/responses`の`model`フィールドで使用される値。 |
+| `created` | モデルがカタログに追加された時刻（Unixエポック、秒）。 |
+| `owned_by` | 常に `"hostlinku"` — このモデルがカタログ Hostlinku によって管理されていることを示すマーカー。 |
+| `context_window` | トークン内の最大コンテキストサイズ（入力＋出力）。 |
+| `capabilities` | 機能一覧（例：`vision`、`tool-calling`、`json-mode`、`reasoning`、`long-context`）。 |
+| `pricing` | Service Modeにおける価格の対象は、`null`（そのモードでモデルにまだ価格がない場合）。 `pricing.unit`は常に`"1M_tokens"`であり、`pricing.currency`にはクレジット記号が含まれます（1 <CreditIcon /> = $1）。 |
+| `pricing.input` / `pricing.output` | プロンプトトークン／回答トークンの価格は、**1Mトークン**あたり（1トークンあたりや1Kあたりではありません）です。 |
+| `pricing.cache_read` / `pricing.cache_write` | 5分間のキャッシュ読み取り／書き込みあたりの1Mトークンあたりの価格（[Prompt Caching](/ja/prompt-caching)を参照）。モデルが対応していない場合は`null`。 |
+
+<Callout type="note" title="レスポンスの「Pricing」は顧客価格です">
+`pricing`という数値は、Service Mode API keyに対して支払った金額であり、プラットフォームの手数料が含まれています。各リクエストの実際の費用は、レスポンスの`hostlinku.cost`ブロックおよびコンソールログに常に表示されます。
+</Callout>
+
+## 公開カタログ（認証不要）
+
+APIキーを使用しないマーケティングや探索用のサイトについては、公開カタログが利用可能です：
+
+```http
+GET https://api.hostlinku.com/api/public/models
+```
+
+公開カタログには、モデル「Hostlinku」と、そのslug、名称、コンテキスト、機能、および公開価格のみが表示されます。 サポートされているクエリ：`q`（名前/説明の検索）、`capability`、`family`、`sort`（`popular`、 `newest`、`price-asc`、`price-desc`、`context-desc`、`name-asc`）、`page`、および`pageSize`（最大100件）。 `data`の応答には、`items`、`total`、`page`、`pageSize`、および`totalPages`が含まれています。
+
+## モデル一覧
+
+現在、45種類のモデルが利用可能です。モデル名をクリックすると、概要、機能、価格、およびサポートされているエンドポイントを確認できます。
+
+| モデル | プロバイダー | コンテキスト | 最大出力 | 入力 /1M | 出力 /1M |
+|---|---|---|---|---|---|
+| [Qwen 3.6 Plus](/ja/models/qwen3-6-plus) | Alibaba | 1,000,000 | — | $0.294 | $1.765 |
+| [Qwen 3.7 Max](/ja/models/qwen3-7-max) | Alibaba | 1,000,000 | — | $1.765 | $5.294 |
+| [Model Baize](/ja/models/model-baize) | Anonymous | 1,000,000 | — | $1.177 | $4.118 |
+| [Claude Fable 5](/ja/models/claude-fable-5) | Anthropic | 1,000,000 | 128,000 | $10 | $50 |
+| [Claude Fable 5.1](/ja/models/claude-fable-5-1) | Anthropic | 1,000,000 | 128,000 | — | — |
+| [Claude Haiku 4.5](/ja/models/claude-haiku-4-5) | Anthropic | 200,000 | 64,000 | $1 | $5 |
+| [Claude Opus 4.6](/ja/models/claude-opus-4-6) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
+| [Claude Opus 4.7](/ja/models/claude-opus-4-7) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
+| [Claude Opus 4.8](/ja/models/claude-opus-4-8) | Anthropic | 1,000,000 | 128,000 | $5 | $25 |
+| [Claude Opus 5](/ja/models/claude-opus-5) | Anthropic | 1,000,000 | 64,000 | $5 | $25 |
+| [Claude Opus 5.5](/ja/models/claude-opus-5-5) | Anthropic | 1,000,000 | 128,000 | $4 | $20 |
+| [Claude Sonnet 4.6](/ja/models/claude-sonnet-4-6) | Anthropic | 1,000,000 | 64,000 | $3 | $15 |
+| [Claude Sonnet 5](/ja/models/claude-sonnet-5) | Anthropic | 1,000,000 | 64,000 | $2 | $10 |
+| [Claude Sonnet 5.5](/ja/models/claude-sonnet-5-5) | Anthropic | 1,000,000 | 128,000 | — | — |
+| [DeepSeek V4 Flash](/ja/models/deepseek-v4-flash) | DeepSeek | 1,000,000 | — | $0.15 | $0.6 |
+| [DeepSeek V4 Pro](/ja/models/deepseek-v4-pro) | DeepSeek | 1,000,000 | 64,000 | $0.662 | $1.985 |
+| [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 | 384,000 | $0.15 | $0.6 |
+| [DeepSeek-V4.1-Flash Hyper](/ja/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [DeepSeek-V4.1-Flash Hyper Chat](/ja/models/deepseek-v4-1-flash-hyper-chat) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [DeepSeek-V4.1-Flash Turbo](/ja/models/deepseek-v4-1-flash-turbo) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [MiniMax M3](/ja/models/minimax-m3) | MiniMax | 1,000,000 | 64,000 | $0.309 | $1.235 |
+| [Kimi K2.6](/ja/models/kimi-k2-6) | Moonshot | 256,000 | 32,000 | $0.956 | $3.971 |
+| [Kimi K2.7 Code](/ja/models/kimi-k2-7-code) | Moonshot | 256,000 | — | $0.956 | $3.971 |
+| [Kimi K3](/ja/models/kimi-k3) | Moonshot | 1,000,000 | 64,000 | $2.941 | $14.706 |
+| [Kimi K3 Hyper](/ja/models/kimi-k3-hyper) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [Kimi K3 Hyper Chat](/ja/models/kimi-k3-hyper-chat) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [Kimi K3 Turbo](/ja/models/kimi-k3-turbo) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [GPT 5.3 Codex](/ja/models/gpt-5-3-codex) | OpenAI | 400,000 | 128,000 | $1.75 | $14 |
+| [GPT-5.5](/ja/models/gpt-5-5) | OpenAI | 1,000,000 | 128,000 | $5 | $30 |
+| [GPT-5.6 Luna](/ja/models/gpt-5-6-luna) | OpenAI | 1,050,000 | 64,000 | $0.2 | $1.2 |
+| [GPT-5.6 Sol](/ja/models/gpt-5-6-sol) | OpenAI | 1,050,000 | 64,000 | $4 | $20 |
+| [GPT-5.6 Terra](/ja/models/gpt-5-6-terra) | OpenAI | 1,050,000 | 64,000 | $2 | $12 |
+| [GPT-6 Astra](/ja/models/gpt-6-astra) | OpenAI | 1,050,000 | 128,000 | $10 | $50 |
+| [GPT-6 Luna](/ja/models/gpt-6-luna) | OpenAI | 1,050,000 | 128,000 | $0.1 | $0.5 |
+| [GPT-6 Sol](/ja/models/gpt-6-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
+| [GPT-6.1 Sol](/ja/models/gpt-6-1-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
+| [MiMo V2.5 Pro](/ja/models/mimo-v2-5-pro) | Xiaomi | 1,000,000 | 32,000 | $0.441 | $0.882 |
+| [GLM 5](/ja/models/glm-5) | Zhipu | 200,000 | — | $0.588 | $2.647 |
+| [GLM 5.1](/ja/models/glm-5-1) | Zhipu | 200,000 | 128,000 | $0.882 | $3.529 |
+| [GLM 5.2](/ja/models/glm-5-2) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
+| [GLM 5.3](/ja/models/glm-5-3) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
+| [GLM 5.3 Hyper Chat](/ja/models/glm-5-3-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM-5.3 Flash](/ja/models/glm-5-3-flash) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM-5.3 Flash Hyper](/ja/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM-5.3 Flash Hyper Chat](/ja/models/glm-5-3-flash-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
+
+## モデルの選び方
+
+1. **要件を特定する**：通常のチャット、推論（_reasoning_）、ビジョン／マルチモーダル、ツール呼び出し、または構造化されたJSON出力。フィールド`capabilities`を確認してください。
+2. **コンテキストのサイズに注意**：`context_window`が、あなたのプロンプトと出力に対して十分な容量であることを確認してください。
+3. **価格の比較**：プロンプトトークンは`pricing.input`、回答トークンは`pricing.output`です。推論モデルは一般的に出力コストが高くなります。
+4. **小型モデルから始める**：開発段階では、軽量クラスのモデル（例：`gpt-6-luna`、`deepseek-v4-1-flash`、`qwen3-6-plus`）の方がはるかに安価です。品質に問題がある場合にのみ、上位モデルに切り替えてください。
+5. **コンソールを参照**：[console.hostlinku.com](https://console.hostlinku.com) の **モデル** メニューには、価格や仕様が同じカタログに加え、各モデルの詳細ページが表示されます。
+
+<Callout type="tip" title="別名（スラッグ）">
+`GET /v1/models`が返すslugをそのまま使用してください。表示側ではslugの大文字小文字は区別されませんが、入力ミスを防ぐため、カタログからそのままコピーしてください。 カタログに存在しないslugの場合は`404 MODEL_NOT_FOUND`が返され、非推奨または現在利用できないモデルの場合は`503 MODEL_UNAVAILABLE`が返され、利用可能な場合は代替slugの提案も併せて表示されます。
+</Callout>
+
+## ルーティングとフェイルオーバー
+
+Hostlinkuは、各モデルに対応する内部経路を自動的に管理します。使用中の経路で障害が発生した場合（5xxエラーやタイムアウト）、リクエストはあきらめる前に自動的に別の経路を通じて再試行されます。モデルのslugはそのまま使用でき、何も変更する必要はありません。この内部的な詳細はレスポンスには表示されません。

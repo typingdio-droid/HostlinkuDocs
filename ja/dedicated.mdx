@@ -1,0 +1,53 @@
+---
+title: "Service Mode 専用"
+description: "Hostlinkuのインフラ上で実行されているモデル自体――DeepSeek、GLM、およびKimi――のコンテキストは100万トークンです。"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Dedicated**は、Hostlinkuに次ぐ3番目のService Modeです。リクエストをアップストリームのパートナーに転送する**Performance**や**Low-Cost**とは異なり、Dedicatedモデルは**Hostlinku独自のインフラストラクチャ**上で動作します。
+
+<Callout type="note" title="1つのAPIキー = 1つのService Mode">
+このモードは、管理者がAPIキーを「Dedicated」に設定した場合に有効になります。他のモードを同時に使用するには、別のAPIキーを作成してください。Service Modeはリクエストではなく、キーに紐付けられています。
+</Callout>
+
+## 利用可能なモデル
+
+9つのモデル、3つのシリーズ：
+
+| 家族 | モデル | コンテキスト |
+|---|---|---|
+| DeepSeek | `deepseek-v4-1-flash`, `deepseek-v4-1-flash-turbo`, `deepseek-v4-1-flash-hyper` | 1,000,000トークン |
+| GLM | `glm-5-3`, `glm-5-3-flash`, `glm-5-3-flash-hyper` | 1,000,000トークン |
+| キミ | `kimi-k3`, `kimi-k3-turbo`, `kimi-k3-hyper` | 1,000,000トークン |
+
+`-turbo` および `-hyper` バリエーションは、基本モデルよりも高速かつ大容量な構成です。このリストにないモデルは、Dedicated モードでは**利用できません**。その場合は、Performance または Low-Cost をご利用ください。
+
+## エンドポイントと認証
+
+モード間でベースURLは変わりません。3つのAPI方言がサポートされています：
+
+| 方言 | エンドポイント | ヘッダー認証 |
+|---|---|---|
+| OpenAI チャット | `POST {base}/v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
+| OpenAI Responses | `POST {base}/v1/responses` | `Authorization: Bearer <API_KEY>` |
+| Anthropic Messages | `POST {base}/v1/messages` | `x-api-key: <API_KEY>` |
+
+アプリをベースURL「Hostlinku」に設定し、DedicatedモードのAPIキーを使用するだけで十分です。モードを選択するための追加パラメータはありません。
+
+## 価格
+
+販売価格 = モデルの基本価格 × 専用モードの乗数。**1M トークン** 単位で請求されます（1 <CreditIcon /> = 1 ドル）。 モデルごとの数値は[モデルカタログ](/ja/models)に記載されています。**Dedicated**タブを選択すると、お使いのキーに適用される価格を確認できます。 例：`glm-5-3`は現在、1Mトークンあたり<CreditIcon />1.21の入力および<CreditIcon />3.80の出力となっています。
+
+## プロンプトのキャッシュ
+
+Dedicatedモデルでは、**プロバイダーの自動キャッシュ**が使用されます。 `cache_control`を送信する必要はありません。キャッシュの有効期間内に同じプレフィックスを送信すると、キャッシュから読み込まれたトークンは`cached_tokens`（`/v1/chat/completions`）または`cache_read_input_tokens`（`/v1/messages`）として表示されます。 コンソールで数値を確認する方法については、[プロンプトキャッシュによる効率化](/ja/prompt-caching)を参照してください。
+
+## 制限
+
+- 上の表には9つのモデルしか記載されておらず、他のモードへの自動フォールバックはありません。
+- `-chat` バリエーション（コーディング／エージェント用）は、一般向けカタログでは販売されていません。
+- ツール呼び出し、ストリーミング、および`stream_options.include_usage`がサポートされています。ベンダー固有の機能（例：Web検索）はモデルによって異なり、利用可能であるとは限りません。

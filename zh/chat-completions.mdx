@@ -1,0 +1,173 @@
+---
+title: "Chat Completions"
+description: "POST /v1/chat/completions 端点参考，包括参数、SSE 流式传输以及 curl 和 Python 示例"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku 的主端点。 请求和响应格式与 [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat) 兼容，因此只需将 `base_url` 替换为 `https://api.hostlinku.com/v1`，即可使用官方的 OpenAI SDK。
+
+```http
+POST https://api.hostlinku.com/v1/chat/completions
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+每个响应都包含 `x-request-id` 标头（请求 ID 为 Hostlinku），而在非流式传输的成功响应中，还会包含 `x-model` 标头（处理该请求的模型的公共 slug）。
+
+## body 参数
+
+| 参数 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `model` | `string` | 没有 | **必填。** 模型缩写，例如 `gpt-5-5`。参见 [模型](/zh/models)。 |
+| `messages` | `array` | 没有 | **必选。** 至少1条消息。每项需包含：`{ role, content, name? }` 及 `role`，并从 `system`、`user`、`assistant`、`tool` 中任选一项。 |
+| `temperature` | `number` | 运营商预装 | 范围为`0`–`2`。数值越高，随机性越强。 |
+| `top_p` | `number` | 运营商预装 | 范围 `0`–`1`。`temperature` 的 _nucleus sampling_ 替代方案。 |
+| `n` | `integer` | `1` | 选项数量，`1`–`8`。 |
+| `stream` | `boolean` | `false` | `true` 用于 SSE 流式响应（见下文）。 |
+| `stop` | `string` \| `string[]` | 没有 | 一个或多个导致生成停止的文本序列。 |
+| `max_tokens` | `integer` | 模型配置 | 输出Token上限（正值）。 |
+| `max_completion_tokens` | `integer` | 没有 | `max_tokens`的现代替代方案（部分提供商采用）。 |
+| `presence_penalty` | `number` | `0` | 范围 `-2`–`2`。 |
+| `frequency_penalty` | `number` | `0` | 范围 `-2`–`2`。 |
+| `user` | `string` | 没有 | 用于追踪滥用行为的终端用户标识符。 |
+| `tools` | `array` | 没有 | 工具/函数调用的定义（OpenAI格式）。 |
+| `tool_choice` | `any` | 没有 | 工具选择控制（`"auto"`、`"none"`、`{...}`）。 |
+| `response_format` | `any` | 没有 | 例如：`{ "type": "json_object" }` 用于 JSON 输出（取决于模型是否支持）。 |
+| `seed` | `integer` | 没有 | 种子确定性（尽最大努力，取决于服务提供商）。 |
+
+<Callout type="note" title="仅处理上述参数">
+在将请求主体转发给服务提供商之前，会根据严格的验证规则对其进行验证。上述列表之外的字段将被**忽略**（从请求主体中移除），而无效的请求主体将被以 `422 VALIDATION_FAILED` 状态码拒绝，并附带各字段的详细信息。 `messages[].content` 接受字符串或多模态内容数组（OpenAI 格式），前提是模型支持该格式。
+</Callout>
+
+## 示例：非流式请求（curl）
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
+      { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
+    ],
+    "temperature": 0.7,
+    "max_tokens": 256
+  }'
+```
+
+回复（节选）：
+
+```json
+{
+  "id": "cmpl_…",
+  "object": "chat.completion",
+  "created": 1770000000,
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "API gateway adalah …" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 30, "completion_tokens": 55, "total_tokens": 85 },
+  "hostlinku": {
+    "cost": 0.00021,
+    "latencyMs": 940
+  }
+}
+```
+
+字段 `model` 始终包含公共标识符 Hostlinku（而非内部标识符），而附加块 `hostlinku` 始终出现在成功响应中，其中仅包含请求的费用和延迟：
+
+| Field | 含义 |
+|---|---|
+| `cost` | 请求费用以美元计（高精度小数）。 |
+| `latencyMs` | 从网关接收请求到请求完成为止的总延迟，单位为毫秒。 |
+
+## 流式传输 (`stream: true`)
+
+收到 `stream: true` 后，网关以 `Content-Type: text/event-stream`（SSE）进行响应，并以 OpenAI 兼容格式传输数据块（每个数据块均使用 `id` 公开的 Hostlinku 及相同的模型标识符）， 随后使用 `data: [DONE]` 关闭流：
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
+    "stream": true
+  }'
+```
+
+```text
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"1"}}]}
+
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":", 2"}}]}
+
+data: [DONE]
+```
+
+重要说明：
+
+- 如果流传输过程中发生故障，网关会发送一个错误事件（`data: {"error": { "code": …, "message": … }}`），但**不会**发送虚假的`[DONE]`。中断的流绝不会表现得像正常结束的流一样。
+- 固定费用根据流式传输播放结束后实际的使用量计算；如果无法获取使用量数据，则根据请求提交时预留的估计值进行计费。
+- 在流式响应中还会发送 `x-request-id` 标头，以便与控制台日志建立关联。
+
+## 示例：Python（OpenAI 官方 SDK）
+
+除`base_url`外，代码没有其他变化。OpenAI SDK可直接使用：
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key="sk-isi-api-key-kamu",
+)
+
+# Non-streaming
+response = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[
+        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
+        {"role": "user", "content": "Halo dari SDK OpenAI!"},
+    ],
+)
+print(response.choices[0].message.content)
+
+# Streaming
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+<Callout type="tip" title="在其他库中修改 base_url">
+同样的模式也适用于 `openai-node`（`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`）、LangChain（`baseURL`/`openai_api_base`）以及其他支持 OpenAI 兼容端点的工具。
+</Callout>
+
+## 该端点常见的错误
+
+| 案例 | HTTP | `error.code` |
+|---|---|---|
+| 正文未通过验证（字段错误/类型错误/`messages`为空） | 422 | `VALIDATION_FAILED` |
+| API密钥无效/已过期 | 401 | `UNAUTHORIZED` |
+| API密钥的余额或额度不足 | 402 | `PAYMENT_REQUIRED` |
+| 该模型的Slug未收录在产品目录中 | 404 | `MODEL_NOT_FOUND` |
+| `max_tokens` 超出了模型的输出限制 | 400 | `BAD_REQUEST` |
+| 该模型已停用/目前不可用 | 503 | `MODEL_UNAVAILABLE` |
+| 每个API密钥的调用限制已超出 | 429 | `RATE_LIMITED` |
+| 上游不可用/暂时故障（可重试） | 503 | `UPSTREAM_ERROR` |
+
+错误信封的完整格式请参见 [错误](/zh/errors)。

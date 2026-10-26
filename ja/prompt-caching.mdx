@@ -1,0 +1,221 @@
+---
+title: "プロンプトキャッシュでコストを削減"
+description: "Hostlinkuでcache_controlを使用し、繰り返される大きなプロンプトの課金率を約10%に抑える方法 — Claude Code、Cursor、エージェント、および長いシステムプロンプトを使用するアプリケーション向け"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+**プロンプトキャッシュ**により、同一のプロンプト部分（長いシステムプロンプト、ツールの定義、リファレンスドキュメント、会話履歴）は、**1回**のみ完全に処理されます。その後のリクエストでは、その部分はキャッシュから読み込まれ、**通常の入力料金の約10%**が課金されます。 Hostlinkuは、Anthropicのキャッシュメカニズムをそのまま引き継いでおり、キャッシュに対する特別な費用は追加されません。モデルごとの実効料金は[モデルカタログ](/ja/models)に記載されています。
+
+<Callout type="tip" title="Hostlinkuにおける実証試験の結果">
+`claude-sonnet-4-6`へのシステムプロンプト ±3,600トークン：1回目のリクエスト（キャッシュ書き込み、1.25倍）**$0.0135**、同じプロンプトでの2回目のリクエスト（キャッシュ読み取り、0.1倍） **$0.00108** — **92%**の節約。この数値は、コンソールの → **リクエストログ**（*Cache Read* / *Cache Write* 列）で確認できます。
+</Callout>
+
+## 価格の仕組み
+
+| トークンの種類 | 通常の投入量に対する価格 | いつ起きたのか |
+|---|---|---|
+| 通常の入力 | 1× | キャッシュされていないプロンプト部分 |
+| **キャッシュ書き込み** | **1,25×** | ブロックが初めて`cache_control`としてマークされ、キャッシュにはまだ存在しない |
+| **キャッシュ読み取り** | **0,1×** | キャッシュの有効期間内に、同じブロックが再度送信される |
+
+一部の最新モデルでは、キャッシュ読み取りレートがさらに低くなっています：`claude-opus-5-5`および`claude-sonnet-5-5`は**0.05倍**、`claude-fable-5-1`は**0.025倍**です。 モデルごとの正確な数値は[モデルカタログ](/ja/models)に記載されています。このページには、オリジナル価格とサービスモードごとの販売価格が表示されています。
+
+キャッシュのデフォルトの有効期間は、最後に使用されてから**5分間**です（ヒットするたびに延長されます）。つまり、同じブロックが**少なくとも2回**使用されれば、キャッシュの導入コストは回収されたことになります。使用頻度が高ければ高いほど、節約効果も大きくなります。 モデルごとの料金は[モデルカタログ](/ja/models)（`cache_read`／`cache_write`欄）に記載されています。
+
+<Callout type="important" title="どのような場合に使用すべきでないか">
+1回だけ送信されるプロンプトの場合、キャッシュ書き込みはむしろ25%コストが高くなります。Anthropicは、ブロックがそのモデルの最小閾値より小さい場合、キャッシュマーカーを**無視**します（リクエストはキャッシュなしで通常通り実行され、追加コストは発生しません）。 そのため、Hostlinkuではデフォルトでキャッシュを強制しません。設定はユーザー自身が行います。モデルごとの閾値は、以下の**最小閾値**セクションに記載されています。
+</Callout>
+
+### モデルごとの最低閾値
+
+この閾値以下のブロックはキャッシュされず、`cache_creation_input_tokens` / `cache_read_input_tokens` はエラーメッセージなしで 0 となります。
+
+| モデル | キャッシュ可能な最小ブロックサイズ |
+|---|---|
+| `claude-fable-5`, `claude-fable-5-1`, `claude-opus-5`, `claude-opus-5-5`, `claude-sonnet-5-5` | 512トークン |
+| `claude-sonnet-5`, `claude-sonnet-4-6`, `claude-opus-4-8` | 1,024 トークン |
+| `claude-opus-4-7` | 2,048トークン |
+| `claude-opus-4-6`, `claude-haiku-4-5` | 4,096 トークン |
+
+## プロンプトの構成原則
+
+キャッシュは**プレフィックス**に基づいて機能します。つまり、`cache_control`というマーカーの*前*にあるすべてのコンテンツが、バイト単位で完全に一致して初めてヒットとなります。プロンプトを、最も静的なものから最も動的なものの順に並べ替えてください：
+
+1. `tools`（関数の定義） — めったに変更されない
+2. `system` — 手順書、ペルソナ、参考資料
+3. `messages`（旧） — 会話履歴
+4. 最新のユーザーメッセージ — 常に変化するため、キャッシュしないでください
+
+1回のリクエストにつき、`cache_control`の**4つのマーカー**までです。最も一般的なのは、`system`の末尾に1つある場合です。
+
+## フォーマット Anthropic (`/v1/messages`)
+
+Anthropic SDK、Claude Code、Cursor、Cline、およびAnthropicプロトコルに準拠したその他のツールで使用されます。`system`はブロック配列として記述し、静的な最後のブロックに`cache_control`を指定します：
+
+```bash
+curl https://api.hostlinku.com/v1/messages \
+  -H "x-api-key: sk-isi-api-key-kamu" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "system": [
+      {
+        "type": "text",
+        "text": "<instruksi panjang + dokumen referensi di sini>",
+        "cache_control": { "type": "ephemeral" }
+      }
+    ],
+    "messages": [
+      { "role": "user", "content": "Ringkas bagian 3 dokumen di atas." }
+    ]
+  }'
+```
+
+`input_tokens`とは別のキャッシュトークンに関する報告への回答：
+
+```json
+"usage": {
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 3601,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 4
+}
+```
+
+同じ`system`に対する2回目のリクエストでは、その値が`cache_creation_input_tokens: 0`および`cache_read_input_tokens: 3601`となりました。これは、キャッシュが機能している証拠です。
+
+**Python (Anthropic SDK)**
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+    base_url="https://api.hostlinku.com",
+    api_key="sk-isi-api-key-kamu",
+)
+
+resp = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": DOKUMEN_REFERENSI,  # konten statis & panjang
+            "cache_control": {"type": "ephemeral"},
+        }
+    ],
+    messages=[{"role": "user", "content": "Ringkas bagian 3."}],
+)
+print(resp.usage.cache_read_input_tokens)
+```
+
+## フォーマット OpenAI (`/v1/chat/completions`)
+
+OpenAI SDK を使用するアプリケーションでは、`content` システムを *content parts* の配列として記述し、そのパーツに `cache_control` を配置してください。Hostlinku はこれを Anthropic に変換します — これは Claude モデルにのみ適用されます。
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-6",
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": "<instruksi panjang + dokumen referensi di sini>",
+            "cache_control": { "type": "ephemeral" }
+          }
+        ]
+      },
+      { "role": "user", "content": "Ringkas bagian 3 dokumen di atas." }
+    ]
+  }'
+```
+
+`usage.prompt_tokens_details`にキャッシュトークンが表示されました：
+
+```json
+"usage": {
+  "prompt_tokens": 3583,
+  "completion_tokens": 4,
+  "prompt_tokens_details": {
+    "cached_tokens": 3569,
+    "cache_write_tokens": 0
+  }
+}
+```
+
+<Callout type="note" title="OpenAI フォーマットに関するメモ">
+Anthropicの形式とは異なり、ここでは`prompt_tokens`にはキャッシュトークンが**すでに含まれている**。`cached_tokens`は、そのうちキャッシュから読み込まれた分（レート0.1×）を示している。 `cache_control`がない場合、通常のシステムプロンプト（文字列）は**キャッシュされません**。
+</Callout>
+
+**Python (OpenAI SDK)**
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+
+resp = client.chat.completions.create(
+    model="claude-sonnet-4-6",
+    messages=[
+        {
+            "role": "system",
+            "content": [
+                {
+                    "type": "text",
+                    "text": DOKUMEN_REFERENSI,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+        },
+        {"role": "user", "content": "Ringkas bagian 3."},
+    ],
+)
+print(resp.usage.prompt_tokens_details.cached_tokens)
+```
+
+## クロード・コード、カーソル、クライン、およびエージェント
+
+これらのツールは、システムプロンプトおよび各ツールの定義に**`cache_control`を自動的に設定済み**です。 ベースURLをHostlinkuに設定すると（[IDEとエージェントの統合](/ja/integrations)を参照）、最適化は自動的に実行されます。追加の設定は不要です。ログには、1つのセッション内のほぼすべての後続リクエストで、大規模な*Cache Read*が記録されます。
+
+## コンソールで確認してください
+
+コンソールで**リクエストログ**を開きます。各行には、*入力*、*出力*、*キャッシュ読み取り*、*キャッシュ書き込み*（合計）、*キャッシュ書き込み 5分* / *キャッシュ書き込み 1時間*の詳細、および最終的な費用が表示されます。 TTLごとの詳細情報は、アップストリームから送信された場合にのみ表示されます。送信されていない場合、その列には `—`（0 ではありません）が表示され、合計値は引き続き記録されます。キャッシュが正常に動作しているかを確認する簡単な方法：
+
+<Steps>
+
+### 最初のリクエストを送信する
+
+`cache_control`が取り付けられており、ブロック数が最小閾値以上であることを確認してください。ログでは、**Cache Write** 列に値が入力されており、**Cache Read** は 0 となっています。
+
+### 5分以内に2回目のリクエストを送信してください
+
+プレフィックスが同一です。**Cache Read** 列に値が入り、**Cache Write** は 0 となり、その行のコストは大幅に小さくなりました。
+
+### 費用を比較する
+
+この2行の差が、節約できた分です。もし *Cache Read* が 0 のままの場合は、マーカーの *前* の部分が変更されていないか（タイムスタンプ、セッション ID、ツールの順序）、あるいはブロックが小さすぎないかを確認してください。
+
+</Steps>
+
+## 対応モデル
+
+| モデル | プロンプトのキャッシュ |
+|---|---|
+| `claude-*`のすべて | はい — `cache_control`（上記の2つの形式）を通じて明示的に |
+| `gpt-*`, `deepseek-*`, `glm-*` | **プロバイダーによる自動処理** — `cache_control`を除く；プロバイダーのキャッシュ有効期間内に同じプレフィックスが再度送信された場合、`cached_tokens` / `cache_read`が入力される |
+| `kimi-*`, `qwen*`, `minimax-*`, `mimo-*` | プロバイダーによって異なります。一部のプロバイダーはまだキャッシュを報告していないため、値が0になる場合があります |
+
+<Callout type="note" title="Responses API">
+`/v1/responses` は `cache_control` を転送していません — OpenAI Responses の方言には、そのフィールドが存在しないためです。つまり、そのエンドポイント経由で Claude モデルへのリクエストでは、プロンプトキャッシュがまだ使用されていません。キャッシュを活用するには、`/v1/messages` または `/v1/chat/completions` を使用してください。
+</Callout>
+
+他に質問はありますか？ [FAQ](/ja/faqs) をご覧になるか、[サポート](/ja/support) までお問い合わせください。

@@ -1,0 +1,96 @@
+---
+title: "Aider"
+description: "通过 Hostlinku 运行 Aider，并使用 OPENAI_API_BASE 和模型前缀 openai/ — 此外还需提供模型元数据，以确保上下文和费用计算正确"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Aider](https://aider.chat/docs/llms/openai-compat.html) 内部使用了 LiteLLM；对于与 OpenAI 兼容的端点，只需指定 `OPENAI_API_BASE`，且模型名称以 `openai/` 开头即可。
+
+<Steps>
+
+### 安装 Aider
+
+```bash
+python -m pip install -U aider-chat
+# atau: pipx install aider-chat
+```
+
+### 请转至 Hostlinku
+
+```bash
+export OPENAI_API_BASE=https://api.hostlinku.com/v1
+export OPENAI_API_KEY=sk-isi-api-key-kamu   # API key Hostlinku
+
+aider --model openai/claude-sonnet-4-6
+```
+
+前缀 `openai/` 是必填项——它会指示 Aider 使用与 `OPENAI_API_BASE` 兼容的 OpenAI 路径。前缀后的部分是 Hostlinku 的 slug。
+
+### （建议）保存在配置文件中
+
+`.aider.conf.yml` 位于主仓库或根仓库中：
+
+```yaml
+openai-api-base: https://api.hostlinku.com/v1
+model: openai/claude-sonnet-4-6
+weak-model: openai/claude-haiku-4-5      # commit message & ringkasan
+editor-model: openai/deepseek-v4-flash   # mode architect (opsional)
+```
+
+将 API 密钥保存在 `.env` 中（加入 .gitignore），以免被提交：
+
+```bash
+OPENAI_API_KEY=sk-isi-api-key-kamu
+```
+
+### 请告知Aider上下文的规模和价格
+
+Aider 不认识 slug Hostlinku，因此它提示 *“模型未知”* 并推测其上下文。对于 `.aider.model.metadata.json`（home / root 仓库）：
+
+```json
+{
+  "openai/claude-sonnet-4-6": {
+    "max_input_tokens": 1000000,
+    "max_output_tokens": 64000,
+    "input_cost_per_token": 0.0000024,
+    "output_cost_per_token": 0.0000120,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  },
+  "openai/claude-haiku-4-5": {
+    "max_input_tokens": 200000,
+    "max_output_tokens": 16000,
+    "input_cost_per_token": 0.0000008,
+    "output_cost_per_token": 0.0000040,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  }
+}
+```
+
+上述价格仅为示例（Performance模式）——摘自[产品目录](/zh/models)中的`pricing`，以**100万个Token**为单位， 然后**除以1,000,000**，因为Aider采用的是每1个Token的价格（例如`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。Aider的费用估算值将接近控制台上的实际账单金额。
+
+</Steps>
+
+## 建筑师模式（包含两个模型）
+
+```bash
+aider --architect \
+  --model openai/claude-opus-4-6 \
+  --editor-model openai/claude-sonnet-4-6
+```
+
+*architect* 模型负责设计变更，*editor* 模型负责编写差异报告。两者的费用均从同一账户中扣除，并在 **请求日志** 中分别记录。
+
+<Callout type="tip" title="各模型的附加配置">
+若要将额外参数（例如 `reasoning_effort`、`temperature`）传递给特定模型，请使用 `.aider.model.settings.yml` 并配合 `extra_params` 作为键。请参阅 Aider 的 *高级模型设置* 文档。
+</Callout>
+
+## 故障排除
+
+- **`AuthenticationError`** — `OPENAI_API_KEY` 未导出，或 `.env` 无法读取（Aider 无法从工作目录/git 根目录读取 `.env`）。
+- **`NotFoundError` 模型** — 忘记了前缀 `openai/` 或 slug 错误。
+- **“未知上下文窗口”警告*** — 尚未存在 `.aider.model.metadata.json`；请参阅第 4 步。
+- **答案被截断** — 请在元数据中提高 `max_output_tokens` 的值，或选择输出限制更大的模型。

@@ -1,0 +1,87 @@
+---
+title: "继续"
+description: "将模型 Hostlinku 添加到 config.yaml 文件中（VS Code 和 JetBrains），并使用 openai 提供商和自定义 apiBase"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[继续](https://docs.continue.dev) 通过 `config.yaml` 进行配置。 每个模型都拥有 `provider`、`apiBase`、`apiKey` 以及 `roles` 列表（聊天、编辑、应用等）。 对于 Hostlinku，请使用 `openai` 提供商和 `apiBase` 网关。
+
+<Steps>
+
+### 打开配置
+
+在“继续”面板中，点击齿轮图标 → **打开配置文件**，或直接编辑 `~/.continue/config.yaml`（全局）/ `.continue/config.yaml`（按项目）。
+
+### 添加模型 Hostlinku
+
+```yaml
+name: Hostlinku
+version: 0.0.1
+schema: v1
+
+models:
+  - name: Claude Sonnet 4.6 (Hostlinku)
+    provider: openai
+    model: claude-sonnet-4-6
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply]
+    defaultCompletionOptions:
+      contextLength: 1000000
+      maxTokens: 32000
+
+  - name: GPT-5.5 (Hostlinku)
+    provider: openai
+    model: gpt-5-5
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply]
+
+  - name: DeepSeek V4 Flash (Hostlinku)
+    provider: openai
+    model: deepseek-v4-flash
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply, summarize]
+```
+
+### 将 API 密钥保存为密钥
+
+创建文件 `~/.continue/.env`（不提交），内容如下：
+
+```bash
+HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+或者，如果你的配置文件确实是私有的，请直接将 `${{ secrets.HOSTLINKU_API_KEY }}` 替换为密钥值。
+
+### 重新加载并测试
+
+在“Continue”面板中点击**“Reload config”**（或保存文件——“Continue”会自动监听更改）。在下拉菜单中选择模型 *Claude Sonnet 4.6 (Hostlinku)*，发送消息，然后查看控制台 → **请求日志**。
+
+</Steps>
+
+## 支持的角色
+
+| 角色 | 通过Hostlinku提供的支持 | 注释 |
+|---|---|---|
+| `chat` | 是 | 目录中的所有款式。 |
+| `edit`, `apply` | 是 | 使用带调用工具的模型；`claude-sonnet-4-6` 非常适合 *应用*。 |
+| `summarize` | 是 | 如`deepseek-v4-flash`/`claude-haiku-4-5`等经济型机型。 |
+| `autocomplete` | 不 | 需要通过 `/v1/completions` 获取 FIM 模型。请将此角色留给其他提供商（例如本地模型）。 |
+| `embed`, `rerank` | 不 | Hostlinku 尚未提供 embeddings/rerank 端点。 |
+
+如果未为 `edit`/`apply` 指定特定模型，则继续使用当前活动的 `chat` 模型。
+
+<Callout type="tip" title="用于减少重复的 YAML 锚点">
+将 `apiBase` 和 `apiKey` 定义一次作为锚点（`&hostlinku`），然后在每个模型中使用 `<<: *hostlinku`。参见参考资料 `config.yaml` Continue。
+</Callout>
+
+## 故障排除
+
+- **模型未出现在下拉菜单中** — YAML 缩进错误，或者 `roles` 未加载 `chat`。请参阅 VS Code 中的 *输出 → 继续*。
+- **`401`** — 尚未读取 `~/.continue/.env`；请重新加载配置或重启 IDE。
+- **`404 model_not_found`** — `model:` 的 slug 必须与 `GET /v1/models` 的完全一致。
+- **流式传输播放卡顿** — 请确保没有企业代理在缓存 `text/event-stream`。

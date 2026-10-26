@@ -1,0 +1,83 @@
+---
+title: "Claude Opus 4.7"
+description: "Claude Opus 4.7 是 Opus 模型的前身，具有强大的处理能力，适用于复杂编码、专业知识工作、长期运行的智能体以及困难的持续性任务。"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| 属性 | 值 |
+|---|---|
+| 提供商 | Anthropic |
+| Slug | `claude-opus-4-7` |
+| 上下文 | 1,000,000 个Token |
+| 最大输出 | 32,000 个Token |
+| 输入 | 文本、图片 |
+| 输出 | 文本 |
+| 发布日期 | 2026-04-15 |
+| 标签 | 推理 |
+
+## 能力
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## 价格
+
+| 项目 | 价格 |
+|---|---|
+| 输入（提示词） | $5 |
+| 输出（补全） | $25 |
+| 缓存读取 | $0.5 |
+| 缓存写入 | $6.25 |
+
+该价格为API密钥Hostlinku的**100万个Token**的客户单价，其中1 <CreditIcon /> = 1美元。 每次请求的实际价格仍遵循 Service Mode API key，且可能会发生变化；请查看 [控制台](https://console.hostlinku.com/models) 或 `GET /v1/models` 以获取当前有效的价格。
+
+## 支持的端点
+
+| 端点 | 格式 | 支持 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
+| `POST /v1/messages` | Anthropic Messages | 原生 |
+| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+
+端点和模型的可用性遵循目录以及所使用的Service Mode API key。如果该模式下没有可用模型，则可能以`400 MODEL_NOT_IN_SERVICE_MODE`为由拒绝该请求。
+
+## 请求示例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-opus-4-7",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 相关模型
+
+- [Claude Fable 5](/zh/models/claude-fable-5)
+- [Claude Fable 5.1](/zh/models/claude-fable-5-1)
+- [Claude Haiku 4.5](/zh/models/claude-haiku-4-5)
+- [Claude Opus 4.6](/zh/models/claude-opus-4-6)
+- [Claude Opus 4.8](/zh/models/claude-opus-4-8)
+- [Claude Opus 5](/zh/models/claude-opus-5)
+
+[← 返回模型目录](/zh/models)

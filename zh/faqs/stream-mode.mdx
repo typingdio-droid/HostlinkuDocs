@@ -1,0 +1,125 @@
+---
+title: "流式传输模式"
+description: "如何在 Hostlinku 和 OpenAI SDK 上使用 SSE 流式传输，以及 Python requests、curl 和 Node.js。"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+流模式通过 SSE（`text/event-stream`）以Token为单位发送答案。第一个Token会更快出现，无需等待整个答案发送完毕。使用 `"stream": true` 启用此模式。
+
+## 简述：curl
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
+    "stream": true
+  }'
+```
+
+`-N` 标志很重要：如果没有该标志，curl 会将输出暂存，直到缓冲区已满或流结束。
+
+片段格式：
+
+```text
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"1"}}]}
+
+data: [DONE]
+```
+
+## Python — SDK OpenAI
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key="sk-isi-api-key-kamu",
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content if chunk.choices else None
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+## Python — requests
+
+在请求中使用 `stream=True`，并读取 `iter_lines()`。收到 `data: [DONE]` 时停止。
+
+```python
+import json
+import requests
+
+response = requests.post(
+    "https://api.hostlinku.com/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer sk-isi-api-key-kamu",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "gpt-5-5",
+        "messages": [{"role": "user", "content": "Halo!"}],
+        "stream": True,
+    },
+    stream=True,
+)
+
+for line in response.iter_lines():
+    if not line:
+        continue
+    text = line.decode("utf-8")
+    if not text.startswith("data: "):
+        continue
+    payload = text[6:]
+    if payload == "[DONE]":
+        break
+    chunk = json.loads(payload)
+    if "error" in chunk:
+        raise RuntimeError(chunk["error"])
+    delta = chunk["choices"][0].get("delta", {}).get("content")
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+## Node.js — SDK OpenAI
+
+```js
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://api.hostlinku.com/v1",
+  apiKey: process.env.HOSTLINKU_API_KEY,
+});
+
+const stream = await client.chat.completions.create({
+  model: "gpt-5-5",
+  messages: [{ role: "user", content: "Halo!" }],
+  stream: true,
+});
+
+for await (const chunk of stream) {
+  const delta = chunk.choices[0]?.delta?.content;
+  if (delta) process.stdout.write(delta);
+}
+```
+
+## 备注 Hostlinku
+
+- `x-request-id` 标头仍会在流响应中发送。
+- 如果流在传输过程中失败，网关会发送 `data: {"error": {...}}` 事件，并且**不会**发送虚假的 `[DONE]` 事件。
+- 费用将根据流式传输播放结束后实际的使用量计算；如果无法获取实际使用量，则按预留量的预估值计费。
+- 请勿在反向代理或CDN中缓存响应。请原样转发`text/event-stream`。
+
+<Callout type="tip" title="什么时候最适合进行直播？">
+对于需要快速响应的聊天应用或客服系统，请使用 `stream: true`。对于不显示进度条的批处理/任务，非流式处理更为简单。
+</Callout>

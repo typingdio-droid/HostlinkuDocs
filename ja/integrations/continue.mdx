@@ -1,0 +1,87 @@
+---
+title: "続きを読む"
+description: "config.yaml Continue (VS Code & JetBrains) に、プロバイダー「openai」とカスタム apiBase を指定して、モデル Hostlinku を追加します。"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Continue](https://docs.continue.dev)は`config.yaml`を通じて設定されます。 各モデルには、`provider`、`apiBase`、`apiKey`、および`roles`のリスト（chat、edit、apply、…）が割り当てられます。 Hostlinkuについては、`openai`プロバイダと`apiBase`ゲートウェイを使用します。
+
+<Steps>
+
+### 設定を開く
+
+「Continue」パネルで、歯車アイコンをクリックし、**「Open config file」**を選択するか、`~/.continue/config.yaml`（グローバル）または`.continue/config.yaml`（プロジェクト別）を直接編集してください。
+
+### モデル Hostlinku を追加する
+
+```yaml
+name: Hostlinku
+version: 0.0.1
+schema: v1
+
+models:
+  - name: Claude Sonnet 4.6 (Hostlinku)
+    provider: openai
+    model: claude-sonnet-4-6
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply]
+    defaultCompletionOptions:
+      contextLength: 1000000
+      maxTokens: 32000
+
+  - name: GPT-5.5 (Hostlinku)
+    provider: openai
+    model: gpt-5-5
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply]
+
+  - name: DeepSeek V4 Flash (Hostlinku)
+    provider: openai
+    model: deepseek-v4-flash
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply, summarize]
+```
+
+### APIキーをシークレットとして保存する
+
+`~/.continue/.env`というファイルを作成し（コミット対象外）、以下の内容を記述してください：
+
+```bash
+HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+あるいは、設定ファイルが非公開である場合は、`${{ secrets.HOSTLINKU_API_KEY }}`を直接キーの値に置き換えてください。
+
+### 再読み込みしてテストする
+
+「Continue」パネルで **Reload config** をクリックします（またはファイルを保存してください。Continue は変更を監視します）。ドロップダウンから *Claude Sonnet 4.6 (Hostlinku)* モデルを選択し、メッセージを送信してから、コンソール → **リクエストログ** を確認してください。
+
+</Steps>
+
+## サポートされている役割（roles）
+
+| 役割 | Hostlinkuを通じた支援 | 注記 |
+|---|---|---|
+| `chat` | はい | カタログ掲載の全モデル。 |
+| `edit`, `apply` | はい | ツール呼び出し機能付きのモデルを使用してください。`claude-sonnet-4-6`は*apply*に最適です。 |
+| `summarize` | はい | `deepseek-v4-flash`／`claude-haiku-4-5`のような低価格モデル。 |
+| `autocomplete` | いいえ | `/v1/completions` 経由で FIM モデルが必要です。この役割は他のプロバイダー（例：ローカルモデル）に任せてください。 |
+| `embed`, `rerank` | いいえ | Hostlinku には、embeddings/rerank エンドポイントがまだ用意されていません。 |
+
+`edit`/`apply`に特定のモデルが指定されていない場合は、アクティブな`chat`モデルを引き続き使用します。
+
+<Callout type="tip" title="繰り返しを削減するためのYAMLアンカー">
+`apiBase` および `apiKey` を一度だけアンカー（`&hostlinku`）として定義し、その後、各モデルで `<<: *hostlinku` を使用してください。`config.yaml`「Continue」を参照してください。
+</Callout>
+
+## トラブルシューティング
+
+- **モデルがドロップダウンに表示されない** — YAMLのインデントが間違っているか、`roles`が`chat`を読み込んでいません。VS Codeの*Output → Continue*を参照してください。
+- **`401`** — `~/.continue/.env` が読み込まれていません。設定を再読み込みするか、IDE を再起動してください。
+- **`404 model_not_found`** — `model:`のslugは、`GET /v1/models`と完全に一致している必要があります。
+- **ストリーミングが途切れる** — 企業のプロキシが`text/event-stream`をバッファリングしていないことを確認してください。

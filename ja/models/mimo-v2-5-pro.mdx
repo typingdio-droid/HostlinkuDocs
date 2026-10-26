@@ -1,0 +1,70 @@
+---
+title: "MiMo V2.5 Pro"
+description: "数兆ものパラメータを持つフラッグシップのベースモデルは、1,000回近くに及ぶツール呼び出しを伴う長距離タスクを安定して完了することができます。エージェントの能力は..."
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 概要
+
+数兆ものパラメータを備えたフラッグシップのベースモデルは、1,000回近くに及ぶツール呼び出しを伴う長距離タスクも安定して完了できます。エージェントの機能は全面的にアップグレードされており、実際の本番性シナリオに対応するよう設計されています。
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | Xiaomi |
+| slug | `mimo-v2-5-pro` |
+| コンテキスト | 1,000,000トークン |
+| 最大出力 | 32,000トークン |
+| 入力 | text |
+| 出力 | text |
+| リリース | 2026-07-13 |
+| タグ | 推論 |
+
+## 機能
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+
+## 価格
+
+| 項目 | 価格 |
+|---|---|
+| 入力（プロンプト） | $0.441 |
+| 出力（補完） | $0.882 |
+| キャッシュ読み取り | $0.004 |
+| キャッシュ書き込み | — |
+
+価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | サポート |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+
+エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+
+## リクエストの例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "mimo-v2-5-pro",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+[← モデル一覧に戻る](/ja/models)

@@ -1,0 +1,93 @@
+---
+title: "OpenCode"
+description: "在 opencode.json 中将 Hostlinku 注册为与 OpenAI 兼容的自定义提供程序，并通过 /models 选择模型"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[OpenCode](https://opencode.ai/docs/providers/) 采用了 AI SDK，因此任何与 OpenAI 兼容的提供商均可通过 `opencode.json` 进行添加。凭据由 `/connect` 命令单独存储。
+
+<Steps>
+
+### 保存凭据
+
+在 OpenCode 中运行 `/connect`，滚动至 **Other**，填写提供商 ID `hostlinku`，然后粘贴 API 密钥 `sk-…`。密钥保存在 `~/.local/share/opencode/auth.json` 中。
+
+```text
+/connect  →  Other  →  provider id: hostlinku  →  API key: sk-…
+```
+
+### 定义提供商
+
+在项目根目录下创建/修改 `opencode.json`（或创建/修改全局文件 `~/.config/opencode/opencode.json`）：
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1"
+      },
+      "models": {
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "gpt-5-5": {
+          "name": "GPT-5.5",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash",
+          "limit": { "context": 1000000, "output": 32000 }
+        }
+      }
+    }
+  },
+  "model": "hostlinku/claude-sonnet-4-6",
+  "small_model": "hostlinku/deepseek-v4-flash"
+}
+```
+
+`opencode.json` 中的 ID 提供者 **必须与** 在 `/connect` 中输入的保持一致。`models` 中的密钥是 Hostlinku 的 slug；`limit` 用于帮助 OpenCode 计算剩余上下文。
+
+### 选择模型
+
+运行 `/models` — 系统将显示包含您注册的模型的 **Hostlinku** 组。`small_model` 用于处理轻量级任务（如会话标题、摘要），因此可节省较长会话的时间。
+
+</Steps>
+
+## 配置选项
+
+**环境变量中的API密钥**（不含`/connect`）：
+
+```json
+{
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1",
+        "apiKey": "{env:HOSTLINKU_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+**通过 Responses API** — 将 `npm` 替换为 `@ai-sdk/openai`；OpenCode 将使用 [`/v1/responses`](/zh/responses)。 适用于需要 *推理摘要* 的 GPT-5.x 模型。对于大多数用户而言，`@ai-sdk/openai-compatible` (Chat Completions) 已经足够。
+
+<Callout type="note" title="采用交错推理的模型">
+对于返回 `reasoning_content` 的模型（例如 DeepSeek V4、GLM 5），可在其模型定义中添加 `"reasoning": true` 和 `"interleaved": { "field": "reasoning_content" }` 选项，以便 OpenCode 显示其推理路径。
+</Callout>
+
+## 故障排除
+
+- **服务提供商未出现在 `/models` 中** — `/connect` 和 `opencode.json` 中的 ID 不一致，或者 JSON 格式无效。请检查 `opencode auth list`。
+- **`401`** — 该 ID 的密钥尚未保存；请重试 `/connect`。
+- **`404 model_not_found`** — `models`的密钥必须与`GET /v1/models`的密钥完全一致。

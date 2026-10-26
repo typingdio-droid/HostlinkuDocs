@@ -1,0 +1,115 @@
+---
+title: "错误"
+description: "信封格式错误 Hostlinku、错误代码列表及处理方法"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku网关的所有错误都采用相同的_envelope_格式，无论其来源是验证、身份验证、计费还是上游服务故障：
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [{ "path": "messages", "message": "Array must contain at least 1 element(s)" }]
+    }
+  }
+}
+```
+
+- `status`：响应失败时总是显示`"error"`。
+- `error.code`：机器代码（稳定，可用于代码中的逻辑分支）。
+- `error.message`：人类信息，能说印尼语。
+- `error.details`：可选；例如，在验证失败时显示各字段的详细信息。
+
+## 错误代码列表
+
+| HTTP | `error.code` | 含义 | 通常出现在……时 |
+|---|---|---|---|
+| 400 | `BAD_REQUEST` | 无法处理该请求 | 组合参数不合理（例如：充值金额超出限额，`max_tokens`超出模型输出限值） |
+| 401 | `UNAUTHORIZED` | 身份验证失败或未进行身份验证 | API密钥错误、已被撤销或已过期 |
+| 402 | `PAYMENT_REQUIRED` | 需要余额/额度 | 余额不足、API密钥的额度已用尽、尚未配置支付提供商 |
+| 403 | `FORBIDDEN` | 没有许可证 | 使用非管理员账户访问管理员资源 |
+| 404 | `NOT_FOUND` | 未找到资源 | 端点错误，API密钥/交易/日志ID不存在（或不属于您） |
+| 404 | `MODEL_NOT_FOUND` | 该模型的Slug未收录在产品目录中 | slug 输入有误；请查看 `GET /v1/models` |
+| 405 | `METHOD_NOT_ALLOWED` | HTTP 方法错误 | 在仅接受 `POST` 的端点上使用 `GET` |
+| 409 | `CONFLICT` | 状态冲突 | 该操作与当前状态不符 |
+| 422 | `VALIDATION_FAILED` | 正文/查询无效 | 必填字段缺失、类型错误、超出范围 |
+| 429 | `RATE_LIMITED` | 请求过多 | 超过每分钟的限制（按 API 密钥或按 IP 地址计算） |
+| 500 | `INTERNAL` | 服务器内部错误 | 网关中存在一个意外错误；提交报告时请注明 `x-request-id` |
+| 503 | `UPSTREAM_ERROR` | 上游服务不可用/暂时中断 | 在 Hostlinku 尝试多次后，上游未响应（5xx/超时）；可以安全地采用退避策略重试 |
+| 503 | `PROVIDER_UNAVAILABLE` | 无法联系上游 | 与上游的连接暂时中断，或支付服务导致结账会话失败 |
+| 503 | `MODEL_UNAVAILABLE` | 该模型暂无库存 | 该模型当前状态为非`available`或已弃用 |
+
+<Callout type="warning" title="未知端点">
+不存在的路径也会返回与`404 NOT_FOUND`相同的响应包。在断定存在故障之前，请重新检查URL和HTTP方法。
+</Callout>
+
+## 验证详情 (422)
+
+当验证失败时，`details.issues` 会按字段列出问题清单：
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [
+        { "path": "messages", "message": "Array must contain at least 1 element(s)" },
+        { "path": "temperature", "message": "Number must be less than or equal to 2" }
+      ]
+    }
+  }
+}
+```
+
+## 流式传输错误
+
+发生在 SSE 流**中间**的故障将作为事件数据发送到同一流中（而非作为 HTTP 状态）：
+
+```text
+data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+```
+
+网关在发生错误事件后不会发送 `data: [DONE]`，因此断开的流始终可以与正常结束的流区分开来。
+
+## 处理代码中的错误
+
+处理各类错误的方法：
+
+- **401**：API密钥错误或已过期。请修正配置；请勿反复重试。
+- **402**：充值余额或提高/重置 API 密钥限额。请参阅 [计费与余额](/zh/billing)。
+- **422**：修复请求正文；请参阅 `details.issues` 以了解问题所在。
+- **429**：采用指数退避，并遵守速率限制标头。请参阅[使用与限制](/zh/usage-and-limits)。
+- **5xx**（`UPSTREAM_ERROR`、`PROVIDER_UNAVAILABLE`、`INTERNAL`）：经过多次退避重试；Hostlinku在放弃前已尝试多次。
+
+使用 OpenAI SDK 捕获错误的示例（Python）：
+
+```python
+import openai
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+
+try:
+    response = client.chat.completions.create(
+        model="gpt-5-5",
+        messages=[{"role": "user", "content": "Halo"}],
+    )
+except openai.AuthenticationError as err:      # 401
+    raise SystemExit(f"API key bermasalah: {err}")
+except openai.RateLimitError as err:           # 429
+    raise SystemExit(f"Rate limit: {err}")
+except openai.APIStatusError as err:           # 4xx/5xx lainnya
+    print("status:", err.status_code, "body:", err.response.text)
+```
+
+<Callout type="note" title="提交报告时请务必附上 x-request-id">
+建议同时记录失败响应中的 `x-request-id` 标头：支持团队会使用该 ID 在网关日志中追踪该请求。
+</Callout>

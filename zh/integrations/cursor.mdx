@@ -1,0 +1,72 @@
+---
+title: "光标"
+description: "在 Cursor 中使用 Hostlinku 模型，通过覆盖 OpenAI 基础 URL — 聊天、Cmd-K 以及 Agent，并使用您自己的 API 密钥"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[光标](https://cursor.com) 允许通过 *覆盖 OpenAI 基础 URL* 设置自己的 API 密钥。 将其指向 Hostlinku 后，聊天、Cmd-K（内联编辑）和代理将使用 Hostlinku 目录中的模型，相关费用将从您的余额中扣除，而非从 Cursor 的配额中扣除。
+
+<Steps>
+
+### 打开模型设置
+
+`Cursor Settings` (⌘/Ctrl + Shift + J) → **Models** 选项卡。
+
+### 填写 API 密钥和基础 URL
+
+在**API密钥**部分：
+
+1. 启用 **OpenAI API 密钥**，并粘贴 API 密钥 Hostlinku (`sk-…`)。
+2. 启用 **覆盖 OpenAI 基础 URL** 并填写：
+
+```text
+https://api.hostlinku.com/v1
+```
+
+![光标设置 → 模型：Override OpenAI Base URL 列中包含 https://api.hostlinku.com/v1](/images/integrations/cursor-openai-base-url.jpg "在“覆盖 OpenAI 基础 URL”列中输入 https://api.hostlinku.com/v1，然后点击“保存”。")
+
+请勿在后面添加 `/chat/completions` — Cursor 会自动添加路径。点击 **保存**，然后点击 API 密钥列旁边的 **验证**；Cursor 会向网关发送一条测试请求。
+
+### 添加模型 Hostlinku
+
+仍在 **Models** → **Add Custom Model** 选项卡中，请逐一输入 [目录](/zh/models) 中完全相同的 slug：
+
+```text
+claude-sonnet-4-6
+gpt-5-5
+deepseek-v4-flash
+```
+
+禁用你不打算使用的内置模型，以保持模型列表简洁。
+
+### 在聊天中选择模特
+
+在“聊天/客服”面板中，从模型下拉菜单中选择新添加的模型。首个请求将显示在控制台的 → **请求日志** 中。
+
+</Steps>
+
+## 需知事项
+
+<Callout type="warning" title="重写具有全局作用">
+只要 **覆盖 OpenAI 基础 URL** 处于激活状态，Cursor 中所有 OpenAI 系列模型（包括由 Cursor 管理的模型）都会被重定向至 Hostlinku。 请对所有模型统一使用 Hostlinku 作为 slug，或者在需要恢复为 Cursor 默认模型时关闭覆盖开关。
+</Callout>
+
+- **请求是从 Cursor 服务器发送的**，而不是从你的计算机发送的。因此，基础 URL 必须是公开的——`https://api.hostlinku.com` 符合这一要求（`localhost` 的地址被 Cursor 拒绝）。
+- **光标 Tab（自动完成）功能不受影响。** Tab 功能使用光标专用的基础设施，无法切换至任何提供商。Hostlinku 支持聊天、Cmd-K 和 Agent 功能。
+- **代理模式**需要支持 *工具调用* 和 *流式传输* 的模型——[概述](/zh/integrations) 中推荐的所有模型均符合此要求。 如果代理因 *BAD_MODEL_NAME* 报错，请重新检查 slug，并确保 **OpenAI API 密钥** 已启用。
+- **连接挂起/协议错误** — 在同一设置中，将 *HTTP 兼容模式* 更改为 **HTTP/1.1**。
+
+<Callout type="tip" title="Claude 模型，通过 OpenAI 通道">
+您无需填写“*Anthropic API Key*”字段。Slug `claude-sonnet-4-6`是通过相同的OpenAI和Chat Completions路径调用的；网关会将其转换为Anthropic协议。
+</Callout>
+
+## 故障排除
+
+| 症状 | Solusi |
+|---|---|
+| *验证*失败 `401` | API密钥错误/已被撤销，或者复制时混入了空格。 |
+| *未找到该模型* | Slug 拼写错误——复制自 `GET /v1/models`。 |
+| 答案被截断了 | 该模型的输出上限小于光标所请求的值；请尝试其他模型或不同的Service Mode。 |
+| 代理在处理过程中因 `429` 而中断 | 代理会发送大量并行请求。请参阅 [使用情况与限制](/zh/usage-and-limits)。 |

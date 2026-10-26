@@ -1,0 +1,56 @@
+---
+title: "はじめに"
+description: "Hostlinkuとは何か、そのアーキテクチャの仕組み、およびこのドキュメントの読み進め方"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Hostlinku**は統合AIゲートウェイ（_unified AI gateway_）であり、OpenAIと完全に互換性のあるフォーマットを持つ単一のAPIです。 1つのAPIキーを通じて、さまざまなプロバイダー（OpenAI、Anthropic、Google、DeepSeek、Qwenなど）が提供する数百ものモデルへリクエストが転送されます。
+
+Hostlinkuを使えば、プロバイダーごとに異なるアカウント、APIキー、リクエスト形式を個別に管理する必要がなくなります：
+
+- すべてのモデルに**1つのAPIキー**（`sk-…`）。
+- **OpenAIとの互換性**：OpenAI（`openai-python`、`openai-node`）の公式SDKを使用する場合は、`base_url`を置き換えるだけで十分です。
+- **SSEストリーミング**：OpenAIと同様に、`text/event-stream`という形式のトークンごとの応答。
+- **一元化されたモデルカタログ**：スラッグ、トークンあたりの価格、コンテキスト、および機能を1か所に集約。
+- **利用状況の管理**：APIキーごとのクレジット上限、リクエスト履歴、およびコンソール上の詳細なログ。
+- **柔軟な決済**：QRIS／バーチャルアカウント（iPaymu）または仮想通貨（BlockBee）を通じて残高をチャージできます。
+
+## 概要
+
+```text
+Aplikasi kamu
+    │  Authorization: Bearer sk-…
+    ▼
+api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
+(v1/chat/completions)        │                        │
+                             │                        ├─► OpenAI
+                             ├─ Reservasi saldo       ├─► Anthropic
+                             ├─ Telemetri & log       ├─► Google
+                             └─ Commit biaya nyata    └─► …dan lainnya
+```
+
+すべてのリクエストは、APIキーの認証、クレジット制限の確認、残高の仮予約（見積もり）、モデルサービスへの転送（障害発生時は自動再試行）、実際に使用されたトークンに基づく費用の確定、およびテレメトリの記録という同じフローを経由します。
+
+コンソール Hostlinku (`console.hostlinku.com`) は同じバックエンドを使用しています。API キー、残高、リクエスト履歴、監査ログはすべて、実際のデータゲートウェイからのものです。
+
+## クイックリンク
+
+| ニーズ | ページ |
+|---|---|
+| 最初のリクエストを送信する | [クイックスタート](/ja/getting-started) |
+| APIキー、有効期限、およびAPIキーごとの制限について理解する | [認証](/ja/authentication) |
+| すべてのエンドポイント、レート制限、エラーコードの概要 | [APIリファレンス](/ja/api-reference) |
+| エンドポイント参照 `POST /v1/chat/completions` | [Chat Completions](/ja/chat-completions) |
+| `POST /v1/messages` を通じて Anthropic SDK / Claude Code を使用する | [Anthropic Messages](/ja/anthropic-messages) |
+| `POST /v1/responses` を通じて Codex CLI / OpenAI Agents SDK を使用する | [Responses API](/ja/responses) |
+| Claude Code、Codex CLI、Cursor、Zed、Cline、Continue、OpenCode、Aider の設定 | [IDEとエージェントの統合](/ja/integrations) |
+| モデルのリストと選び方 | [モデル](/ja/models) |
+| レート制限と使用状況の監視 | [使用方法と制限](/ja/usage-and-limits) |
+| 残高、チャージ、およびトークンあたりの手数料 | [請求・残高](/ja/billing) |
+| エラーコードとエラー応答の形式 | [エラー](/ja/errors) |
+
+<Callout type="tip" title="まずはアカウントが必要ですか？">
+[auth.hostlinku.com](https://auth.hostlinku.com) でアカウントを作成し、[console.hostlinku.com](https://console.hostlinku.com) で最初の API キーを作成してください。詳細は [クイックスタート](/ja/getting-started) をご覧ください。
+</Callout>

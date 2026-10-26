@@ -1,0 +1,56 @@
+---
+title: "简介"
+description: "什么是 Hostlinku、其架构的工作原理以及阅读本文档的顺序"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Hostlinku** 是一款集成式 AI 网关（_unified AI gateway_）：提供一个 API，其格式与 OpenAI 完全兼容。 您的请求将通过一个 API 密钥转发至来自不同提供商的数百个模型（OpenAI、Anthropic、Google、DeepSeek、Qwen 等）。
+
+使用 Hostlinku，您无需为每个提供商分别管理账户、API 密钥和不同的请求格式：
+
+- **一个API密钥**适用于所有模型（`sk-…`）。
+- **兼容 OpenAI**：使用官方 SDK OpenAI（`openai-python`、`openai-node`）时，只需将 `base_url` 替换掉即可。
+- **SSE 流式传输**：以 `text/event-stream` 格式（如 OpenAI）返回逐个Token的响应。
+- **集中式模型目录**：将别名、每Token价格、上下文和功能集中在一个地方。
+- **使用控制**：每个 API 密钥的额度限制、请求历史记录以及控制台中的完整日志。
+- **灵活充值**：可通过QRIS/虚拟账户（iPaymu）或加密货币（BlockBee）进行充值。
+
+## 简要架构
+
+```text
+Aplikasi kamu
+    │  Authorization: Bearer sk-…
+    ▼
+api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
+(v1/chat/completions)        │                        │
+                             │                        ├─► OpenAI
+                             ├─ Reservasi saldo       ├─► Anthropic
+                             ├─ Telemetri & log       ├─► Google
+                             └─ Commit biaya nyata    └─► …dan lainnya
+```
+
+每个请求都遵循相同的流程：API密钥认证、额度检查、余额预留（预估）、转发至模型服务（若发生故障则自动重试），然后根据实际使用的Token确认费用，并记录遥测数据。
+
+控制台 Hostlinku (`console.hostlinku.com`) 使用相同的后端：API 密钥、余额、请求历史记录和审计日志均来自真实的数据网关。
+
+## 快速链接
+
+| 需求 | 页面 |
+|---|---|
+| 发送你的第一个请求 | [快速入门](/zh/getting-started) |
+| 了解 API 密钥、有效期以及每个 API 密钥的限制 | [身份验证](/zh/authentication) |
+| 所有端点、速率限制和错误代码的简明参考 | [API 参考](/zh/api-reference) |
+| 端点参考编号 `POST /v1/chat/completions` | [Chat Completions](/zh/chat-completions) |
+| 通过 `POST /v1/messages` 使用 Anthropic SDK / Claude Code | [Anthropic Messages](/zh/anthropic-messages) |
+| 通过 `POST /v1/responses` 使用 Codex CLI / OpenAI Agents SDK | [Responses API](/zh/responses) |
+| Claude Code、Codex CLI、Cursor、Zed、Cline、Continue、OpenCode、Aider 的配置 | [IDE 与代理的集成](/zh/integrations) |
+| 模型列表及选购指南 | [模型](/zh/models) |
+| 速率限制和使用情况监控 | [使用与限制](/zh/usage-and-limits) |
+| 余额、充值和每枚Token的费用 | [账单与余额](/zh/billing) |
+| 错误代码和错误响应格式 | [错误](/zh/errors) |
+
+<Callout type="tip" title="需要先注册账号吗？">
+在 [auth.hostlinku.com](https://auth.hostlinku.com) 上注册账户，并在 [console.hostlinku.com](https://console.hostlinku.com) 上创建你的第一个 API 密钥。更多详情请参阅 [快速入门](/zh/getting-started)。
+</Callout>

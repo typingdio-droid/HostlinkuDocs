@@ -1,0 +1,221 @@
+---
+title: "利用提示词缓存节省资源"
+description: "如何在 Hostlinku 中使用 cache_control，使重复出现的大提示仅占 ~10% — 适用于 Claude Code、Cursor、agent 以及采用长系统提示的应用程序"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+**提示缓存**机制确保相同的提示内容（长系统提示、工具定义、参考文档、对话历史记录）仅需完整处理**一次**。后续请求中，该部分内容将从缓存中读取，并按**正常输入费用的约10%**计费。 Hostlinku 完全沿用了 Anthropic 的缓存机制，且未针对缓存追加特殊费用；各模型的实际费率详见 [模型目录](/zh/models)。
+
+<Callout type="tip" title="Hostlinku的实际测试结果">
+系统提示 ±3.600 个Token发送到 `claude-sonnet-4-6`：第一个请求（缓存写入，1.25×）**$0.0135**，第二个请求（提示相同）为缓存读取（0.1×） **$0.00108** — 节省了 **92%**。你可以自行在控制台 → **请求日志**（*缓存读取* / *缓存写入* 列）中查看该数据。
+</Callout>
+
+## 价格的运作机制
+
+| Token类型 | 相对于正常投入的费率 | 何时发生 |
+|---|---|---|
+| 正常输入 | 1× | 未缓存的提示部分 |
+| **缓存写入** | **1,25×** | 该区块首次被标记为`cache_control`，且尚未存入缓存 |
+| **缓存读取** | **0,1×** | 同一块数据在缓存有效期内再次被发送 |
+
+部分最新模型采用更低的缓存读取费率：`claude-opus-5-5` 和 `claude-sonnet-5-5` 为 **0.05×**，`claude-fable-5-1` 为 **0.025×**。 各模型的具体数值请参见[模型目录](/zh/models)——该页面显示了原厂价格以及按服务模式划分的销售价格。
+
+默认缓存有效期为自上次使用起**5分钟**（每次被访问时都会延长）。这意味着，当同一数据块被使用**至少2次**时，缓存就已收回成本；使用频率越高，节省的成本就越大。 各模型的费率详见[模型目录](/zh/models)（`cache_read` / `cache_write`列）。
+
+<Callout type="important" title="何时不应使用">
+对于仅发送一次的提示，写入缓存的成本反而高出25%。Anthropic还会**忽略**缓存标记，如果块小于该模型的最低阈值（请求仍会正常运行，不使用缓存，且无额外成本）。 因此，Hostlinku 默认不会强制使用缓存：由您自行决定。各模型的阈值位于下方的 **最小阈值** 部分。
+</Callout>
+
+### 每个模型的最低阈值
+
+低于此阈值的块将不会被缓存，且 `cache_creation_input_tokens` / `cache_read_input_tokens` 的值为 0，且不会显示错误信息。
+
+| 模型 | 可缓存的最小块 |
+|---|---|
+| `claude-fable-5`, `claude-fable-5-1`, `claude-opus-5`, `claude-opus-5-5`, `claude-sonnet-5-5` | 512 个Token |
+| `claude-sonnet-5`, `claude-sonnet-4-6`, `claude-opus-4-8` | 1,024 个Token |
+| `claude-opus-4-7` | 2,048 个Token |
+| `claude-opus-4-6`, `claude-haiku-4-5` | 4,096 个Token |
+
+## 提示词的构成原则
+
+缓存基于**前缀**工作——所有位于标记`cache_control`*之前*的内容必须字节级完全一致，才能被命中。请按从最静态到最动态的顺序排列提示词：
+
+1. `tools`（函数定义）——很少更改
+2. `system` — 说明、角色、参考文档
+3. `messages` 旧版 — 对话记录
+4. 最新用户消息——内容随时变化，请勿缓存
+
+每个请求最多包含 **4 个** `cache_control` 标记。最常见的情况是：在 `system` 的末尾有一个。
+
+## 格式 Anthropic (`/v1/messages`)
+
+由 Anthropic SDK、Claude Code、Cursor、Cline 以及其他采用 Anthropic 协议的工具使用。将 `system` 写入块数组，然后在最后一个静态块中指定 `cache_control`：
+
+```bash
+curl https://api.hostlinku.com/v1/messages \
+  -H "x-api-key: sk-isi-api-key-kamu" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "system": [
+      {
+        "type": "text",
+        "text": "<instruksi panjang + dokumen referensi di sini>",
+        "cache_control": { "type": "ephemeral" }
+      }
+    ],
+    "messages": [
+      { "role": "user", "content": "Ringkas bagian 3 dokumen di atas." }
+    ]
+  }'
+```
+
+针对`input_tokens`的单独缓存Token报告的响应：
+
+```json
+"usage": {
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 3601,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 4
+}
+```
+
+在第二次使用相同 `system` 的请求中，其值变为 `cache_creation_input_tokens: 0` 和 `cache_read_input_tokens: 3601`——这表明缓存正在起作用。
+
+**Python (Anthropic SDK)**
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+    base_url="https://api.hostlinku.com",
+    api_key="sk-isi-api-key-kamu",
+)
+
+resp = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": DOKUMEN_REFERENSI,  # konten statis & panjang
+            "cache_control": {"type": "ephemeral"},
+        }
+    ],
+    messages=[{"role": "user", "content": "Ringkas bagian 3."}],
+)
+print(resp.usage.cache_read_input_tokens)
+```
+
+## 格式 OpenAI (`/v1/chat/completions`)
+
+对于使用 OpenAI SDK 的应用程序，请将 `content` 系统作为 *内容部分* 数组写入，并将 `cache_control` 放置在其部分中。Hostlinku 会将其转换为 Anthropic —— 仅适用于 Claude 模型。
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-6",
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": "<instruksi panjang + dokumen referensi di sini>",
+            "cache_control": { "type": "ephemeral" }
+          }
+        ]
+      },
+      { "role": "user", "content": "Ringkas bagian 3 dokumen di atas." }
+    ]
+  }'
+```
+
+`usage.prompt_tokens_details` 中出现了缓存Token：
+
+```json
+"usage": {
+  "prompt_tokens": 3583,
+  "completion_tokens": 4,
+  "prompt_tokens_details": {
+    "cached_tokens": 3569,
+    "cache_write_tokens": 0
+  }
+}
+```
+
+<Callout type="note" title="OpenAI 格式说明">
+与Anthropic格式不同，此处的`prompt_tokens`**已包含**缓存Token；`cached_tokens`表示其中有多少是从缓存中读取的（速率为0.1×）。 如果没有 `cache_control`，普通系统提示（字符串）**不会**被缓存。
+</Callout>
+
+**Python (OpenAI SDK)**
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+
+resp = client.chat.completions.create(
+    model="claude-sonnet-4-6",
+    messages=[
+        {
+            "role": "system",
+            "content": [
+                {
+                    "type": "text",
+                    "text": DOKUMEN_REFERENSI,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+        },
+        {"role": "user", "content": "Ringkas bagian 3."},
+    ],
+)
+print(resp.usage.prompt_tokens_details.cached_tokens)
+```
+
+## 克劳德·科德、Cursor、Cline 和 agent
+
+这些工具**已自行将 `cache_control` 添加**到系统提示符及其工具定义中。 一旦您将基础 URL 指向 Hostlinku（参见 [IDE 与代理的集成](/zh/integrations)），优化将自动生效——无需额外配置。在日志中，您会发现同一会话中几乎每次后续请求都会出现大量的 *Cache Read* 记录。
+
+## 在控制台中查看
+
+在控制台中打开**请求日志**。每行显示*输入*、*输出*、*缓存读取*、*缓存写入*（总计）、*缓存写入 5 分钟* / *缓存写入 1 小时*的详细信息，以及最终费用。 每条 TTL 的详细信息仅在上游发送时才会填充——否则，该列将显示 `—`（而非 0），而总计仍会被记录。快速确认缓存是否正常工作的方法：
+
+<Steps>
+
+### 发送第一个请求
+
+请确保 `cache_control` 已安装，且块数≥最低阈值。在日志中，**Cache Write** 列有数据，且 **Cache Read** = 0。
+
+### 请在5分钟内发送第二条请求
+
+前缀完全相同。**Cache Read** 列现在已填充，**Cache Write** = 0，且该行的开销要小得多。
+
+### 比较费用
+
+这两行之间的差值就是你的节省量。如果 *Cache Read* 仍为 0，请检查：标记 *之前* 的部分是否发生了变化（时间戳、会话 ID、工具顺序），或者块是否过小。
+
+</Steps>
+
+## 支持的模型
+
+| 模型 | 提示缓存 |
+|---|---|
+| 所有 `claude-*` | 是的——通过`cache_control`明确规定（上述两种格式） |
+| `gpt-*`, `deepseek-*`, `glm-*` | **来自提供商的自动处理** — 不包含 `cache_control`；若在提供商缓存有效期内再次发送相同的前缀，则会填充 `cached_tokens` / `cache_read` |
+| `kimi-*`, `qwen*`, `minimax-*`, `mimo-*` | 这取决于提供商；部分提供商尚未报告缓存数据，因此该值可能为0 |
+
+<Callout type="note" title="Responses API">
+`/v1/responses` 尚未转发 `cache_control` —— OpenAI Responses 方言确实没有该字段。这意味着通过该端点向 Claude 模型发出的请求尚未使用提示词缓存。若要利用缓存，请使用 `/v1/messages` 或 `/v1/chat/completions`。
+</Callout>
+
+还有其他问题吗？请参阅 [常见问题解答](/zh/faqs) 或联系 [帮助中心](/zh/support)。

@@ -1,0 +1,76 @@
+---
+title: "Cline & Roo コード"
+description: "ClineおよびRoo Codeにおいて、Hostlinkuモデルを使用するために、OpenAI互換プロバイダー（またはカスタムベースURLを持つAnthropic）を設定する"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Cline](https://cline.bot) — およびそのフォークである **Roo Code** — は、ベースURL、APIキー、および任意のモデルIDを受け入れる **OpenAI Compatible** プロバイダーを提供しています。 これが Hostlinku への最もシンプルな方法です。**Anthropic** プロバイダーを経由する別の方法については、以下で説明します。**Kilo Code** をお使いですか？[Kilo Code](/ja/integrations/kilo-code) の専用ガイドをご覧ください。
+
+<Steps>
+
+### プロバイダーの設定を開く
+
+Clineのパネルで、歯車アイコン（**設定**）をクリックし、**API設定**を選択します。
+
+Clineを初めて起動すると、「*How will you use Cline?*」という画面が表示されます。**「Bring my own API key」**を選択し、**「Continue」**をクリックしてください。
+
+![Clineの初期画面：「Bring my own API key」が選択されている](/images/integrations/cline-setup.webp "新規インストール：「Bring my own API key」を選択して、独自のプロバイダーを使用します。")
+
+### 「OpenAI Compatible」を選択し、入力してください
+
+| フィールド | 値 |
+|---|---|
+| **APIプロバイダー** | `OpenAI Compatible` |
+| **ベースURL** | `https://api.hostlinku.com/v1` |
+| **APIキー** | `sk-…`（APIキー Hostlinku） |
+| **モデルID** | [カタログ](/ja/models)のslug、例：`claude-sonnet-4-6` |
+
+![Cline：APIプロバイダー OpenAI は、ベースURL https://api.hostlinku.com/v1 と互換性があります。](/images/integrations/cline-openai.webp "「Base URL」欄には「https://api.hostlinku.com/v1」と入力されています（入力時にフィールドが最後までスクロールされます）。")
+
+### （推奨）モデル構成を完了してください
+
+Clineがコンテキストと価格を正しく管理できるように、**Model Configuration** セクションを開いてください：
+
+- **画像対応**：ビジョン対応モデル（`claude-sonnet-4-6`、`gpt-5-5`）の場合は、このチェックボックスにチェックを入れてください。
+- **コンテキストウィンドウサイズ**：カタログの`context_window`（例：`1000000`）。
+- **最大出力トークン数**：`64000`は、大規模モデルにおける安全な値です。
+- **入出庫価格**：Clineの費用を正確に見積もりたい場合は、`pricing`カタログから転記してください。実際の請求額は、コンソールに記録されている金額が適用されます。
+
+![ClineのAPI設定パネルの全項目：ベースURL Hostlinku、APIキー、モデルID、モデル設定](/images/integrations/cline-byok-openai.webp "「設定」→「API設定」の画面全体。「カスタムヘッダー」は必須ではありません。HostlinkuではAPIキーのみを使用すれば十分です。")
+
+### 確認
+
+**Done** をクリックし、簡単なタスク（*「このリポジトリのREADMEを要約する」*）を送信します。リクエストがコンソールに表示されます → **リクエストログ**。
+
+</Steps>
+
+## 異なるモデルを用いた「Plan／Act」モード
+
+Clineは、**Plan**モードと**Act**モードで異なるモデルを使用することができます。 一般的なコスト削減の組み合わせ：**Plan** = `claude-opus-4-6` または `gpt-5-5`（推論）、**Act** = `claude-sonnet-4-6` または `deepseek-v4-flash`（実行）。 設定で *「PlanモードとActモードで異なるモデルを使用する」* を有効にし、同じプロバイダープロファイルに異なるモデルIDを入力してください。
+
+## 代替案：プロバイダー Anthropic
+
+Clineには、**Anthropic**というプロバイダーもあり、*Use custom base URL*というオプションが用意されています。`https://api.hostlinku.com`（`/v1`は含めない）とAPIキーHostlinkuを入力してください。 違い：このプロバイダーのモデル一覧は**Clineが認識するIDに限定されています**。カタログHostlinkuとslugが同一のClaudeモデル（例：`claude-sonnet-4-6`、`claude-haiku-4-5`）を選択してください。 Claude以外のモデル、またはリストにないslugについては、**OpenAI Compatible**を使用してください。
+
+![Cline：プロバイダー Anthropic の「カスタムベース URL を使用」には、https://api.hostlinku.com が指定されています。](/images/integrations/cline-anthropic.webp "「Use custom base URL」にチェックを入れ、「https://api.hostlinku.com」と入力してください（/v1 は含めないでください）。")
+
+<Callout type="note" title="プロンプトのキャッシュ">
+Anthropicルートを通じて、Clineが`cache_control`を送信し、Hostlinkuがそれを転送した――キャッシュトークンは`cache_read_input_tokens`で報告され、モデルキャッシュの価格で課金された。 OpenAI Compatibleルートを経由して、キャッシュはそれをサポートするモデルによって自動的に処理される。
+</Callout>
+
+## Cline CLI
+
+```bash
+cline auth -p openai -k "$HOSTLINKU_API_KEY" -b https://api.hostlinku.com/v1
+cline --model claude-sonnet-4-6 "tambahkan validasi input di handler login"
+```
+
+## トラブルシューティング
+
+- **`401`** — キーが間違っているか、削除されています。Roo Code で、キーが他のプロファイルではなく、現在アクティブなプロバイダーの **プロファイル** に設定されていることを確認してください。
+- **`404 model_not_found`** — モデルIDの入力ミス。`GET /v1/models`からコピーしてください。
+- **すべてのリクエストで `404`** — ベース URL に `/v1`（OpenAI パス）が含まれていないか、あるいは Anthropic パスで `/v1` が使用されている。上のスクリーンショットと比較してください。
+- **Actモードでの空のレスポンス** — *ツール呼び出し*のないモデル。[概要](/ja/integrations) の推奨モデルを使用してください。
+- **コンテキストがすぐにいっぱいになる** — Clineが履歴を正しく削除できるように、*Context Window Size*をカタログに合わせて設定してください。

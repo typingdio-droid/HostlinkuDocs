@@ -1,0 +1,115 @@
+---
+title: "エラー"
+description: "封筒フォーマットエラー Hostlinku、エラーコード一覧、および対処方法"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinkuゲートウェイからのすべてのエラーは、その原因が検証、認証、課金、あるいはアップストリームサービスの障害のいずれであっても、すべて同じ形式の_envelope_を使用しています：
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [{ "path": "messages", "message": "Array must contain at least 1 element(s)" }]
+    }
+  }
+}
+```
+
+- `status`：応答が失敗した場合は常に`"error"`となる。
+- `error.code`: マシンコード（安定しており、コード内の論理分岐でも安全に使用できます）。
+- `error.message`：人間によるメッセージ。インドネシア語を話せます。
+- `error.details`: オプション。例：検証に失敗した際のフィールドごとの詳細情報。
+
+## エラーコード一覧
+
+| HTTP | `error.code` | 意味 | 一般的に、次のような場合に現れます |
+|---|---|---|---|
+| 400 | `BAD_REQUEST` | リクエストを処理できませんでした | 不合理なパラメータの組み合わせ（例：上限を超えるチャージ額、`max_tokens`がモデルの出力上限を超えている） |
+| 401 | `UNAUTHORIZED` | 認証に失敗した、または認証がない | APIキーが間違っている、無効化されている、または有効期限が切れている |
+| 402 | `PAYMENT_REQUIRED` | 残高／クレジットが必要です | 残高不足、APIキーの与信限度額に達しました、決済プロバイダーがまだ設定されていません |
+| 403 | `FORBIDDEN` | 許可がない | 管理者権限のないアカウントで管理者用リソースにアクセスする |
+| 404 | `NOT_FOUND` | リソースが見つかりません | エンドポイントが間違っている、APIキー/トランザクション/ログのIDが存在しない（またはあなたのものではない） |
+| 404 | `MODEL_NOT_FOUND` | カタログにこのモデルのslugがありません | slugの入力ミス；`GET /v1/models`を確認してください |
+| 405 | `METHOD_NOT_ALLOWED` | HTTPメソッドが間違っています | `POST`のみを受け付けるエンドポイントで`GET`を使用する |
+| 409 | `CONFLICT` | 状態の競合 | この操作は現在の状態と矛盾しています |
+| 422 | `VALIDATION_FAILED` | Body/queryが無効です | 必須フィールドが欠落しています、型が不正です、範囲外です |
+| 429 | `RATE_LIMITED` | リクエストが多すぎます | 1分あたりの制限を超過（APIキーごとまたはIPアドレスごと） |
+| 500 | `INTERNAL` | サーバー内部エラー | ゲートウェイの予期せぬバグ。報告の際は`x-request-id`を記載してください |
+| 503 | `UPSTREAM_ERROR` | アップストリームが利用不可／一時的な障害 | Hostlinkuが数回試行した後、アップストリームからの応答がありませんでした（5xx/タイムアウト）。バックオフを適用して再試行しても問題ありません。 |
+| 503 | `PROVIDER_UNAVAILABLE` | Upstreamに接続できません | アップストリームへの接続が一時的に途切れたか、決済サービスでチェックアウトの処理に失敗しました |
+| 503 | `MODEL_UNAVAILABLE` | このモデルは取り扱っておりません | このモデルは非`available`ステータス、またはすでに非推奨となっています |
+
+<Callout type="warning" title="未知のエンドポイント">
+存在しないパスでも、`404 NOT_FOUND`と同じエンベロープが返されます。障害が発生していると結論付ける前に、URLとHTTPメソッドを再確認してください。
+</Callout>
+
+## 検証の詳細 (422)
+
+検証に失敗した場合、`details.issues`にはフィールドごとの問題の一覧が表示されます：
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [
+        { "path": "messages", "message": "Array must contain at least 1 element(s)" },
+        { "path": "temperature", "message": "Number must be less than or equal to 2" }
+      ]
+    }
+  }
+}
+```
+
+## ストリーミングのエラー
+
+SSEストリームの**途中**で発生した失敗は、同じストリーム上でイベントデータとして送信されます（HTTPステータスとしてではなく）：
+
+```text
+data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+```
+
+ゲートウェイはエラー発生後に`data: [DONE]`を送信しないため、切断されたストリームと正常に終了したストリームを常に区別することができます。
+
+## コード内のエラーの対処
+
+各エラーグループへの対処方法：
+
+- **401**: APIキーが間違っているか、有効期限が切れています。設定を修正してください。繰り返しリトライしないでください。
+- **402**: 残高のチャージ、またはAPIキーの制限値の引き上げ／リセットを行ってください。[課金と残高](/ja/billing)をご参照ください。
+- **422**: リクエスト本文を修正してください。問題の箇所については、`details.issues`を参照してください。
+- **429**: 指数関数的なバックオフを行い、ヘッダーのレート制限を遵守してください。[使用方法と制限](/ja/usage-and-limits)を参照してください。
+- **5xx** (`UPSTREAM_ERROR`、`PROVIDER_UNAVAILABLE`、`INTERNAL`)：バックオフを伴い数回リトライする。Hostlinkuは、あきらめる前に数回試行している。
+
+OpenAI SDK を使用したエラー処理の例（Python）：
+
+```python
+import openai
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+
+try:
+    response = client.chat.completions.create(
+        model="gpt-5-5",
+        messages=[{"role": "user", "content": "Halo"}],
+    )
+except openai.AuthenticationError as err:      # 401
+    raise SystemExit(f"API key bermasalah: {err}")
+except openai.RateLimitError as err:           # 429
+    raise SystemExit(f"Rate limit: {err}")
+except openai.APIStatusError as err:           # 4xx/5xx lainnya
+    print("status:", err.status_code, "body:", err.response.text)
+```
+
+<Callout type="note" title="報告する際は、必ず x-request-id を記載してください">
+また、失敗したレスポンスのヘッダー「`x-request-id`」も記録しておくことをお勧めします。サポートチームは、そのIDを使用してゲートウェイのログから当該リクエストを追跡します。
+</Callout>

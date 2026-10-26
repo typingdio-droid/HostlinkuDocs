@@ -1,0 +1,123 @@
+---
+title: "克劳德·科德"
+description: "通过 Hostlinku 并使用 ANTHROPIC_BASE_URL 运行 Claude Code（CLI、VS Code、JetBrains）——无论使用 Claude 还是其他模型，一个余额即可满足所有需求"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Claude Code](https://code.claude.com/docs) 支持 Anthropic Messages 协议。Hostlinku 在 [`POST /v1/messages`](/zh/anthropic-messages)（包括 `/v1/messages/count_tokens`）上提供兼容的端点，因此只需通过环境变量即可将 Claude Code 重定向至 Hostlinku ——无需额外的代理。
+
+<Steps>
+
+### 安装 Claude Code
+
+```bash
+npm install -g @anthropic-ai/claude-code
+# atau: curl -fsSL https://claude.ai/install.sh | bash
+```
+
+如果你之前曾使用账号 Anthropic/Claude 登录过，请先运行 `claude`，然后输入 `/logout`，以确保已保存的 OAuth 凭据不会影响网关配置。
+
+### 请转至 Hostlinku
+
+最快的方法——在shell中导出（`~/.zshrc` / `~/.bashrc`）：
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hostlinku.com
+export ANTHROPIC_AUTH_TOKEN=sk-isi-api-key-kamu
+
+# Pin model untuk alias yang dipakai Claude Code
+export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
+export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
+
+claude
+```
+
+持久化方法——将 `env` 块放置在 `~/.claude/settings.json` 中（适用于所有项目），或放置在项目根目录下的 `.claude/settings.local.json` 中（仅限该项目；该文件通常会被添加到 `.gitignore` 中）：
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.hostlinku.com",
+    "ANTHROPIC_AUTH_TOKEN": "sk-isi-api-key-kamu",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5"
+  }
+}
+```
+
+`settings.json`中的数值**超过了**export shell。
+
+### 验证
+
+在Claude Code会话中输入`/status`：*API*部分应显示基础 URL `https://api.hostlinku.com`以及*auth token*身份验证方法。发送一条简单的提示，然后检查该请求是否出现在控制台的→**请求日志**中，并确认其中显示的是你所使用的API密钥。
+
+### （可选）在会话中切换模型
+
+`/model` 显示了你上面已固定的别名 `sonnet` / `opus` / `haiku`。若要一次性使用其他别名：
+
+```bash
+claude --model deepseek-v4-flash
+# atau pin default lewat env: export ANTHROPIC_MODEL=gpt-5-5
+```
+
+</Steps>
+
+## 认证：`AUTH_TOKEN` 还是 `API_KEY`？
+
+| 变量 | 发送的标头 | 由 Hostlinku 提供支持 |
+|---|---|---|
+| `ANTHROPIC_AUTH_TOKEN` | `Authorization: Bearer sk-…` | 是（建议） |
+| `ANTHROPIC_API_KEY` | `x-api-key: sk-…` | 是 |
+
+这两个值均可被网关接受；请选择其中一个，不要同时填写两个不同的值。
+
+## VS Code 和 JetBrains 扩展
+
+Claude Code 扩展会自行检查登录信息，因此还需在扩展设置中填写相同的变量 — VS Code：`claudeCode.environmentVariables` 中的 `settings.json`：
+
+```json
+{
+  "claudeCode.environmentVariables": [
+    { "name": "ANTHROPIC_BASE_URL", "value": "https://api.hostlinku.com" },
+    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-isi-api-key-kamu" },
+    { "name": "ANTHROPIC_DEFAULT_SONNET_MODEL", "value": "claude-sonnet-4-6" },
+    { "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL", "value": "claude-haiku-4-5" }
+  ]
+}
+```
+
+在 JetBrains 中，请在 *设置 → 工具 → Claude Code → 环境变量* 中设置相同的变量（或确保 IDE 是从已导出该变量的 shell 中运行的）。
+
+## 使用非Claude模型
+
+由于网关会进行协议转换，因此 `sonnet`/`haiku` 的别名可以填写 [目录](/zh/models) 中的任意短链接：
+
+```bash
+export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
+```
+
+依赖于模型能力的特性（工具使用、*扩展思维*、视觉）遵循目标模型的能力——请查阅目录中的字段 `capabilities`。
+
+<Callout type="note" title="Claude Code 无法识别非 Claude 模型的名称">
+当使用 `gpt-5-5` 或 `deepseek-v4-flash` 这样的 slug 时，Claude Code 会显示 `unrecognized_model` 警告，并假设上下文长度为 200k 个Token。 请求仍会正常运行（已验证），但如果目标模型的上下文窗口更大，请在客户端调整上下文。
+</Callout>
+
+<Callout type="tip" title="为分代理节省余额">
+Claude Code 使用 *haiku* 作为别名来处理轻量级任务（摘要、会话标题、快速子代理）。将其设置为 `claude-haiku-4-5` 或 `deepseek-v4-flash`，可在不影响主模型质量的前提下，显著降低长会话的成本。
+</Callout>
+
+<Callout type="note" title="大上下文与缓存">
+Hostlinku 继承了 `cache_control`（提示缓存），并在 `usage` 中报告了 `cache_read_input_tokens` / `cache_creation_input_tokens` — Claude Code 会自动利用这些信息。 计费遵循相关模型的缓存定价（参见 [计费](/zh/billing)）。
+</Callout>
+
+## 故障排除
+
+- **`401 authentication_error` 尽管密钥正确** — 仍在使用旧的 OAuth 凭据。运行 `/logout`，关闭会话，确保能读取 `ANTHROPIC_BASE_URL`（`/status`）。
+- **未找到模型（`404`）** — 即尚未进行固定，因此Claude Code发送了其默认模型名称。请将`ANTHROPIC_DEFAULT_*_MODEL`填入目录中的别名。
+- **`400 max_tokens melebihi batas`** — 如果目标模型的输出上限较小，则通过 `CLAUDE_CODE_MAX_OUTPUT_TOKENS`（例如 `32000`）将 `max_tokens` 降低。
+- **速率限制 (`429`)** — Claude Code 可以并行运行多个子代理。有关限制的详细信息，请参阅 [使用与限制](/zh/usage-and-limits)。

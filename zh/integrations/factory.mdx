@@ -1,0 +1,84 @@
+---
+title: "Factory Droid"
+description: "在 ~/.factory/settings.json 中将模型 Hostlinku 添加为 customModels，并在 Droid CLI 以及 Factory 桌面应用程序中使用它"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Droid](https://docs.factory.ai/cli/byok/overview) —— Factory 的代理编码工具 —— 支持 **BYOK 自定义模型**。 自定义模型从 `~/.factory/settings.json` 读取，可在 Droid CLI 以及 Factory 桌面应用程序中使用（不适用于 Factory 网页/移动平台）。API 密钥始终保存在本地，不会发送至 Factory 服务器。
+
+<Steps>
+
+### 将 API 密钥保存到环境变量中
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+将其添加到 `~/.zshrc` / `~/.bashrc` 中以使其永久生效。Droid 从 `settings.json` 中读取 `${HOSTLINKU_API_KEY}` 的引用。
+
+### 在 settings.json 中注册模型
+
+打开（或创建）`~/.factory/settings.json`，然后添加`customModels`：
+
+```json
+{
+  "customModels": [
+    {
+      "model": "claude-sonnet-4-6",
+      "displayName": "Claude Sonnet 4.6 (Hostlinku)",
+      "baseUrl": "https://api.hostlinku.com",
+      "apiKey": "${HOSTLINKU_API_KEY}",
+      "provider": "anthropic",
+      "maxOutputTokens": 64000
+    },
+    {
+      "model": "gpt-5-5",
+      "displayName": "GPT-5.5 (Hostlinku)",
+      "baseUrl": "https://api.hostlinku.com/v1",
+      "apiKey": "${HOSTLINKU_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 64000
+    },
+    {
+      "model": "deepseek-v4-flash",
+      "displayName": "DeepSeek V4 Flash (Hostlinku)",
+      "baseUrl": "https://api.hostlinku.com/v1",
+      "apiKey": "${HOSTLINKU_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 32000
+    }
+  ]
+}
+```
+
+| `provider` | API 格式 | 基准URL Hostlinku |
+|---|---|---|
+| `anthropic` | Anthropic Messages | `https://api.hostlinku.com`（不含`/v1`） |
+| `generic-chat-completion-api` | OpenAI Chat Completions | `https://api.hostlinku.com/v1` |
+
+### 在Droid上选择机型
+
+运行 `droid`，输入 `/model`，然后在 **自定义模型** 部分选择模型（名称与 `displayName` 一致）。第一个请求将显示在控制台 → **请求日志** 中。
+
+</Steps>
+
+## 需知事项
+
+<Callout type="tip" title="通过Anthropic提供的Claude模型">
+提供商 `anthropic` 使用 Messages API，因此 `cache_control` 被转发，且提示缓存功能完全正常。您可以在 Droid 中通过 `/cost` 检查节省效果，或查看请求日志中的 *cache* 列。
+</Callout>
+
+- **GPT及其他模型**（DeepSeek、GLM、Qwen、Kimi）通过`generic-chat-completion-api`的兼容性最佳。Droid平台上的`openai`提供商使用Responses API； Hostlinku 以 *无状态* 方式为 Responses 提供服务 ([详情](/zh/responses))，因此如有疑问，请选择 Chat Completions。
+- **`maxOutputTokens`** 请勿超过[产品目录](/zh/models)中规定的模型输出限值。
+- **通用提供程序的提示缓存**取决于目标模型。
+
+## 故障排除
+
+| 症状 | Solusi |
+|---|---|
+| 模型未在 `/model` 中显示 | JSON 无效或 `provider` 输入有误 — 请使用 `jq . ~/.factory/settings.json` 进行核对。 |
+| 错误：未找到变量 | `HOSTLINKU_API_KEY` 尚未在运行 `droid` 的 shell 中导出。 |
+| 所有请求中均包含`404` | 基础 URL弄混了：`anthropic`与`/v1`搞混了，`generic-chat-completion-api`与`/v1`搞混了。 |
+| `404 model_not_found` | `model` 的 slug 必须与 `GET /v1/models` 完全一致。 |

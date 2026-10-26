@@ -1,0 +1,49 @@
+---
+title: "支持"
+description: "如何联系Hostlinku团队以及报案时需提供的信息"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+需要有关网关、账户、API密钥或计费方面的帮助吗？以下是可用的联系渠道。
+
+## 支持渠道
+
+| 频道 | 用途 |
+|---|---|
+| **电子邮件**：[halo@hostlinku.com](mailto:halo@hostlinku.com) | 所有问题：技术、账户、账单 |
+| **控制台**：[console.hostlinku.com](https://console.hostlinku.com) | 提交报告前，请先检查余额、API密钥、请求日志和审计记录 |
+| **状态**：[status.hostlinku.com](https://status.hostlinku.com) | 查看当前正在发生的故障或事件 |
+
+## 提交报告时，请附上
+
+为了让团队能更快地进行排查，请附上：
+
+1. **`x-request-id`** 来自存在问题的响应（响应头；也出现在控制台日志中）。
+2. **事件发生时间**（含时区）以及所使用的**文章别名**。
+3. **HTTP状态码 + `error.code`** 来自错误响应（例如 `429 RATE_LIMITED`）。
+4. **可复现的最小请求示例**，不包含密钥。切勿将完整的API密钥发送给任何人；只需提供前8个字符即可。
+
+一份优秀的报告范例：
+
+```text
+Waktu     : 2026-10-08 14:32 WIB
+Request ID: cmpl_mfx1a2b3c4
+Model     : gpt-5-5
+Status    : 503 UPSTREAM_ERROR ("Terjadi gangguan saat memproses permintaan. Coba lagi.")
+Akun      : user@contoh.com
+Catatan   : terjadi 3x dalam 10 menit terakhir, endpoint /v1/chat/completions
+```
+
+## 响应时间
+
+支持工作由一个小型团队负责：工作日将**尽快**回复电子邮件（尽最大努力）。对于影响范围较大的故障，请关注状态页面；相关更新将在此发布。
+
+## 安全
+
+若发现安全问题（例如API密钥可能泄露或网关存在漏洞），请将详细信息私下发送至[halo@hostlinku.com](mailto:halo@hostlinku.com)，邮件主题请注明`[SECURITY]`。在问题得到处理之前，请勿公开相关细节。
+
+<Callout type="warning" title="请勿发送密钥">
+支持团队绝不会索要您的API密钥、密码或一次性密码（OTP）。如果有人冒用Hostlinku的名义索要此类信息，请予以忽略并进行举报。
+</Callout>

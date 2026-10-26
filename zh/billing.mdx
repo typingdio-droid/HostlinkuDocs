@@ -1,0 +1,99 @@
+---
+title: "账单与余额"
+description: "Hostlinku 余额的工作原理、充值方式及每枚Token费用的计算依据"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku的计费基于**美元预付余额**。每次聊天请求完成后，系统将根据实际使用的Token数量从余额中扣除相应金额；无需强制月费，且无任何隐藏费用。
+
+## 账户余额
+
+余额以每个用户一个信用账户的形式进行管理，包含以下字段：
+
+| Field | 含义 |
+|---|---|
+| `balance` | 账户总余额（美元）。 |
+| `reserved` | 当前被正在处理的请求占用的余额部分（估计值）。 |
+| `available` | `balance − reserved`。这个编号可用于提交新请求。 |
+| `lifetimeTopup` | 自账户创建以来的累计充值总额。 |
+| `lifetimeUsage` | 累计使用费总额。 |
+| `lowBalanceThreshold` | 控制台中的低余额预警阈值（默认值为 25 美元）。 |
+
+该数值可在控制台 → **余额** 菜单中查看，并可通过 `GET /api/wallet/account` 会话 API 获取（控制台使用）。对于您的应用程序，实时基准值在每个响应和日志记录中始终为 `hostlinku.cost`。
+
+## 充值余额
+
+1. 进入 [console.hostlinku.com](https://console.hostlinku.com) → **计费 → 付款**。
+2. 选择“Credit”套餐或输入其他金额（部分套餐可自动获得奖励）。
+3. 选择支付方式：
+
+| 方法 | 提供商 | 类型 |
+|---|---|---|
+| **QRIS** | iPaymu | 电子钱包或手机银行（印尼盾）的扫描件 |
+| **虚拟账户** | iPaymu | BCA、BNI、BRI、Mandiri等银行转账（印尼盾） |
+| **加密货币** | BlockBee | 通过BlockBee支付页面使用USDT、USDC及其他Token（USD） |
+
+尚未被管理员启用的方法仍会显示为**未启用**。
+4. 您将被引导至包含二维码、虚拟账户号或加密货币支付链接的结算页面。该页面可安全刷新，也可从“**待处理支付**”中再次打开。
+5. 完成支付。在提供商的 webhook 通过验证后，款项将**自动到账**，无需手动确认。
+
+从API的角度来看，流程如下：
+
+```http
+POST https://api.hostlinku.com/api/wallet/topup
+Content-Type: application/json
+Cookie: hl_session=…   # sesi console
+```
+
+```json
+{
+  "credits": 100,
+  "method": "qris"
+}
+```
+
+`method` = `qris`、`va`（添加`"channel": "bca"`等），或`crypto`。 响应包含 `topupId` 以及二维码/虚拟账户号/支付链接；状态可通过 `GET /api/wallet/topup/{topupId}` 进行监控。 服务器验证会通过 `400 BAD_REQUEST` 拒绝超出充值政策范围的金额（最小/最大值由管理员设置，技术上限为每笔交易 10,000 美元），并通过 `402 PAYMENT_REQUIRED` 拒绝尚未配置的提供商。
+
+<Callout type="note" title="信贷与付款不可混用">
+充值仅会增加**账户余额**，不会提高API密钥的限额。如果你使用的是按API密钥计算的信用限额（例如每天5美元），充值不会提高该限额。请在API密钥设置中调整限额。
+</Callout>
+
+## 费用计算依据
+
+每次请求的费用按**每个Token**计算，具体价格取决于所使用的客户模型：
+
+```text
+biaya = (token input non-cache  × harga_input_per_token)
+      + (token output           × harga_output_per_token)
+      + (token cache read       × harga_cache_read)   ← bila model mendukung caching
+      + (token cache write      × harga_cache_write)  ← bila model mendukung caching
+```
+
+- 缓存Token是输入Token的**组成部分**，而非其外部的附加内容。从缓存中获取的Token将分别按各自的缓存价格计费，而剩余的输入Token则按输入价格计费——因此同一Token绝不会被重复计费。
+- 各模型的价格（输入/输出，如有缓存则包含缓存价格）列于产品目录中。请参阅 [模型](/zh/models) 以及控制台中的 **模型** 菜单。 `GET /v1/models`响应中的数值是所用Service Mode API key中**1M个Token**的单价（1 <CreditIcon /> = $1）——而非每个Token或每1,000个Token的单价。
+- Token数量根据响应中的`usage`进行计算；如果无法获取使用量数据，则Hostlinku将采用保守估计值，并以此为依据进行计费（这种情况很少发生）。
+- 此处的缓存是指 `usage`（`prompt_tokens_details.cached_tokens` / `cache_write_tokens`）中提到的**服务提供商的提示缓存**。Hostlinku 不存储响应副本，也不会混用不同服务提供商之间的缓存。 如何启用该功能以及实际节省效果的示例，请参阅 [通过提示缓存节省成本](/zh/prompt-caching)。
+- 对于流式传输，费用将在流式传输结束后的计算；`hostlinku.cost`区块中的数值仍然准确。
+- 计算采用微美元（micro-USD）作为单位，以避免浮点数四舍五入误差，随后格式化为8位小数。
+
+## `402 PAYMENT_REQUIRED`是什么时候出现的？
+
+代码 402 始终表示 **需要积分**，但该消息会区分其来源：
+
+| 消息 | 含义 | 措施 |
+|---|---|---|
+| `Saldo kredit tidak cukup untuk request ini.` | `available` < 费用估算请求 | 在主机上充值 |
+| `Limit kredit API key tercapai (kredit x dari y …).` | 每次窗口重置时，API密钥为`credit_limit` | 请等待重置、修改限额，或使用其他 API 密钥 |
+| `Payment provider belum dikonfigurasi.`（充值时） | 支付服务提供商在设置中已停用 | 请选择其他提供商或联系管理员 |
+
+## 交易记录
+
+所有余额变动均记录在账本中，可在控制台 → **交易**（充值、消费、退款）中查看，其中包含状态、金额、支付方式和参考号。通过API会话：`GET /api/wallet/transactions`（支持按键集分页及每笔交易的详细信息）。
+
+<Callout type="tip" title="确保余额安全">
+在控制台中设置 `lowBalanceThreshold`。当余额达到该阈值时，控制台会发出提示，以便你在生产请求因 402 错误而失败之前及时充值。
+</Callout>

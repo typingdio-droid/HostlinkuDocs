@@ -1,0 +1,222 @@
+---
+title: "SDK およびサンプルコード"
+description: "Hostlinku～Anthropic Messages、OpenAI、Chat Completions、およびOpenAI Responsesの3つのAPI方言に関するPythonおよびNode.jsのサンプル。"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+1つのAPIキーが3つのダイアレクトすべてで有効です。異なるのは**base URL**と**header auth**のみです：
+
+| 方言 | ベースURL | ヘッダー |
+|---|---|---|
+| Anthropic Messages | `https://api.hostlinku.com`（`/v1`を除く） | `x-api-key: <API_KEY>` |
+| OpenAI Chat Completions | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
+| OpenAI Responses | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
+
+モデルの名前を[カタログ](/ja/models)のslugに変更してください。以下の例では、Service Mode Performanceで利用可能なモデルを使用しています。
+
+## Python
+
+### Anthropic Messages
+
+```bash
+pip install anthropic
+```
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+    api_key="sk-isi-api-key-kamu",
+    base_url="https://api.hostlinku.com",
+)
+
+message = client.messages.create(
+    model="claude-sonnet-5",
+    max_tokens=256,
+    messages=[{"role": "user", "content": "Jelaskan API gateway dalam dua kalimat."}],
+)
+print(message.content[0].text)
+print(message.usage.input_tokens, message.usage.output_tokens)
+```
+
+ストリーミング：
+
+```python
+with client.messages.stream(
+    model="claude-sonnet-5",
+    max_tokens=256,
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
+
+### OpenAI Chat Completions
+
+```bash
+pip install openai
+```
+
+```python
+from openai import OpenAI
+
+client = OpenAI(api_key="sk-isi-api-key-kamu", base_url="https://api.hostlinku.com/v1")
+
+response = client.chat.completions.create(
+    model="gpt-6-astra",
+    messages=[
+        {"role": "system", "content": "Kamu asisten yang ringkas."},
+        {"role": "user", "content": "Halo dari SDK OpenAI!"},
+    ],
+)
+print(response.choices[0].message.content)
+```
+
+ストリーミング：
+
+```python
+stream = client.chat.completions.create(
+    model="gpt-6-astra",
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+### OpenAI Responses
+
+```python
+response = client.responses.create(
+    model="gpt-6-astra",
+    instructions="Jawab singkat dalam bahasa Indonesia.",
+    input="Apa itu API gateway?",
+    max_output_tokens=256,
+)
+print(response.output_text)
+```
+
+ストリーミング：
+
+```python
+with client.responses.stream(
+    model="gpt-6-astra",
+    input="Tulis satu paragraf pendek.",
+) as stream:
+    for event in stream:
+        if event.type == "response.output_text.delta":
+            print(event.delta, end="", flush=True)
+```
+
+## Node.js / TypeScript
+
+### Anthropic Messages
+
+```bash
+npm install @anthropic-ai/sdk
+```
+
+```ts
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic({
+  apiKey: "sk-isi-api-key-kamu",
+  baseURL: "https://api.hostlinku.com",
+});
+
+const message = await client.messages.create({
+  model: "claude-sonnet-5",
+  max_tokens: 256,
+  messages: [{ role: "user", content: "Halo!" }],
+});
+console.log(message.content[0].text);
+```
+
+ストリーミング：
+
+```ts
+const stream = client.messages.stream({
+  model: "claude-sonnet-5",
+  max_tokens: 256,
+  messages: [{ role: "user", content: "Tulis satu paragraf pendek." }],
+});
+
+stream.on("text", (text) => process.stdout.write(text));
+await stream.finalMessage();
+```
+
+### OpenAI Chat Completions
+
+```bash
+npm install openai
+```
+
+```ts
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-isi-api-key-kamu",
+  baseURL: "https://api.hostlinku.com/v1",
+});
+
+const response = await client.chat.completions.create({
+  model: "gpt-6-astra",
+  messages: [{ role: "user", content: "Halo!" }],
+});
+console.log(response.choices[0].message.content);
+```
+
+ストリーミング：
+
+```ts
+const stream = await client.chat.completions.create({
+  model: "gpt-6-astra",
+  messages: [{ role: "user", content: "Tulis satu paragraf pendek." }],
+  stream: true,
+});
+
+for await (const chunk of stream) {
+  process.stdout.write(chunk.choices[0]?.delta?.content ?? "");
+}
+```
+
+### OpenAI Responses
+
+```ts
+const response = await client.responses.create({
+  model: "gpt-6-astra",
+  input: "Halo!",
+  max_output_tokens: 256,
+});
+console.log(response.output_text);
+```
+
+ストリーミング：
+
+```ts
+const stream = await client.responses.create({
+  model: "gpt-6-astra",
+  input: "Tulis satu paragraf pendek.",
+  stream: true,
+});
+
+for await (const event of stream) {
+  if (event.type === "response.output_text.delta") {
+    process.stdout.write(event.delta);
+  }
+}
+```
+
+## 注記
+
+<Callout type="note" title="他の言語">
+Java、Go、PHPでは同じパターンを採用しています：`base_url`をHostlinkuに置き換え、 その後、公式SDKのAnthropic（Messages）またはOpenAI（Chat/Responses）を使用します。Hostlinku専用のライブラリはありません。
+</Callout>
+
+<Callout type="warning" title="クライアントごとの上限">
+**Codex CLIはOpenAIモデルのみに対応しています** (`gpt-*`) — ClaudeモデルおよびOpenAI以外のモデルは、ツールのタイプが異なるため、アップストリームで拒否されます。 **Claude Code**では非Claudeモデルを使用できますが、`unrecognized_model`の警告が表示され、200kトークンのコンテキストが想定されます。 詳細は、[Codex CLI](/ja/integrations/codex-cli) および [Claude Code](/ja/integrations/claude-code) のページをご覧ください。
+</Callout>

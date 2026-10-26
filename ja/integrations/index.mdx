@@ -1,0 +1,74 @@
+---
+title: "統合の概要"
+description: "Claude Code、Codex CLI、Cursor、VS Code、GitHub Copilot、Zed、Cline、Kilo Code、Continue、 JetBrains AI Assistant、Junie、Factory Droid、OpenCode、Xum、Aider、およびOpenAI Agents SDKでご利用いただけます。ツールの動作を変更することなく、ベースURLを変更するだけで済みます。"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+ほぼすべての最新のコーディングエージェントやAI IDEは、**カスタムベースURL**を介して他のプロバイダーに接続できます。Hostlinkuは、OpenAI、Chat Completions、 OpenAI、Responses、およびAnthropic Messages——に対応しているため、以下のすべてのツールで**1つのAPIキーと1つの残高**を使用でき、コンソールの1つのリクエストログからすべての使用状況を監視できます。
+
+## お好みのツールを選んでください
+
+| ツール | 使用されているAPIのフォーマット | ベースURL | ガイド |
+|---|---|---|---|
+| Claude Code（CLI および VS Code/JetBrains 拡張機能） | Anthropic Messages | `https://api.hostlinku.com` | [クロード・コード](/ja/integrations/claude-code) |
+| Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/ja/integrations/codex-cli) |
+| カーソル | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [カーソル](/ja/integrations/cursor) |
+| VS Code（チャット機能および標準搭載のエージェントモード） | OpenAI Chat Completions（または Anthropic／Responses） | `https://api.hostlinku.com/v1/chat/completions`（完全なエンドポイントURL） | [VS Code](/ja/integrations/vscode) |
+| GitHub Copilot CLI および Copilot アプリ | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [GitHub Copilot](/ja/integrations/copilot) |
+| Zed（エージェントパネル） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/ja/integrations/zed) |
+| Cline、Roo Code | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/ja/integrations/cline) |
+| キロコード | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [キロコード](/ja/integrations/kilo-code) |
+| 続行 (VS Code および JetBrains) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [続き](/ja/integrations/continue) |
+| JetBrains AI Assistant（IntelliJ IDEA、PyCharm、WebStorm、…） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [JetBrains](/ja/integrations/jetbrains) |
+| Junie CLI (JetBrains) | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1/chat/completions`（完全なエンドポイントURL） | [Junie](/ja/integrations/junie) |
+| Factory Droid（CLI およびデスクトップ版） | Anthropic Messages または OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [工場](/ja/integrations/factory) |
+| OpenCode | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [OpenCode](/ja/integrations/opencode) |
+| Xum（並列エージェント） | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [Xum](/ja/integrations/xum) |
+| Aider | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Aider](/ja/integrations/aider) |
+| OpenAI エージェント SDK（Python および TypeScript） | OpenAI Responses | `https://api.hostlinku.com/v1` | [Agents SDK](/ja/integrations/agents-sdk) |
+
+*「OpenAI-compatible」* または *「カスタムベースURL」* のオプションを提供するその他のツール （例：Open WebUI、LibreChat、LangChain、Vercel AI SDK、n8n、Dify）も同様のパターンに従います：ベースURLは`https://api.hostlinku.com/v1`、APIキーは`sk-…`、そしてカタログからのモデルのスラッグです。
+
+## 常に変わらない3つのこと
+
+1. **ベースURL** — OpenAI形式のツールには`https://api.hostlinku.com/v1`； Anthropic形式のツールには`https://api.hostlinku.com`（`/v1`を除く）を使用してください。これは、Anthropic SDKが独自に`/v1/messages`を追加するためです。
+2. **APIキー** — [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** のシークレット `sk-…`。 `Authorization: Bearer sk-…` (OpenAI) または `x-api-key` (Anthropic) として使用されます。ゲートウェイは、すべてのエンドポイント `/v1/*` でこれら両方を認識します。
+3. **モデルのslug** — [モデルカタログ](/ja/models)に記載されているものと同じです。例：`claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 各APIフォーマットは、プロトコルを翻訳するゲートウェイを介して、どのモデルでも呼び出すことができます。例えば、Codex CLI経由でClaudeを呼び出したり、Claude Code経由でGPTを呼び出したりできます。
+
+## コーディングにおすすめのモデル
+
+アカウントで有効なslugの一覧は、常にコンソール（**Model** メニュー）または `GET /v1/models` に表示されています。まずは以下を参考にしてください：
+
+| ニーズ | slug | 注記 |
+|---|---|---|
+| 毎日のエージェント型コーディング（安全なデフォルト設定） | `claude-sonnet-4-6` | 強力なツール呼び出し、広範なコンテキスト。 |
+| 難しい課題／ファイル横断的なリファクタリング | `claude-opus-4-6`, `gpt-5-5` | より高価です。Sonnetが不足している場合に使用してください。 |
+| Codex CLI | `gpt-5-3-codex`, `gpt-5-5` | Codexのワークフロー（apply_patch、shell）向けに最適化されています。 |
+| サブエージェント／コミットメッセージ／要約のための迅速かつ低コストなモデル | `claude-haiku-4-5`, `deepseek-v4-flash` | *haiku* / *weak model* の別名として適しています。 |
+| 大規模なコンテキストに対応したオープンウェイトの代替案 | `kimi-k2-7-code`, `glm-5-3`, `qwen3-6-plus` | すべてがコールツールをサポートしています。 |
+
+## 安全な実践
+
+<Callout type="important" title="ツールごとに1つのAPIキー">
+各ツールごとに個別のAPIキー（例：`claude-code-laptop`、`cursor-kantor`）を作成し、日次／月次の**クレジット制限**を設定してください。万が一、設定ファイルから1つのキーが漏洩した場合でも、他のツールに影響を与えることなく、そのキーのみを無効化すれば済みます。 [認証](/ja/authentication)を参照してください。
+</Callout>
+
+- **APIキーは`/v1/*`ゲートウェイでのみ有効です。** `sk-…`のキーでは、コンソールへのログイン、残高の変更、新しいキーの作成はできません。したがって、IDEの設定に保存されているキーによって、あなたのアカウントが乗っ取られることはありません。
+- **APIキーをコミットしないでください。** 環境変数（`HOSTLINKU_API_KEY`）または各シークレットストアツールに保存してください。ここにあるすべてのガイドでは、この方法を採用しています。
+- **使用状況を監視する。** コンソールの **リクエストログ** メニューには、各ツールからのすべてのリクエスト（モデル、トークン、コスト、レイテンシ、および使用された API キー）が表示されます。[使用状況と制限](/ja/usage-and-limits) を参照してください。
+
+## よくある問題
+
+| 症状 | 原因と解決策 |
+|---|---|
+| `401` / *認証エラー* | APIキーが間違っている、無効化されている、または有効期限が切れています。スペースや改行が誤ってコピーされていないか確認してください。Claude Codeでは、以前にAnthropicアカウントでログインしたことがある場合は、まず`/logout`を実行してください。 |
+| `402` / *割り当て不足* | 残高がなくなったか、APIキーのクレジット上限に達しました。コンソールで残高を補充するか、上限を引き上げてください。 |
+| `404` / *モデルが見つかりません* | モデルのslugに誤字があるか、カタログに存在しません。`GET /v1/models`からそのままコピーしてください。 |
+| `400` *Service Modeでは取り扱っておりません* | Service Mode API key にはそのモデルがありません。モデルを変更するか、別の Service Mode を使用してキーを作成してください。 |
+| `429` / *レート制限* | ツールが多数の要求を並列で送信しています（サブエージェント）。ヘッダー `Retry-After` の指示に従って待機するか、並列処理の数を減らしてください。[使用方法と制限](/ja/usage-and-limits) を参照してください。 |
+| ツールがベースURL `localhost` を拒否しました | 一部のツール（例：Cursor）は、あなたのコンピュータではなく、そのサーバーのAPIを呼び出します。`https://api.hostlinku.com`は公開エンドポイントであるため、安全です。 |
+| 「オートコンプリート／タブ」機能が動作しない | インラインのオートコンプリートは通常、エンドポイント `/v1/completions` (FIM) またはツール専用のインフラストラクチャを使用します。Hostlinku はチャットに対応しており、Responses および Messages は FIM ではありません。 チャット/エージェント/編集にはHostlinkuを使用し、オートコンプリートはツールのデフォルトプロバイダーのままにしておきます。 |
+
+ここにまだ掲載されていないツールが必要ですか？[halo@hostlinku.com](mailto:halo@hostlinku.com) までご連絡いただくか、[サポート](/ja/support) をご覧ください。

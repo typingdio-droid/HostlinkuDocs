@@ -1,0 +1,123 @@
+---
+title: "クロード・コード"
+description: "Hostlinku 経由で Claude Code（CLI、VS Code、JetBrains）を実行し、ANTHROPIC_BASE_URL を指定 — Claude や他のモデルを利用でき、1つの残高ですべてに対応"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Claude Code](https://code.claude.com/docs) は Anthropic Messages プロトコルに対応しています。Hostlinku は [`POST /v1/messages`](/ja/anthropic-messages)（`/v1/messages/count_tokens`を含む）に互換性のあるエンドポイントを提供しているため、Claude Codeは環境変数を設定するだけでHostlinkuにリダイレクトでき、追加のプロキシは不要です。
+
+<Steps>
+
+### Claude Codeをインストールする
+
+```bash
+npm install -g @anthropic-ai/claude-code
+# atau: curl -fsSL https://claude.ai/install.sh | bash
+```
+
+以前にAnthropic/Claudeというアカウントでログインしたことがある場合は、`claude`を実行してから`/logout`と入力し、保存されているOAuthの認証情報がゲートウェイの設定に優先されないようにしてください。
+
+### Hostlinku へ移動してください
+
+最も手っ取り早い方法 — シェルでのエクスポート (`~/.zshrc` / `~/.bashrc`)：
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hostlinku.com
+export ANTHROPIC_AUTH_TOKEN=sk-isi-api-key-kamu
+
+# Pin model untuk alias yang dipakai Claude Code
+export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
+export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
+
+claude
+```
+
+永続化の方法 — `~/.claude/settings.json`内の`env`ブロック（すべてのプロジェクトに適用）またはプロジェクトルート内の`.claude/settings.local.json`（そのプロジェクトのみ。このファイルは通常、gitignoreの対象となります）：
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.hostlinku.com",
+    "ANTHROPIC_AUTH_TOKEN": "sk-isi-api-key-kamu",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5"
+  }
+}
+```
+
+`settings.json`の値は、export shellを**上回った**。
+
+### 確認
+
+Claude Codeのセッションで「`/status`」と入力してください：*API*セクションには、ベースURL「`https://api.hostlinku.com`」と認証方法「*auth token*」が表示される必要があります。簡単なプロンプトを1つ送信し、コンソールの「**リクエストログ**」に、使用しているAPIキーを含むリクエストが表示されているか確認してください。
+
+### （オプション）セッション内でモデルを切り替える
+
+`/model`には、上記でピン留めした`sonnet` / `opus` / `haiku`のエイリアスが表示されます。一度だけ別のslugを使用するには：
+
+```bash
+claude --model deepseek-v4-flash
+# atau pin default lewat env: export ANTHROPIC_MODEL=gpt-5-5
+```
+
+</Steps>
+
+## 認証：`AUTH_TOKEN` それとも `API_KEY`？
+
+| 変数 | 送信されたヘッダー | Hostlinkuによる支援 |
+|---|---|---|
+| `ANTHROPIC_AUTH_TOKEN` | `Authorization: Bearer sk-…` | はい（推奨） |
+| `ANTHROPIC_API_KEY` | `x-api-key: sk-…` | はい |
+
+どちらもゲートウェイで受け入れられます。どちらか一方を選択してください。異なる値を両方とも入力しないでください。
+
+## VS Code および JetBrains の拡張機能
+
+Claude Code 拡張機能はログイン情報を独自に確認するため、拡張機能の設定でも同じ変数を指定する必要があります — VS Code: `claudeCode.environmentVariables` および `settings.json`:
+
+```json
+{
+  "claudeCode.environmentVariables": [
+    { "name": "ANTHROPIC_BASE_URL", "value": "https://api.hostlinku.com" },
+    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-isi-api-key-kamu" },
+    { "name": "ANTHROPIC_DEFAULT_SONNET_MODEL", "value": "claude-sonnet-4-6" },
+    { "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL", "value": "claude-haiku-4-5" }
+  ]
+}
+```
+
+JetBrainsでは、*[設定] → [ツール] → [Claude Code] → [環境変数]* で同じ変数を設定してください（または、その変数がエクスポートされているシェルからIDEが実行されていることを確認してください）。
+
+## 非Claudeモデルを使用する
+
+ゲートウェイがプロトコルを変換するため、`sonnet`/`haiku` には、[カタログ](/ja/models) から任意のslugを指定できます：
+
+```bash
+export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
+```
+
+モデルの能力に依存する機能（道具の使用、*拡張思考*、視覚）は、対象モデルの機能に準じます。カタログのフィールド `capabilities` をご確認ください。
+
+<Callout type="note" title="Claude Codeは、Claude以外のモデルの名前を認識しません">
+`gpt-5-5` や `deepseek-v4-flash` のようなslugを使用すると、Claude Code は警告 `unrecognized_model` を表示し、200k トークンのコンテキストを想定します。 リクエストは正常に実行されます（検証済み）が、対象のモデルのウィンドウサイズがこれより大きい場合は、クライアント側でコンテキストを調整してください。
+</Callout>
+
+<Callout type="tip" title="サブエージェントの残高を節約する">
+Claude Codeは、簡単なタスク（要約、セッションのタイトル、簡易サブエージェントなど）には*haiku*という別名を使用しています。これに`claude-haiku-4-5`または`deepseek-v4-flash`を設定することで、メインモデルの品質を損なうことなく、長時間のセッションにかかるコストを大幅に削減できます。
+</Callout>
+
+<Callout type="note" title="大枠のコンテキストとキャッシュ">
+Hostlinkuは`cache_control`（プロンプトキャッシュ）を引き継ぎ、`usage`で`cache_read_input_tokens` / `cache_creation_input_tokens`を報告します。Claude Codeはこれを自動的に活用します。 請求は、該当するモデルのキャッシュ価格に基づいて行われます（[Billing](/ja/billing)を参照）。
+</Callout>
+
+## トラブルシューティング
+
+- **`401 authentication_error` キーは正しいはずなのに** — 古いOAuth認証情報がまだ使用されています。`/logout`を実行し、セッションを終了してから、`ANTHROPIC_BASE_URL`が読み取れることを確認してください（`/status`）。
+- **モデルが見つかりません (`404`)** — エイリアスがまだピン留めされていないため、Claude Code はデフォルトのモデル名を送信しています。`ANTHROPIC_DEFAULT_*_MODEL` にカタログのslugを入力してください。
+- **`400 max_tokens melebihi batas`** — 目標モデルの出力上限が小さい場合は、`max_tokens`を`CLAUDE_CODE_MAX_OUTPUT_TOKENS`（例：`32000`）経由で下げる。
+- **レート制限 (`429`)** — Claude Code では、複数のサブエージェントを並行して実行できます。制限については、[利用状況と制限](/ja/usage-and-limits) をご覧ください。

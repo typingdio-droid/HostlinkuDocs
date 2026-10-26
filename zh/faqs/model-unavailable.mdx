@@ -1,0 +1,32 @@
+---
+title: "该模型暂无库存"
+description: "404与503的区别、Service Mode、已弃用的模型以及可采取的措施。"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+## 404 还是 503？
+
+| 状态 | 代码 | 含义 | 措施 |
+|---|---|---|---|
+| 404 | `MODEL_NOT_FOUND` | 该Slug未在目录中 | 从 `GET /v1/models` 中提取短链接 |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | 该模型已存在，但不支持API密钥模式 | 更改密钥/模式或选择其他模型 |
+| 503 | `MODEL_UNAVAILABLE` | 该模型已弃用/目前不可用 | 检查`replacement_slug`是否存在错误或是否在目录中 |
+| 503 | `UPSTREAM_ERROR` | 上游出现临时故障 | 请尝试使用backoff |
+
+## 已弃用的模型
+
+已弃用的模型不再出现在 `GET /v1/models` 中。如果错误消息中包含 `replacement_slug`，请使用该 slug。有效模型列表请参见 [模型](/zh/models)。
+
+## 为什么我的密钥里没有模型了？
+
+不同 Service Mode 的目录可能有所不同。Performance 和 Low-Cost 类型的 API 密钥可查看不同的模型列表。请使用正确的密钥查看 `GET /v1/models`，或在控制台中按所需模式创建密钥。
+
+## 请求会被自动重定向吗？
+
+对于上游故障，网关会在放弃之前尝试其他路径。但如果该模型确实不在目录中或没有可用路由，请求仍会失败。故障转移不会改变你使用的slug。
+
+<Callout type="tip" title="快速检查">
+请将该slug与[模型目录](/zh/models)进行对比，然后查看[错误](/zh/errors)中的详细错误代码。如果仍然失败，请将`x-request-id`发送至[支持部门](/zh/support)。
+</Callout>

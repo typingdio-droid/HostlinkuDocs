@@ -1,0 +1,64 @@
+---
+title: "Model Baize"
+description: "Model BaizeモデルとAnonymousモデル。"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | Anonymous |
+| slug | `model-baize` |
+| コンテキスト | 1,000,000トークン |
+| 最大出力 | 非公開 |
+| 入力 | text |
+| 出力 | text |
+| リリース | 2026-08-13 |
+
+## 機能
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `long-context`
+
+## 価格
+
+| 項目 | 価格 |
+|---|---|
+| 入力（プロンプト） | $1.177 |
+| 出力（補完） | $4.118 |
+| キャッシュ読み取り | $0.294 |
+| キャッシュ書き込み | — |
+
+価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | サポート |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+
+エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+
+## リクエストの例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "model-baize",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+[← モデル一覧に戻る](/ja/models)

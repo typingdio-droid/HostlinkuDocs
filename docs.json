@@ -694,6 +694,566 @@
             "href": "https://console.hostlinku.com"
           }
         }
+      },
+      {
+        "language": "ja",
+        "tabs": [
+          {
+            "tab": "ドキュメント",
+            "icon": "book-open",
+            "groups": [
+              {
+                "group": "はじめに",
+                "icon": "rocket",
+                "pages": [
+                  "ja/index",
+                  "ja/getting-started",
+                  "ja/authentication"
+                ]
+              },
+              {
+                "group": "アカウント",
+                "icon": "wallet",
+                "pages": [
+                  "ja/usage-and-limits",
+                  "ja/billing"
+                ]
+              },
+              {
+                "group": "ヘルプ",
+                "icon": "life-buoy",
+                "pages": [
+                  "ja/support"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "よくある質問",
+            "pages": [
+              "ja/faqs/index",
+              "ja/faqs/stream-mode",
+              "ja/faqs/errors",
+              "ja/faqs/rate-limits",
+              "ja/faqs/billing",
+              "ja/faqs/model-unavailable"
+            ]
+          },
+          {
+            "tab": "API",
+            "icon": "square-terminal",
+            "groups": [
+              {
+                "group": "API",
+                "pages": [
+                  "ja/api-reference",
+                  "ja/sdk",
+                  "ja/chat-completions",
+                  "ja/anthropic-messages",
+                  "ja/responses",
+                  "ja/prompt-caching",
+                  "ja/models",
+                  "ja/dedicated",
+                  "ja/errors"
+                ]
+              },
+              {
+                "group": "モデル",
+                "hidden": true,
+                "searchable": true,
+                "pages": [
+                  "ja/models/qwen3-6-plus",
+                  "ja/models/qwen3-7-max",
+                  "ja/models/model-baize",
+                  "ja/models/claude-fable-5",
+                  "ja/models/claude-fable-5-1",
+                  "ja/models/claude-haiku-4-5",
+                  "ja/models/claude-opus-4-6",
+                  "ja/models/claude-opus-4-7",
+                  "ja/models/claude-opus-4-8",
+                  "ja/models/claude-opus-5",
+                  "ja/models/claude-opus-5-5",
+                  "ja/models/claude-sonnet-4-6",
+                  "ja/models/claude-sonnet-5",
+                  "ja/models/claude-sonnet-5-5",
+                  "ja/models/deepseek-v4-flash",
+                  "ja/models/deepseek-v4-pro",
+                  "ja/models/deepseek-v4-1-flash",
+                  "ja/models/deepseek-v4-1-flash-hyper",
+                  "ja/models/deepseek-v4-1-flash-hyper-chat",
+                  "ja/models/deepseek-v4-1-flash-turbo",
+                  "ja/models/minimax-m3",
+                  "ja/models/kimi-k2-6",
+                  "ja/models/kimi-k2-7-code",
+                  "ja/models/kimi-k3",
+                  "ja/models/kimi-k3-hyper",
+                  "ja/models/kimi-k3-hyper-chat",
+                  "ja/models/kimi-k3-turbo",
+                  "ja/models/gpt-5-3-codex",
+                  "ja/models/gpt-5-5",
+                  "ja/models/gpt-5-6-luna",
+                  "ja/models/gpt-5-6-sol",
+                  "ja/models/gpt-5-6-terra",
+                  "ja/models/gpt-6-astra",
+                  "ja/models/gpt-6-luna",
+                  "ja/models/gpt-6-sol",
+                  "ja/models/gpt-6-1-sol",
+                  "ja/models/mimo-v2-5-pro",
+                  "ja/models/glm-5",
+                  "ja/models/glm-5-1",
+                  "ja/models/glm-5-2",
+                  "ja/models/glm-5-3",
+                  "ja/models/glm-5-3-hyper-chat",
+                  "ja/models/glm-5-3-flash",
+                  "ja/models/glm-5-3-flash-hyper",
+                  "ja/models/glm-5-3-flash-hyper-chat"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "連携",
+            "icon": "plug",
+            "groups": [
+              {
+                "group": "連携",
+                "pages": [
+                  "ja/integrations/index",
+                  {
+                    "group": "IDE・エージェント連携",
+                    "expanded": false,
+                    "pages": [
+                      "ja/integrations/claude-code",
+                      "ja/integrations/codex-cli",
+                      "ja/integrations/cursor",
+                      "ja/integrations/vscode",
+                      "ja/integrations/copilot",
+                      "ja/integrations/zed",
+                      "ja/integrations/cline",
+                      "ja/integrations/kilo-code",
+                      "ja/integrations/continue",
+                      "ja/integrations/jetbrains",
+                      "ja/integrations/junie",
+                      "ja/integrations/factory",
+                      "ja/integrations/opencode",
+                      "ja/integrations/xum",
+                      "ja/integrations/aider",
+                      "ja/integrations/agents-sdk"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "法的情報",
+            "icon": "scale",
+            "groups": [
+              {
+                "group": "法的文書",
+                "pages": [
+                  "ja/legals/terms-of-service",
+                  "ja/legals/refund-policy",
+                  "ja/legals/privacy-policy",
+                  "ja/legals/acceptable-use-policy",
+                  "ja/legals/security"
+                ]
+              }
+            ]
+          }
+        ],
+        "footer": {
+          "socials": {
+            "website": "https://hostlinku.com"
+          },
+          "links": [
+            {
+              "header": "製品",
+              "items": [
+                {
+                  "label": "ウェブサイト",
+                  "href": "https://hostlinku.com"
+                },
+                {
+                  "label": "コンソール",
+                  "href": "https://console.hostlinku.com"
+                },
+                {
+                  "label": "料金",
+                  "href": "https://hostlinku.com/pricing"
+                }
+              ]
+            },
+            {
+              "header": "ドキュメント",
+              "items": [
+                {
+                  "label": "クイックスタート",
+                  "href": "/ja/getting-started"
+                },
+                {
+                  "label": "認証",
+                  "href": "/ja/authentication"
+                },
+                {
+                  "label": "チャット補完",
+                  "href": "/ja/chat-completions"
+                },
+                {
+                  "label": "モデル",
+                  "href": "/ja/models"
+                }
+              ]
+            },
+            {
+              "header": "ヘルプ",
+              "items": [
+                {
+                  "label": "FAQ",
+                  "href": "/ja/faqs"
+                },
+                {
+                  "label": "サポート",
+                  "href": "/ja/support"
+                },
+                {
+                  "label": "請求と残高",
+                  "href": "/ja/billing"
+                },
+                {
+                  "label": "ステータス",
+                  "href": "https://status.hostlinku.com"
+                }
+              ]
+            },
+            {
+              "header": "法的情報",
+              "items": [
+                {
+                  "label": "利用規約",
+                  "href": "/ja/legals/terms-of-service"
+                },
+                {
+                  "label": "プライバシーポリシー",
+                  "href": "/ja/legals/privacy-policy"
+                },
+                {
+                  "label": "返金ポリシー",
+                  "href": "/ja/legals/refund-policy"
+                },
+                {
+                  "label": "利用ポリシー",
+                  "href": "/ja/legals/acceptable-use-policy"
+                },
+                {
+                  "label": "セキュリティ",
+                  "href": "/ja/legals/security"
+                }
+              ]
+            }
+          ]
+        },
+        "navbar": {
+          "links": [
+            {
+              "label": "ドキュメント",
+              "href": "/ja"
+            },
+            {
+              "label": "ウェブサイト",
+              "href": "https://hostlinku.com"
+            },
+            {
+              "label": "ステータス",
+              "href": "https://status.hostlinku.com"
+            }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "コンソール",
+            "href": "https://console.hostlinku.com"
+          }
+        }
+      },
+      {
+        "language": "zh",
+        "tabs": [
+          {
+            "tab": "文档",
+            "icon": "book-open",
+            "groups": [
+              {
+                "group": "开始使用",
+                "icon": "rocket",
+                "pages": [
+                  "zh/index",
+                  "zh/getting-started",
+                  "zh/authentication"
+                ]
+              },
+              {
+                "group": "账户",
+                "icon": "wallet",
+                "pages": [
+                  "zh/usage-and-limits",
+                  "zh/billing"
+                ]
+              },
+              {
+                "group": "帮助",
+                "icon": "life-buoy",
+                "pages": [
+                  "zh/support"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "常见问题",
+            "pages": [
+              "zh/faqs/index",
+              "zh/faqs/stream-mode",
+              "zh/faqs/errors",
+              "zh/faqs/rate-limits",
+              "zh/faqs/billing",
+              "zh/faqs/model-unavailable"
+            ]
+          },
+          {
+            "tab": "API",
+            "icon": "square-terminal",
+            "groups": [
+              {
+                "group": "API",
+                "pages": [
+                  "zh/api-reference",
+                  "zh/sdk",
+                  "zh/chat-completions",
+                  "zh/anthropic-messages",
+                  "zh/responses",
+                  "zh/prompt-caching",
+                  "zh/models",
+                  "zh/dedicated",
+                  "zh/errors"
+                ]
+              },
+              {
+                "group": "模型",
+                "hidden": true,
+                "searchable": true,
+                "pages": [
+                  "zh/models/qwen3-6-plus",
+                  "zh/models/qwen3-7-max",
+                  "zh/models/model-baize",
+                  "zh/models/claude-fable-5",
+                  "zh/models/claude-fable-5-1",
+                  "zh/models/claude-haiku-4-5",
+                  "zh/models/claude-opus-4-6",
+                  "zh/models/claude-opus-4-7",
+                  "zh/models/claude-opus-4-8",
+                  "zh/models/claude-opus-5",
+                  "zh/models/claude-opus-5-5",
+                  "zh/models/claude-sonnet-4-6",
+                  "zh/models/claude-sonnet-5",
+                  "zh/models/claude-sonnet-5-5",
+                  "zh/models/deepseek-v4-flash",
+                  "zh/models/deepseek-v4-pro",
+                  "zh/models/deepseek-v4-1-flash",
+                  "zh/models/deepseek-v4-1-flash-hyper",
+                  "zh/models/deepseek-v4-1-flash-hyper-chat",
+                  "zh/models/deepseek-v4-1-flash-turbo",
+                  "zh/models/minimax-m3",
+                  "zh/models/kimi-k2-6",
+                  "zh/models/kimi-k2-7-code",
+                  "zh/models/kimi-k3",
+                  "zh/models/kimi-k3-hyper",
+                  "zh/models/kimi-k3-hyper-chat",
+                  "zh/models/kimi-k3-turbo",
+                  "zh/models/gpt-5-3-codex",
+                  "zh/models/gpt-5-5",
+                  "zh/models/gpt-5-6-luna",
+                  "zh/models/gpt-5-6-sol",
+                  "zh/models/gpt-5-6-terra",
+                  "zh/models/gpt-6-astra",
+                  "zh/models/gpt-6-luna",
+                  "zh/models/gpt-6-sol",
+                  "zh/models/gpt-6-1-sol",
+                  "zh/models/mimo-v2-5-pro",
+                  "zh/models/glm-5",
+                  "zh/models/glm-5-1",
+                  "zh/models/glm-5-2",
+                  "zh/models/glm-5-3",
+                  "zh/models/glm-5-3-hyper-chat",
+                  "zh/models/glm-5-3-flash",
+                  "zh/models/glm-5-3-flash-hyper",
+                  "zh/models/glm-5-3-flash-hyper-chat"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "集成",
+            "icon": "plug",
+            "groups": [
+              {
+                "group": "集成",
+                "pages": [
+                  "zh/integrations/index",
+                  {
+                    "group": "IDE 与代理集成",
+                    "expanded": false,
+                    "pages": [
+                      "zh/integrations/claude-code",
+                      "zh/integrations/codex-cli",
+                      "zh/integrations/cursor",
+                      "zh/integrations/vscode",
+                      "zh/integrations/copilot",
+                      "zh/integrations/zed",
+                      "zh/integrations/cline",
+                      "zh/integrations/kilo-code",
+                      "zh/integrations/continue",
+                      "zh/integrations/jetbrains",
+                      "zh/integrations/junie",
+                      "zh/integrations/factory",
+                      "zh/integrations/opencode",
+                      "zh/integrations/xum",
+                      "zh/integrations/aider",
+                      "zh/integrations/agents-sdk"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "法律",
+            "icon": "scale",
+            "groups": [
+              {
+                "group": "法律文件",
+                "pages": [
+                  "zh/legals/terms-of-service",
+                  "zh/legals/refund-policy",
+                  "zh/legals/privacy-policy",
+                  "zh/legals/acceptable-use-policy",
+                  "zh/legals/security"
+                ]
+              }
+            ]
+          }
+        ],
+        "footer": {
+          "socials": {
+            "website": "https://hostlinku.com"
+          },
+          "links": [
+            {
+              "header": "产品",
+              "items": [
+                {
+                  "label": "网站",
+                  "href": "https://hostlinku.com"
+                },
+                {
+                  "label": "控制台",
+                  "href": "https://console.hostlinku.com"
+                },
+                {
+                  "label": "价格",
+                  "href": "https://hostlinku.com/pricing"
+                }
+              ]
+            },
+            {
+              "header": "文档",
+              "items": [
+                {
+                  "label": "快速开始",
+                  "href": "/zh/getting-started"
+                },
+                {
+                  "label": "认证",
+                  "href": "/zh/authentication"
+                },
+                {
+                  "label": "聊天补全",
+                  "href": "/zh/chat-completions"
+                },
+                {
+                  "label": "模型",
+                  "href": "/zh/models"
+                }
+              ]
+            },
+            {
+              "header": "帮助",
+              "items": [
+                {
+                  "label": "常见问题",
+                  "href": "/zh/faqs"
+                },
+                {
+                  "label": "支持",
+                  "href": "/zh/support"
+                },
+                {
+                  "label": "计费与余额",
+                  "href": "/zh/billing"
+                },
+                {
+                  "label": "状态",
+                  "href": "https://status.hostlinku.com"
+                }
+              ]
+            },
+            {
+              "header": "法律",
+              "items": [
+                {
+                  "label": "服务条款",
+                  "href": "/zh/legals/terms-of-service"
+                },
+                {
+                  "label": "隐私政策",
+                  "href": "/zh/legals/privacy-policy"
+                },
+                {
+                  "label": "退款政策",
+                  "href": "/zh/legals/refund-policy"
+                },
+                {
+                  "label": "可接受使用政策",
+                  "href": "/zh/legals/acceptable-use-policy"
+                },
+                {
+                  "label": "安全",
+                  "href": "/zh/legals/security"
+                }
+              ]
+            }
+          ]
+        },
+        "navbar": {
+          "links": [
+            {
+              "label": "文档",
+              "href": "/zh"
+            },
+            {
+              "label": "网站",
+              "href": "https://hostlinku.com"
+            },
+            {
+              "label": "状态",
+              "href": "https://status.hostlinku.com"
+            }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "控制台",
+            "href": "https://console.hostlinku.com"
+          }
+        }
       }
     ]
   },

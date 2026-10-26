@@ -1,0 +1,344 @@
+---
+title: "APIリファレンス"
+description: "1ページにまとめたリファレンス — レート制限、Anthropic Messages API、OpenAI、Chat Completions、OpenAI Responses API、エラーコード、およびモデル一覧"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+ベースURL：`https://api.hostlinku.com`。すべてのゲートウェイエンドポイントは`/v1`の下にあり、ヘッダー`Authorization: Bearer` **または** `x-api-key`を介してAPIキーHostlinku（`sk-…`）を受け取ります。
+
+## レート制限
+
+すべてのユーザーに質の高いサービスを提供するため、ゲートウェイではAPIキーごとに以下の制限を設けています：
+
+| リミットタイプ | 割当 | 説明 |
+|---|---|---|
+| RPM（1分あたりのリクエスト数） | **600リクエスト/分** | APIキーごとに、すべてのモデルに割り当てられます |
+| RPD（1日あたりのリクエスト数） | 制限なし | アカウントの残高および[APIキーごとの与信限度額](/ja/authentication)による制限があります |
+| TPM（トークン／分） | 制限なし | `max_tokens` は、モデルの出力上限以下でなければならない（上限を超える場合は `400` が拒否される） |
+
+**レート制限の詳細：**
+
+- APIキーごとに60秒間の制限があります。すべてのモデルからのリクエストはまとめてカウントされます。
+- リミッターによって拒否されたリクエストは、残高に影響を与えません（クレジットの予約は発生しません）。
+- コンソールおよびパブリックエンドポイント（`/api/*`）は、**IP 1つあたり 120 リクエスト/分**に制限されています。認証エンドポイントは、**IP 1つあたり 15 分間に 30 回**の試行に制限されています。
+
+**制限に達した場合：**
+
+- HTTP `429 Too Many Requests`を返します。
+- ヘッダー `Retry-After` には、再試行までの推奨秒数が記載されています。
+- ヘッダー `RateLimit-Limit` / `RateLimit-Remaining` / `RateLimit-Reset`（IETF 形式）には、現在の RPM クォータが表示されます。
+
+<Callout type="note" title="もっと高い限度額が必要ですか？">
+アカウントのメールアドレスとおおよその利用量をご明記の上、[halo@hostlinku.com](mailto:halo@hostlinku.com) までご連絡ください。
+</Callout>
+
+## Anthropic Messages API フォーマット
+
+`POST /v1/messages`
+
+ネイティブ形式 Anthropic でモデルを呼び出します。リクエストヘッダーには `x-api-key: YOUR_API_KEY`（または `Authorization: Bearer`）を含める必要があります。 Anthropic SDK、Claude Code、Cursor、およびClineに対応しています。`ANTHROPIC_BASE_URL=https://api.hostlinku.com`を設定するだけで済みます。詳細なドキュメント：[Anthropic Messages](/ja/anthropic-messages)。
+
+### リクエストボディのパラメータ
+
+| パラメータ | タイプ | 説明 | 必須 |
+|---|---|---|---|
+| `model` | 文字列 | slugモデル Hostlinku、例：`claude-sonnet-4-6` | true |
+| `messages` | 配列 | 会話メッセージの配列 (`role`: `user` \| `assistant`) | true |
+| `max_tokens` | 整数 | 出力トークンの最大数 | true |
+| `system` | 文字列 \| 配列 | システムプロンプト（`cache_control`に対応したブロック配列） | false |
+| `stream` | ブール値 | SSEのストリーミング、デフォルトは`false` | false |
+| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | — | 仕様書 Anthropic に準拠 | false |
+
+### リクエスト例
+
+```bash
+curl --request POST \
+  --url https://api.hostlinku.com/v1/messages \
+  --header 'content-type: application/json' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'anthropic-version: 2023-06-01' \
+  --data '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "system": "You are a professional coding assistant",
+    "messages": [
+      { "role": "user", "content": "Write a quicksort in Python" }
+    ]
+  }'
+```
+
+### 応答例
+
+```json
+{
+  "id": "msg_mv5ujf05qf6ayfbx",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-sonnet-4-6",
+  "content": [
+    { "type": "text", "text": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 86,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 }
+  },
+  "hostlinku": { "cost": 0.0013, "currency": "🪙", "serviceMode": "performance", "latencyMs": 2410 }
+}
+```
+
+### ストリーミング出力
+
+```bash
+curl -N --request POST \
+  --url https://api.hostlinku.com/v1/messages \
+  --header 'content-type: application/json' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'accept: text/event-stream' \
+  --data '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "messages": [{ "role": "user", "content": [{ "type": "text", "text": "Hello" }] }],
+    "stream": true
+  }'
+```
+
+応答は、SSE形式で各セグメントごとに送信されます：
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_…","type":"message","role":"assistant","model":"claude-sonnet-4-6","content":[],"stop_reason":null,"usage":{"input_tokens":10,"output_tokens":1}}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello"}}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":10,"output_tokens":5}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+## OpenAI プロトコル (Chat Completions API)
+
+`POST /v1/chat/completions`
+
+OpenAI、Chat Completions の形式で任意のモデルを呼び出してください。リクエストヘッダーには `Authorization: Bearer YOUR_API_KEY` を指定する必要があります。 SDK OpenAIは、`base_url="https://api.hostlinku.com/v1"`にリダイレクトされます。詳細なドキュメント：[Chat Completions](/ja/chat-completions)。
+
+### リクエストボディのパラメータ
+
+| パラメータ | タイプ | 説明 | 必須 |
+|---|---|---|---|
+| `model` | 文字列 | slugモデル Hostlinku、例：`gpt-5-5` | true |
+| `messages` | 配列 | 会話メッセージの配列 (`system` \| `user` \| `assistant` \| `tool`) | true |
+| `max_tokens` | 整数 | 出力トークンの最大数 | false |
+| `stream` | ブール値 | SSEのストリーミング、デフォルトは`false` | false |
+| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | — | 仕様書 OpenAI（+ thinking 拡張機能）に準拠 | false |
+
+### リクエスト例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "user", "content": "Write a quicksort in Python" }
+    ],
+    "stream": false
+  }'
+```
+
+### 回答例
+
+```json
+{
+  "id": "cmpl_mv5strfqh3zktr",
+  "object": "chat.completion",
+  "created": 1770000000,
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 12, "completion_tokens": 86, "total_tokens": 98 },
+  "hostlinku": { "cost": 0.0009, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1890 }
+}
+```
+
+### ストリーミング出力
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hello" }],
+    "stream": true
+  }'
+```
+
+```text
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"Hello"}}]}
+
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":5,"completion_tokens":12,"total_tokens":17}}
+
+data: [DONE]
+```
+
+## OpenAI Responses API フォーマット
+
+`POST /v1/responses`
+
+**Codex CLI**、**OpenAI Agents SDK**、および `client.responses.create()` で使用されるフォーマット。リクエストヘッダーには `Authorization: Bearer YOUR_API_KEY` が含まれ、ベース URL は `https://api.hostlinku.com/v1` です。 ステートレス：`store`は常に`false`、`previous_response_id`は`400`で拒否される — `input`で完全な履歴を送信する。 完全なドキュメント：[Responses API](/ja/responses)。
+
+### リクエストボディのパラメータ
+
+| パラメータ | タイプ | 説明 | 必須 |
+|---|---|---|---|
+| `model` | 文字列 | slug型番 Hostlinku、例：`gpt-5-5` | true |
+| `input` | 文字列 \| 配列 | テキスト、または配列項目 `message` / `function_call` / `function_call_output` / `reasoning` | true |
+| `instructions` | 文字列 | システムプロンプト | false |
+| `max_output_tokens` | 整数 | 出力トークンの最大数 | false |
+| `stream` | ブール値 | SSE（`event: response.*`）のストリーミング、デフォルトは`false` | false |
+| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | — | 仕様書 OpenAI Responses に準拠 | false |
+
+### リクエスト例
+
+```bash
+curl https://api.hostlinku.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "instructions": "Be concise.",
+    "input": "Write a quicksort in Python",
+    "max_output_tokens": 512
+  }'
+```
+
+### 回答例
+
+```json
+{
+  "id": "resp_mv5xpsggbnpc4x7g",
+  "object": "response",
+  "created_at": 1791850828,
+  "status": "completed",
+  "model": "gpt-5-5",
+  "output": [
+    { "id": "rs_…", "type": "reasoning", "summary": [], "encrypted_content": "…" },
+    { "id": "msg_…", "type": "message", "status": "completed", "role": "assistant",
+      "content": [{ "type": "output_text", "text": "def quicksort(arr): …", "annotations": [] }] }
+  ],
+  "usage": { "input_tokens": 20, "output_tokens": 95, "total_tokens": 115,
+             "input_tokens_details": { "cached_tokens": 0 }, "output_tokens_details": { "reasoning_tokens": 12 } },
+  "previous_response_id": null,
+  "store": false,
+  "hostlinku": { "cost": 0.0011, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1420 }
+}
+```
+
+### ストリーミング出力
+
+```text
+event: response.created
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_…","status":"in_progress","model":"gpt-5-5","output":[]}}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"def quicksort"}
+
+event: response.completed
+data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_…","status":"completed","output":[…],"usage":{"input_tokens":20,"output_tokens":95,"total_tokens":115}}}
+```
+
+## エラーコード
+
+呼び出されたエンドポイントのプロトコルに準拠したエンベロープエラー：`/v1/chat/completions` → `{ "status": "error", "error": { "code", "message" } }`；`/v1/messages` → `{ "type": "error", "error": { "type", "message" } }`；`/v1/responses` → `{ "error": { "message", "type", "param", "code" } }`。
+
+| HTTPステータスコード | 説明 | エラーメッセージの例 |
+|---|---|---|
+| 400 | Bodyが無効です。`max_tokens`がモデルの出力制限を超えています。または、Service Mode API keyでモデルが利用できません。 | `max_tokens (20000) melebihi batas output model 'claude-haiku-4-5' (16000).` |
+| 401 | APIキーが送信されていない、無効である、取り消されている、または有効期限が切れている。 | `API key tidak valid atau sudah dicabut.` |
+| 402 | リクエストの推定費用を賄うのに残高が不足しているか、APIキーのクレジット上限に達しています。 | `Saldo tidak mencukupi.` |
+| 403 | アカウントが停止されました／アクセスが拒否されました。 | `Kamu tidak punya akses ke resource ini.` |
+| 404 | カタログにこのモデルのslugがありません。 | `Model 'xxx' tidak ditemukan.` |
+| 413 | リクエストのボディが最大サイズを超えています。 | `Payload terlalu besar.` |
+| 422 | ボディの検証に失敗しました（`/v1/chat/completions`のみ。`/v1/messages`および`/v1/responses`は400を使用）。 | `Request body tidak valid.` |
+| 429 | レート制限を超えました。 | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
+| 503 | モデル/アップストリームが利用できません — バックオフを適用して再試行しても問題ありません。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
+
+エラーメッセージには、**決して**アップストリームプロバイダの識別情報や生のテキストは含まれません。OpenAI 形式のエラーコードの完全な一覧は、[エラー](/ja/errors) に記載されています。
+
+### 429 レスポンスヘッダー
+
+| レスポンスヘッダー | 説明 |
+|---|---|
+| `Retry-After` | 再試行までの推奨待機時間（秒） |
+| `RateLimit-Limit` | RPMの上限 |
+| `RateLimit-Remaining` | 現在実行中のウィンドウに残っているリクエスト |
+| `RateLimit-Reset` | 次のウィンドウが始まるまでの残り時間（秒） |
+
+## 利用可能なモデルを照会する
+
+`GET /v1/models`
+
+使用中の**Service Mode API key**で利用可能なモデルと、そのモードにおける<CreditIcon />の1Mトークンあたりの価格を返します。
+
+### リクエスト例
+
+```bash
+curl --request GET \
+  --url https://api.hostlinku.com/v1/models \
+  --header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+### 応答例
+
+```json
+{
+  "object": "list",
+  "service_mode": "performance",
+  "data": [
+    {
+      "id": "claude-haiku-4-5",
+      "object": "model",
+      "created": 1760000000,
+      "owned_by": "hostlinku",
+      "context_window": 200000,
+      "capabilities": ["text", "tool-calling", "json-mode", "streaming", "long-context"],
+      "service_mode": "performance",
+      "pricing": { "input": 0.8, "output": 4, "cache_read": 0.08, "cache_write": 1, "unit": "1M_tokens", "currency": "🪙" }
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "object": "model",
+      "created": 1760000000,
+      "owned_by": "hostlinku",
+      "context_window": 1000000,
+      "capabilities": ["text", "vision", "tool-calling", "json-mode", "streaming", "reasoning", "long-context"],
+      "service_mode": "performance",
+      "pricing": { "input": 2.4, "output": 12, "cache_read": 0.24, "cache_write": 3, "unit": "1M_tokens", "currency": "🪙" }
+    }
+  ]
+}
+```
+
+<Callout type="note">
+このエンドポイントを使用して、最新のモデル名を取得してください。`id` は、両方の API フォーマットにおいてフィールド `model` で使用されるスラッグです。完全なカタログと価格については、[モデル](/ja/models) をご覧ください。
+</Callout>

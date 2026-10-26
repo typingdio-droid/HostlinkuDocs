@@ -1,0 +1,74 @@
+---
+title: "集成概述"
+description: "在 Claude Code、Codex CLI、Cursor、VS Code、GitHub Copilot、Zed、Cline、Kilo Code、Continue、 JetBrains AI Assistant、Junie、Factory Droid、OpenCode、Xum、Aider 以及 OpenAI Agents SDK ——只需替换基础 URL，无需更改工具的工作方式"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+几乎所有现代编程代理和AI集成开发环境（IDE）都可以通过**自定义基础 URL**指向其他提供商。由于Hostlinku同时支持三种协议——OpenAI、Chat Completions、 OpenAI、Responses 和 Anthropic Messages——因此您可以使用 **一个 API 密钥和一个余额** 来管理以下所有工具，并通过控制台中的单一“请求日志”来监控所有使用情况。
+
+## 选择你的工具
+
+| 工具 | 使用的API格式 | 基础 URL | 指南 |
+|---|---|---|---|
+| Claude Code（CLI 及 VS Code/JetBrains 扩展） | Anthropic Messages | `https://api.hostlinku.com` | [克劳德·科德](/zh/integrations/claude-code) |
+| Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/zh/integrations/codex-cli) |
+| 光标 | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [光标](/zh/integrations/cursor) |
+| VS Code（内置聊天与代理模式） | OpenAI Chat Completions（或 Anthropic/Responses） | `https://api.hostlinku.com/v1/chat/completions`（完整URL端点） | [VS Code](/zh/integrations/vscode) |
+| GitHub Copilot CLI 和 Copilot 应用 | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [GitHub Copilot](/zh/integrations/copilot) |
+| 泽德（英雄面板） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/zh/integrations/zed) |
+| 克莱恩，Roo Code | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/zh/integrations/cline) |
+| Kilo Code | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Kilo Code](/zh/integrations/kilo-code) |
+| 继续（VS Code 和 JetBrains） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [继续](/zh/integrations/continue) |
+| JetBrains AI 助手（IntelliJ IDEA、PyCharm、WebStorm 等） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [JetBrains](/zh/integrations/jetbrains) |
+| Junie CLI（JetBrains） | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1/chat/completions`（完整URL端点） | [Junie](/zh/integrations/junie) |
+| Factory Droid（命令行界面与桌面版） | Anthropic Messages 或 OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [工厂](/zh/integrations/factory) |
+| OpenCode | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [OpenCode](/zh/integrations/opencode) |
+| Xum（并行代理） | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Xum](/zh/integrations/xum) |
+| Aider | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Aider](/zh/integrations/aider) |
+| OpenAI Agents SDK（Python 和 TypeScript） | OpenAI Responses | `https://api.hostlinku.com/v1` | [代理 SDK](/zh/integrations/agents-sdk) |
+
+其他提供 *“OpenAI-compatible”* 或 *“自定义基础 URL”* 选项的工具 （例如 Open WebUI、LibreChat、LangChain、Vercel AI SDK、n8n、Dify）也遵循相同的模式：基础 URL 为 `https://api.hostlinku.com/v1`，API 密钥为 `sk-…`，以及来自目录的模型 slug。
+
+## 三件始终不变的事情
+
+1. **基础 URL** — `https://api.hostlinku.com/v1` 适用于 OpenAI 格式的工具； 对于格式为 Anthropic 的工具，请使用 `https://api.hostlinku.com`（不包含 `/v1`），因为 Anthropic SDK 会自行添加 `/v1/messages`。
+2. **API密钥** — 来自[console.hostlinku.com](https://console.hostlinku.com) → **API密钥**的密钥`sk-…`。 可作为 `Authorization: Bearer sk-…` (OpenAI) 或 `x-api-key` (Anthropic) 使用；网关在所有 `/v1/*` 端点上均接受这两种密钥。
+3. **模型标识符** — 与[模型目录](/zh/models)中的完全一致，例如 `claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 任何API格式都可以调用任何模型——例如通过Codex CLI调用Claude，或通过Claude Code调用GPT——因为网关会负责转换协议。
+
+## 编程的模型推荐
+
+您账户中已启用的slug列表始终可在控制台（**Model**菜单）或`GET /v1/models`中查看。作为起点：
+
+| 需求 | Slug | 注释 |
+|---|---|---|
+| 每日代理编码（安全的默认设置） | `claude-sonnet-4-6` | 强大的调用工具，广阔的应用场景。 |
+| 艰巨的任务 / 跨文件重构 | `claude-opus-4-6`, `gpt-5-5` | 价格更高；当Sonnet不足时使用。 |
+| Codex CLI | `gpt-5-3-codex`, `gpt-5-5` | 针对 Codex 工作流（apply_patch、shell）进行了优化。 |
+| 适用于子代理/提交消息/摘要的快速且经济实惠的模型 | `claude-haiku-4-5`, `deepseek-v4-flash` | 适用于别名 *haiku* / *weak model*。 |
+| 具有广泛语境的开放式权重替代方案 | `kimi-k2-7-code`, `glm-5-3`, `qwen3-6-plus` | 所有工具都支持呼叫功能。 |
+
+## 安全操作
+
+<Callout type="important" title="每个工具一个 API 密钥">
+为每个工具创建独立的API密钥（例如`claude-code-laptop`、`cursor-kantor`），并设置每日/每月**配额上限**。如果某个密钥从配置文件中泄露，只需撤销该密钥，而不会影响其他工具。 参见 [身份验证](/zh/authentication)。
+</Callout>
+
+- **该 API 密钥仅适用于 `/v1/*` 网关。** `sk-…` 密钥无法用于登录控制台、修改余额或创建新密钥——因此，存储在 IDE 配置中的密钥无法接管您的账户。
+- **请勿将 API 密钥提交到代码中。**请将其存储在环境变量（`HOSTLINKU_API_KEY`）或各自的密钥存储工具中；此处的所有指南均采用该模式。
+- **监控使用情况。** 控制台中的 **请求日志** 菜单会显示每个工具的每条请求——包括模型、Token、费用、延迟以及所使用的 API 密钥。请参阅 [使用情况与限制](/zh/usage-and-limits)。
+
+## 常见问题
+
+| 症状 | 原因与解决方案 |
+|---|---|
+| `401` / *身份验证错误* | API密钥错误、已被撤销或已过期。请确保复制时未包含空格或换行符。在Claude Code中，如果之前使用Anthropic账户登录过，请先运行`/logout`。 |
+| `402` / *配额不足* | 余额已用尽或API密钥的额度已用尽。请在控制台充值或提高额度。 |
+| `404` / *未找到该模型* | 模型代码有拼写错误或未收录在目录中。请直接从`GET /v1/models`中照抄。 |
+| `400` *Service Mode中无此项* | 该Service Mode API key中没有该模型。请更换模型，或使用另一个Service Mode生成密钥。 |
+| `429` / *速率限制* | 该工具会并行发送大量请求（子代理）。请按照 `Retry-After` 标头中的说明等待，或降低并行度。请参阅 [使用与限制](/zh/usage-and-limits)。 |
+| 工具拒绝了基础 URL `localhost` | 某些工具（例如 Cursor）调用的是其服务器上的 API，而非你电脑上的 API。`https://api.hostlinku.com` 是一个公开的端点，因此是安全的。 |
+| *自动完成/Tab* 功能无法正常使用 | 内联自动完成功能通常使用 `/v1/completions`（FIM）端点或工具专用的基础设施。Hostlinku 用于聊天功能，而 Responses 和 Messages 则不属于 FIM。 请使用 Hostlinku 处理聊天/客服代表/编辑功能；自动完成功能请保留在工具的默认提供商中。 |
+
+还需要这里尚未提供的其他工具吗？请发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com) 或查看 [支持](/zh/support)。

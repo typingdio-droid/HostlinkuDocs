@@ -1,0 +1,344 @@
+---
+title: "API 参考文档"
+description: "一页简明参考指南——速率限制、Anthropic Messages API、OpenAI、Chat Completions、OpenAI Responses API、错误代码及模型列表"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+基础 URL：`https://api.hostlinku.com`。所有网关端点均位于 `/v1` 之下，并通过 `Authorization: Bearer` **或** `x-api-key` 请求头接收 API 密钥 Hostlinku（`sk-…`）。
+
+## 速率限制
+
+为了保障所有用户的服务质量，网关对每个API密钥设定了以下限制：
+
+| 限额类型 | 配额 | 描述 |
+|---|---|---|
+| RPM（每分钟请求数） | **600 次请求/分钟** | 按API密钥划分，适用于所有模型 |
+| RPD（每日请求数） | 无限制 | 受账户余额及[每个API密钥的额度](/zh/authentication)限制 |
+| TPM（每分钟Token数） | 无限制 | `max_tokens` 必须 ≤ 模型输出上限（若超过，则 `400` 将被拒绝） |
+
+**速率限制详情：**
+
+- 每个API密钥的60秒时间窗口；所有模型的请求将合并计算。
+- 被限额器拒绝的请求**不会**影响余额（不会预留额度）。
+- 控制台和公共端点（`/api/*`）的限制为**每个 IP 地址每分钟 120 次请求**；身份验证端点的限制为**每个 IP 地址每 15 分钟 30 次尝试**。
+
+**当达到限额时：**
+
+- 返回 HTTP 错误代码 `429 Too Many Requests`。
+- `Retry-After` 标头中包含建议在重试前等待的秒数。
+- 标头 `RateLimit-Limit` / `RateLimit-Remaining` / `RateLimit-Reset`（IETF 格式）显示当前的 RPM 配额。
+
+<Callout type="note" title="需要更高的限额吗？">
+请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)，并注明账户邮箱和预计费用。
+</Callout>
+
+## Anthropic Messages API 格式
+
+`POST /v1/messages`
+
+以原生格式 Anthropic 调用模型。请求头必须包含 `x-api-key: YOUR_API_KEY`（或 `Authorization: Bearer`）。 适用于 Anthropic SDK、Claude Code、Cursor 和 Cline —— 只需设置 `ANTHROPIC_BASE_URL=https://api.hostlinku.com` 即可。完整文档：[Anthropic Messages](/zh/anthropic-messages)。
+
+### 请求正文参数
+
+| 参数 | 类型 | 描述 | 必填 |
+|---|---|---|---|
+| `model` | 字符串 | 模型为Hostlinku的螺纹杆，例如`claude-sonnet-4-6` | true |
+| `messages` | 数组 | 对话消息数组（`role`：`user` \| `assistant`） | true |
+| `max_tokens` | 整数 | 最大输出Token数量 | true |
+| `system` | 字符串 \| 数组 | 系统提示（块数组支持 `cache_control`） | false |
+| `stream` | 布尔型 | SSE流式传输，默认`false` | false |
+| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | — | 符合Anthropic规格 | false |
+
+### 请求示例
+
+```bash
+curl --request POST \
+  --url https://api.hostlinku.com/v1/messages \
+  --header 'content-type: application/json' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'anthropic-version: 2023-06-01' \
+  --data '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "system": "You are a professional coding assistant",
+    "messages": [
+      { "role": "user", "content": "Write a quicksort in Python" }
+    ]
+  }'
+```
+
+### 响应示例
+
+```json
+{
+  "id": "msg_mv5ujf05qf6ayfbx",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-sonnet-4-6",
+  "content": [
+    { "type": "text", "text": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 86,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 }
+  },
+  "hostlinku": { "cost": 0.0013, "currency": "🪙", "serviceMode": "performance", "latencyMs": 2410 }
+}
+```
+
+### 流式输出
+
+```bash
+curl -N --request POST \
+  --url https://api.hostlinku.com/v1/messages \
+  --header 'content-type: application/json' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'accept: text/event-stream' \
+  --data '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "messages": [{ "role": "user", "content": [{ "type": "text", "text": "Hello" }] }],
+    "stream": true
+  }'
+```
+
+响应以SSE格式按片段发送：
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_…","type":"message","role":"assistant","model":"claude-sonnet-4-6","content":[],"stop_reason":null,"usage":{"input_tokens":10,"output_tokens":1}}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello"}}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":10,"output_tokens":5}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+## OpenAI 协议（Chat Completions API）
+
+`POST /v1/chat/completions`
+
+以 OpenAI Chat Completions 格式调用任意模型。请求头中必须包含 `Authorization: Bearer YOUR_API_KEY`。 OpenAI SDK 只需指向 `base_url="https://api.hostlinku.com/v1"` 即可。完整文档：[Chat Completions](/zh/chat-completions)。
+
+### 请求正文参数
+
+| 参数 | 类型 | 描述 | 必填 |
+|---|---|---|---|
+| `model` | 字符串 | 模型为Hostlinku的螺杆，例如`gpt-5-5` | true |
+| `messages` | 数组 | 对话消息数组（`system` \| `user` \| `assistant` \| `tool`） | true |
+| `max_tokens` | 整数 | 最大输出Token数量 | false |
+| `stream` | 布尔型 | SSE 流式传输，默认 `false` | false |
+| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | — | 符合 OpenAI 规格（+ thinking 扩展） | false |
+
+### 请求示例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "user", "content": "Write a quicksort in Python" }
+    ],
+    "stream": false
+  }'
+```
+
+### 示例回复
+
+```json
+{
+  "id": "cmpl_mv5strfqh3zktr",
+  "object": "chat.completion",
+  "created": 1770000000,
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 12, "completion_tokens": 86, "total_tokens": 98 },
+  "hostlinku": { "cost": 0.0009, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1890 }
+}
+```
+
+### 流式输出
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hello" }],
+    "stream": true
+  }'
+```
+
+```text
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"Hello"}}]}
+
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":5,"completion_tokens":12,"total_tokens":17}}
+
+data: [DONE]
+```
+
+## OpenAI Responses API 格式
+
+`POST /v1/responses`
+
+**Codex CLI**、**OpenAI Agents SDK** 和 `client.responses.create()` 采用的格式。请求头包含 `Authorization: Bearer YOUR_API_KEY`；基础 URL 为 `https://api.hostlinku.com/v1`。 无状态：`store` 始终为 `false`，`previous_response_id` 被 `400` 拒绝 — 请在 `input` 中发送完整历史记录。 完整文档：[Responses API](/zh/responses)。
+
+### 请求正文参数
+
+| 参数 | 类型 | 描述 | 必填 |
+|---|---|---|---|
+| `model` | 字符串 | 模型为Hostlinku的螺杆，例如`gpt-5-5` | true |
+| `input` | 字符串 \| 数组 | 文本，或数组项 `message` / `function_call` / `function_call_output` / `reasoning` | true |
+| `instructions` | 字符串 | 系统提示 | false |
+| `max_output_tokens` | 整数 | 最大输出Token数量 | false |
+| `stream` | 布尔型 | SSE（`event: response.*`）直播，默认 `false` | false |
+| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | — | 符合OpenAI Responses规格 | false |
+
+### 请求示例
+
+```bash
+curl https://api.hostlinku.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "instructions": "Be concise.",
+    "input": "Write a quicksort in Python",
+    "max_output_tokens": 512
+  }'
+```
+
+### 示例回复
+
+```json
+{
+  "id": "resp_mv5xpsggbnpc4x7g",
+  "object": "response",
+  "created_at": 1791850828,
+  "status": "completed",
+  "model": "gpt-5-5",
+  "output": [
+    { "id": "rs_…", "type": "reasoning", "summary": [], "encrypted_content": "…" },
+    { "id": "msg_…", "type": "message", "status": "completed", "role": "assistant",
+      "content": [{ "type": "output_text", "text": "def quicksort(arr): …", "annotations": [] }] }
+  ],
+  "usage": { "input_tokens": 20, "output_tokens": 95, "total_tokens": 115,
+             "input_tokens_details": { "cached_tokens": 0 }, "output_tokens_details": { "reasoning_tokens": 12 } },
+  "previous_response_id": null,
+  "store": false,
+  "hostlinku": { "cost": 0.0011, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1420 }
+}
+```
+
+### 流式输出
+
+```text
+event: response.created
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_…","status":"in_progress","model":"gpt-5-5","output":[]}}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"def quicksort"}
+
+event: response.completed
+data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_…","status":"completed","output":[…],"usage":{"input_tokens":20,"output_tokens":95,"total_tokens":115}}}
+```
+
+## 错误代码
+
+封装错误遵循所调用的端点协议：`/v1/chat/completions` → `{ "status": "error", "error": { "code", "message" } }`；`/v1/messages` → `{ "type": "error", "error": { "type", "message" } }`；`/v1/responses` → `{ "error": { "message", "type", "param", "code" } }`。
+
+| HTTP 状态码 | 描述 | 错误消息示例 |
+|---|---|---|
+| 400 | 正文无效，`max_tokens` 超出了模型的输出限制，或者 Service Mode API key 中未提供该模型。 | `max_tokens (20000) melebihi batas output model 'claude-haiku-4-5' (16000).` |
+| 401 | API密钥未发送、无效、已被撤销或已过期。 | `API key tidak valid atau sudah dicabut.` |
+| 402 | 余额不足以支付请求的预估费用，或者API密钥的额度已用尽。 | `Saldo tidak mencukupi.` |
+| 403 | 账户已被暂停/访问被拒绝。 | `Kamu tidak punya akses ke resource ini.` |
+| 404 | 该模型的Slug未收录在产品目录中。 | `Model 'xxx' tidak ditemukan.` |
+| 413 | 请求正文超过最大长度。 | `Payload terlalu besar.` |
+| 422 | 正文验证失败（仅 `/v1/chat/completions`；`/v1/messages` 和 `/v1/responses` 使用 400）。 | `Request body tidak valid.` |
+| 429 | 超出速率限制。 | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
+| 503 | 模型/上游当前不可用——可以安全地采用退避策略重试。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
+
+错误消息中**绝不会**包含上游提供商的标识或原始文本。OpenAI格式的完整代码列表请参见[错误](/zh/errors)。
+
+### 429 响应头
+
+| 响应头 | 描述 |
+|---|---|
+| `Retry-After` | 建议在再次尝试前等待的时间（秒） |
+| `RateLimit-Limit` | 转速限制 |
+| `RateLimit-Remaining` | 当前窗口中剩余的请求 |
+| `RateLimit-Reset` | 距离下一个窗口开始还有X秒 |
+
+## 查询可用模型
+
+`GET /v1/models`
+
+返回当前使用的 **Service Mode API key** 所对应的可用模型，以及该模式下 <CreditIcon /> 每 1M 个Token的价格。
+
+### 请求示例
+
+```bash
+curl --request GET \
+  --url https://api.hostlinku.com/v1/models \
+  --header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+### 响应示例
+
+```json
+{
+  "object": "list",
+  "service_mode": "performance",
+  "data": [
+    {
+      "id": "claude-haiku-4-5",
+      "object": "model",
+      "created": 1760000000,
+      "owned_by": "hostlinku",
+      "context_window": 200000,
+      "capabilities": ["text", "tool-calling", "json-mode", "streaming", "long-context"],
+      "service_mode": "performance",
+      "pricing": { "input": 0.8, "output": 4, "cache_read": 0.08, "cache_write": 1, "unit": "1M_tokens", "currency": "🪙" }
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "object": "model",
+      "created": 1760000000,
+      "owned_by": "hostlinku",
+      "context_window": 1000000,
+      "capabilities": ["text", "vision", "tool-calling", "json-mode", "streaming", "reasoning", "long-context"],
+      "service_mode": "performance",
+      "pricing": { "input": 2.4, "output": 12, "cache_read": 0.24, "cache_write": 3, "unit": "1M_tokens", "currency": "🪙" }
+    }
+  ]
+}
+```
+
+<Callout type="note">
+使用此端点获取最新模型名称；`id` 是两种 API 格式中 `model` 字段所使用的 slug。完整的目录及价格请参见 [模型](/zh/models)。
+</Callout>

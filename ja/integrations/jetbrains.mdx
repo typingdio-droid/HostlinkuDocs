@@ -1,0 +1,66 @@
+---
+title: "JetBrains AIアシスタント"
+description: "AI AssistantのOpenAI互換プロバイダーを通じて、IntelliJ IDEA、PyCharm、WebStorm、GoLand、およびその他のJetBrains IDEでHostlinkuモデルを使用する"
+---
+
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[JetBrains AI Assistant](https://www.jetbrains.com/help/ai-assistant/) は **サードパーティの AI プロバイダー** に対応しています。独自の API キーを使用して、AI チャットを *OpenAI 互換* の任意のエンドポイントに接続できます。 Hostlinkuに入力することで、IntelliJ IDEA、PyCharm、WebStorm、GoLand、Rider、およびその他のJetBrains IDEでのチャットは、Hostlinkuカタログのモデルを使用し、その利用料金はあなたの残高から引き落とされます。
+
+**前提条件：** **AI Assistant** プラグインがインストールされ、有効になっていること、および [コンソール](https://console.hostlinku.com) → **API Keys** から取得した API キー Hostlinku (`sk-…`) があること。
+
+<Steps>
+
+### モデル設定を開く
+
+**設定** (⌘ + , / Ctrl + Alt + S) → **ツール** → **AIアシスタント** → **モデルとAPIキー**。
+
+### Hostlinkuをサードパーティプロバイダーとして追加する
+
+**サードパーティのAIプロバイダー**のセクションでは：
+
+| フィールド | 値 |
+|---|---|
+| **プロバイダー** | `OpenAI-compatible` |
+| **URL** | `https://api.hostlinku.com/v1` |
+| **APIキー** | `sk-…`（APIキー Hostlinku） |
+| **ツール呼び出し** | チェックマークが付いている |
+
+![JetBrains の [設定] → [ツール] → [AI アシスタント] → [モデルと API キー]：URL に「https://api.hostlinku.com/v1」が含まれている](/images/integrations/jetbrains-ai-settings.webp "プロバイダー OpenAI は、URL https://api.hostlinku.com/v1 と互換性があります。「Apply」をクリックする前に、「Test Connection」をクリックしてください。")
+
+**「Test Connection」**をクリックします。IDEがゲートウェイにテストリクエストを送信します。成功したら、**「Apply」**をクリックし、続いて**「OK」**をクリックします。
+
+### （オプション）モデル割り当ての設定
+
+**Model Assignment** セクションでは、**Core features**（例：`claude-sonnet-4-6`）および **Instant helpers**（例：`claude-haiku-4-5`）に対して、モデル Hostlinku を選択できます。 **Completion model**は*Not selected*のままにしておいてください。インラインオートコンプリートには、HostlinkuでサポートされていないFIMが使用されます（[概要](/ja/integrations#masalah-umum)を参照）。
+
+### AIチャットでモデルを選択してください
+
+**AI Chat** を開き、**Chat** モードが有効になっていることを確認してから、モデルのドロップダウンリストからモデルを選択してください。このリストは `GET /v1/models` から取得されているため、表示されるslugは [カタログ](/ja/models) と同じになります。
+
+![JetBrainsのAIチャット：モデル選択ドロップダウンには、サードパーティのプロバイダーの一覧が表示されます](/images/integrations/jetbrains-ai-chat.webp "AIチャットのドロップダウンモデル。カタログ「Hostlinku」からslugを選択し、チャットを開始してください。")
+
+最初のリクエストはコンソールの「**リクエストログ**」に表示されます。
+
+</Steps>
+
+## 知っておくべきこと
+
+<Callout type="note" title="OpenAI互換のルートのみ">
+AIアシスタントは現在、サードパーティ向けには*OpenAI互換*のプロバイダーのみをサポートしており、AnthropicのベースURLオプションはまだありません。 Claudeモデルは引き続き使用可能です：slug`claude-sonnet-4-6`はChat Completions経由で呼び出され、ゲートウェイがAnthropicプロトコルに変換します。
+</Callout>
+
+- **ベースURLは必ず`/v1`で終わらせる必要があります。** IDEは`/models`と`/chat/completions`を自動的に追加します。`/v1`が含まれていない場合、「*Test Connection*」は`404`エラーで失敗します。
+- **カスタムヘッダーはありません。** AIアシスタントはAPIキーを「`Authorization: Bearer sk-…`」として送信するのみです。これだけでHostlinkuには十分です。
+- **すべてのモデルがChatに対応しているわけではありません。** IDE内でツールを呼び出す機能が動作するように、*ツール呼び出し*機能を備えたモデルを選択してください（設定で**ツール呼び出し**にチェックを入れてください）。推奨事項については、[概要](/ja/integrations)をご覧ください。
+- **JetBrainsのClaude Code**は、独立した統合機能（Claude Codeプラグインは独自のCLIを使用しています）です。[Claude Code](/ja/integrations/claude-code)をご覧ください。
+
+## トラブルシューティング
+
+| 症状 | Solusi |
+|---|---|
+| *接続テスト* が失敗しました `401` | APIキーが間違っている、または無効になっているか、スペースが誤ってコピーされてしまった可能性があります。 |
+| *接続テスト* が失敗しました `404` | URLの末尾が`/v1`で終わっていないか、`/chat/completions`のような追加のパスが含まれている。 |
+| 空のドロップダウンモデル | 接続がまだ「*Apply*」されていません、またはAPIキーがService Mode上のどのモデルにもアクセス権を持っていません。 |
+| `429` によるチャットが終了しました | 並列リクエストが多すぎます。[使用状況と制限](/ja/usage-and-limits)をご確認ください。 |

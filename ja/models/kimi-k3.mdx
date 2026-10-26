@@ -1,0 +1,81 @@
+---
+title: "Kimi K3"
+description: "Kimi K3は、Kimiのフラッグシップモデルであり、長距離プログラミングやエンドツーエンドのナレッジワーク向けに設計されています。100万トークンのコンテキストウィンドウを備え、..."
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 概要
+
+Kimi K3は、Kimiのフラッグシップモデルであり、長距離プログラミングやエンドツーエンドのナレッジワーク向けに設計されています。100万トークンのコンテキストウィンドウを備え、最先端の包括的なインテリジェンスを提供します。
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | Moonshot |
+| slug | `kimi-k3` |
+| コンテキスト | 1,000,000トークン |
+| 最大出力 | 64,000トークン |
+| 入力 | テキスト、画像 |
+| 出力 | text |
+| リリース | 2026-07-16 |
+| タグ | フラッグシップ |
+
+## 機能
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## 価格
+
+| 項目 | 価格 |
+|---|---|
+| 入力（プロンプト） | $2.941 |
+| 出力（補完） | $14.706 |
+| キャッシュ読み取り | $0.2941 |
+| キャッシュ書き込み | — |
+
+価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | サポート |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+
+エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+
+## リクエストの例
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kimi-k3",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## 関連モデル
+
+- [Kimi K2.6](/ja/models/kimi-k2-6)
+- [Kimi K2.7 Code](/ja/models/kimi-k2-7-code)
+- [Kimi K3 Hyper](/ja/models/kimi-k3-hyper)
+- [Kimi K3 Hyper Chat](/ja/models/kimi-k3-hyper-chat)
+- [Kimi K3 Turbo](/ja/models/kimi-k3-turbo)
+
+[← モデルカタログに戻る](/ja/models)

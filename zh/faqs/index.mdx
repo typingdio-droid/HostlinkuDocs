@@ -1,0 +1,68 @@
+---
+title: "常见问题解答"
+description: "关于Hostlinku网关最常被问到的问题"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+## 主题
+
+- [流模式](/zh/faqs/stream-mode)：如何结合 OpenAI SDK、Python `requests` 和 curl 使用 SSE。
+- [常见错误](/zh/faqs/errors)：401、402、404、422、429 和 503。
+- [速率限制](/zh/faqs/rate-limits)：配额、`Retry-After`标头和退避策略。
+- [计费与充值](/zh/faqs/billing)：余额、限额密钥和错误代码402。
+- [该模型已停产](/zh/faqs/model-unavailable)：404 与 503、已弃用，以及 Service Mode。
+
+## OpenAI的官方SDK可以使用吗？
+
+可以，无需修改代码。将 `base_url`/`baseURL` 指向 `https://api.hostlinku.com/v1`，并将 API 密钥 `sk-…` Hostlinku 作为 `api_key` 使用。 完整示例请参见 [Chat Completions](/zh/chat-completions#contoh-python-sdk-resmi-openai)。
+
+## 有哪些可用端点？
+
+目前，网关优先处理两个兼容OpenAI的核心端点：
+
+- `POST /v1/chat/completions`：[Chat Completions](/zh/chat-completions)
+- `GET /v1/models`：[模型](/zh/models)
+
+其他端点（例如嵌入）目前在公共网关上尚不可用。非`/v1`的公共目录（适用于网站）可在`/api/public/models`上获取。控制台页面使用`/api/*`端点，通过会话Cookie而非API密钥进行认证。
+
+## 我可以使用哪些模型？
+
+查看 [模型](/zh/models)：其官方列表来自 `GET /v1/models` 或控制台中的 **模型** 菜单。 该目录包含 OpenAI、Anthropic、Google、DeepSeek、Qwen 等模型，每个模型都有唯一的 slug。
+
+## 为什么我的请求被401拒绝了？
+
+最常见的原因：`Authorization` 标头不存在或格式不正确（`Bearer`），API 密钥复制有误、已被撤销或已过期。 请在 [console.hostlinku.com](https://console.hostlinku.com) 上创建/检查 API 密钥。详细信息：[身份验证](/zh/authentication)。
+
+## 明明我有余额，为什么会显示402？
+
+请检查错误信息。402 错误有两种原因：**账户余额**不足（`available` 低于请求的预估费用），或者**API 密钥的额度**已用尽。 如果错误信息中提到“API密钥额度”，请等待重置周期（每日/每周/每月）结束，或在控制台中调整额度。详情请参阅 [计费与余额](/zh/billing)。
+
+## 一个请求需要多少钱？
+
+费用 = 输入Token × 输入价格 + 输出Token × 输出价格（按Token计算，具体取决于模型）。各模型的价格详见目录；每次请求的实际费用会在 `hostlinku.cost` 以及控制台日志中显示。详细信息请参见 [计费与余额](/zh/billing)。
+
+## 是否有请求频率限制？
+
+是：每个 API 密钥每分钟 600 次聊天补全请求，此外控制台端点还设有每 IP 的限制。详细数据和退避策略请参见 [使用情况与限制](/zh/usage-and-limits)。
+
+## 如何发送图片/多媒体消息？
+
+将`messages[].content`填充为OpenAI格式的内容数组 （例如：一个 `image_url` 类型的对象和一个 `text` 类型的对象），并在目录中选择具备 `vision`/`image-input` 功能的支持模型。具体支持程度取决于模型提供商。
+
+## 如何停止使用已泄露的API密钥？
+
+请立即在控制台的**API Keys**菜单中**撤销**该API密钥。被撤销的API密钥将立即被拒绝（401），且此后所有请求均会失败。如需永久删除，请使用**清除**功能。撤销前的使用记录仍会保留，以供审计之用。
+
+## 请求日志会保存我的对话内容吗？
+
+请求日志记录了**技术元数据**：模型、状态、Token数量、费用、延迟和请求 ID。这些数据用于计费和监控。 如对符合您合规要求的数据保留期限有任何疑问，请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)。
+
+## 如何联系客服？
+
+请参阅 [支持](/zh/support)：发送邮件至 **halo@hostlinku.com**，建议在邮件中附上出现问题的回复中的 `x-request-id`。
+
+<Callout type="note" title="没找到答案？">
+请将问题发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)。本常见问题解答根据收到的最常见问题进行了更新。
+</Callout>

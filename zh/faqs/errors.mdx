@@ -1,0 +1,46 @@
+---
+title: "常见错误"
+description: "最常见的Hostlinku错误代码的原因及解决方法。"
+---
+
+
+import { Callout } from "/snippets/mdx.jsx";
+
+所有错误都使用相同的封装：`{"error": {"code": "...", "message": "..."}}`。完整列表请参见 [错误](/zh/errors)。
+
+## 401 访问被拒绝
+
+API密钥不存在、复制错误、已被撤销或已过期。请确保请求头中使用了`Authorization: Bearer sk-...`或`x-api-key`，然后在控制台 → **API密钥** 中检查密钥状态。
+
+## 402 需付款
+
+原因有两个：
+
+- **账户余额**不足以支付该请求的预估费用。
+- **API密钥的额度**已达到上限（每日、每周、每月或总计）。
+
+请阅读错误信息以进行区分。在控制台中查看余额和密钥限额。详情请参见：[计费与余额](/zh/billing)。
+
+## 404 未找到模板
+
+该模型的slug在目录中不存在。请直接从`GET /v1/models`或[模型](/zh/models)页面获取确切的slug。请勿根据显示名称猜测slug。
+
+## 400 模型未处于服务模式
+
+虽然存在该模型，但不适用于当前使用的 Service Mode API key。例如：key“Low-Cost”调用了仅包含“Performance”路由的模型。请创建具有相应模式的 key，或选择其他模型。
+
+## 422 验证失败
+
+请求正文未通过验证：`messages` 为空、字段类型错误或缺少必填字段。响应中包含各字段的详细信息。请参阅 [Chat Completions](/zh/chat-completions) 中的请求正文示例。
+
+## 429 RATE_LIMITED
+
+请求超限。请查阅 `Retry-After` 和 `RateLimit-*` 报头，然后采用指数退避算法重试。被限流器拒绝的请求不会扣除配额。详情：[使用情况与限额](/zh/usage-and-limits)。
+
+## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
+
+该模型已弃用/不可用，或者上游服务暂时出现故障。对于 `UPSTREAM_ERROR`，请稍后再试。对于 `MODEL_UNAVAILABLE`，请检查错误信息中是否包含 `replacement_slug`。
+
+<Callout type="note" title="调试技巧">
+请保存响应头中的 `x-request-id`。联系支持团队时，可使用该 ID 将请求与控制台日志进行匹配。
+</Callout>

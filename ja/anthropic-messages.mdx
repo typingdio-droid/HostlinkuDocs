@@ -1,0 +1,172 @@
+---
+title: "Anthropic Messages"
+description: "エンドポイント POST /v1/messages (Anthropic 互換) のリファレンス — Anthropic SDK、Claude Code、または Hostlinku API キーを使用した Cursor をご利用ください"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+OpenAI 形式に加え、Hostlinku では [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) と互換性のあるエンドポイントも提供されています。 公式のAnthropic SDK、**Claude Code**、Cursor、Cline、およびAnthropicプロトコルに対応したその他のツールは、ベースURLを変更するだけで利用可能です。両方のフォーマットで、1つのAPIキーと1つのHostlinku残高で利用できます。
+
+```http
+POST https://api.hostlinku.com/v1/messages
+x-api-key: sk-isi-api-key-kamu
+anthropic-version: 2023-06-01
+Content-Type: application/json
+```
+
+認証では、`x-api-key`（Anthropic形式）**または**`Authorization: Bearer sk-…`のヘッダーを受け付けます。 すべての応答には、`request-id` / `x-request-id` ヘッダー（リクエスト ID: Hostlinku、フォーマット: `msg_…`）が含まれ、非ストリーミングの成功応答には `x-model` が含まれます。
+
+<Callout type="note" title="どんなモデルでも、クロードだけじゃない">
+`model`は、[モデルカタログ](/ja/models)と同じパブリックslugHostlinkuを使用しています。例：`claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 Claude以外のモデルも、Anthropic形式で呼び出すことができます。翻訳を行うゲートウェイが対応します。
+</Callout>
+
+## クイック設定
+
+各ツール（Claude Code、Clineなど）ごとのステップバイステップガイドは、[IDEとエージェントの統合](/ja/integrations)に記載されています。
+
+**クロード・コード**
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hostlinku.com
+export ANTHROPIC_API_KEY=sk-isi-api-key-kamu
+export ANTHROPIC_MODEL=claude-sonnet-4-6
+claude
+```
+
+**Python（Anthropic公式SDK）**
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+    api_key="sk-isi-api-key-kamu",
+    base_url="https://api.hostlinku.com",
+)
+
+message = client.messages.create(
+    model="claude-haiku-4-5",
+    max_tokens=256,
+    messages=[{"role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat."}],
+)
+print(message.content[0].text)
+print(message.usage.input_tokens, message.usage.output_tokens)
+```
+
+**Node.js**
+
+```ts
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com" });
+const msg = await client.messages.create({
+  model: "claude-haiku-4-5",
+  max_tokens: 256,
+  messages: [{ role: "user", content: "Halo!" }],
+});
+```
+
+## bodyパラメータ
+
+| パラメータ | タイプ | 説明 |
+|---|---|---|
+| `model` | `string` | **必須。** slug型番 Hostlinku。 |
+| `messages` | `array` | **必須。** `{ role: "user" \| "assistant", content }`; `content` 文字列またはブロック配列 (`text`、`image`、`tool_use`、`tool_result`、…)。 |
+| `max_tokens` | `integer` | **必須**（仕様 Anthropic に準拠）。モデルの出力上限を超える場合は、`400` により拒否されます。 |
+| `system` | `string` \| `array` | システムプロンプト：ブロック配列は`cache_control`に対応しています。 |
+| `stream` | `boolean` | SSE用の`true`（下記参照）。 |
+| `temperature` | `number` | `0`–`1`. |
+| `top_p`, `top_k` | `number`, `integer` | 代替サンプリング。 |
+| `stop_sequences` | `string[]` | 最大16。 |
+| `tools`, `tool_choice` | `array`, `any` | ツール使用フォーマット Anthropic（`input_schema`を含む）。 |
+| `thinking` | `object` | 拡張思考、例：`{ "type": "enabled", "budget_tokens": 1024 }`。 |
+| `metadata` | `object` | 例：`{ "user_id": "…" }`。 |
+| `mcp_servers`, `context_management`, `output_format` | — | そのまま転送されます（モデルの対応状況によります）。 |
+
+リスト外のフィールドは破棄されます。無効なボディは`400 invalid_request_error`として拒否され、フィールドごとの詳細は`error.details.issues`に記載されています。
+
+## 非ストリーミングの応答
+
+```json
+{
+  "id": "msg_…",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-haiku-4-5",
+  "content": [{ "type": "text", "text": "API gateway adalah …" }],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 30,
+    "output_tokens": 55,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 }
+  },
+  "hostlinku": { "cost": 0.00021, "currency": "🪙", "serviceMode": "performance", "latencyMs": 940 }
+}
+```
+
+`id` および `model` は、常に Hostlinku の公開識別子です。 ブロック `hostlinku` は拡張情報（Anthropic の SDK では無視される）であり、<CreditIcon />、Service Mode API key のコストおよびレイテンシが含まれている。
+
+<Callout type="note" title="Anthropic の使用規約">
+仕様 Anthropic によると、`input_tokens` にはキャッシュトークンは含まれて**いません**。キャッシュトークンは、`cache_read_input_tokens` / `cache_creation_input_tokens` で別途報告されます。 請求書Hostlinkuでは、これら3つをそれぞれの価格で計算しています。これは`/v1/chat/completions`の項目と同様です（[請求](/ja/billing)を参照）。
+</Callout>
+
+## ストリーミング (`stream: true`)
+
+ゲートウェイは、フレーム番号 Anthropic（`event:` + `data:`）の SSE イベントを送信します：
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_…","type":"message","role":"assistant","model":"claude-haiku-4-5","content":[],"usage":{"input_tokens":22,"output_tokens":1,…}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Apel"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":22,"output_tokens":7,…}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+注：
+
+- 最終使用量は`message_delta`に記載されています。費用は、`message_stop`以降の実使用量に基づいて計算されます。
+- ストリームが途中で失敗した場合、ゲートウェイは`event: error`と`{"type":"error","error":{"type":…,"message":…}}`を送信し、偽の`message_stop`は**送信しない**。
+- 最初のバイトの前に発生したエラー（残高不足、モデルが存在しない、レート制限）は、正しいHTTPステータスを伴う通常のJSONレスポンスとして返されます。SDK Anthropicでは、これらを例外 （`AuthenticationError`、`NotFoundError`、`RateLimitError`、…）としてマッピングします。
+
+## トークンの数を数える
+
+```http
+POST https://api.hostlinku.com/v1/messages/count_tokens
+```
+
+本文：`model`、`messages`、オプション：`system`、`tools`、`tool_choice`、`thinking`。`{ "input_tokens": 15 }`の回答。費用はかかりません。
+
+## フォーマットエラー
+
+```json
+{ "type": "error", "error": { "type": "authentication_error", "message": "API key tidak valid atau sudah dicabut." } }
+```
+
+| HTTP | `error.type` | 一般的な原因 |
+|---|---|---|
+| 400 | `invalid_request_error` | ボディが無効です。`max_tokens`がモデルの制限を超えています。Service Modeキーにはそのモデルがありません。 |
+| 401 | `authentication_error` | APIキーが間違っている／無効化されている／有効期限が切れている。 |
+| 402 | `billing_error` | 残高が不足しているか、APIキーのクレジット上限に達しています。 |
+| 403 | `permission_error` | アカウントが停止されました／アクセスが拒否されました。 |
+| 404 | `not_found_error` | カタログにこのモデルのslugがありません。 |
+| 429 | `rate_limit_error` | リクエストの上限に達しました。 |
+| 503 | `overloaded_error` | モデル/アップストリームが利用できません — 再試行しても問題ありません。 |
+
+エラーメッセージには、アップストリームプロバイダーの識別子が含まれていません。OpenAI 形式のエラーコードの完全な一覧は、[エラー](/ja/errors) に記載されています。

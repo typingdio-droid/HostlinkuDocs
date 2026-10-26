@@ -1,0 +1,53 @@
+---
+title: "Service Mode 专用"
+description: "在Hostlinku基础设施上运行的模型——DeepSeek、GLM和Kimi，其上下文长度为100万个Token。"
+---
+
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**专用**是继 Hostlinku 之后的第三个 Service Mode。与将请求转发给上游合作伙伴的 **性能型** 和 **低成本型** 不同，专用型在 **Hostlinku 自身的基础设施** 上运行。
+
+<Callout type="note" title="一个 API 密钥 = 一个 Service Mode">
+当管理员将您的 API 密钥设置为“专用”时，此模式即生效。若要同时使用其他模式，请创建独立的 API 密钥——Service Mode 绑定的是密钥，而非请求。
+</Callout>
+
+## 可选模型
+
+九款模型，三个系列：
+
+| 家庭 | 模型 | 上下文 |
+|---|---|---|
+| DeepSeek | `deepseek-v4-1-flash`, `deepseek-v4-1-flash-turbo`, `deepseek-v4-1-flash-hyper` | 1,000,000 个Token |
+| GLM | `glm-5-3`, `glm-5-3-flash`, `glm-5-3-flash-hyper` | 1,000,000 个Token |
+| 基米 | `kimi-k3`, `kimi-k3-turbo`, `kimi-k3-hyper` | 1,000,000 个Token |
+
+`-turbo` 和 `-hyper` 变体是基础模型的更快/更大配置。列表之外的模型在“专用”模式下**不可用**——请使用“高性能”或“低成本”模式。
+
+## 端点与身份验证
+
+不同模式下，基础 URL 保持不变。支持以下三种 API 方言：
+
+| 方言 | 端点 | 身份验证标头 |
+|---|---|---|
+| OpenAI 聊天 | `POST {base}/v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
+| OpenAI Responses | `POST {base}/v1/responses` | `Authorization: Bearer <API_KEY>` |
+| Anthropic Messages | `POST {base}/v1/messages` | `x-api-key: <API_KEY>` |
+
+只需将应用程序指向基础 URL Hostlinku，并使用“专用”模式的 API 密钥即可——无需额外参数来选择模式。
+
+## 价格
+
+售价 = 模型基准价 × “专用”模式系数，按 **100万个Token** 为单位计费（1 <CreditIcon /> = 1 美元）。 各模型的具体数据请参见[模型目录](/zh/models) — 请选择**Dedicated**标签页，查看适用于您密钥的现行价格。 示例：`glm-5-3` 当前每 1M Token的输入价格为 <CreditIcon />1.21，输出价格为 <CreditIcon />3.80。
+
+## 提示缓存
+
+专用模型使用**提供商的自动缓存**。 您无需发送 `cache_control`：在缓存有效期内发送相同的前缀，随后从缓存中读取的Token将显示为 `cached_tokens` (`/v1/chat/completions`) 或 `cache_read_input_tokens` (`/v1/messages`)。 请参阅 [通过提示缓存节省资源](/zh/prompt-caching)，了解如何在控制台中读取相关数据。
+
+## 限制
+
+- 上表中只有九种模式；不会自动切换到其他模式。
+- `-chat` 模型（仅限编码/代理）不在公开产品目录中销售。
+- 支持工具调用、流式传输和`stream_options.include_usage`。特定供应商的功能（例如网络搜索）取决于具体模型，不保证可用。
