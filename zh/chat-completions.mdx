@@ -50,7 +50,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -d '{
     "model": "gpt-5-5",
     "messages": [
-      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
+      { "role": "system", "content": "你是一个简洁的助手。" },
       { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
     ],
     "temperature": 0.7,
@@ -69,7 +69,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   "choices": [
     {
       "index": 0,
-      "message": { "role": "assistant", "content": "API gateway adalah …" },
+      "message": { "role": "assistant", "content": "API 网关是 …" },
       "finish_reason": "stop"
     }
   ],
@@ -135,7 +135,7 @@ client = OpenAI(
 response = client.chat.completions.create(
     model="gpt-5-5",
     messages=[
-        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
+        {"role": "system", "content": "你是一个简洁的助手。"},
         {"role": "user", "content": "Halo dari SDK OpenAI!"},
     ],
 )

@@ -137,5 +137,5 @@ Hostlinkuはレスポンスを保存しません。履歴の管理は`Runner`/`r
 ## トラブルシューティング
 
 - **エラーログ *tracing export 401* が満杯です*** - トレースがまだ無効化されていません。`set_tracing_disabled(True)` / `setTracingDisabled(true)` を呼び出すか、`OPENAI_AGENTS_DISABLE_TRACING=1` を設定してください。
-- **`400 previous_response_id tidak didukung`** - `previous_response_id` / `conversation_id` の使用を削除してください。上記の注記を参照してください。
+- **`400 previous_response_id はサポートされていません`** - `previous_response_id` / `conversation_id` の使用を削除してください。上記の注記を参照してください。
 - **`404 model_not_found`** - `model=`のslugはHostlinkuとするべきであり、元のモデル名であるOpenAI/Anthropicではない。

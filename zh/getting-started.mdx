@@ -26,7 +26,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 进入 [console.hostlinku.com](https://console.hostlinku.com) → **API 密钥** 菜单 → **创建 API 密钥**。在创建 API 密钥的对话框中，您可以设置：
 
-- **名称**：用于识别，例如 `produksi-aplikasi-kamu`。
+- **名称**：用于识别，例如 `your-production-app`。
 - **过期**：可选，可选择“永不过期”、“30/90/365天”或自定义日期。
 - **额度**：可选，按**每日/每周/每月**为周期设置的密钥使用上限（例如 10 美元），或不重置（总额度）。
 
@@ -60,7 +60,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   "choices": [
     {
       "index": 0,
-      "message": { "role": "assistant", "content": "Halo! Saya adalah …" },
+      "message": { "role": "assistant", "content": "你好! 我是 …" },
       "finish_reason": "stop"
     }
   ],

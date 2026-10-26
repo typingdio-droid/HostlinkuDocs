@@ -67,8 +67,8 @@ client = OpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v
 response = client.chat.completions.create(
     model="gpt-6-astra",
     messages=[
-        {"role": "system", "content": "Kamu asisten yang ringkas."},
-        {"role": "user", "content": "Halo dari SDK OpenAI!"},
+        {"role": "system", "content": "あなたは簡潔なアシスタントです。"},
+        {"role": "user", "content": "OpenAI SDK からこんにちは!"},
     ],
 )
 print(response.choices[0].message.content)

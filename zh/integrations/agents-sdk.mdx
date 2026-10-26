@@ -137,5 +137,5 @@ Hostlinku 不存储响应。请让 `Runner`/`run` 管理历史记录（默认情
 ## 故障排除
 
 - **错误日志中出现 *tracing export 401* - 跟踪功能尚未关闭；请调用 `set_tracing_disabled(True)` / `setTracingDisabled(true)` 或设置 `OPENAI_AGENTS_DISABLE_TRACING=1`。**
-- **`400 previous_response_id tidak didukung`** - 停止使用 `previous_response_id` / `conversation_id`；请参见上方的说明。
+- **`400 previous_response_id 不受支持`** - 停止使用 `previous_response_id` / `conversation_id`；请参见上方的说明。
 - **`404 model_not_found`** - `model=` 的 slug 应为 Hostlinku，而非原始模型 OpenAI/Anthropic。

@@ -14,7 +14,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ```bash
 npm install -g @openai/codex
-# atau: brew install codex
+# 或者: brew install codex
 ```
 
 ### 添加提供商 Hostlinku
@@ -72,7 +72,7 @@ model_provider = "hostlinku"
 
 ```bash
 codex --profile kuat
-codex --profile cepat "tulis unit test untuk utils/date.ts"
+codex --profile cepat "为 utils/date.ts 编写单元测试"
 ```
 
 <Callout type="warning" title="该代码仅适用于模型 OpenAI">
@@ -93,6 +93,6 @@ Codex CLI 在每个回合中都会发送 `input` 和 `store: false` 中的完整
 
 - **`401`** - `env_key` 中的变量尚未导出到运行 `codex` 的 shell 中。
 - **模型回答“无法运行shell”，随后编造了输出结果** -该模型并非Responses原生模型，因此Codex工具在数据到达模型之前就被移除了。请从上方的Codex就绪模型列表中选择模型；请勿将`gpt-5-6-terra`用于Codex。
-- **`400 previous_response_id tidak didukung`** - 仅在存在强制启用 *stored responses* 模式的插件/脚本时才会出现。请确保 `store` 不会被 `true` 强制触发。
+- **`400 previous_response_id 不受支持`** - 仅在存在强制启用 *stored responses* 模式的插件/脚本时才会出现。请确保 `store` 不会被 `true` 强制触发。
 - **模型未显示 / `404`** - 别名错误；`/v1/models` 显示了与您的密钥对应的有效列表。
 - **旧版Codex要求使用`wire_api = "chat"`** - Hostlinku同样支持[`/v1/chat/completions`](/zh/chat-completions)；但Codex的推理功能与`responses`配合使用时效果最佳。
