@@ -81,7 +81,7 @@ request-nya di console → **Log Permintaan**.
 |---|---|
 | `reasoning_effort` (`"low"`/`"medium"`/`"high"`) | Model reasoning (GPT-5.x, Claude 4.6, DeepSeek V4). |
 | `capabilities.max_tokens_parameter: true` | Hanya bila model menolak `max_completion_tokens`; Hostlinku menerima keduanya, biarkan default. |
-| `capabilities.chat_completions: false` | Mengalihkan model ke Responses API (`/v1/responses`) — juga didukung Hostlinku, tetapi default Chat Completions lebih teruji di Zed. |
+| `capabilities.chat_completions: false` | Mengalihkan model ke Responses API (`/v1/responses`) - juga didukung Hostlinku, tetapi default Chat Completions lebih teruji di Zed. |
 
 <Callout type="note" title="Edit Predictions tidak termasuk">
   Fitur *edit predictions* (autocomplete inline) Zed dikonfigurasi terpisah di `edit_predictions`
@@ -91,9 +91,9 @@ request-nya di console → **Log Permintaan**.
 
 ## Troubleshooting
 
-- **Provider tidak muncul** — `settings.json` tidak valid (koma/kurung). Cek `zed: open log`.
-- **`401`** — key belum dimasukkan untuk provider `hostlinku`, atau env var di-export setelah Zed
+- **Provider tidak muncul** - `settings.json` tidak valid (koma/kurung). Cek `zed: open log`.
+- **`401`** - key belum dimasukkan untuk provider `hostlinku`, atau env var di-export setelah Zed
   dibuka; restart Zed.
-- **Tool call diabaikan** — pastikan `capabilities.tools: true` pada model tersebut.
-- **Konteks penuh terlalu cepat** — `max_tokens` terlalu kecil dibanding `context_window` model;
+- **Tool call diabaikan** - pastikan `capabilities.tools: true` pada model tersebut.
+- **Konteks penuh terlalu cepat** - `max_tokens` terlalu kecil dibanding `context_window` model;
   sesuaikan dengan katalog.

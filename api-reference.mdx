@@ -1,6 +1,6 @@
 ---
 title: API Reference
-description: Referensi ringkas satu halaman — rate limit, Anthropic Messages API, OpenAI Chat Completions, OpenAI Responses API, kode error, dan daftar model
+description: Referensi ringkas satu halaman - rate limit, Anthropic Messages API, OpenAI Chat Completions, OpenAI Responses API, kode error, dan daftar model
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -42,7 +42,7 @@ Untuk menjaga kualitas layanan bagi semua pengguna, gateway memberlakukan batas 
 `POST /v1/messages`
 
 Panggil model dengan format native Anthropic. Header request harus memuat `x-api-key: YOUR_API_KEY`
-(atau `Authorization: Bearer`). Cocok untuk Anthropic SDK, Claude Code, Cursor, dan Cline — cukup
+(atau `Authorization: Bearer`). Cocok untuk Anthropic SDK, Claude Code, Cursor, dan Cline - cukup
 set `ANTHROPIC_BASE_URL=https://api.hostlinku.com`. Dokumentasi lengkap: [Anthropic Messages](/anthropic-messages).
 
 ### Request Body Parameters
@@ -54,7 +54,7 @@ set `ANTHROPIC_BASE_URL=https://api.hostlinku.com`. Dokumentasi lengkap: [Anthro
 | `max_tokens` | integer | Jumlah token output maksimum | true |
 | `system` | string \| array | Prompt sistem (array blok mendukung `cache_control`) | false |
 | `stream` | boolean | Streaming SSE, default `false` | false |
-| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | — | Sesuai spesifikasi Anthropic | false |
+| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | - | Sesuai spesifikasi Anthropic | false |
 
 ### Example Request
 
@@ -146,7 +146,7 @@ Dokumentasi lengkap: [Chat Completions](/chat-completions).
 | `messages` | array | Array pesan percakapan (`system` \| `user` \| `assistant` \| `tool`) | true |
 | `max_tokens` | integer | Jumlah token output maksimum | false |
 | `stream` | boolean | Streaming SSE, default `false` | false |
-| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | — | Sesuai spesifikasi OpenAI (+ ekstensi thinking) | false |
+| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | - | Sesuai spesifikasi OpenAI (+ ekstensi thinking) | false |
 
 ### Example Request
 
@@ -212,7 +212,7 @@ data: [DONE]
 
 Format yang dipakai **Codex CLI**, **OpenAI Agents SDK**, dan `client.responses.create()`. Header
 request memuat `Authorization: Bearer YOUR_API_KEY`; base URL `https://api.hostlinku.com/v1`.
-Stateless: `store` selalu `false`, `previous_response_id` ditolak `400` — kirim riwayat penuh di
+Stateless: `store` selalu `false`, `previous_response_id` ditolak `400` - kirim riwayat penuh di
 `input`. Dokumentasi lengkap: [Responses API](/responses).
 
 ### Request Body Parameters
@@ -224,7 +224,7 @@ Stateless: `store` selalu `false`, `previous_response_id` ditolak `400` — kiri
 | `instructions` | string | Prompt sistem | false |
 | `max_output_tokens` | integer | Jumlah token output maksimum | false |
 | `stream` | boolean | Streaming SSE (`event: response.*`), default `false` | false |
-| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | — | Sesuai spesifikasi OpenAI Responses | false |
+| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | - | Sesuai spesifikasi OpenAI Responses | false |
 
 ### Example Request
 
@@ -292,7 +292,7 @@ Envelope error mengikuti protokol endpoint yang dipanggil:
 | 413 | Body request melebihi ukuran maksimum. | `Payload terlalu besar.` |
 | 422 | Validasi body gagal (hanya `/v1/chat/completions`; `/v1/messages` & `/v1/responses` memakai 400). | `Request body tidak valid.` |
 | 429 | Rate limit terlampaui. | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
-| 503 | Model/upstream sedang tidak tersedia — aman untuk di-retry dengan backoff. | `Model sedang tidak tersedia. Coba lagi nanti.` |
+| 503 | Model/upstream sedang tidak tersedia - aman untuk di-retry dengan backoff. | `Model sedang tidak tersedia. Coba lagi nanti.` |
 
 Pesan error **tidak pernah** memuat identitas atau teks mentah provider upstream. Daftar kode
 lengkap format OpenAI ada di [Error](/errors).

@@ -6,7 +6,7 @@ description: "JetBrainsのJunie CLIを、カスタムモデルプロファイル
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) — JetBrainsが提供するターミナル用エージェント — は、JSONファイル形式の**カスタムモデルプロファイル**に対応しています。1つのプロファイルには、エンドポイント、API形式、APIキー、および軽めのタスク向けのメインモデルと高速モデル（*faster model*）が含まれます。
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrainsが提供するターミナル用エージェント - は、JSONファイル形式の**カスタムモデルプロファイル**に対応しています。1つのプロファイルには、エンドポイント、API形式、APIキー、および軽めのタスク向けのメインモデルと高速モデル（*faster model*）が含まれます。
 
 JetBrains IDE内のAIアシスタントについては、[JetBrains AIアシスタント](/ja/integrations/jetbrains)をご覧ください。
 
@@ -79,7 +79,7 @@ Messages API（フルプロンプトキャッシュ）を使用したClaudeモ�
 
 | 症状 | Solusi |
 |---|---|
-| `404` | `baseUrl` は不完全です — `/v1/chat/completions` または `/v1/messages` で終わる必要があります。 |
+| `404` | `baseUrl` は不完全です - `/v1/chat/completions` または `/v1/messages` で終わる必要があります。 |
 | プロフィールが表示されない | ファイル名またはファイルの場所が間違っているか、JSONが無効です。プロファイル = `.json`を含まないファイル名。 |
 | 環境変数のエラー | `junie` を実行しているシェルで、`HOSTLINKU_API_KEY` をエクスポートします。 |
-| ツール呼び出しに失敗した／エージェントがループしている | このモデルはエージェント型コーディングには小さすぎます — メインのモデルを[概要](/ja/integrations)の推奨モデルに変更してください。 |
+| ツール呼び出しに失敗した／エージェントがループしている | このモデルはエージェント型コーディングには小さすぎます - メインのモデルを[概要](/ja/integrations)の推奨モデルに変更してください。 |

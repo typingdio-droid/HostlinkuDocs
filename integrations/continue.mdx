@@ -62,7 +62,7 @@ kamu memang privat.
 
 ### Muat ulang dan uji
 
-Klik **Reload config** di panel Continue (atau simpan file — Continue memantau perubahan). Pilih
+Klik **Reload config** di panel Continue (atau simpan file - Continue memantau perubahan). Pilih
 model *Claude Sonnet 4.6 (Hostlinku)* di dropdown, kirim pesan, lalu cek console → **Log
 Permintaan**.
 
@@ -87,8 +87,8 @@ Bila `edit`/`apply` tidak diberi model khusus, Continue memakai model `chat` yan
 
 ## Troubleshooting
 
-- **Model tidak muncul di dropdown** — indentasi YAML salah atau `roles` tidak memuat `chat`.
+- **Model tidak muncul di dropdown** - indentasi YAML salah atau `roles` tidak memuat `chat`.
   Lihat *Output → Continue* di VS Code.
-- **`401`** — `~/.continue/.env` belum terbaca; reload config atau restart IDE.
-- **`404 model_not_found`** — `model:` harus slug persis dari `GET /v1/models`.
-- **Streaming tersendat** — pastikan tidak ada proxy korporat yang mem-buffer `text/event-stream`.
+- **`401`** - `~/.continue/.env` belum terbaca; reload config atau restart IDE.
+- **`404 model_not_found`** - `model:` harus slug persis dari `GET /v1/models`.
+- **Streaming tersendat** - pastikan tidak ada proxy korporat yang mem-buffer `text/event-stream`.

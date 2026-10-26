@@ -1,6 +1,6 @@
 ---
 title: "VS Code (チャット)"
-description: "VS Codeに標準搭載のチャット＆エージェントで、カスタムエンドポイントプロバイダーを介してモデルHostlinkuを使用する — GitHubへのログインは不要、APIキーHostlinkuだけで十分"
+description: "VS Codeに標準搭載のチャット＆エージェントで、カスタムエンドポイントプロバイダーを介してモデルHostlinkuを使用する - GitHubへのログインは不要、APIキーHostlinkuだけで十分"
 ---
 
 
@@ -77,7 +77,7 @@ VS Codeが推測する必要がないように、`url`を**エンドポイント
 
 ファイルを保存します。モデル Hostlinku が、コンテキストサイズと機能情報とともに **Chat: Manage Language Models** に表示されます：
 
-![VS CodeのDialog Language Modelsには、Hostlinkuグループ（Claude Haiku 4.5、Claude Sonnet 4.6、GPT-5.5）が含まれています。](/images/integrations/vscode-language-models.webp "チャット：言語モデルの管理 — コンテキストが200K/1Mで、chatLanguageModels.jsonのTools/Vision機能を備えたHostlinkuグループ。")
+![VS CodeのDialog Language Modelsには、Hostlinkuグループ（Claude Haiku 4.5、Claude Sonnet 4.6、GPT-5.5）が含まれています。](/images/integrations/vscode-language-models.webp "チャット：言語モデルの管理 - コンテキストが200K/1Mで、chatLanguageModels.jsonのTools/Vision機能を備えたHostlinkuグループ。")
 
 次に、チャットパネルのモデル選択ツールからモデルを選択します（表示されない場合は、VS Code を再起動してください）。最初のリクエストがコンソールに表示されます → **リクエストログ**。
 
@@ -91,9 +91,9 @@ VS Codeが推測する必要がないように、`url`を**エンドポイント
 
 | `apiType` | `url` | 注記 |
 |---|---|---|
-| `chat-completions` | `https://api.hostlinku.com/v1/chat/completions` | 推奨されるデフォルト設定 — カタログ内のすべてのモデル。 |
+| `chat-completions` | `https://api.hostlinku.com/v1/chat/completions` | 推奨されるデフォルト設定 - カタログ内のすべてのモデル。 |
 | `messages` | `https://api.hostlinku.com/v1/messages` | フォーマット Anthropic；VS Code はキーを `x-api-key` として送信（ゲートウェイで受信）。 |
-| `responses` | `https://api.hostlinku.com/v1/responses` | **必ず** `"statefulResponses": false` を追加してください — 下記を参照してください。 |
+| `responses` | `https://api.hostlinku.com/v1/responses` | **必ず** `"statefulResponses": false` を追加してください - 下記を参照してください。 |
 
 <Callout type="important" title="Responses API Hostlinku はステートレスです">
 デフォルトでは、VS Code は `apiType: "responses"` モデルに対して `previous_response_id` を送信しますが、Hostlinku はレスポンスを保存しないため、そのようなリクエストは `400` として拒否されます。 Responses APIを使用したい場合は、そのモデルに`"statefulResponses": false`を追加して、VS Codeが会話の履歴をすべて送信するようにしてください。[Responses API](/ja/responses)を参照してください。
@@ -125,7 +125,7 @@ VS Codeが推測する必要がないように、`url`を**エンドポイント
 | 症状 | Solusi |
 |---|---|
 | エージェントモードでモデルが表示されない | `"toolCalling": true`セットを使用し、カタログに記載されている*ツール呼び出し*機能付きのモデルを採用してください。 |
-| `401` | APIキーが間違っている／無効化されている — 「Language Models」エディタ内のプロバイダーの歯車アイコンから更新してください。 |
+| `401` | APIキーが間違っている／無効化されている - 「Language Models」エディタ内のプロバイダーの歯車アイコンから更新してください。 |
 | `404 model_not_found` | `id`のslugは、`GET /v1/models`と完全に一致する必要があります。 |
 | `400`は`previous_response_id`を参照している | `apiType: "responses"`を搭載したモデルで、`"statefulResponses": false`は搭載されていない。 |
 | 新型モデルは登場しなかった | `chatLanguageModels.json`を保存した後、VS Codeを再起動してください。 |

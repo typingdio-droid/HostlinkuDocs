@@ -5,7 +5,7 @@ description: "Register Hostlinku as a custom provider in Xum (formerly Mux) to r
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Xum](https://xum.cdr.dev/config/providers) (formerly **Mux**) runs multiple coding agents in parallel, each with its own isolated workspace, from your desktop or browser. Xum supports **custom providers** with your choice of API format—the cleanest way to add Hostlinku without changing the default OpenAI/Anthropic provider.
+[Xum](https://xum.cdr.dev/config/providers) (formerly **Mux**) runs multiple coding agents in parallel, each with its own isolated workspace, from your desktop or browser. Xum supports **custom providers** with your choice of API format-the cleanest way to add Hostlinku without changing the default OpenAI/Anthropic provider.
 
 <Steps>
 
@@ -46,7 +46,7 @@ For `anthropic-messages`, Xum adds `/v1` on its own, so the base URL is written 
 
 ### Select a model
 
-Open the model picker (or `/model`) and select a model from the **Hostlinku** group. `models` is just a list of suggestions—you can still type in other slugs from the [catalog](/en/models) directly. The request appears in the console → **Request Log**.
+Open the model picker (or `/model`) and select a model from the **Hostlinku** group. `models` is just a list of suggestions-you can still type in other slugs from the [catalog](/en/models) directly. The request appears in the console → **Request Log**.
 
 </Steps>
 
@@ -65,7 +65,7 @@ If you prefer to use only one provider, configure the built-in **OpenAI** provid
 ```
 
 <Callout type="note" title="Why chatCompletions?">
-OpenAI's default wire format provider is the Responses API, while Responses on Hostlinku are *stateless* ([details](/en/responses)). Chat Completions supports all catalog models—including Claude—without that limitation.
+OpenAI's default wire format provider is the Responses API, while Responses on Hostlinku are *stateless* ([details](/en/responses)). Chat Completions supports all catalog models-including Claude-without that limitation.
 </Callout>
 
 ## Troubleshooting
@@ -73,6 +73,6 @@ OpenAI's default wire format provider is the Responses API, while Responses on H
 | Symptoms | Solutions |
 |---|---|
 | `401` | The contents of the `apiKeyFile` are incorrect (contain newlines or spaces) or the key has been revoked. |
-| `404` | `anthropic-messages` with a duplicate `/v1` — set the base URL to `https://api.hostlinku.com`. |
+| `404` | `anthropic-messages` with a duplicate `/v1` - set the base URL to `https://api.hostlinku.com`. |
 | Provider not displayed | The provider ID contains uppercase letters or periods, or conflicts with a built-in provider name. |
-| `404 model_not_found` | Incorrectly typed slug — copied from `GET /v1/models`. |
+| `404 model_not_found` | Incorrectly typed slug - copied from `GET /v1/models`. |

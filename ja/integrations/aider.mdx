@@ -70,7 +70,7 @@ Aiderはslug「Hostlinku」を認識していないため、*「model is unknown
 }
 ```
 
-上記の価格はあくまで一例です（パフォーマンスモード）— [カタログ](/ja/models) の `pricing` から転載したもので、**100万トークン**単位で表示されており、 、Aiderは1トークンあたりの価格を使用するため、**1,000,000で割る**必要があります（例：`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。これにより、Aiderによる費用見積もりは、コンソール上の実際の請求額に近くなります。
+上記の価格はあくまで一例です（パフォーマンスモード）- [カタログ](/ja/models) の `pricing` から転載したもので、**100万トークン**単位で表示されており、 、Aiderは1トークンあたりの価格を使用するため、**1,000,000で割る**必要があります（例：`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。これにより、Aiderによる費用見積もりは、コンソール上の実際の請求額に近くなります。
 
 </Steps>
 
@@ -90,7 +90,7 @@ aider --architect \
 
 ## トラブルシューティング
 
-- **`AuthenticationError`** — `OPENAI_API_KEY`がエクスポートされていないか、`.env`が読み取れない（Aiderは作業ディレクトリ/gitルートから`.env`を読み取っている）。
-- **`NotFoundError`モデル** — プレフィックス「`openai/`」の記載漏れ、またはスラッグが間違っている。
-- **「*unknown context window*」に関する警告 — `.aider.model.metadata.json`はまだありません。手順 4 を参照してください。
-- **回答が途切れています** — メタデータで`max_output_tokens`の値を引き上げるか、出力制限がより大きいモデルを選択してください。
+- **`AuthenticationError`** - `OPENAI_API_KEY`がエクスポートされていないか、`.env`が読み取れない（Aiderは作業ディレクトリ/gitルートから`.env`を読み取っている）。
+- **`NotFoundError`モデル** - プレフィックス「`openai/`」の記載漏れ、またはスラッグが間違っている。
+- **「*unknown context window*」に関する警告 - `.aider.model.metadata.json`はまだありません。手順 4 を参照してください。
+- **回答が途切れています** - メタデータで`max_output_tokens`の値を引き上げるか、出力制限がより大きいモデルを選択してください。

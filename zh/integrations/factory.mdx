@@ -6,7 +6,7 @@ description: "在 ~/.factory/settings.json 中将模型 Hostlinku 添加为 cust
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Droid](https://docs.factory.ai/cli/byok/overview) —— Factory 的代理编码工具 —— 支持 **BYOK 自定义模型**。 自定义模型从 `~/.factory/settings.json` 读取，可在 Droid CLI 以及 Factory 桌面应用程序中使用（不适用于 Factory 网页/移动平台）。API 密钥始终保存在本地，不会发送至 Factory 服务器。
+[Droid](https://docs.factory.ai/cli/byok/overview) - Factory 的代理编码工具 - 支持 **BYOK 自定义模型**。 自定义模型从 `~/.factory/settings.json` 读取，可在 Droid CLI 以及 Factory 桌面应用程序中使用（不适用于 Factory 网页/移动平台）。API 密钥始终保存在本地，不会发送至 Factory 服务器。
 
 <Steps>
 
@@ -78,7 +78,7 @@ export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
 
 | 症状 | Solusi |
 |---|---|
-| 模型未在 `/model` 中显示 | JSON 无效或 `provider` 输入有误 — 请使用 `jq . ~/.factory/settings.json` 进行核对。 |
+| 模型未在 `/model` 中显示 | JSON 无效或 `provider` 输入有误 - 请使用 `jq . ~/.factory/settings.json` 进行核对。 |
 | 错误：未找到变量 | `HOSTLINKU_API_KEY` 尚未在运行 `droid` 的 shell 中导出。 |
 | 所有请求中均包含`404` | 基础 URL弄混了：`anthropic`与`/v1`搞混了，`generic-chat-completion-api`与`/v1`搞混了。 |
 | `404 model_not_found` | `model` 的 slug 必须与 `GET /v1/models` 完全一致。 |

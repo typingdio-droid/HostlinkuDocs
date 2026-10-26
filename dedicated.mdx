@@ -1,6 +1,6 @@
 ---
 title: Service Mode Dedicated
-description: Model yang berjalan di infrastruktur Hostlinku sendiri — DeepSeek, GLM, dan Kimi dengan konteks 1 juta token.
+description: Model yang berjalan di infrastruktur Hostlinku sendiri - DeepSeek, GLM, dan Kimi dengan konteks 1 juta token.
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -13,7 +13,7 @@ import { Callout } from "/snippets/mdx.jsx";
 
 <Callout type="note" title="Satu API key = satu Service Mode">
   Mode ini aktif bila API key kamu di-set ke Dedicated oleh admin. Untuk memakai mode lain
-  bersamaan, buat API key terpisah — Service Mode melekat pada key, bukan pada request.
+  bersamaan, buat API key terpisah - Service Mode melekat pada key, bukan pada request.
 </Callout>
 
 ## Model yang tersedia
@@ -27,7 +27,7 @@ Sembilan model, tiga keluarga:
 | Kimi | `kimi-k3`, `kimi-k3-turbo`, `kimi-k3-hyper` | 1.000.000 token |
 
 Varian `-turbo` dan `-hyper` adalah konfigurasi yang lebih cepat/lebih besar dari model
-dasarnya. Model di luar daftar ini **tidak** tersedia di mode Dedicated — gunakan Performance
+dasarnya. Model di luar daftar ini **tidak** tersedia di mode Dedicated - gunakan Performance
 atau Low-Cost.
 
 ## Endpoint dan autentikasi
@@ -40,13 +40,13 @@ Base URL tidak berubah antar mode. Ketiga dialek API didukung:
 | OpenAI Responses | `POST {base}/v1/responses` | `Authorization: Bearer <API_KEY>` |
 | Anthropic Messages | `POST {base}/v1/messages` | `x-api-key: <API_KEY>` |
 
-Cukup arahkan aplikasi ke base URL Hostlinku dan pakai API key bermode Dedicated — tidak ada
+Cukup arahkan aplikasi ke base URL Hostlinku dan pakai API key bermode Dedicated - tidak ada
 parameter tambahan untuk memilih mode.
 
 ## Harga
 
 Harga jual = harga dasar model × multiplier mode Dedicated, ditagih per **1M token**
-(1 <CreditIcon /> = $1). Angka per model ada di [Katalog Model](/models) — pilih tab **Dedicated**
+(1 <CreditIcon /> = $1). Angka per model ada di [Katalog Model](/models) - pilih tab **Dedicated**
 untuk melihat harga yang berlaku pada key kamu. Contoh: `glm-5-3` saat ini <CreditIcon />1,21 input dan
 <CreditIcon />3,80 output per 1M token.
 

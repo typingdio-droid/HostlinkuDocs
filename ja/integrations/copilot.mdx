@@ -10,10 +10,10 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 | コパイロットの画面 | Hostlinkuへ案内していただけますか？ | ガイド |
 |---|---|---|
-| **Copilot CLI** (`copilot`) | はい — 環境変数 `COPILOT_PROVIDER_*` | [下](#copilot-cli) |
-| **GitHub Copilot アプリ**（デスクトップ版） | はい — *設定 → モデルプロバイダー*（パブリックプレビュー） | [以下](#github-copilot-app) |
-| **VS CodeのCopilot Chat** | はい — *カスタムエンドポイント* プロバイダー | [VS Code](/ja/integrations/vscode) |
-| JetBrains、Visual Studio、Xcodeのコパイロット；インラインオートコンプリート | いいえ — ベースURLの設定はありません | [制限](#batasan) |
+| **Copilot CLI** (`copilot`) | はい - 環境変数 `COPILOT_PROVIDER_*` | [下](#copilot-cli) |
+| **GitHub Copilot アプリ**（デスクトップ版） | はい - *設定 → モデルプロバイダー*（パブリックプレビュー） | [以下](#github-copilot-app) |
+| **VS CodeのCopilot Chat** | はい - *カスタムエンドポイント* プロバイダー | [VS Code](/ja/integrations/vscode) |
+| JetBrains、Visual Studio、Xcodeのコパイロット；インラインオートコンプリート | いいえ - ベースURLの設定はありません | [制限](#batasan) |
 
 ## Copilot CLI
 
@@ -69,7 +69,7 @@ export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
 <Callout type="note" title="モデルは、ツール呼び出しとストリーミングに対応している必要があります">
-Copilot CLIは、*tool calling*や*streaming*を含まないモデルを拒否し、コンテキストは最低128Kトークンであることを推奨しています。 [概要](/ja/integrations)に記載されているすべての推奨事項は、この要件を満たしています — `claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`、`glm-5-3`。
+Copilot CLIは、*tool calling*や*streaming*を含まないモデルを拒否し、コンテキストは最低128Kトークンであることを推奨しています。 [概要](/ja/integrations)に記載されているすべての推奨事項は、この要件を満たしています - `claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`、`glm-5-3`。
 </Callout>
 
 - **デフォルトのWire API（Chat Completions）のままにします。** Responses API および Hostlinku API は *ステートレス* です ([詳細](/ja/responses))；Chat Completions は、その制限なしにすべてのカタログモデルを受け付けます。
@@ -118,4 +118,4 @@ Claudeモデルの場合、プロバイダーとして**Anthropic**を選択し�
 | すべてのリクエストで`404` | `openai`のプロバイダーで`/v1`がない場合、または`anthropic`のプロバイダーで`/v1`がある場合。 |
 | `404 model_not_found` | `COPILOT_MODEL`のslugは、`GET /v1/models`のslugと完全に一致する必要があります。 |
 | エラー：このモデルはツールの呼び出しに対応していません | [カタログ](/ja/models)の「*ツール呼び出し*」対応モデルに変更してください。 |
-| まだGitHubのモデルを使用している | 変数が別のシェルにエクスポートされている — 同じシェルから`copilot`を実行するか、`~/.zshrc`に追加してください。 |
+| まだGitHubのモデルを使用している | 変数が別のシェルにエクスポートされている - 同じシェルから`copilot`を実行するか、`~/.zshrc`に追加してください。 |

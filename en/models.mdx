@@ -58,7 +58,7 @@ Response (example truncated; the exact value for your account is retrieved from 
 | `service_mode` (level list & item) | Service Mode API key used: `performance` or `low_cost`. The list of models varies by mode. |
 | `id` | Model slug; the value used in the `model` field in `/v1/chat/completions`, `/v1/messages`, and `/v1/responses`. |
 | `created` | The time the model was added to the catalog (Unix epoch, seconds). |
-| `owned_by` | Always `"hostlinku"` — indicates that the model is managed by the Hostlinku catalog. |
+| `owned_by` | Always `"hostlinku"` - indicates that the model is managed by the Hostlinku catalog. |
 | `context_window` | Maximum context size in tokens (input + output). |
 | `capabilities` | List of capabilities, e.g., `vision`, `tool-calling`, `json-mode`, `reasoning`, `long-context`. |
 | `pricing` | The pricing object for that Service Mode; `null` if the model does not yet have a price for that mode. `pricing.unit` is always `"1M_tokens"`, and `pricing.currency` contains the credit symbol (1 <CreditIcon /> = $1). |
@@ -85,11 +85,11 @@ There are currently 45 models available. Click a model name to view its context,
 
 | Model | Provider | Context | Max Output | Input /1M | Output /1M |
 |---|---|---|---|---|---|
-| [Qwen 3.6 Plus](/en/models/qwen3-6-plus) | Alibaba | 1,000,000 | — | $0.294 | $1.765 |
-| [Qwen 3.7 Max](/en/models/qwen3-7-max) | Alibaba | 1,000,000 | — | $1.765 | $5.294 |
-| [Baize Model](/en/models/model-baize) | Anonymous | 1,000,000 | — | $1.177 | $4.118 |
+| [Qwen 3.6 Plus](/en/models/qwen3-6-plus) | Alibaba | 1,000,000 | - | $0.294 | $1.765 |
+| [Qwen 3.7 Max](/en/models/qwen3-7-max) | Alibaba | 1,000,000 | - | $1.765 | $5.294 |
+| [Baize Model](/en/models/model-baize) | Anonymous | 1,000,000 | - | $1.177 | $4.118 |
 | [Claude Fable 5](/en/models/claude-fable-5) | Anthropic | 1,000,000 | 128,000 | $10 | $50 |
-| [Claude Fable 5.1](/en/models/claude-fable-5-1) | Anthropic | 1,000,000 | 128,000 | — | — |
+| [Claude Fable 5.1](/en/models/claude-fable-5-1) | Anthropic | 1,000,000 | 128,000 | - | - |
 | [Claude Haiku 4.5](/en/models/claude-haiku-4-5) | Anthropic | 200,000 | 64,000 | $1 | $5 |
 | [Claude Opus 4.6](/en/models/claude-opus-4-6) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
 | [Claude Opus 4.7](/en/models/claude-opus-4-7) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
@@ -98,20 +98,20 @@ There are currently 45 models available. Click a model name to view its context,
 | [Claude Opus 5.5](/en/models/claude-opus-5-5) | Anthropic | 1,000,000 | 128,000 | $4 | $20 |
 | [Claude Sonnet 4.6](/en/models/claude-sonnet-4-6) | Anthropic | 1,000,000 | 64,000 | $3 | $15 |
 | [Claude Sonnet 5](/en/models/claude-sonnet-5) | Anthropic | 1,000,000 | 64,000 | $2 | $10 |
-| [Claude Sonnet 5.5](/en/models/claude-sonnet-5-5) | Anthropic | 1,000,000 | 128,000 | — | — |
-| [DeepSeek V4 Flash](/en/models/deepseek-v4-flash) | DeepSeek | 1,000,000 | — | $0.15 | $0.6 |
+| [Claude Sonnet 5.5](/en/models/claude-sonnet-5-5) | Anthropic | 1,000,000 | 128,000 | - | - |
+| [DeepSeek V4 Flash](/en/models/deepseek-v4-flash) | DeepSeek | 1,000,000 | - | $0.15 | $0.6 |
 | [DeepSeek V4 Pro](/en/models/deepseek-v4-pro) | DeepSeek | 1,000,000 | 64,000 | $0.662 | $1.985 |
 | [DeepSeek-V4.1-Flash](/en/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 | 384,000 | $0.15 | $0.6 |
-| [DeepSeek-V4.1-Flash Hyper](/en/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 | 384,000 | — | — |
-| [DeepSeek-V4.1-Flash Hyper Chat](/en/models/deepseek-v4-1-flash-hyper-chat) | DeepSeek | 1,000,000 | 384,000 | — | — |
-| [DeepSeek-V4.1-Flash Turbo](/en/models/deepseek-v4-1-flash-turbo) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [DeepSeek-V4.1-Flash Hyper](/en/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 | 384,000 | - | - |
+| [DeepSeek-V4.1-Flash Hyper Chat](/en/models/deepseek-v4-1-flash-hyper-chat) | DeepSeek | 1,000,000 | 384,000 | - | - |
+| [DeepSeek-V4.1-Flash Turbo](/en/models/deepseek-v4-1-flash-turbo) | DeepSeek | 1,000,000 | 384,000 | - | - |
 | [MiniMax M3](/en/models/minimax-m3) | MiniMax | 1,000,000 | 64,000 | $0.309 | $1.235 |
 | [Kimi K2.6](/en/models/kimi-k2-6) | Moonshot | 256,000 | 32,000 | $0.956 | $3.971 |
-| [Kimi K2.7 Code](/en/models/kimi-k2-7-code) | Moonshot | 256,000 | — | $0.956 | $3.971 |
+| [Kimi K2.7 Code](/en/models/kimi-k2-7-code) | Moonshot | 256,000 | - | $0.956 | $3.971 |
 | [Kimi K3](/en/models/kimi-k3) | Moonshot | 1,000,000 | 64,000 | $2.941 | $14.706 |
-| [Kimi K3 Hyper](/en/models/kimi-k3-hyper) | Moonshot | 1,000,000 | 64,000 | — | — |
-| [Kimi K3 Hyper Chat](/en/models/kimi-k3-hyper-chat) | Moonshot | 1,000,000 | 64,000 | — | — |
-| [Kimi K3 Turbo](/en/models/kimi-k3-turbo) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [Kimi K3 Hyper](/en/models/kimi-k3-hyper) | Moonshot | 1,000,000 | 64,000 | - | - |
+| [Kimi K3 Hyper Chat](/en/models/kimi-k3-hyper-chat) | Moonshot | 1,000,000 | 64,000 | - | - |
+| [Kimi K3 Turbo](/en/models/kimi-k3-turbo) | Moonshot | 1,000,000 | 64,000 | - | - |
 | [GPT 5.3 Codex](/en/models/gpt-5-3-codex) | OpenAI | 400,000 | 128,000 | $1.75 | $14 |
 | [GPT-5.5](/en/models/gpt-5-5) | OpenAI | 1,000,000 | 128,000 | $5 | $30 |
 | [GPT-5.6 Luna](/en/models/gpt-5-6-luna) | OpenAI | 1,050,000 | 64,000 | $0.2 | $1.2 |
@@ -122,14 +122,14 @@ There are currently 45 models available. Click a model name to view its context,
 | [GPT-6 Sol](/en/models/gpt-6-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
 | [GPT-6.1 Sol](/en/models/gpt-6-1-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
 | [MiMo V2.5 Pro](/en/models/mimo-v2-5-pro) | Xiaomi | 1,000,000 | 32,000 | $0.441 | $0.882 |
-| [GLM 5](/en/models/glm-5) | Zhipu | 200,000 | — | $0.588 | $2.647 |
+| [GLM 5](/en/models/glm-5) | Zhipu | 200,000 | - | $0.588 | $2.647 |
 | [GLM 5.1](/en/models/glm-5-1) | Zhipu | 200,000 | 128,000 | $0.882 | $3.529 |
 | [GLM 5.2](/en/models/glm-5-2) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
 | [GLM 5.3](/en/models/glm-5-3) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
-| [GLM 5.3 Hyper Chat](/en/models/glm-5-3-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
-| [GLM-5.3 Flash](/en/models/glm-5-3-flash) | Zhipu | 1,000,000 | 64,000 | — | — |
-| [GLM-5.3 Flash Hyper](/en/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 | 64,000 | — | — |
-| [GLM-5.3 Flash Hyper Chat](/en/models/glm-5-3-flash-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM 5.3 Hyper Chat](/en/models/glm-5-3-hyper-chat) | Zhipu | 1,000,000 | 64,000 | - | - |
+| [GLM-5.3 Flash](/en/models/glm-5-3-flash) | Zhipu | 1,000,000 | 64,000 | - | - |
+| [GLM-5.3 Flash Hyper](/en/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 | 64,000 | - | - |
+| [GLM-5.3 Flash Hyper Chat](/en/models/glm-5-3-flash-hyper-chat) | Zhipu | 1,000,000 | 64,000 | - | - |
 
 ## How to Choose a Model
 

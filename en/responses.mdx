@@ -1,13 +1,13 @@
 ---
 title: "API Responses"
-description: "POST endpoint reference: /v1/responses (OpenAI Responses API-compatible) — use the Codex CLI, OpenAI Agents SDK, or client.responses.create() with your Hostlink API key"
+description: "POST endpoint reference: /v1/responses (OpenAI Responses API-compatible) - use the Codex CLI, OpenAI Agents SDK, or client.responses.create() with your Hostlink API key"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku provides an endpoint compatible with the [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses)—the format used by the **Codex CLI**, **OpenAI Agents SDK**, and the `client.responses.create()` method in the OpenAI SDK. Simply replace the base URL; the API key, balance, Service Mode, rate limit, and Request Logs are the same as for `/v1/chat/completions` and `/v1/messages`.
+Hostlinku provides an endpoint compatible with the [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses)-the format used by the **Codex CLI**, **OpenAI Agents SDK**, and the `client.responses.create()` method in the OpenAI SDK. Simply replace the base URL; the API key, balance, Service Mode, rate limit, and Request Logs are the same as for `/v1/chat/completions` and `/v1/messages`.
 
 ```http
 POST https://api.hostlinku.com/v1/responses
@@ -18,7 +18,7 @@ Content-Type: application/json
 Each response includes an `x-request-id` header (Hostlinku request ID, in the format `resp_…`) and, for successful non-streaming responses, an `x-model` header.
 
 <Callout type="note" title="All models, one format">
-`model` uses the same Hostlinku public slug as the [model catalog](/en/models) — e.g., `gpt-5-5`, `claude-sonnet-4-6`, `deepseek-v4-flash`. Models that do not natively provide a Responses API (including Claude) can still be called—the gateway handles the translation.
+`model` uses the same Hostlinku public slug as the [model catalog](/en/models) - e.g., `gpt-5-5`, `claude-sonnet-4-6`, `deepseek-v4-flash`. Models that do not natively provide a Responses API (including Claude) can still be called-the gateway handles the translation.
 </Callout>
 
 ## Quick Setup
@@ -97,17 +97,17 @@ print(result.final_output)
 | `instructions` | `string` | System prompt (developer message). |
 | `max_output_tokens` | `integer` | Output token limit. Returns a `400` error if the model's output limit is exceeded. |
 | `stream` | `boolean` | `true` for SSE (see below). |
-| `tools`, `tool_choice`, `parallel_tool_calls` | — | Function calling format Responses (`{ "type": "function", "name", "parameters" }`). |
+| `tools`, `tool_choice`, `parallel_tool_calls` | - | Function calling format Responses (`{ "type": "function", "name", "parameters" }`). |
 | `reasoning` | `object` | E.g., `{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`. |
-| `include` | `string[]` | E.g., `["reasoning.encrypted_content"]` — encrypted reasoning items are returned as-is so they can be resent on the next turn (used by the Codex CLI). |
-| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | — | As specified by OpenAI; passed to the model. |
+| `include` | `string[]` | E.g., `["reasoning.encrypted_content"]` - encrypted reasoning items are returned as-is so they can be resent on the next turn (used by the Codex CLI). |
+| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | As specified by OpenAI; passed to the model. |
 | `store` | `boolean` | Always treated as `false` (see *Stateless*). |
-| `previous_response_id`, `conversation`, `background` | — | **Not supported** → `400 invalid_request_error`. |
+| `previous_response_id`, `conversation`, `background` | - | **Not supported** → `400 invalid_request_error`. |
 
 Any other unknown fields are passed to the gateway (parameters not supported by the model will be ignored). An invalid body results in a `400 invalid_request_error` response, with details for each field provided in `error.details.issues`.
 
-<Callout type="important" title="Stateless — send the full history in `input`">
-Hostlinku **does not store** the response (`store: false`). For multi-turn conversations, send the entire history (including the `function_call`, `function_call_output`, and `reasoning` items from the previous response) in the `input` array—exactly as the Codex CLI does. `previous_response_id` is rejected with a clear message; `GET`/`DELETE /v1/responses/{id}` returns a `404`.
+<Callout type="important" title="Stateless - send the full history in `input`">
+Hostlinku **does not store** the response (`store: false`). For multi-turn conversations, send the entire history (including the `function_call`, `function_call_output`, and `reasoning` items from the previous response) in the `input` array-exactly as the Codex CLI does. `previous_response_id` is rejected with a clear message; `GET`/`DELETE /v1/responses/{id}` returns a `404`.
 </Callout>
 
 ## Non-streaming response
@@ -145,7 +145,7 @@ Hostlinku **does not store** the response (`store: false`). For multi-turn conve
 }
 ```
 
-`id` and `model` are always Hostlinku’s public identifiers. The `hostlinku` block is an extension (the OpenAI SDK ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency. `status: "incomplete"` with `incomplete_details.reason = "max_output_tokens"` means the output was truncated by `max_output_tokens`—you’ll still be billed based on the actual number of tokens.
+`id` and `model` are always Hostlinku’s public identifiers. The `hostlinku` block is an extension (the OpenAI SDK ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency. `status: "incomplete"` with `incomplete_details.reason = "max_output_tokens"` means the output was truncated by `max_output_tokens`-you’ll still be billed based on the actual number of tokens.
 
 <Callout type="warning" title="Reasoning model + small `max_output_tokens`">
 In reasoning models (e.g., DeepSeek V4, GPT-6, Claude with "thinking"), "thinking" tokens are included in the `max_output_tokens` count. A small value (e.g., `16`) is usually exhausted by the `reasoning` items alone → `status: "incomplete"` and `output` contains only the `reasoning` items without a `message`. Use `max_output_tokens` ≥ 256 or set `reasoning.effort` to `"low"`.
@@ -197,7 +197,7 @@ calculated based on actual usage following that event.
 - If the stream fails midway, the gateway sends an `event: error` with
 `{"type":"error","code":…,"message":…}` and **do not** send a fake `response.completed`.
 - Errors occurring before the first byte (insufficient balance, model not found, rate limit) are returned as
-A standard JSON response with the correct HTTP status code — the OpenAI SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+A standard JSON response with the correct HTTP status code - the OpenAI SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
 
 ## Tool calling (function calling)
 
@@ -237,9 +237,9 @@ print(r2.output_text)
 | 400 | `invalid_request_error` | `invalid_request` | Invalid body, `max_output_tokens` exceeds the model limit, `previous_response_id` was sent, model not available in Service Mode key. |
 | 401 | `authentication_error` | `invalid_api_key` | Invalid, revoked, or expired API key, or request made without an API key. |
 | 402 | `insufficient_quota` | `insufficient_quota` | Insufficient balance or API key credit limit reached. |
-| 403 | `permission_error` | — | Account suspended / access denied. |
+| 403 | `permission_error` | - | Account suspended / access denied. |
 | 404 | `not_found_error` | `model_not_found` / `not_found` | The model slug does not exist; or `GET /v1/responses/{id}` (stateless). |
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | The request limit has been reached (see the `Retry-After` header). |
-| 503 | `server_error` | `model_unavailable` / `server_error` | The model or upstream is currently unavailable — it is safe to retry. |
+| 503 | `server_error` | `model_unavailable` / `server_error` | The model or upstream is currently unavailable - it is safe to retry. |
 
 Error messages never include the upstream provider's identity. A complete list of codes for the Chat Completions format is available at [Error](/en/errors).

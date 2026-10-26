@@ -76,7 +76,7 @@ export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
 |---|---|
 | `reasoning_effort` (`"low"`/`"medium"`/`"high"`) | 推論モデル（GPT-5.x、Claude 4.6、DeepSeek V4）。 |
 | `capabilities.max_tokens_parameter: true` | モデルが`max_completion_tokens`を拒否し、Hostlinkuが両方を承認する場合に限り、デフォルトのままにしておきます。 |
-| `capabilities.chat_completions: false` | モデルを Responses API (`/v1/responses`) に移行する — Hostlinku でもサポートされているが、Zed ではデフォルトの Chat Completions の方が十分に検証されている。 |
+| `capabilities.chat_completions: false` | モデルを Responses API (`/v1/responses`) に移行する - Hostlinku でもサポートされているが、Zed ではデフォルトの Chat Completions の方が十分に検証されている。 |
 
 <Callout type="note" title="「予測の編集」は含まれません">
 Zedの「予測の編集」（インラインオートコンプリート）機能は、`edit_predictions`で個別に構成され、Hostlinkuでは提供されていない`/v1/completions`（FIM）エンドポイントを使用します。 Agent Panel、インラインアシスタント、およびスレッドにはHostlinkuを使用し、予測の編集はデフォルトのプロバイダーのままにしてください。
@@ -84,7 +84,7 @@ Zedの「予測の編集」（インラインオートコンプリート）機�
 
 ## トラブルシューティング
 
-- **プロバイダーが表示されない** — `settings.json` が無効です（コンマ／括弧）。`zed: open log` を確認してください。
-- **`401`** — プロバイダ `hostlinku` のキーが入力されていないか、Zed の起動後に環境変数がエクスポートされました。Zed を再起動してください。
-- **ツール呼び出しは無視されます** — 当該モデルで `capabilities.tools: true` であることを確認してください。
-- **コンテキスト全体が早すぎる** — `max_tokens`は`context_window`モデルに比べて小さすぎる；カタログに合わせて調整してください。
+- **プロバイダーが表示されない** - `settings.json` が無効です（コンマ／括弧）。`zed: open log` を確認してください。
+- **`401`** - プロバイダ `hostlinku` のキーが入力されていないか、Zed の起動後に環境変数がエクスポートされました。Zed を再起動してください。
+- **ツール呼び出しは無視されます** - 当該モデルで `capabilities.tools: true` であることを確認してください。
+- **コンテキスト全体が早すぎる** - `max_tokens`は`context_window`モデルに比べて小さすぎる；カタログに合わせて調整してください。

@@ -1,6 +1,6 @@
 ---
 title: "Responses API"
-description: "エンドポイント POST /v1/responses (OpenAI Responses API 互換) — Codex CLI、OpenAI Agents SDK、または API キー Hostlinku を使用した client.responses.create() を使用してください"
+description: "エンドポイント POST /v1/responses (OpenAI Responses API 互換) - Codex CLI、OpenAI Agents SDK、または API キー Hostlinku を使用した client.responses.create() を使用してください"
 ---
 
 
@@ -8,7 +8,7 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku は、[OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) — **Codex CLI** で使用されるフォーマット — と互換性のあるエンドポイントを提供します。 **OpenAI Agents SDK**、およびOpenAI SDKの`client.responses.create()`メソッドで使用されるフォーマットです。 base URL を変更するだけで済みます。API キー、残高、Service Mode、レート制限、およびリクエストログは、`/v1/chat/completions` および `/v1/messages` と同じです。
+Hostlinku は、[OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) - **Codex CLI** で使用されるフォーマット - と互換性のあるエンドポイントを提供します。 **OpenAI Agents SDK**、およびOpenAI SDKの`client.responses.create()`メソッドで使用されるフォーマットです。 base URL を変更するだけで済みます。API キー、残高、Service Mode、レート制限、およびリクエストログは、`/v1/chat/completions` および `/v1/messages` と同じです。
 
 ```http
 POST https://api.hostlinku.com/v1/responses
@@ -98,16 +98,16 @@ print(result.final_output)
 | `instructions` | `string` | システムプロンプト（開発者向けメッセージ）。 |
 | `max_output_tokens` | `integer` | 出力トークンの上限。モデルの出力上限を超えた場合、`400`として拒否されます。 |
 | `stream` | `boolean` | SSE用の`true`（下記参照）。 |
-| `tools`, `tool_choice`, `parallel_tool_calls` | — | 関数呼び出し形式 Responses (`{ "type": "function", "name", "parameters" }`)。 |
+| `tools`, `tool_choice`, `parallel_tool_calls` | - | 関数呼び出し形式 Responses (`{ "type": "function", "name", "parameters" }`)。 |
 | `reasoning` | `object` | 例：`{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`。 |
-| `include` | `string[]` | 例：`["reasoning.encrypted_content"]` — 暗号化された項目推論は、次のターンで再送信できるよう、そのままの状態で返されます（Codex CLIで使用）。 |
-| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | — | OpenAIの仕様に準拠；モデルに反映済み。 |
+| `include` | `string[]` | 例：`["reasoning.encrypted_content"]` - 暗号化された項目推論は、次のターンで再送信できるよう、そのままの状態で返されます（Codex CLIで使用）。 |
+| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | OpenAIの仕様に準拠；モデルに反映済み。 |
 | `store` | `boolean` | 常に `false` として扱われます（*Stateless* を参照）。 |
-| `previous_response_id`, `conversation`, `background` | — | **未対応** → `400 invalid_request_error`。 |
+| `previous_response_id`, `conversation`, `background` | - | **未対応** → `400 invalid_request_error`。 |
 
 認識されないその他のフィールドはゲートウェイに転送されます（モデルでサポートされていないパラメータは無視されます）。無効なボディは`400 invalid_request_error`として拒否され、フィールドごとの詳細は`error.details.issues`に記載されています。
 
-<Callout type="important" title="Stateless — `input`に完全な履歴を送信">
+<Callout type="important" title="Stateless - `input`に完全な履歴を送信">
 Hostlinku **は** レスポンス（`store: false`）を保存しません。 複数ターンにわたる会話の場合、`input`配列に履歴全体（以前の応答に含まれる`function_call`、`function_call_output`、および`reasoning`の項目を含む）を送信してください。これは、Codex CLIの動作とまったく同じです。 `previous_response_id`は明確なメッセージで拒否され、`GET`/`DELETE /v1/responses/{id}`は`404`に応答します。
 </Callout>
 
@@ -234,9 +234,9 @@ print(r2.output_text)
 | 400 | `invalid_request_error` | `invalid_request` | ボディが無効です。`max_output_tokens`がモデルの制限を超えています。`previous_response_id`が送信されました。Service Modeキーにはモデルが存在しません。 |
 | 401 | `authentication_error` | `invalid_api_key` | APIキーが間違っている、無効化されている、または有効期限が切れている、あるいはAPIキーなしでリクエストが行われた。 |
 | 402 | `insufficient_quota` | `insufficient_quota` | 残高が不足しているか、APIキーのクレジット上限に達しています。 |
-| 403 | `permission_error` | — | アカウントが停止されました／アクセスが拒否されました。 |
+| 403 | `permission_error` | - | アカウントが停止されました／アクセスが拒否されました。 |
 | 404 | `not_found_error` | `model_not_found` / `not_found` | slugモデルが存在しない、または `GET /v1/responses/{id}`（ステートレス）。 |
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | リクエストの制限に達しました（ヘッダー `Retry-After` を参照）。 |
-| 503 | `server_error` | `model_unavailable` / `server_error` | モデル/アップストリームが利用できません — 再試行しても問題ありません。 |
+| 503 | `server_error` | `model_unavailable` / `server_error` | モデル/アップストリームが利用できません - 再試行しても問題ありません。 |
 
 エラーメッセージには、アップストリームプロバイダーの識別子が含まれていません。Chat Completions 形式のエラーコードの完全な一覧は、[エラー](/ja/errors) に記載されています。

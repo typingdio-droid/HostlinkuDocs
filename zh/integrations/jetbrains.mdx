@@ -29,11 +29,11 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ![JetBrains 设置 → 工具 → AI 助手 → 模型和 API 密钥：URL 包含 https://api.hostlinku.com/v1](/images/integrations/jetbrains-ai-settings.webp "该提供商支持 OpenAI，URL 为 https://api.hostlinku.com/v1。在点击“应用”之前，请先点击“测试连接”。")
 
-点击 **测试连接** — IDE 会向网关发送测试请求。如果成功，请点击 **应用**，然后点击 **确定**。
+点击 **测试连接** - IDE 会向网关发送测试请求。如果成功，请点击 **应用**，然后点击 **确定**。
 
 ### （可选）设置模型分配
 
-在 **模型分配** 部分，您可以为 **核心功能**（例如 `claude-sonnet-4-6`）和 **即时助手**（例如 `claude-haiku-4-5`）选择 Hostlinku 模型。 请将**Completion model**保留为*Not selected*——内联自动完成功能使用的是未由 Hostlinku 支持的 FIM（参见 [概述](/zh/integrations#masalah-umum)）。
+在 **模型分配** 部分，您可以为 **核心功能**（例如 `claude-sonnet-4-6`）和 **即时助手**（例如 `claude-haiku-4-5`）选择 Hostlinku 模型。 请将**Completion model**保留为*Not selected*-内联自动完成功能使用的是未由 Hostlinku 支持的 FIM（参见 [概述](/zh/integrations#masalah-umum)）。
 
 ### 在AI Chat中选择模型
 
@@ -48,11 +48,11 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 ## 需知事项
 
 <Callout type="note" title="仅支持与OpenAI兼容的线路">
-AI Assistant 目前仅支持 *OpenAI 兼容* 的第三方提供商——尚无 Anthropic 基础 URL 选项。 Claude 模型仍可使用：通过 Chat Completions 调用 slug `claude-sonnet-4-6`，并由网关将其转换为 Anthropic 协议。
+AI Assistant 目前仅支持 *OpenAI 兼容* 的第三方提供商-尚无 Anthropic 基础 URL 选项。 Claude 模型仍可使用：通过 Chat Completions 调用 slug `claude-sonnet-4-6`，并由网关将其转换为 Anthropic 协议。
 </Callout>
 
 - **基础 URL 必须以 `/v1` 结尾。** IDE 会自动添加 `/models` 和 `/chat/completions`；若缺少 `/v1`，*测试连接* 将因 `404` 错误而失败。
-- **没有自定义标头。** AI Assistant 仅将 API 密钥作为 `Authorization: Bearer sk-…` 发送——这对 Hostlinku 来说已经足够了。
+- **没有自定义标头。** AI Assistant 仅将 API 密钥作为 `Authorization: Bearer sk-…` 发送-这对 Hostlinku 来说已经足够了。
 - **并非所有模型都适用于 Chat。**请选择带有 *工具调用* 功能的模型（在设置中勾选 **工具调用**），以便 IDE 内的工具调用功能能够正常运行。相关建议请参见 [概述](/zh/integrations)。
 - **JetBrains 中的 Claude Code** 是一个独立的集成（Claude Code 插件使用其命令行界面）。请参阅 [Claude Code](/zh/integrations/claude-code)。
 

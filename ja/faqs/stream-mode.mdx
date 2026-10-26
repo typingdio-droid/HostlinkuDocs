@@ -31,7 +31,7 @@ data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content
 data: [DONE]
 ```
 
-## Python — SDK OpenAI
+## Python - SDK OpenAI
 
 ```python
 from openai import OpenAI
@@ -52,7 +52,7 @@ for chunk in stream:
         print(delta, end="", flush=True)
 ```
 
-## Python — requests
+## Python - requests
 
 リクエストには`stream=True`を使用し、`iter_lines()`を読み取ってください。`data: [DONE]`を受信したら停止してください。
 
@@ -91,7 +91,7 @@ for line in response.iter_lines():
         print(delta, end="", flush=True)
 ```
 
-## Node.js — SDK OpenAI
+## Node.js - SDK OpenAI
 
 ```js
 import OpenAI from "openai";

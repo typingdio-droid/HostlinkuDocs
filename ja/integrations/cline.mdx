@@ -6,7 +6,7 @@ description: "ClineおよびRoo Codeにおいて、Hostlinkuモデルを使用�
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Cline](https://cline.bot) — およびそのフォークである **Roo Code** — は、ベースURL、APIキー、および任意のモデルIDを受け入れる **OpenAI Compatible** プロバイダーを提供しています。 これが Hostlinku への最もシンプルな方法です。**Anthropic** プロバイダーを経由する別の方法については、以下で説明します。**Kilo Code** をお使いですか？[Kilo Code](/ja/integrations/kilo-code) の専用ガイドをご覧ください。
+[Cline](https://cline.bot) - およびそのフォークである **Roo Code** - は、ベースURL、APIキー、および任意のモデルIDを受け入れる **OpenAI Compatible** プロバイダーを提供しています。 これが Hostlinku への最もシンプルな方法です。**Anthropic** プロバイダーを経由する別の方法については、以下で説明します。**Kilo Code** をお使いですか？[Kilo Code](/ja/integrations/kilo-code) の専用ガイドをご覧ください。
 
 <Steps>
 
@@ -57,7 +57,7 @@ Clineには、**Anthropic**というプロバイダーもあり、*Use custom ba
 ![Cline：プロバイダー Anthropic の「カスタムベース URL を使用」には、https://api.hostlinku.com が指定されています。](/images/integrations/cline-anthropic.webp "「Use custom base URL」にチェックを入れ、「https://api.hostlinku.com」と入力してください（/v1 は含めないでください）。")
 
 <Callout type="note" title="プロンプトのキャッシュ">
-Anthropicルートを通じて、Clineが`cache_control`を送信し、Hostlinkuがそれを転送した――キャッシュトークンは`cache_read_input_tokens`で報告され、モデルキャッシュの価格で課金された。 OpenAI Compatibleルートを経由して、キャッシュはそれをサポートするモデルによって自動的に処理される。
+Anthropicルートを通じて、Clineが`cache_control`を送信し、Hostlinkuがそれを転送した-キャッシュトークンは`cache_read_input_tokens`で報告され、モデルキャッシュの価格で課金された。 OpenAI Compatibleルートを経由して、キャッシュはそれをサポートするモデルによって自動的に処理される。
 </Callout>
 
 ## Cline CLI
@@ -69,8 +69,8 @@ cline --model claude-sonnet-4-6 "tambahkan validasi input di handler login"
 
 ## トラブルシューティング
 
-- **`401`** — キーが間違っているか、削除されています。Roo Code で、キーが他のプロファイルではなく、現在アクティブなプロバイダーの **プロファイル** に設定されていることを確認してください。
-- **`404 model_not_found`** — モデルIDの入力ミス。`GET /v1/models`からコピーしてください。
-- **すべてのリクエストで `404`** — ベース URL に `/v1`（OpenAI パス）が含まれていないか、あるいは Anthropic パスで `/v1` が使用されている。上のスクリーンショットと比較してください。
-- **Actモードでの空のレスポンス** — *ツール呼び出し*のないモデル。[概要](/ja/integrations) の推奨モデルを使用してください。
-- **コンテキストがすぐにいっぱいになる** — Clineが履歴を正しく削除できるように、*Context Window Size*をカタログに合わせて設定してください。
+- **`401`** - キーが間違っているか、削除されています。Roo Code で、キーが他のプロファイルではなく、現在アクティブなプロバイダーの **プロファイル** に設定されていることを確認してください。
+- **`404 model_not_found`** - モデルIDの入力ミス。`GET /v1/models`からコピーしてください。
+- **すべてのリクエストで `404`** - ベース URL に `/v1`（OpenAI パス）が含まれていないか、あるいは Anthropic パスで `/v1` が使用されている。上のスクリーンショットと比較してください。
+- **Actモードでの空のレスポンス** - *ツール呼び出し*のないモデル。[概要](/ja/integrations) の推奨モデルを使用してください。
+- **コンテキストがすぐにいっぱいになる** - Clineが履歴を正しく削除できるように、*Context Window Size*をカタログに合わせて設定してください。

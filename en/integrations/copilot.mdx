@@ -9,10 +9,10 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 | Copilot Interface | Can I connect to Hostlinku? | Guide |
 |---|---|---|
-| **Copilot CLI** (`copilot`) | Yes — `COPILOT_PROVIDER_*` environment variable | [below](#copilot-cli) |
-| **GitHub Copilot app** (desktop) | Yes — *Settings → Model providers* (public preview) | [below](#github-copilot-app) |
-| **Copilot Chat in VS Code** | Yes — *Custom Endpoint* provider | [VS Code](/en/integrations/vscode) |
-| Copilot in JetBrains, Visual Studio, Xcode; inline autocomplete | No — no base URL setting | [Limitations](#batasan) |
+| **Copilot CLI** (`copilot`) | Yes - `COPILOT_PROVIDER_*` environment variable | [below](#copilot-cli) |
+| **GitHub Copilot app** (desktop) | Yes - *Settings → Model providers* (public preview) | [below](#github-copilot-app) |
+| **Copilot Chat in VS Code** | Yes - *Custom Endpoint* provider | [VS Code](/en/integrations/vscode) |
+| Copilot in JetBrains, Visual Studio, Xcode; inline autocomplete | No - no base URL setting | [Limitations](#batasan) |
 
 <a id="copilot-cli"></a>
 
@@ -31,7 +31,7 @@ export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
 export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
-`COPILOT_PROVIDER_TYPE` defaults to `openai` (Chat Completions), so there's no need to set it. Copilot adds `/chat/completions` on its own—the base URL just needs to end at `/v1`.
+`COPILOT_PROVIDER_TYPE` defaults to `openai` (Chat Completions), so there's no need to set it. Copilot adds `/chat/completions` on its own-the base URL just needs to end at `/v1`.
 
 ### (Recommended) Specify the model token limit
 
@@ -70,13 +70,13 @@ export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
 <Callout type="note" title="The model must support calling and streaming">
-Copilot CLI rejects models without *tool calling* or *streaming*, and recommends a minimum context size of 128K tokens. All recommendations in the [Overview](/en/integrations) meet this requirement — `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`, `glm-5-3`.
+Copilot CLI rejects models without *tool calling* or *streaming*, and recommends a minimum context size of 128K tokens. All recommendations in the [Overview](/en/integrations) meet this requirement - `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`, `glm-5-3`.
 </Callout>
 
 - **Leave the API wire set to the default (Chat Completions).** The Responses API on Hostlinku is *stateless*
 ([details](/en/responses)); Chat Completions supports all catalog models without any restrictions.
 - **Without GitHub login**, features that rely on GitHub servers (`/delegate`, the GitHub MCP server,
-(code search) is not available. Log in with `copilot login` if you need that feature—the request model remains with Hostlinku.
+(code search) is not available. Log in with `copilot login` if you need that feature-the request model remains with Hostlinku.
 - **`COPILOT_OFFLINE=true`** disables all connections to GitHub (including telemetry). The prompt remains the same
 sent to `api.hostlinku.com`.
 
@@ -108,7 +108,7 @@ The Hostlinku model appears in the model picker next to the GitHub model. Select
 
 </Steps>
 
-For the Claude model, you can also select the **Anthropic** provider and enter the base URL `https://api.hostlinku.com` (without `/v1`) — this option is available if the provider form includes a base URL field.
+For the Claude model, you can also select the **Anthropic** provider and enter the base URL `https://api.hostlinku.com` (without `/v1`) - this option is available if the provider form includes a base URL field.
 
 <a id="batasan"></a>
 
@@ -129,4 +129,4 @@ Applies only to chat and agents.
 | `404` on all requests | The `openai` provider without `/v1`, or the `anthropic` provider with `/v1`. |
 | `404 model_not_found` | `COPILOT_MODEL` must be the exact slug from `GET /v1/models`. |
 | Error: Model does not support tool calling | Switch to a *tool calling* model from the [catalog](/en/models). |
-| Still using the GitHub model | Variables are exported to other shells — run `copilot` from the same shell or add it to `~/.zshrc`. |
+| Still using the GitHub model | Variables are exported to other shells - run `copilot` from the same shell or add it to `~/.zshrc`. |

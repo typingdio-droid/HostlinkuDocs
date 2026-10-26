@@ -32,14 +32,14 @@ Di bagian **Third-party AI providers**:
 
 ![JetBrains Settings → Tools → AI Assistant → Models & API keys: URL berisi https://api.hostlinku.com/v1](/images/integrations/jetbrains-ai-settings.webp "Provider OpenAI-compatible dengan URL https://api.hostlinku.com/v1. Klik Test Connection sebelum Apply.")
 
-Klik **Test Connection** — IDE mengirim request uji ke gateway. Bila berhasil, klik **Apply**
+Klik **Test Connection** - IDE mengirim request uji ke gateway. Bila berhasil, klik **Apply**
 lalu **OK**.
 
 ### (Opsional) Atur Model Assignment
 
 Di bagian **Model Assignment** kamu bisa memilih model Hostlinku untuk **Core features** (mis.
 `claude-sonnet-4-6`) dan **Instant helpers** (mis. `claude-haiku-4-5`). Biarkan **Completion model**
-pada *Not selected* — autocomplete inline memakai FIM yang tidak dilayani Hostlinku (lihat
+pada *Not selected* - autocomplete inline memakai FIM yang tidak dilayani Hostlinku (lihat
 [Ikhtisar](/integrations#masalah-umum)).
 
 ### Pilih model di AI Chat
@@ -56,7 +56,7 @@ Request pertama akan muncul di console → **Log Permintaan**.
 ## Yang perlu diketahui
 
 <Callout type="note" title="Hanya jalur OpenAI-compatible">
-  AI Assistant saat ini hanya mendukung provider *OpenAI-compatible* untuk third-party — belum ada
+  AI Assistant saat ini hanya mendukung provider *OpenAI-compatible* untuk third-party - belum ada
   opsi base URL Anthropic. Model Claude tetap bisa dipakai: slug `claude-sonnet-4-6` dipanggil lewat
   Chat Completions dan gateway yang menerjemahkan ke protokol Anthropic.
 </Callout>
@@ -64,7 +64,7 @@ Request pertama akan muncul di console → **Log Permintaan**.
 - **Base URL wajib diakhiri `/v1`.** IDE menambahkan `/models` dan `/chat/completions` sendiri;
   tanpa `/v1`, *Test Connection* gagal dengan `404`.
 - **Tidak ada custom header.** AI Assistant hanya mengirim API key sebagai
-  `Authorization: Bearer sk-…` — itu sudah cukup untuk Hostlinku.
+  `Authorization: Bearer sk-…` - itu sudah cukup untuk Hostlinku.
 - **Tidak semua model cocok untuk Chat.** Pilih model dengan *tool calling* (centang **Tool
   calling** di pengaturan) agar fitur yang memanggil tool di dalam IDE berjalan. Rekomendasi ada di
   [Ikhtisar](/integrations).

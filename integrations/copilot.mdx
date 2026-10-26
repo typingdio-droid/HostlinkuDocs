@@ -11,10 +11,10 @@ Hostlinku dan memakai model dari katalog dengan saldo Hostlinku.
 
 | Permukaan Copilot | Bisa diarahkan ke Hostlinku? | Panduan |
 |---|---|---|
-| **Copilot CLI** (`copilot`) | Ya — environment variable `COPILOT_PROVIDER_*` | [di bawah](#copilot-cli) |
-| **GitHub Copilot app** (desktop) | Ya — *Settings → Model providers* (public preview) | [di bawah](#github-copilot-app) |
-| **Copilot Chat di VS Code** | Ya — provider *Custom Endpoint* | [VS Code](/integrations/vscode) |
-| Copilot di JetBrains, Visual Studio, Xcode; autocomplete inline | Tidak — tidak ada pengaturan base URL | [Batasan](#batasan) |
+| **Copilot CLI** (`copilot`) | Ya - environment variable `COPILOT_PROVIDER_*` | [di bawah](#copilot-cli) |
+| **GitHub Copilot app** (desktop) | Ya - *Settings → Model providers* (public preview) | [di bawah](#github-copilot-app) |
+| **Copilot Chat di VS Code** | Ya - provider *Custom Endpoint* | [VS Code](/integrations/vscode) |
+| Copilot di JetBrains, Visual Studio, Xcode; autocomplete inline | Tidak - tidak ada pengaturan base URL | [Batasan](#batasan) |
 
 ## Copilot CLI
 
@@ -33,7 +33,7 @@ export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
 `COPILOT_PROVIDER_TYPE` default-nya `openai` (Chat Completions), jadi tidak perlu di-set. Copilot
-menambahkan `/chat/completions` sendiri — base URL cukup sampai `/v1`.
+menambahkan `/chat/completions` sendiri - base URL cukup sampai `/v1`.
 
 ### (Disarankan) Beri tahu batas token model
 
@@ -75,14 +75,14 @@ export COPILOT_MODEL=claude-sonnet-4-6
 
 <Callout type="note" title="Model wajib mendukung tool calling dan streaming">
   Copilot CLI menolak model tanpa *tool calling* atau *streaming*, dan menyarankan konteks minimal
-  128K token. Semua rekomendasi di [Ikhtisar](/integrations) memenuhi syarat ini —
+  128K token. Semua rekomendasi di [Ikhtisar](/integrations) memenuhi syarat ini -
   `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`, `glm-5-3`.
 </Callout>
 
 - **Biarkan wire API default (Chat Completions).** Responses API di Hostlinku bersifat *stateless*
   ([detail](/responses)); Chat Completions menerima semua model katalog tanpa batasan itu.
 - **Tanpa login GitHub**, fitur yang bergantung pada server GitHub (`/delegate`, GitHub MCP server,
-  code search) tidak tersedia. Login dengan `copilot login` bila butuh fitur itu — request model
+  code search) tidak tersedia. Login dengan `copilot login` bila butuh fitur itu - request model
   tetap ke Hostlinku.
 - **`COPILOT_OFFLINE=true`** mematikan semua koneksi ke GitHub (termasuk telemetri). Prompt tetap
   dikirim ke `api.hostlinku.com`.
@@ -116,7 +116,7 @@ sesi agent.
 </Steps>
 
 Untuk model Claude, kamu juga bisa memilih provider **Anthropic** dan mengisi base URL
-`https://api.hostlinku.com` (tanpa `/v1`) — tersedia bila form provider menampilkan kolom base URL.
+`https://api.hostlinku.com` (tanpa `/v1`) - tersedia bila form provider menampilkan kolom base URL.
 
 ## Batasan
 
@@ -136,4 +136,4 @@ Untuk model Claude, kamu juga bisa memilih provider **Anthropic** dan mengisi ba
 | `404` di semua request | Provider `openai` tanpa `/v1`, atau provider `anthropic` dengan `/v1`. |
 | `404 model_not_found` | `COPILOT_MODEL` harus slug persis dari `GET /v1/models`. |
 | Error model tidak mendukung tool calling | Ganti ke model ber-*tool calling* dari [katalog](/models). |
-| Masih memakai model GitHub | Variabel di-export di shell lain — jalankan `copilot` dari shell yang sama atau tambahkan ke `~/.zshrc`. |
+| Masih memakai model GitHub | Variabel di-export di shell lain - jalankan `copilot` dari shell yang sama atau tambahkan ke `~/.zshrc`. |

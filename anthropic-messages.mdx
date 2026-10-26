@@ -1,6 +1,6 @@
 ---
 title: Anthropic Messages
-description: Referensi endpoint POST /v1/messages (Anthropic-compatible) — pakai Anthropic SDK, Claude Code, atau Cursor dengan API key Hostlinku
+description: Referensi endpoint POST /v1/messages (Anthropic-compatible) - pakai Anthropic SDK, Claude Code, atau Cursor dengan API key Hostlinku
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -10,7 +10,7 @@ import { Callout } from "/snippets/mdx.jsx";
 Selain format OpenAI, Hostlinku juga menyediakan endpoint yang kompatibel dengan
 [Anthropic Messages API](https://docs.anthropic.com/en/api/messages). SDK Anthropic resmi,
 **Claude Code**, Cursor, Cline, dan tool lain yang bicara protokol Anthropic bisa dipakai hanya
-dengan mengganti base URL — satu API key dan satu saldo Hostlinku untuk kedua format.
+dengan mengganti base URL - satu API key dan satu saldo Hostlinku untuk kedua format.
 
 ```http
 POST https://api.hostlinku.com/v1/messages
@@ -24,7 +24,7 @@ Setiap respons menyertakan header `request-id` / `x-request-id` (ID request Host
 `msg_…`) dan, pada respons sukses non-streaming, `x-model`.
 
 <Callout type="note" title="Model apa saja, bukan hanya Claude">
-  `model` memakai slug publik Hostlinku yang sama dengan [katalog model](/models) —
+  `model` memakai slug publik Hostlinku yang sama dengan [katalog model](/models) -
   mis. `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Model non-Claude tetap bisa dipanggil
   lewat format Anthropic; gateway yang menerjemahkan.
 </Callout>
@@ -90,7 +90,7 @@ const msg = await client.messages.create({
 | `tools`, `tool_choice` | `array`, `any` | Tool use format Anthropic (termasuk `input_schema`). |
 | `thinking` | `object` | Extended thinking, mis. `{ "type": "enabled", "budget_tokens": 1024 }`. |
 | `metadata` | `object` | Mis. `{ "user_id": "…" }`. |
-| `mcp_servers`, `context_management`, `output_format` | — | Diteruskan apa adanya (tergantung dukungan model). |
+| `mcp_servers`, `context_management`, `output_format` | - | Diteruskan apa adanya (tergantung dukungan model). |
 
 Field di luar daftar dibuang. Body tidak valid ditolak `400 invalid_request_error` dengan
 rincian per field di `error.details.issues`.
@@ -123,7 +123,7 @@ mengabaikannya) berisi biaya <CreditIcon />, Service Mode API key, dan latensi.
 <Callout type="note" title="Konvensi usage Anthropic">
   Sesuai spesifikasi Anthropic, `input_tokens` **tidak** memuat token cache; token cache dilaporkan
   terpisah di `cache_read_input_tokens` / `cache_creation_input_tokens`. Tagihan Hostlinku menghitung
-  ketiganya dengan harga masing-masing — identik dengan jalur `/v1/chat/completions`
+  ketiganya dengan harga masing-masing - identik dengan jalur `/v1/chat/completions`
   (lihat [Billing](/billing)).
 </Callout>
 
@@ -157,7 +157,7 @@ Catatan:
 - Bila stream gagal di tengah, gateway mengirim `event: error` dengan
   `{"type":"error","error":{"type":…,"message":…}}` dan **tidak** mengirim `message_stop` palsu.
 - Error sebelum byte pertama (saldo habis, model tidak ada, rate limit) dikembalikan sebagai
-  respons JSON biasa dengan status HTTP yang benar — SDK Anthropic memetakannya ke exception
+  respons JSON biasa dengan status HTTP yang benar - SDK Anthropic memetakannya ke exception
   (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
 
 ## Hitung token
@@ -183,7 +183,7 @@ Body: `model`, `messages`, opsional `system`, `tools`, `tool_choice`, `thinking`
 | 403 | `permission_error` | Akun ditangguhkan / akses ditolak. |
 | 404 | `not_found_error` | Slug model tidak ada di katalog. |
 | 429 | `rate_limit_error` | Batas permintaan tercapai. |
-| 503 | `overloaded_error` | Model/upstream sedang tidak tersedia — aman untuk di-retry. |
+| 503 | `overloaded_error` | Model/upstream sedang tidak tersedia - aman untuk di-retry. |
 
 Pesan error tidak pernah memuat identitas provider upstream. Daftar lengkap kode untuk format
 OpenAI ada di [Error](/errors).

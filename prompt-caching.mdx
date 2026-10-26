@@ -1,6 +1,6 @@
 ---
 title: Hemat dengan Prompt Caching
-description: Cara memakai cache_control di Hostlinku agar prompt besar yang berulang hanya ditagih ~10% — untuk Claude Code, Cursor, agent, dan aplikasi dengan system prompt panjang
+description: Cara memakai cache_control di Hostlinku agar prompt besar yang berulang hanya ditagih ~10% - untuk Claude Code, Cursor, agent, dan aplikasi dengan system prompt panjang
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -13,7 +13,7 @@ tarif efektif per model ada di [Katalog Model](/models).
 
 <Callout type="tip" title="Hasil uji nyata di Hostlinku">
   System prompt ±3.600 token ke `claude-sonnet-4-6`: request pertama (cache write, 1,25×)
-  **$0,0135**, request kedua dengan prompt sama (cache read, 0,1×) **$0,00108** — hemat **92%**.
+  **$0,0135**, request kedua dengan prompt sama (cache read, 0,1×) **$0,00108** - hemat **92%**.
   Angka ini bisa kamu cek sendiri di console → **Log Permintaan** (kolom *Cache Read* /
   *Cache Write*).
 </Callout>
@@ -28,7 +28,7 @@ tarif efektif per model ada di [Katalog Model](/models).
 
 Beberapa model terbaru memakai tarif cache read lebih rendah: `claude-opus-5-5` dan
 `claude-sonnet-5-5` **0,05×**, serta `claude-fable-5-1` **0,025×**. Angka pasti per model ada di
-[Katalog Model](/models) — halaman itu menampilkan harga Original dan harga jual per Service
+[Katalog Model](/models) - halaman itu menampilkan harga Original dan harga jual per Service
 Mode.
 
 Masa hidup cache default **5 menit** sejak terakhir dipakai (diperpanjang tiap kali kena hit).
@@ -58,13 +58,13 @@ Blok di bawah ambang ini tidak akan di-cache, dan `cache_creation_input_tokens` 
 
 ## Prinsip susunan prompt
 
-Cache bekerja berdasarkan **prefix** — semua konten *sebelum* penanda `cache_control` harus
+Cache bekerja berdasarkan **prefix** - semua konten *sebelum* penanda `cache_control` harus
 identik byte-per-byte agar kena hit. Susun prompt dari yang paling statis ke paling dinamis:
 
-1. `tools` (definisi fungsi) — jarang berubah
-2. `system` — instruksi, persona, dokumen referensi
-3. `messages` lama — riwayat percakapan
-4. Pesan user terbaru — selalu berubah, jangan di-cache
+1. `tools` (definisi fungsi) - jarang berubah
+2. `system` - instruksi, persona, dokumen referensi
+3. `messages` lama - riwayat percakapan
+4. Pesan user terbaru - selalu berubah, jangan di-cache
 
 Maksimal **4 penanda** `cache_control` per request. Yang paling umum: satu di akhir `system`.
 
@@ -106,7 +106,7 @@ Respons melaporkan token cache terpisah dari `input_tokens`:
 ```
 
 Pada request kedua dengan `system` yang sama, nilainya menjadi `cache_creation_input_tokens: 0`
-dan `cache_read_input_tokens: 3601` — itulah tanda cache bekerja.
+dan `cache_read_input_tokens: 3601` - itulah tanda cache bekerja.
 
 **Python (Anthropic SDK)**
 
@@ -136,7 +136,7 @@ print(resp.usage.cache_read_input_tokens)
 ## Format OpenAI (`/v1/chat/completions`)
 
 Untuk aplikasi yang memakai OpenAI SDK, tulis `content` system sebagai array *content parts*
-dan letakkan `cache_control` pada part-nya. Hostlinku menerjemahkannya ke Anthropic — hanya
+dan letakkan `cache_control` pada part-nya. Hostlinku menerjemahkannya ke Anthropic - hanya
 berlaku untuk model Claude.
 
 ```bash
@@ -210,14 +210,14 @@ print(resp.usage.prompt_tokens_details.cached_tokens)
 
 Tool-tool ini **sudah memasang `cache_control` sendiri** pada system prompt dan definisi tools
 mereka. Begitu kamu mengarahkan base URL ke Hostlinku (lihat [Integrasi IDE & Agent](/integrations)),
-penghematan berjalan otomatis — tidak perlu konfigurasi tambahan. Di log kamu akan melihat
+penghematan berjalan otomatis - tidak perlu konfigurasi tambahan. Di log kamu akan melihat
 *Cache Read* yang besar pada hampir setiap request lanjutan dalam satu sesi.
 
 ## Cek di console
 
 Buka **Log Permintaan** di console. Setiap baris menampilkan *Input*, *Output*, *Cache Read*,
 *Cache Write* (total), rincian *Cache Write 5m* / *Cache Write 1h*, dan biaya final. Rincian
-per-TTL hanya terisi bila upstream mengirimkannya — bila tidak, kolomnya menampilkan `—`
+per-TTL hanya terisi bila upstream mengirimkannya - bila tidak, kolomnya menampilkan `-`
 (bukan 0), sedangkan totalnya tetap tercatat. Cara cepat memastikan cache bekerja:
 
 <Steps>
@@ -243,12 +243,12 @@ Selisih kedua baris itulah penghematanmu. Bila *Cache Read* tetap 0, cek: apakah
 
 | Model | Prompt caching |
 |---|---|
-| Semua `claude-*` | Ya — eksplisit lewat `cache_control` (kedua format di atas) |
-| `gpt-*`, `deepseek-*`, `glm-*` | **Otomatis dari provider** — tanpa `cache_control`; `cached_tokens` / `cache_read` terisi bila prefix yang sama dikirim lagi dalam masa hidup cache provider |
+| Semua `claude-*` | Ya - eksplisit lewat `cache_control` (kedua format di atas) |
+| `gpt-*`, `deepseek-*`, `glm-*` | **Otomatis dari provider** - tanpa `cache_control`; `cached_tokens` / `cache_read` terisi bila prefix yang sama dikirim lagi dalam masa hidup cache provider |
 | `kimi-*`, `qwen*`, `minimax-*`, `mimo-*` | Tergantung provider; sebagian belum melaporkan cache, jadi nilainya bisa 0 |
 
 <Callout type="note" title="Responses API">
-  `/v1/responses` belum meneruskan `cache_control` — dialek OpenAI Responses memang tidak punya
+  `/v1/responses` belum meneruskan `cache_control` - dialek OpenAI Responses memang tidak punya
   field itu. Artinya request ke model Claude lewat endpoint tersebut belum memakai prompt cache.
   Untuk memanfaatkan cache, pakai `/v1/messages` atau `/v1/chat/completions`.
 </Callout>

@@ -6,7 +6,7 @@ description: "Claude Code、Codex CLI、Cursor、VS Code、GitHub Copilot、Zed�
 
 import { Callout } from "/snippets/mdx.jsx";
 
-ほぼすべての最新のコーディングエージェントやAI IDEは、**カスタムベースURL**を介して他のプロバイダーに接続できます。Hostlinkuは、OpenAI、Chat Completions、 OpenAI、Responses、およびAnthropic Messages——に対応しているため、以下のすべてのツールで**1つのAPIキーと1つの残高**を使用でき、コンソールの1つのリクエストログからすべての使用状況を監視できます。
+ほぼすべての最新のコーディングエージェントやAI IDEは、**カスタムベースURL**を介して他のプロバイダーに接続できます。Hostlinkuは、OpenAI、Chat Completions、 OpenAI、Responses、およびAnthropic Messages-に対応しているため、以下のすべてのツールで**1つのAPIキーと1つの残高**を使用でき、コンソールの1つのリクエストログからすべての使用状況を監視できます。
 
 ## お好みのツールを選んでください
 
@@ -33,9 +33,9 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## 常に変わらない3つのこと
 
-1. **ベースURL** — OpenAI形式のツールには`https://api.hostlinku.com/v1`； Anthropic形式のツールには`https://api.hostlinku.com`（`/v1`を除く）を使用してください。これは、Anthropic SDKが独自に`/v1/messages`を追加するためです。
-2. **APIキー** — [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** のシークレット `sk-…`。 `Authorization: Bearer sk-…` (OpenAI) または `x-api-key` (Anthropic) として使用されます。ゲートウェイは、すべてのエンドポイント `/v1/*` でこれら両方を認識します。
-3. **モデルのslug** — [モデルカタログ](/ja/models)に記載されているものと同じです。例：`claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 各APIフォーマットは、プロトコルを翻訳するゲートウェイを介して、どのモデルでも呼び出すことができます。例えば、Codex CLI経由でClaudeを呼び出したり、Claude Code経由でGPTを呼び出したりできます。
+1. **ベースURL** - OpenAI形式のツールには`https://api.hostlinku.com/v1`； Anthropic形式のツールには`https://api.hostlinku.com`（`/v1`を除く）を使用してください。これは、Anthropic SDKが独自に`/v1/messages`を追加するためです。
+2. **APIキー** - [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** のシークレット `sk-…`。 `Authorization: Bearer sk-…` (OpenAI) または `x-api-key` (Anthropic) として使用されます。ゲートウェイは、すべてのエンドポイント `/v1/*` でこれら両方を認識します。
+3. **モデルのslug** - [モデルカタログ](/ja/models)に記載されているものと同じです。例：`claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 各APIフォーマットは、プロトコルを翻訳するゲートウェイを介して、どのモデルでも呼び出すことができます。例えば、Codex CLI経由でClaudeを呼び出したり、Claude Code経由でGPTを呼び出したりできます。
 
 ## コーディングにおすすめのモデル
 

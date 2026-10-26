@@ -1,6 +1,6 @@
 ---
 title: "Anthropic Messages"
-description: "POST /v1/messages 端点参考（兼容 Anthropic）——请使用 Anthropic SDK、Claude Code 或 Cursor，并配合 Hostlinku API 密钥"
+description: "POST /v1/messages 端点参考（兼容 Anthropic）-请使用 Anthropic SDK、Claude Code 或 Cursor，并配合 Hostlinku API 密钥"
 ---
 
 
@@ -8,7 +8,7 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-除了 OpenAI 格式外，Hostlinku 还提供了与 [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) 兼容的端点。 官方的 Anthropic SDK、**Claude Code**、Cursor、Cline 以及其他支持 Anthropic 协议的工具，只需更改基础 URL 即可使用——两种格式共用一个 API 密钥和一个 Hostlinku 余额。
+除了 OpenAI 格式外，Hostlinku 还提供了与 [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) 兼容的端点。 官方的 Anthropic SDK、**Claude Code**、Cursor、Cline 以及其他支持 Anthropic 协议的工具，只需更改基础 URL 即可使用-两种格式共用一个 API 密钥和一个 Hostlinku 余额。
 
 ```http
 POST https://api.hostlinku.com/v1/messages
@@ -20,7 +20,7 @@ Content-Type: application/json
 身份验证接收 `x-api-key`（Anthropic 样式）**或** `Authorization: Bearer sk-…` 标头。 每个响应都包含 `request-id` / `x-request-id` 标头（请求 ID 为 Hostlinku，格式为 `msg_…`），而在非流式传输的成功响应中，还包含 `x-model`。
 
 <Callout type="note" title="任何模型，而不仅仅是克劳德">
-`model` 使用与 [模型目录](/zh/models) 相同的公共 slug Hostlinku — 例如 `claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 非Claude模型仍可通过 Anthropic 格式调用；由网关进行转换。
+`model` 使用与 [模型目录](/zh/models) 相同的公共 slug Hostlinku - 例如 `claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 非Claude模型仍可通过 Anthropic 格式调用；由网关进行转换。
 </Callout>
 
 ## 快速配置
@@ -83,7 +83,7 @@ const msg = await client.messages.create({
 | `tools`, `tool_choice` | `array`, `any` | 工具使用格式 Anthropic（包括 `input_schema`）。 |
 | `thinking` | `object` | 扩展思考，例如 `{ "type": "enabled", "budget_tokens": 1024 }`。 |
 | `metadata` | `object` | 例如：`{ "user_id": "…" }`。 |
-| `mcp_servers`, `context_management`, `output_format` | — | 原样转发（视模型支持情况而定）。 |
+| `mcp_servers`, `context_management`, `output_format` | - | 原样转发（视模型支持情况而定）。 |
 
 列表外的字段将被丢弃。无效的正文将被拒绝（错误代码 `400 invalid_request_error`），各字段的详细信息请参见 `error.details.issues`。
 
@@ -112,7 +112,7 @@ const msg = await client.messages.create({
 `id` 和 `model` 始终是 Hostlinku 的公共标识符。 `hostlinku` 块是扩展块（Anthropic 的 SDK 会忽略它），其中包含 <CreditIcon />、Service Mode API key 的费用以及延迟。
 
 <Callout type="note" title="Anthropic 用法规范">
-根据 Anthropic 规范，`input_tokens` **不**包含缓存Token；缓存Token在 `cache_read_input_tokens` / `cache_creation_input_tokens` 中单独报告。 Hostlinku 账单分别按各自的价格计算这三项费用——这与 `/v1/chat/completions` 的计费路径完全一致（参见 [计费](/zh/billing)）。
+根据 Anthropic 规范，`input_tokens` **不**包含缓存Token；缓存Token在 `cache_read_input_tokens` / `cache_creation_input_tokens` 中单独报告。 Hostlinku 账单分别按各自的价格计算这三项费用-这与 `/v1/chat/completions` 的计费路径完全一致（参见 [计费](/zh/billing)）。
 </Callout>
 
 ## 流式传输 (`stream: true`)
@@ -143,7 +143,7 @@ data: {"type":"message_stop"}
 
 - 最终用量记录在`message_delta`中；费用根据`message_stop`之后的实际用量计算。
 - 如果流在传输过程中失败，网关将发送 `event: error` 和 `{"type":"error","error":{"type":…,"message":…}}`，但**不会**发送虚假的 `message_stop`。
-- 第一个字节之前的错误（余额不足、模型不存在、速率限制）将作为常规的 JSON 响应返回，并附带正确的 HTTP 状态码——Anthropic SDK 将其映射为异常 (`AuthenticationError`、`NotFoundError`、`RateLimitError`、……)。
+- 第一个字节之前的错误（余额不足、模型不存在、速率限制）将作为常规的 JSON 响应返回，并附带正确的 HTTP 状态码-Anthropic SDK 将其映射为异常 (`AuthenticationError`、`NotFoundError`、`RateLimitError`、……)。
 
 ## 计算Token
 
@@ -167,6 +167,6 @@ POST https://api.hostlinku.com/v1/messages/count_tokens
 | 403 | `permission_error` | 账户已被暂停/访问被拒绝。 |
 | 404 | `not_found_error` | 该模型的Slug未收录在产品目录中。 |
 | 429 | `rate_limit_error` | 已达到请求上限。 |
-| 503 | `overloaded_error` | 模型/上游当前不可用——可以安全地重试。 |
+| 503 | `overloaded_error` | 模型/上游当前不可用-可以安全地重试。 |
 
 错误消息中从未包含上游提供商的标识信息。OpenAI 格式的完整代码列表请参见 [错误](/zh/errors)。

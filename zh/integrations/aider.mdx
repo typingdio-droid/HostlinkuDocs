@@ -1,6 +1,6 @@
 ---
 title: "Aider"
-description: "通过 Hostlinku 运行 Aider，并使用 OPENAI_API_BASE 和模型前缀 openai/ — 此外还需提供模型元数据，以确保上下文和费用计算正确"
+description: "通过 Hostlinku 运行 Aider，并使用 OPENAI_API_BASE 和模型前缀 openai/ - 此外还需提供模型元数据，以确保上下文和费用计算正确"
 ---
 
 
@@ -26,7 +26,7 @@ export OPENAI_API_KEY=sk-isi-api-key-kamu   # API key Hostlinku
 aider --model openai/claude-sonnet-4-6
 ```
 
-前缀 `openai/` 是必填项——它会指示 Aider 使用与 `OPENAI_API_BASE` 兼容的 OpenAI 路径。前缀后的部分是 Hostlinku 的 slug。
+前缀 `openai/` 是必填项-它会指示 Aider 使用与 `OPENAI_API_BASE` 兼容的 OpenAI 路径。前缀后的部分是 Hostlinku 的 slug。
 
 ### （建议）保存在配置文件中
 
@@ -70,7 +70,7 @@ Aider 不认识 slug Hostlinku，因此它提示 *“模型未知”* 并推测�
 }
 ```
 
-上述价格仅为示例（Performance模式）——摘自[产品目录](/zh/models)中的`pricing`，以**100万个Token**为单位， 然后**除以1,000,000**，因为Aider采用的是每1个Token的价格（例如`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。Aider的费用估算值将接近控制台上的实际账单金额。
+上述价格仅为示例（Performance模式）-摘自[产品目录](/zh/models)中的`pricing`，以**100万个Token**为单位， 然后**除以1,000,000**，因为Aider采用的是每1个Token的价格（例如`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。Aider的费用估算值将接近控制台上的实际账单金额。
 
 </Steps>
 
@@ -90,7 +90,7 @@ aider --architect \
 
 ## 故障排除
 
-- **`AuthenticationError`** — `OPENAI_API_KEY` 未导出，或 `.env` 无法读取（Aider 无法从工作目录/git 根目录读取 `.env`）。
-- **`NotFoundError` 模型** — 忘记了前缀 `openai/` 或 slug 错误。
-- **“未知上下文窗口”警告*** — 尚未存在 `.aider.model.metadata.json`；请参阅第 4 步。
-- **答案被截断** — 请在元数据中提高 `max_output_tokens` 的值，或选择输出限制更大的模型。
+- **`AuthenticationError`** - `OPENAI_API_KEY` 未导出，或 `.env` 无法读取（Aider 无法从工作目录/git 根目录读取 `.env`）。
+- **`NotFoundError` 模型** - 忘记了前缀 `openai/` 或 slug 错误。
+- **“未知上下文窗口”警告*** - 尚未存在 `.aider.model.metadata.json`；请参阅第 4 步。
+- **答案被截断** - 请在元数据中提高 `max_output_tokens` 的值，或选择输出限制更大的模型。

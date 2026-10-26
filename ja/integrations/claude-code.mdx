@@ -1,6 +1,6 @@
 ---
 title: "クロード・コード"
-description: "Hostlinku 経由で Claude Code（CLI、VS Code、JetBrains）を実行し、ANTHROPIC_BASE_URL を指定 — Claude や他のモデルを利用でき、1つの残高ですべてに対応"
+description: "Hostlinku 経由で Claude Code（CLI、VS Code、JetBrains）を実行し、ANTHROPIC_BASE_URL を指定 - Claude や他のモデルを利用でき、1つの残高ですべてに対応"
 ---
 
 
@@ -21,7 +21,7 @@ npm install -g @anthropic-ai/claude-code
 
 ### Hostlinku へ移動してください
 
-最も手っ取り早い方法 — シェルでのエクスポート (`~/.zshrc` / `~/.bashrc`)：
+最も手っ取り早い方法 - シェルでのエクスポート (`~/.zshrc` / `~/.bashrc`)：
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
@@ -35,7 +35,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
 claude
 ```
 
-永続化の方法 — `~/.claude/settings.json`内の`env`ブロック（すべてのプロジェクトに適用）またはプロジェクトルート内の`.claude/settings.local.json`（そのプロジェクトのみ。このファイルは通常、gitignoreの対象となります）：
+永続化の方法 - `~/.claude/settings.json`内の`env`ブロック（すべてのプロジェクトに適用）またはプロジェクトルート内の`.claude/settings.local.json`（そのプロジェクトのみ。このファイルは通常、gitignoreの対象となります）：
 
 ```json
 {
@@ -77,7 +77,7 @@ claude --model deepseek-v4-flash
 
 ## VS Code および JetBrains の拡張機能
 
-Claude Code 拡張機能はログイン情報を独自に確認するため、拡張機能の設定でも同じ変数を指定する必要があります — VS Code: `claudeCode.environmentVariables` および `settings.json`:
+Claude Code 拡張機能はログイン情報を独自に確認するため、拡張機能の設定でも同じ変数を指定する必要があります - VS Code: `claudeCode.environmentVariables` および `settings.json`:
 
 ```json
 {
@@ -117,7 +117,7 @@ Hostlinkuは`cache_control`（プロンプトキャッシュ）を引き継ぎ�
 
 ## トラブルシューティング
 
-- **`401 authentication_error` キーは正しいはずなのに** — 古いOAuth認証情報がまだ使用されています。`/logout`を実行し、セッションを終了してから、`ANTHROPIC_BASE_URL`が読み取れることを確認してください（`/status`）。
-- **モデルが見つかりません (`404`)** — エイリアスがまだピン留めされていないため、Claude Code はデフォルトのモデル名を送信しています。`ANTHROPIC_DEFAULT_*_MODEL` にカタログのslugを入力してください。
-- **`400 max_tokens melebihi batas`** — 目標モデルの出力上限が小さい場合は、`max_tokens`を`CLAUDE_CODE_MAX_OUTPUT_TOKENS`（例：`32000`）経由で下げる。
-- **レート制限 (`429`)** — Claude Code では、複数のサブエージェントを並行して実行できます。制限については、[利用状況と制限](/ja/usage-and-limits) をご覧ください。
+- **`401 authentication_error` キーは正しいはずなのに** - 古いOAuth認証情報がまだ使用されています。`/logout`を実行し、セッションを終了してから、`ANTHROPIC_BASE_URL`が読み取れることを確認してください（`/status`）。
+- **モデルが見つかりません (`404`)** - エイリアスがまだピン留めされていないため、Claude Code はデフォルトのモデル名を送信しています。`ANTHROPIC_DEFAULT_*_MODEL` にカタログのslugを入力してください。
+- **`400 max_tokens melebihi batas`** - 目標モデルの出力上限が小さい場合は、`max_tokens`を`CLAUDE_CODE_MAX_OUTPUT_TOKENS`（例：`32000`）経由で下げる。
+- **レート制限 (`429`)** - Claude Code では、複数のサブエージェントを並行して実行できます。制限については、[利用状況と制限](/ja/usage-and-limits) をご覧ください。

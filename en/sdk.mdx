@@ -1,6 +1,6 @@
 ---
 title: "SDK & Sample Code"
-description: "Python and Node.js examples for the three Hostlinku API dialects—Anthropic Messages, OpenAI Chat Completions, and OpenAI Responses."
+description: "Python and Node.js examples for the three Hostlinku API dialects-Anthropic Messages, OpenAI Chat Completions, and OpenAI Responses."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -13,7 +13,7 @@ A single API key works for all three dialects. The only differences are the **ba
 | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
 | OpenAI Responses | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
 
-Replace the model name with the slug from the [catalog](/en/models) — the example below uses a model available in Service Mode Performance.
+Replace the model name with the slug from the [catalog](/en/models) - the example below uses a model available in Service Mode Performance.
 
 ## Python
 
@@ -217,5 +217,5 @@ Java, Go, and PHP use the same pattern: replace `base_url` with Hostlinku, then 
 </Callout>
 
 <Callout type="warning" title="Limit per client">
-**The Codex CLI is for OpenAI models only** (`gpt-*`) — Claude models and other non-OpenAI models are rejected upstream due to differences in tool types. **Claude Code** can use non-Claude models, but it displays an `unrecognized_model` warning and assumes a 200k-token context. Details are available on the [Codex CLI](/en/integrations/codex-cli) and [Claude Code](/en/integrations/claude-code) pages.
+**The Codex CLI is for OpenAI models only** (`gpt-*`) - Claude models and other non-OpenAI models are rejected upstream due to differences in tool types. **Claude Code** can use non-Claude models, but it displays an `unrecognized_model` warning and assumes a 200k-token context. Details are available on the [Codex CLI](/en/integrations/codex-cli) and [Claude Code](/en/integrations/claude-code) pages.
 </Callout>

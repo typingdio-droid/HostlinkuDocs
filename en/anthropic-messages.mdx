@@ -1,13 +1,13 @@
 ---
 title: "Anthropic Messages"
-description: "POST /v1/messages endpoint reference (Anthropic-compatible) — use the Anthropic SDK, Claude Code, or Cursor with your Hostlink API key"
+description: "POST /v1/messages endpoint reference (Anthropic-compatible) - use the Anthropic SDK, Claude Code, or Cursor with your Hostlink API key"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-In addition to the OpenAI format, Hostlinku also provides endpoints compatible with the [Anthropic Messages API](https://docs.anthropic.com/en/api/messages). The official Anthropic SDK, **Claude Code**, Cursor, Cline, and other tools that support the Anthropic protocol can be used simply by changing the base URL—one API key and one Hostlinku balance cover both formats.
+In addition to the OpenAI format, Hostlinku also provides endpoints compatible with the [Anthropic Messages API](https://docs.anthropic.com/en/api/messages). The official Anthropic SDK, **Claude Code**, Cursor, Cline, and other tools that support the Anthropic protocol can be used simply by changing the base URL-one API key and one Hostlinku balance cover both formats.
 
 ```http
 POST https://api.hostlinku.com/v1/messages
@@ -19,7 +19,7 @@ Content-Type: application/json
 Authentication accepts the `x-api-key` header (Anthropic style) **or** `Authorization: Bearer sk-…`. Each response includes the `request-id` / `x-request-id` header (Hostlinku request ID, in the format `msg_…`) and, for successful non-streaming responses, `x-model`.
 
 <Callout type="note" title="Any model, not just Claude">
-`model` uses the same Hostlinku public slug as the [model catalog](/en/models) — e.g., `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Non-Claude models can still be invoked via the Anthropic format; the gateway handles the translation.
+`model` uses the same Hostlinku public slug as the [model catalog](/en/models) - e.g., `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Non-Claude models can still be invoked via the Anthropic format; the gateway handles the translation.
 </Callout>
 
 ## Quick Setup
@@ -82,7 +82,7 @@ const msg = await client.messages.create({
 | `tools`, `tool_choice` | `array`, `any` | Uses the Anthropic tool format (including `input_schema`). |
 | `thinking` | `object` | Extended thinking, e.g., `{ "type": "enabled", "budget_tokens": 1024 }`. |
 | `metadata` | `object` | E.g., `{ "user_id": "…" }`. |
-| `mcp_servers`, `context_management`, `output_format` | — | Passed through as-is (depending on model support). |
+| `mcp_servers`, `context_management`, `output_format` | - | Passed through as-is (depending on model support). |
 
 Fields not in the list are discarded. An invalid body results in a `400 invalid_request_error` response, with details for each field in `error.details.issues`.
 
@@ -111,7 +111,7 @@ Fields not in the list are discarded. An invalid body results in a `400 invalid_
 `id` and `model` are always Hostlinku's public identifiers. The `hostlinku` block is an extension (the Anthropic SDK ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency.
 
 <Callout type="note" title="Anthropic usage conventions">
-According to Anthropic's specifications, `input_tokens` **does not** include cache tokens; cache tokens are reported separately in `cache_read_input_tokens` / `cache_creation_input_tokens`. Hostlinku’s billing calculates all three at their respective rates—identical to the `/v1/chat/completions` endpoint (see [Billing](/en/billing)).
+According to Anthropic's specifications, `input_tokens` **does not** include cache tokens; cache tokens are reported separately in `cache_read_input_tokens` / `cache_creation_input_tokens`. Hostlinku’s billing calculates all three at their respective rates-identical to the `/v1/chat/completions` endpoint (see [Billing](/en/billing)).
 </Callout>
 
 ## Streaming (`stream: true`)
@@ -144,7 +144,7 @@ Note:
 - If the stream fails midway, the gateway sends an `event: error` with
 `{"type":"error","error":{"type":…,"message":…}}` and **do not** send a fake `message_stop`.
 - Errors occurring before the first byte (insufficient balance, model not found, rate limit) are returned as
-A standard JSON response with the correct HTTP status code — the Anthropic SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+A standard JSON response with the correct HTTP status code - the Anthropic SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
 
 ## Count tokens
 
@@ -168,6 +168,6 @@ Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`
 | 403 | `permission_error` | Account suspended / access denied. |
 | 404 | `not_found_error` | The model slug does not exist in the catalog. |
 | 429 | `rate_limit_error` | Request limit reached. |
-| 503 | `overloaded_error` | The model/upstream is currently unavailable — it is safe to retry. |
+| 503 | `overloaded_error` | The model/upstream is currently unavailable - it is safe to retry. |
 
 Error messages never include the upstream provider's identifier. A complete list of codes for the OpenAI format is available at [Error](/en/errors).

@@ -1,6 +1,6 @@
 ---
 title: "OpenAI 代理 SDK"
-description: "通过 Responses API 使用 OpenAI Agents SDK（Python 和 TypeScript）与 Hostlinku 配合——set_default_openai_client，跟踪功能已关闭，工具和交接功能仍正常运行"
+description: "通过 Responses API 使用 OpenAI Agents SDK（Python 和 TypeScript）与 Hostlinku 配合-set_default_openai_client，跟踪功能已关闭，工具和交接功能仍正常运行"
 ---
 
 
@@ -87,13 +87,13 @@ console.log(result.finalOutput);
 
 ## 代理循环的工作原理
 
-每个 *agent loop* 循环都对应一次向 Hostlinku 网关发出的请求：代理发送提示，模型通过 *工具调用* 进行响应，代理在本地运行工具（读写文件、执行命令），然后将结果发回——如此循环往复，直至模型给出最终答案。 网关将每个循环路由到上游模型，所有操作都会在控制台中单独记录 → **请求日志**，其中包含Token和费用信息。
+每个 *agent loop* 循环都对应一次向 Hostlinku 网关发出的请求：代理发送提示，模型通过 *工具调用* 进行响应，代理在本地运行工具（读写文件、执行命令），然后将结果发回-如此循环往复，直至模型给出最终答案。 网关将每个循环路由到上游模型，所有操作都会在控制台中单独记录 → **请求日志**，其中包含Token和费用信息。
 
 ![Hostlinku 代理循环图：IDE/编码代理、Hostlinku 网关、上游模型、Hostlinku 控制台以及本地工作区](/images/integrations/agent-loop-detailed.webp "通过 Hostlinku 的代理循环：代理向网关发送提示，网关将其路由到上游模型，工具在本地运行，且每个请求都会记录在控制台中。")
 
 ## 无需修改代码：环境变量
 
-SDK OpenAI 读取 `OPENAI_BASE_URL` 和 `OPENAI_API_KEY`，因此无需修改代码即可将 Agents SDK 重定向至 Hostlinku — 只需通过环境变量关闭跟踪即可：
+SDK OpenAI 读取 `OPENAI_BASE_URL` 和 `OPENAI_API_KEY`，因此无需修改代码即可将 Agents SDK 重定向至 Hostlinku - 只需通过环境变量关闭跟踪即可：
 
 ```bash
 export OPENAI_BASE_URL=https://api.hostlinku.com/v1
@@ -104,7 +104,7 @@ python agent.py
 
 ## 是Responses API还是Chat Completions？
 
-默认 SDK 是 Responses API（`/v1/responses`）——建议使用该版本，因为它支持 `reasoning` 项，且工具流程最为完整。若需使用 Chat Completions（`/v1/chat/completions`）：
+默认 SDK 是 Responses API（`/v1/responses`）-建议使用该版本，因为它支持 `reasoning` 项，且工具流程最为完整。若需使用 Chat Completions（`/v1/chat/completions`）：
 
 ```python
 from agents import set_default_openai_api
@@ -119,7 +119,7 @@ setOpenAIAPI("chat_completions");
 两者使用相同的API密钥、余额和请求日志。
 
 <Callout type="important" title="无状态：请勿使用 previous_response_id / conversation">
-Hostlinku 不存储响应。请让 `Runner`/`run` 管理历史记录（默认情况下，SDK 会在每次轮次中将所有历史记录发送到 `input`）。 请勿设置 `previous_response_id`、`conversation_id` 或 `OpenAIConversationsSession` ——网关会以 `400 invalid_request_error` 为由拒绝这些请求。像 `SQLiteSession` 这样的本地会话仍然可以使用，因为其历史记录存储在您这边。
+Hostlinku 不存储响应。请让 `Runner`/`run` 管理历史记录（默认情况下，SDK 会在每次轮次中将所有历史记录发送到 `input`）。 请勿设置 `previous_response_id`、`conversation_id` 或 `OpenAIConversationsSession` -网关会以 `400 invalid_request_error` 为由拒绝这些请求。像 `SQLiteSession` 这样的本地会话仍然可以使用，因为其历史记录存储在您这边。
 </Callout>
 
 ## 通过网关支持的
@@ -127,15 +127,15 @@ Hostlinku 不存储响应。请让 `Runner`/`run` 管理历史记录（默认情
 | Agents SDK 功能 | 状态 |
 |---|---|
 | `function_tool` / `tool()`，并行工具调用 | 是 |
-| 代理之间的交接（包括每个代理采用不同的模型） | 是的——将`claude-sonnet-4-6`和`gpt-5-5`混合在同一条生产线上 |
+| 代理之间的交接（包括每个代理采用不同的模型） | 是的-将`claude-sonnet-4-6`和`gpt-5-5`混合在同一条生产线上 |
 | 结构化输出（`output_type` / Zod） | 是的，在支持 JSON 模式的模型中 |
 | 流式传输 (`Runner.run_streamed`, `run(..., { stream: true })`) | 是 |
 | `reasoning={"effort": …}` 经由 `ModelSettings` | 是的，转给模型 |
 | 托管工具 OpenAI（`WebSearchTool`、`FileSearchTool`、`CodeInterpreterTool`） | 取决于目标模型；如果不可用，请单独以`function_tool`身份运行该工具 |
-| 追踪至OpenAI平台 | 不经过网关——请关闭，或使用第三方跟踪处理器 |
+| 追踪至OpenAI平台 | 不经过网关-请关闭，或使用第三方跟踪处理器 |
 
 ## 故障排除
 
-- **错误日志中出现 *tracing export 401* — 跟踪功能尚未关闭；请调用 `set_tracing_disabled(True)` / `setTracingDisabled(true)` 或设置 `OPENAI_AGENTS_DISABLE_TRACING=1`。**
-- **`400 previous_response_id tidak didukung`** — 停止使用 `previous_response_id` / `conversation_id`；请参见上方的说明。
-- **`404 model_not_found`** — `model=` 的 slug 应为 Hostlinku，而非原始模型 OpenAI/Anthropic。
+- **错误日志中出现 *tracing export 401* - 跟踪功能尚未关闭；请调用 `set_tracing_disabled(True)` / `setTracingDisabled(true)` 或设置 `OPENAI_AGENTS_DISABLE_TRACING=1`。**
+- **`400 previous_response_id tidak didukung`** - 停止使用 `previous_response_id` / `conversation_id`；请参见上方的说明。
+- **`404 model_not_found`** - `model=` 的 slug 应为 Hostlinku，而非原始模型 OpenAI/Anthropic。

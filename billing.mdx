@@ -85,10 +85,10 @@ biaya = (token input non-cache  × harga_input_per_token)
 
 - Token cache adalah **bagian dari** token input, bukan tambahan di luarnya. Token yang dilayani dari
   cache dibebankan dengan harga cache masing-masing, dan sisa token input dibebankan dengan harga
-  input — jadi token yang sama tidak pernah dihitung dua kali.
+  input - jadi token yang sama tidak pernah dihitung dua kali.
 - Harga per model (input/output, termasuk harga cache bila ada) tercantum di katalog. Lihat
   [Model](/models) dan menu **Model** di console. Angka di respons `GET /v1/models`
-  adalah harga per **1M token** dalam <CreditIcon /> (1 <CreditIcon /> = $1) pada Service Mode API key yang dipakai —
+  adalah harga per **1M token** dalam <CreditIcon /> (1 <CreditIcon /> = $1) pada Service Mode API key yang dipakai -
   bukan per 1 token atau per 1.000 token.
 - Token dihitung dari `usage` pada respons; bila usage tidak tersedia, Hostlinku memakai
   estimasi konservatif dan itulah yang ditagihkan (jarang terjadi).

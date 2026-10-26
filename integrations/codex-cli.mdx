@@ -6,7 +6,7 @@ description: Jalankan OpenAI Codex CLI lewat Hostlinku dengan provider kustom di
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
 [Codex CLI](https://developers.openai.com/codex/cli) hanya berbicara protokol **OpenAI
-Responses**. Hostlinku menyediakannya di [`POST /v1/responses`](/responses) — stateless, dengan
+Responses**. Hostlinku menyediakannya di [`POST /v1/responses`](/responses) - stateless, dengan
 dukungan `reasoning.encrypted_content`, function calling, dan streaming persis seperti yang
 diharapkan Codex. Konfigurasinya cukup satu provider kustom.
 
@@ -22,7 +22,7 @@ npm install -g @openai/codex
 ### Tambahkan provider Hostlinku
 
 Edit `~/.codex/config.toml` (buat bila belum ada). Provider **harus** didefinisikan di file
-pengguna ini — `.codex/config.toml` di dalam proyek tidak boleh menimpa `model_providers` demi
+pengguna ini - `.codex/config.toml` di dalam proyek tidak boleh menimpa `model_providers` demi
 keamanan.
 
 ```toml
@@ -86,7 +86,7 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
   Codex mengirim tool bawaannya sendiri (shell, patch file, dsb.). Model non-OpenAI menolak tipe
   tool tersebut dan mengembalikan `The requested tool type is not supported by this model`.
   Artinya `claude-*`, `deepseek-*`, `glm-*`, `qwen*`, `kimi-*`, dan `minimax-*` **tidak bisa** dipakai
-  lewat Codex — gunakan model `gpt-*`. Untuk model lain, pakai klien yang berbicara dialek
+  lewat Codex - gunakan model `gpt-*`. Untuk model lain, pakai klien yang berbicara dialek
   Anthropic atau Chat Completions (Claude Code, Cline, OpenCode, Aider).
 
   Model `gpt-*` yang **Responses-native** (tool Codex diteruskan apa adanya): `gpt-5-3-codex`,
@@ -110,14 +110,14 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
 
 ## Troubleshooting
 
-- **`401`** — variabel di `env_key` belum ter-export di shell tempat `codex` dijalankan.
-- **Model menjawab "tidak bisa menjalankan shell" lalu mengarang output** — model tersebut bukan
+- **`401`** - variabel di `env_key` belum ter-export di shell tempat `codex` dijalankan.
+- **Model menjawab "tidak bisa menjalankan shell" lalu mengarang output** - model tersebut bukan
   Responses-native, sehingga tool Codex dibuang sebelum sampai ke model. Pilih model dari daftar
   Codex-ready di atas; jangan pakai `gpt-5-6-terra` untuk Codex.
-- **`400 previous_response_id tidak didukung`** — muncul hanya bila ada plugin/skrip yang memaksa
+- **`400 previous_response_id tidak didukung`** - muncul hanya bila ada plugin/skrip yang memaksa
   mode *stored responses*. Pastikan `store` tidak dipaksa `true`.
-- **Model tidak muncul / `404`** — slug salah; `/v1/models` menampilkan daftar yang valid untuk
+- **Model tidak muncul / `404`** - slug salah; `/v1/models` menampilkan daftar yang valid untuk
   key kamu.
-- **Codex versi lama meminta `wire_api = "chat"`** — Hostlinku juga melayani
+- **Codex versi lama meminta `wire_api = "chat"`** - Hostlinku juga melayani
   [`/v1/chat/completions`](/chat-completions); namun fitur reasoning Codex bekerja paling baik
   dengan `responses`.

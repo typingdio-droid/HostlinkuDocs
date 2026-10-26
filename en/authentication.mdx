@@ -17,7 +17,7 @@ For the [Anthropic Messages](/en/anthropic-messages) endpoint, the `x-api-key: s
 API keys are created and managed at [console.hostlinku.com](https://console.hostlinku.com), under the **API Keys** menu.
 
 <Callout type="important" title="The API key is only valid for /v1/*">
-The API key is **only** valid at the following gateway endpoints: `/v1/chat/completions`, `/v1/messages`, `/v1/responses`, and `/v1/models`. Console account endpoints (`/api/*` — profile, API key list, logs, balance, admin) **reject** API keys with a `403 API_KEY_NOT_ALLOWED` error and can only be accessed via a Console login session. Conversely, login sessions (cookies) **do not** apply to `/v1/*` — the gateway always requires an API key (`401`). As a result, a leaked API key can only be used to call models (subject to balance, credit limit, and rate limit restrictions); it cannot be used to read account data, create new API keys, or change settings.
+The API key is **only** valid at the following gateway endpoints: `/v1/chat/completions`, `/v1/messages`, `/v1/responses`, and `/v1/models`. Console account endpoints (`/api/*` - profile, API key list, logs, balance, admin) **reject** API keys with a `403 API_KEY_NOT_ALLOWED` error and can only be accessed via a Console login session. Conversely, login sessions (cookies) **do not** apply to `/v1/*` - the gateway always requires an API key (`401`). As a result, a leaked API key can only be used to call models (subject to balance, credit limit, and rate limit restrictions); it cannot be used to read account data, create new API keys, or change settings.
 </Callout>
 
 ## Creating an API Key

@@ -28,11 +28,11 @@ In the **Third-party AI providers** section:
 
 ![JetBrains Settings → Tools → AI Assistant → Models & API keys: URL containing https://api.hostlinku.com/v1](/images/integrations/jetbrains-ai-settings.webp "An OpenAI-compatible provider with the URL https://api.hostlinku.com/v1. Click &quot;Test Connection&quot; before clicking &quot;Apply.&quot;")
 
-Click **Test Connection** — The IDE sends a test request to the gateway. If successful, click **Apply**, then **OK**.
+Click **Test Connection** - The IDE sends a test request to the gateway. If successful, click **Apply**, then **OK**.
 
 ### (Optional) Configure the Assignment Model
 
-In the **Model Assignment** section, you can select a Hostlinku model for **Core features** (e.g., `claude-sonnet-4-6`) and **Instant helpers** (e.g., `claude-haiku-4-5`). Leave the **Completion model** set to *Not selected* — inline autocomplete uses FIM, which is not supported by Hostlinku (see [Overview](/en/integrations#masalah-umum)).
+In the **Model Assignment** section, you can select a Hostlinku model for **Core features** (e.g., `claude-sonnet-4-6`) and **Instant helpers** (e.g., `claude-haiku-4-5`). Leave the **Completion model** set to *Not selected* - inline autocomplete uses FIM, which is not supported by Hostlinku (see [Overview](/en/integrations#masalah-umum)).
 
 ### Select a model in AI Chat
 
@@ -47,13 +47,13 @@ The first request will appear in the console → **Request Log**.
 ## What You Need to Know
 
 <Callout type="note" title="OpenAI-compatible paths only">
-The AI Assistant currently only supports *OpenAI-compatible* third-party providers—there is no Anthropic base URL option yet. The Claude model can still be used: the `claude-sonnet-4-6` slug is invoked via Chat Completions and a gateway that translates to the Anthropic protocol.
+The AI Assistant currently only supports *OpenAI-compatible* third-party providers-there is no Anthropic base URL option yet. The Claude model can still be used: the `claude-sonnet-4-6` slug is invoked via Chat Completions and a gateway that translates to the Anthropic protocol.
 </Callout>
 
 - **The base URL must end with `/v1`.** The IDE adds `/models` and `/chat/completions` on its own;
 Without `/v1`, *Test Connection* fails with a `404`.
 - **No custom header.** The AI Assistant only sends the API key as
-`Authorization: Bearer sk-…` — that's all Hostlinku needs.
+`Authorization: Bearer sk-…` - that's all Hostlinku needs.
 - **Not all models are suitable for Chat.** Choose a model with *calling tools* (check **Tool
 "calling**" in the settings) so that the feature that calls the tool within the IDE works. Recommendations can be found in the [Overview](/en/integrations).
 - **Claude Code on JetBrains** is a separate integration (the Claude Code plugin uses its own CLI). See

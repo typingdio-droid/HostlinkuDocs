@@ -76,7 +76,7 @@ export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
 |---|---|
 | `reasoning_effort` (`"low"`/`"medium"`/`"high"`) | 推理模型（GPT-5.x、Claude 4.6、DeepSeek V4）。 |
 | `capabilities.max_tokens_parameter: true` | 只有当模型拒绝 `max_completion_tokens` 时；若 Hostlinku 同时接受两者，则保持默认设置。 |
-| `capabilities.chat_completions: false` | 将模型切换至 Responses API（`/v1/responses`）——Hostlinku 同样支持，但默认的 Chat Completions 在 Zed 中经过了更充分的测试。 |
+| `capabilities.chat_completions: false` | 将模型切换至 Responses API（`/v1/responses`）-Hostlinku 同样支持，但默认的 Chat Completions 在 Zed 中经过了更充分的测试。 |
 
 <Callout type="note" title="“编辑预测”不包括在内">
 Zed 的 *编辑预测*（内联自动完成）功能在 `edit_predictions` 中单独配置，并使用 `/v1/completions`（FIM）端点，而 Hostlinku 并未提供该端点。 请使用 Hostlinku 用于代理面板、内联助手和线程；将“编辑预测”功能保留在默认提供程序中。
@@ -84,7 +84,7 @@ Zed 的 *编辑预测*（内联自动完成）功能在 `edit_predictions` 中�
 
 ## 故障排除
 
-- **未显示提供商** — `settings.json` 无效（逗号/括号）。请检查 `zed: open log`。
-- **`401`** — 尚未为提供程序 `hostlinku` 输入密钥，或者环境变量是在 Zed 启动后导出的；请重启 Zed。
-- **忽略工具调用** — 请确保该模型的`capabilities.tools: true`。
-- **完整上下文显示过快** — `max_tokens` 与 `context_window` 模型相比尺寸过小；请按产品目录调整。
+- **未显示提供商** - `settings.json` 无效（逗号/括号）。请检查 `zed: open log`。
+- **`401`** - 尚未为提供程序 `hostlinku` 输入密钥，或者环境变量是在 Zed 启动后导出的；请重启 Zed。
+- **忽略工具调用** - 请确保该模型的`capabilities.tools: true`。
+- **完整上下文显示过快** - `max_tokens` 与 `context_window` 模型相比尺寸过小；请按产品目录调整。

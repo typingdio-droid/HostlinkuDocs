@@ -1,6 +1,6 @@
 ---
 title: "API Reference"
-description: "A one-page reference guide—rate limits, the Anthropic Messages API, OpenAI Chat Completions, the OpenAI Responses API, error codes, and a list of models"
+description: "A one-page reference guide-rate limits, the Anthropic Messages API, OpenAI Chat Completions, the OpenAI Responses API, error codes, and a list of models"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -40,7 +40,7 @@ Contact [halo@hostlinku.com](mailto:halo@hostlinku.com) and provide your account
 
 `POST /v1/messages`
 
-Call the model using the native Anthropic format. The request header must include `x-api-key: YOUR_API_KEY` (or `Authorization: Bearer`). Compatible with the Anthropic SDK, Claude Code, Cursor, and Cline—simply set `ANTHROPIC_BASE_URL=https://api.hostlinku.com`. Complete documentation: [Anthropic Messages](/en/anthropic-messages).
+Call the model using the native Anthropic format. The request header must include `x-api-key: YOUR_API_KEY` (or `Authorization: Bearer`). Compatible with the Anthropic SDK, Claude Code, Cursor, and Cline-simply set `ANTHROPIC_BASE_URL=https://api.hostlinku.com`. Complete documentation: [Anthropic Messages](/en/anthropic-messages).
 
 ### Request Body Parameters
 
@@ -51,7 +51,7 @@ Call the model using the native Anthropic format. The request header must includ
 | `max_tokens` | integer | Maximum number of output tokens | true |
 | `system` | string \| array | System prompt (block arrays support `cache_control`) | false |
 | `stream` | boolean | SSE streaming, default `false` | false |
-| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | — | As specified by Anthropic | false |
+| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | - | As specified by Anthropic | false |
 
 ### Example Request
 
@@ -141,7 +141,7 @@ Call any model using the OpenAI Chat Completions format. The request header must
 | `messages` | array | Array of conversation messages (`system` | `user` | `assistant` | `tool`) | true |
 | `max_tokens` | integer | Maximum number of output tokens | false |
 | `stream` | boolean | SSE streaming, default `false` | false |
-| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | — | As per OpenAI specifications (+ the "thinking" extension) | false |
+| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | - | As per OpenAI specifications (+ the "thinking" extension) | false |
 
 ### Example Request
 
@@ -205,7 +205,7 @@ data: [DONE]
 
 `POST /v1/responses`
 
-The format used by **Codex CLI**, **OpenAI Agents SDK**, and `client.responses.create()`. The request header includes `Authorization: Bearer YOUR_API_KEY`; the base URL is `https://api.hostlinku.com/v1`. Stateless: `store` is always `false`, `previous_response_id` results in a `400` error — send the full history in `input`. Complete documentation: [Responses API](/en/responses).
+The format used by **Codex CLI**, **OpenAI Agents SDK**, and `client.responses.create()`. The request header includes `Authorization: Bearer YOUR_API_KEY`; the base URL is `https://api.hostlinku.com/v1`. Stateless: `store` is always `false`, `previous_response_id` results in a `400` error - send the full history in `input`. Complete documentation: [Responses API](/en/responses).
 
 ### Request Body Parameters
 
@@ -216,7 +216,7 @@ The format used by **Codex CLI**, **OpenAI Agents SDK**, and `client.responses.c
 | `instructions` | string | System prompt | false |
 | `max_output_tokens` | integer | Maximum number of output tokens | false |
 | `stream` | boolean | SSE streaming (`event: response.*`), default `false` | false |
-| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | — | As specified in the OpenAI Responses documentation | false |
+| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | - | As specified in the OpenAI Responses documentation | false |
 
 ### Example Request
 
@@ -281,7 +281,7 @@ The envelope error follows the protocol of the called endpoint: `/v1/chat/comple
 | 413 | The request body exceeds the maximum size. | `Payload is too large.` |
 | 422 | Body validation failed (only `/v1/chat/completions`; `/v1/messages` and `/v1/responses` return a 400). | `Invalid request body.` |
 | 429 | Rate limit exceeded. | `Rate limit exceeded. Upgrade to a plan with a higher limit.` |
-| 503 | Model/upstream is currently unavailable — it is safe to retry with backoff. | `The model is currently unavailable. Please try again later.` |
+| 503 | Model/upstream is currently unavailable - it is safe to retry with backoff. | `The model is currently unavailable. Please try again later.` |
 
 Error messages **never** contain the identity or raw text of the upstream provider. A complete list of OpenAI-format codes is available at [Error](/en/errors).
 

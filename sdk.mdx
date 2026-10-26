@@ -1,6 +1,6 @@
 ---
 title: SDK & Contoh Kode
-description: Contoh Python dan Node.js untuk tiga dialek API Hostlinku — Anthropic Messages, OpenAI Chat Completions, dan OpenAI Responses.
+description: Contoh Python dan Node.js untuk tiga dialek API Hostlinku - Anthropic Messages, OpenAI Chat Completions, dan OpenAI Responses.
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -13,7 +13,7 @@ Satu API key berlaku di ketiga dialek. Yang berbeda hanya **base URL** dan **hea
 | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
 | OpenAI Responses | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
 
-Ganti nama model dengan slug dari [katalog](/models) — contoh di bawah memakai model yang
+Ganti nama model dengan slug dari [katalog](/models) - contoh di bawah memakai model yang
 tersedia di Service Mode Performance.
 
 ## Python
@@ -219,7 +219,7 @@ for await (const event of stream) {
 </Callout>
 
 <Callout type="warning" title="Batas per klien">
-  **Codex CLI hanya untuk model OpenAI** (`gpt-*`) — model Claude dan model non-OpenAI lain
+  **Codex CLI hanya untuk model OpenAI** (`gpt-*`) - model Claude dan model non-OpenAI lain
   ditolak upstream karena perbedaan tipe tool. **Claude Code** bisa memakai model non-Claude,
   tetapi menampilkan peringatan `unrecognized_model` dan mengasumsikan konteks 200k token.
   Detail ada di halaman [Codex CLI](/integrations/codex-cli) dan

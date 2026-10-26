@@ -60,7 +60,7 @@ ID provider di `opencode.json` **harus sama** dengan yang dimasukkan saat `/conn
 
 ### Pilih model
 
-Jalankan `/models` — grup **Hostlinku** muncul dengan model yang kamu daftarkan. `small_model`
+Jalankan `/models` - grup **Hostlinku** muncul dengan model yang kamu daftarkan. `small_model`
 dipakai untuk tugas ringan (judul sesi, ringkasan) sehingga sesi panjang lebih hemat.
 
 </Steps>
@@ -84,7 +84,7 @@ dipakai untuk tugas ringan (judul sesi, ringkasan) sehingga sesi panjang lebih h
 }
 ```
 
-**Lewat Responses API** — ganti `npm` menjadi `@ai-sdk/openai`; OpenCode akan memakai
+**Lewat Responses API** - ganti `npm` menjadi `@ai-sdk/openai`; OpenCode akan memakai
 [`/v1/responses`](/responses). Berguna untuk model GPT-5.x bila ingin *reasoning summary*.
 Untuk sebagian besar pengguna, `@ai-sdk/openai-compatible` (Chat Completions) sudah cukup.
 
@@ -96,7 +96,7 @@ Untuk sebagian besar pengguna, `@ai-sdk/openai-compatible` (Chat Completions) su
 
 ## Troubleshooting
 
-- **Provider tidak muncul di `/models`** — ID di `/connect` dan `opencode.json` berbeda, atau JSON
+- **Provider tidak muncul di `/models`** - ID di `/connect` dan `opencode.json` berbeda, atau JSON
   tidak valid. Cek `opencode auth list`.
-- **`401`** — key belum tersimpan untuk ID tersebut; ulangi `/connect`.
-- **`404 model_not_found`** — kunci `models` harus slug persis dari `GET /v1/models`.
+- **`401`** - key belum tersimpan untuk ID tersebut; ulangi `/connect`.
+- **`404 model_not_found`** - kunci `models` harus slug persis dari `GET /v1/models`.

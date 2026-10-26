@@ -6,7 +6,7 @@ description: "在 Cline 和 Roo Code 中配置兼容 OpenAI 的提供商（或�
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Cline](https://cline.bot) — 及其分支 **Roo Code** — 提供了一个 **OpenAI Compatible** 提供商，该提供商支持自定义基础 URL、API 密钥和模型 ID。 这是实现 Hostlinku 的最简单途径；关于通过 **Anthropic** 提供商实现的替代方案，将在下文讨论。正在使用 **Kilo Code**？请参阅 [Kilo Code](/zh/integrations/kilo-code) 中的专门指南。
+[Cline](https://cline.bot) - 及其分支 **Roo Code** - 提供了一个 **OpenAI Compatible** 提供商，该提供商支持自定义基础 URL、API 密钥和模型 ID。 这是实现 Hostlinku 的最简单途径；关于通过 **Anthropic** 提供商实现的替代方案，将在下文讨论。正在使用 **Kilo Code**？请参阅 [Kilo Code](/zh/integrations/kilo-code) 中的专门指南。
 
 <Steps>
 
@@ -14,7 +14,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 在 Cline 面板中，点击齿轮图标（**设置**）→ **API 配置**。
 
-首次打开 Cline 时，会显示 *“您将如何使用 Cline？”* 界面——请选择 **“使用我自己的 API 密钥”**，然后点击 **“继续”**。
+首次打开 Cline 时，会显示 *“您将如何使用 Cline？”* 界面-请选择 **“使用我自己的 API 密钥”**，然后点击 **“继续”**。
 
 ![Cline 起始界面：已选中“使用我自己的 API 密钥”选项](/images/integrations/cline-setup.webp "新安装：选择“使用我自己的 API 密钥”以使用自有提供商。")
 
@@ -38,7 +38,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 - **最大输出Token数**：`64000` 是大型模型的安全值。
 - **进出库价格**：如需准确估算Cline的成本，请从`pricing`目录中复制数据；实际账单仍以控制台记录为准。
 
-![完整的API配置面板：基础 URL Hostlinku、API密钥、模型ID、模型配置](/images/integrations/cline-byok-openai.webp "“设置”→“API 配置”的完整界面。自定义标头并非必需——Hostlinku 只需使用 API 密钥即可。")
+![完整的API配置面板：基础 URL Hostlinku、API密钥、模型ID、模型配置](/images/integrations/cline-byok-openai.webp "“设置”→“API 配置”的完整界面。自定义标头并非必需-Hostlinku 只需使用 API 密钥即可。")
 
 ### 验证
 
@@ -52,12 +52,12 @@ Cline 可以为 **Plan** 和 **Act** 模式使用不同的模型。 常见的经
 
 ## 备选方案：提供商 Anthropic
 
-Cline 还提供了一个名为 **Anthropic** 的提供商，其选项中包含 *使用自定义基础 URL*。请填写 `https://api.hostlinku.com`（不包含 `/v1`）以及 API 密钥 Hostlinku。 区别在于：该提供商中的模型列表**仅限于 Cline 识别的 ID**——请选择其 slug 与 Hostlinku 目录中完全一致的 Claude 模型（例如 `claude-sonnet-4-6`、`claude-haiku-4-5`）。 对于非Claude模型或列表中不存在的slug，请使用**OpenAI Compatible**。
+Cline 还提供了一个名为 **Anthropic** 的提供商，其选项中包含 *使用自定义基础 URL*。请填写 `https://api.hostlinku.com`（不包含 `/v1`）以及 API 密钥 Hostlinku。 区别在于：该提供商中的模型列表**仅限于 Cline 识别的 ID**-请选择其 slug 与 Hostlinku 目录中完全一致的 Claude 模型（例如 `claude-sonnet-4-6`、`claude-haiku-4-5`）。 对于非Claude模型或列表中不存在的slug，请使用**OpenAI Compatible**。
 
-![Cline：提供商 Anthropic，其“使用自定义基础 URL”字段包含 https://api.hostlinku.com](/images/integrations/cline-anthropic.webp "勾选“使用自定义基础 URL”，并输入 https://api.hostlinku.com — 不要添加 /v1。")
+![Cline：提供商 Anthropic，其“使用自定义基础 URL”字段包含 https://api.hostlinku.com](/images/integrations/cline-anthropic.webp "勾选“使用自定义基础 URL”，并输入 https://api.hostlinku.com - 不要添加 /v1。")
 
 <Callout type="note" title="提示缓存">
-通过Anthropic通道，Cline发送了`cache_control`，Hostlinku将其转发——缓存Token在`cache_read_input_tokens`中被报告，并按模型缓存价格计费。 通过 OpenAI Compatible 路径，缓存将由支持该功能的模型自动处理。
+通过Anthropic通道，Cline发送了`cache_control`，Hostlinku将其转发-缓存Token在`cache_read_input_tokens`中被报告，并按模型缓存价格计费。 通过 OpenAI Compatible 路径，缓存将由支持该功能的模型自动处理。
 </Callout>
 
 ## Cline CLI
@@ -69,8 +69,8 @@ cline --model claude-sonnet-4-6 "tambahkan validasi input di handler login"
 
 ## 故障排除
 
-- **`401`** — 密钥错误/已被撤销。请在 Roo Code 中确认密钥已填写在当前活动的提供商**配置文件**中，而非其他配置文件。
-- **`404 model_not_found`** — 模型ID输入有误；请复制自`GET /v1/models`。
-- **所有请求中的 `404`** — 基础 URL 缺少 `/v1`（OpenAI 路径），或者在 Anthropic 路径中反而使用了 `/v1`。请与上方的截图进行对比。
-- **Act模式下的空响应** — 不包含*工具调用*的模型。请使用[概述](/zh/integrations)中推荐的模型。
-- **上下文缓冲区即将用尽** — 请根据目录设置 *Context Window Size*，以便 Cline 能正确截断历史记录。
+- **`401`** - 密钥错误/已被撤销。请在 Roo Code 中确认密钥已填写在当前活动的提供商**配置文件**中，而非其他配置文件。
+- **`404 model_not_found`** - 模型ID输入有误；请复制自`GET /v1/models`。
+- **所有请求中的 `404`** - 基础 URL 缺少 `/v1`（OpenAI 路径），或者在 Anthropic 路径中反而使用了 `/v1`。请与上方的截图进行对比。
+- **Act模式下的空响应** - 不包含*工具调用*的模型。请使用[概述](/zh/integrations)中推荐的模型。
+- **上下文缓冲区即将用尽** - 请根据目录设置 *Context Window Size*，以便 Cline 能正确截断历史记录。

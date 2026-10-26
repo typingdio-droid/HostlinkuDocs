@@ -1,6 +1,6 @@
 ---
 title: Cursor
-description: Pakai model Hostlinku di Cursor lewat Override OpenAI Base URL — chat, Cmd-K, dan Agent dengan API key kamu sendiri
+description: Pakai model Hostlinku di Cursor lewat Override OpenAI Base URL - chat, Cmd-K, dan Agent dengan API key kamu sendiri
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -28,7 +28,7 @@ https://api.hostlinku.com/v1
 
 ![Cursor Settings → Models: kolom Override OpenAI Base URL berisi https://api.hostlinku.com/v1](/images/integrations/cursor-openai-base-url.jpg "Kolom Override OpenAI Base URL diisi https://api.hostlinku.com/v1, lalu klik Save.")
 
-Jangan tambahkan `/chat/completions` di belakangnya — Cursor menambahkan path-nya sendiri. Klik
+Jangan tambahkan `/chat/completions` di belakangnya - Cursor menambahkan path-nya sendiri. Klik
 **Save**, lalu **Verify** di samping kolom API key; Cursor mengirim satu request uji ke gateway.
 
 ### Tambahkan model Hostlinku
@@ -54,19 +54,19 @@ muncul di console → **Log Permintaan**.
 ## Yang perlu diketahui
 
 <Callout type="warning" title="Override bersifat global">
-  Selama **Override OpenAI Base URL** aktif, semua model keluarga OpenAI di Cursor — termasuk yang
-  dikelola Cursor — ikut dialihkan ke Hostlinku. Pakai slug Hostlinku untuk semuanya, atau matikan
+  Selama **Override OpenAI Base URL** aktif, semua model keluarga OpenAI di Cursor - termasuk yang
+  dikelola Cursor - ikut dialihkan ke Hostlinku. Pakai slug Hostlinku untuk semuanya, atau matikan
   toggle override saat ingin kembali ke model bawaan Cursor.
 </Callout>
 
 - **Request dikirim dari server Cursor**, bukan dari komputer kamu. Karena itu base URL harus
-  publik — `https://api.hostlinku.com` memenuhi syarat ini (alamat `localhost` ditolak Cursor).
+  publik - `https://api.hostlinku.com` memenuhi syarat ini (alamat `localhost` ditolak Cursor).
 - **Cursor Tab (autocomplete) tidak terpengaruh.** Fitur Tab memakai infrastruktur khusus Cursor dan
   tidak bisa dialihkan ke provider mana pun. Hostlinku melayani chat, Cmd-K, dan Agent.
-- **Agent mode** memerlukan model dengan *tool calling* dan *streaming* — semua model yang
+- **Agent mode** memerlukan model dengan *tool calling* dan *streaming* - semua model yang
   direkomendasikan di [Ikhtisar](/integrations) memenuhinya. Bila Agent menolak dengan
   *BAD_MODEL_NAME*, periksa kembali slug dan pastikan toggle **OpenAI API Key** aktif.
-- **Koneksi menggantung / error protokol** — di pengaturan yang sama, ubah *HTTP Compatibility
+- **Koneksi menggantung / error protokol** - di pengaturan yang sama, ubah *HTTP Compatibility
   Mode* ke **HTTP/1.1**.
 
 <Callout type="tip" title="Model Claude lewat jalur OpenAI">
@@ -79,6 +79,6 @@ muncul di console → **Log Permintaan**.
 | Gejala | Solusi |
 |---|---|
 | *Verify* gagal `401` | API key salah/dicabut, atau ada spasi ikut tersalin. |
-| *Model not found* | Slug salah ketik — salin dari `GET /v1/models`. |
+| *Model not found* | Slug salah ketik - salin dari `GET /v1/models`. |
 | Jawaban terpotong | Model punya batas output lebih kecil dari yang diminta Cursor; coba model lain atau Service Mode berbeda. |
 | Agent berhenti di tengah dengan `429` | Agent mengirim banyak request paralel. Lihat [Pemakaian & Limit](/usage-and-limits). |

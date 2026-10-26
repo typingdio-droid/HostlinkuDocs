@@ -1,6 +1,6 @@
 ---
 title: "Dedicated Service Mode"
-description: "Models running on Hostlinku’s own infrastructure—DeepSeek, GLM, and Kimi—with a context size of 1 million tokens."
+description: "Models running on Hostlinku’s own infrastructure-DeepSeek, GLM, and Kimi-with a context size of 1 million tokens."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -10,7 +10,7 @@ import { Callout } from "/snippets/mdx.jsx";
 **Dedicated** is Hostlinku’s third service mode. Unlike **Performance** and **Low-Cost**, which forward requests to upstream partners, the Dedicated model runs on **Hostlinku’s own infrastructure**.
 
 <Callout type="note" title="One API key = one Service Mode">
-This mode is enabled when your API key is set to "Dedicated" by an admin. To use another mode at the same time, create a separate API key—Service Mode is tied to the key, not to the request.
+This mode is enabled when your API key is set to "Dedicated" by an admin. To use another mode at the same time, create a separate API key-Service Mode is tied to the key, not to the request.
 </Callout>
 
 ## Available Models
@@ -23,7 +23,7 @@ Nine models, three families:
 | GLM | `glm-5-3`, `glm-5-3-flash`, `glm-5-3-flash-hyper` | 1,000,000 tokens |
 | Kimi | `kimi-k3`, `kimi-k3-turbo`, `kimi-k3-hyper` | 1,000,000 tokens |
 
-The `-turbo` and `-hyper` variants are faster/larger configurations of the base model. Models not listed here are **not** available in Dedicated mode—use Performance or Low-Cost instead.
+The `-turbo` and `-hyper` variants are faster/larger configurations of the base model. Models not listed here are **not** available in Dedicated mode-use Performance or Low-Cost instead.
 
 ## Endpoints and Authentication
 
@@ -35,11 +35,11 @@ The base URL does not change between modes. All three API dialects are supported
 | OpenAI Responses | `POST {base}/v1/responses` | `Authorization: Bearer <API_KEY>` |
 | Anthropic Messages | `POST {base}/v1/messages` | `x-api-key: <API_KEY>` |
 
-Simply point the app to the Hostlinku base URL and use the Dedicated mode API key—there are no additional parameters for selecting the mode.
+Simply point the app to the Hostlinku base URL and use the Dedicated mode API key-there are no additional parameters for selecting the mode.
 
 ## Price
 
-Selling price = base price of the model × Dedicated mode multiplier, billed per **1M tokens** (1 <CreditIcon /> = $1). The figures per model are listed in the [Model Catalog](/en/models) — select the **Dedicated** tab to view the prices applicable to your key. Example: `glm-5-3` currently costs <CreditIcon />1.21 inputs and
+Selling price = base price of the model × Dedicated mode multiplier, billed per **1M tokens** (1 <CreditIcon /> = $1). The figures per model are listed in the [Model Catalog](/en/models) - select the **Dedicated** tab to view the prices applicable to your key. Example: `glm-5-3` currently costs <CreditIcon />1.21 inputs and
 <CreditIcon />3.80 output per 1M token.
 
 ## Prompt Caching

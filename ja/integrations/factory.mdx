@@ -6,7 +6,7 @@ description: "~/.factory/settings.json に Hostlinku モデルを customModels �
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Droid](https://docs.factory.ai/cli/byok/overview) — Factoryのコーディングエージェント — は、**BYOKカスタムモデル**に対応しています。 カスタムモデルは`~/.factory/settings.json`から読み込まれ、Droid CLIおよびFactoryデスクトップアプリで利用可能です（FactoryのWeb/モバイルプラットフォームでは利用できません）。APIキーはローカルに保持され、Factoryサーバーには送信されません。
+[Droid](https://docs.factory.ai/cli/byok/overview) - Factoryのコーディングエージェント - は、**BYOKカスタムモデル**に対応しています。 カスタムモデルは`~/.factory/settings.json`から読み込まれ、Droid CLIおよびFactoryデスクトップアプリで利用可能です（FactoryのWeb/モバイルプラットフォームでは利用できません）。APIキーはローカルに保持され、Factoryサーバーには送信されません。
 
 <Steps>
 
@@ -78,7 +78,7 @@ export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
 
 | 症状 | Solusi |
 |---|---|
-| `/model`にモデルが表示されない | JSONが無効、または`provider`の入力ミス — `jq . ~/.factory/settings.json`で確認してください。 |
+| `/model`にモデルが表示されない | JSONが無効、または`provider`の入力ミス - `jq . ~/.factory/settings.json`で確認してください。 |
 | 変数が見つかりませんというエラー | `HOSTLINKU_API_KEY`は、`droid`を実行しているシェルではまだエクスポートされていません。 |
 | すべてのリクエストにおける`404` | ベースURLが入れ替わっています：`anthropic`と`/v1`、`generic-chat-completion-api`と`/v1`。 |
 | `404 model_not_found` | `model`のslugは、`GET /v1/models`と完全に一致している必要があります。 |

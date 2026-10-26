@@ -1,6 +1,6 @@
 ---
 title: "OpenAI エージェント SDK"
-description: "OpenAI Agents SDK（Python および TypeScript）を、Responses API 経由で Hostlinku と併用する — set_default_openai_client、トレーシングは無効化、ツールおよびハンドオフは引き続き動作"
+description: "OpenAI Agents SDK（Python および TypeScript）を、Responses API 経由で Hostlinku と併用する - set_default_openai_client、トレーシングは無効化、ツールおよびハンドオフは引き続き動作"
 ---
 
 
@@ -127,15 +127,15 @@ Hostlinkuはレスポンスを保存しません。履歴の管理は`Runner`/`r
 | Agents SDKの機能 | ステータス |
 |---|---|
 | `function_tool` / `tool()`、並列ツール呼び出し | はい |
-| エージェント間のハンドオフ（エージェントごとに異なるモデルを含む） | はい――`claude-sonnet-4-6`と`gpt-5-5`を1つのフローで組み合わせてください |
+| エージェント間のハンドオフ（エージェントごとに異なるモデルを含む） | はい-`claude-sonnet-4-6`と`gpt-5-5`を1つのフローで組み合わせてください |
 | 構造化出力 (`output_type` / Zod) | はい、JSONスキーマに対応しているモデルでは |
 | ストリーミング (`Runner.run_streamed`、`run(..., { stream: true })`) | はい |
 | `reasoning={"effort": …}` 経由 `ModelSettings` | はい、モデルに引き継ぎます |
 | ホスト型ツール OpenAI (`WebSearchTool`、`FileSearchTool`、`CodeInterpreterTool`) | 目的のモデルに応じて、利用できない場合は`function_tool`としてツールを単独で実行してください |
-| OpenAIプラットフォームへのトレース | ゲートウェイを経由しない — 無効にするか、サードパーティ製のトレースプロセッサを使用する |
+| OpenAIプラットフォームへのトレース | ゲートウェイを経由しない - 無効にするか、サードパーティ製のトレースプロセッサを使用する |
 
 ## トラブルシューティング
 
-- **エラーログ *tracing export 401* が満杯です*** — トレースがまだ無効化されていません。`set_tracing_disabled(True)` / `setTracingDisabled(true)` を呼び出すか、`OPENAI_AGENTS_DISABLE_TRACING=1` を設定してください。
-- **`400 previous_response_id tidak didukung`** — `previous_response_id` / `conversation_id` の使用を削除してください。上記の注記を参照してください。
-- **`404 model_not_found`** — `model=`のslugはHostlinkuとするべきであり、元のモデル名であるOpenAI/Anthropicではない。
+- **エラーログ *tracing export 401* が満杯です*** - トレースがまだ無効化されていません。`set_tracing_disabled(True)` / `setTracingDisabled(true)` を呼び出すか、`OPENAI_AGENTS_DISABLE_TRACING=1` を設定してください。
+- **`400 previous_response_id tidak didukung`** - `previous_response_id` / `conversation_id` の使用を削除してください。上記の注記を参照してください。
+- **`404 model_not_found`** - `model=`のslugはHostlinkuとするべきであり、元のモデル名であるOpenAI/Anthropicではない。

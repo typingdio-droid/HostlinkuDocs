@@ -59,7 +59,7 @@ HOSTLINKU_API_KEY=sk-isi-api-key-kamu
 
 ### 重新加载并测试
 
-在“Continue”面板中点击**“Reload config”**（或保存文件——“Continue”会自动监听更改）。在下拉菜单中选择模型 *Claude Sonnet 4.6 (Hostlinku)*，发送消息，然后查看控制台 → **请求日志**。
+在“Continue”面板中点击**“Reload config”**（或保存文件-“Continue”会自动监听更改）。在下拉菜单中选择模型 *Claude Sonnet 4.6 (Hostlinku)*，发送消息，然后查看控制台 → **请求日志**。
 
 </Steps>
 
@@ -81,7 +81,7 @@ HOSTLINKU_API_KEY=sk-isi-api-key-kamu
 
 ## 故障排除
 
-- **模型未出现在下拉菜单中** — YAML 缩进错误，或者 `roles` 未加载 `chat`。请参阅 VS Code 中的 *输出 → 继续*。
-- **`401`** — 尚未读取 `~/.continue/.env`；请重新加载配置或重启 IDE。
-- **`404 model_not_found`** — `model:` 的 slug 必须与 `GET /v1/models` 的完全一致。
-- **流式传输播放卡顿** — 请确保没有企业代理在缓存 `text/event-stream`。
+- **模型未出现在下拉菜单中** - YAML 缩进错误，或者 `roles` 未加载 `chat`。请参阅 VS Code 中的 *输出 → 继续*。
+- **`401`** - 尚未读取 `~/.continue/.env`；请重新加载配置或重启 IDE。
+- **`404 model_not_found`** - `model:` 的 slug 必须与 `GET /v1/models` 的完全一致。
+- **流式传输播放卡顿** - 请确保没有企业代理在缓存 `text/event-stream`。

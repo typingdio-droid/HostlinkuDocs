@@ -58,7 +58,7 @@ Or replace `${{ secrets.HOSTLINKU_API_KEY }}` with the actual key value if your 
 
 ### Reload and test
 
-Click **Reload config** in the Continue panel (or save the file—Continue monitors changes). Select the *Claude Sonnet 4.6 (Hostlinku)* model from the dropdown, send a message, then check the console → **Request Log**.
+Click **Reload config** in the Continue panel (or save the file-Continue monitors changes). Select the *Claude Sonnet 4.6 (Hostlinku)* model from the dropdown, send a message, then check the console → **Request Log**.
 
 </Steps>
 
@@ -80,8 +80,8 @@ Define `apiBase` and `apiKey` once as an anchor (`&hostlinku`), then use `<<: *h
 
 ## Troubleshooting
 
-- **The model does not appear in the dropdown** — the YAML indentation is incorrect or `roles` does not include `chat`.
+- **The model does not appear in the dropdown** - the YAML indentation is incorrect or `roles` does not include `chat`.
 Look for *Output → Continue* in VS Code.
-- **`401`** — `~/.continue/.env` was not read; reload the configuration or restart the IDE.
-- **`404 model_not_found`** — `model:` must be the exact slug from `GET /v1/models`.
-- **Streaming is choppy** — make sure there are no corporate proxies buffering `text/event-stream`.
+- **`401`** - `~/.continue/.env` was not read; reload the configuration or restart the IDE.
+- **`404 model_not_found`** - `model:` must be the exact slug from `GET /v1/models`.
+- **Streaming is choppy** - make sure there are no corporate proxies buffering `text/event-stream`.

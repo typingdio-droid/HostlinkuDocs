@@ -1,6 +1,6 @@
 ---
 title: OpenAI Agents SDK
-description: Pakai OpenAI Agents SDK (Python & TypeScript) dengan Hostlinku lewat Responses API — set_default_openai_client, tracing dimatikan, tools & handoff tetap berjalan
+description: Pakai OpenAI Agents SDK (Python & TypeScript) dengan Hostlinku lewat Responses API - set_default_openai_client, tracing dimatikan, tools & handoff tetap berjalan
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -92,7 +92,7 @@ Permintaan** dengan ID `resp_…`.
 
 Setiap putaran *agent loop* adalah satu request ke Hostlinku Gateway: agent mengirim prompt, model
 membalas dengan *tool call*, agent menjalankan tool secara lokal (baca/tulis file, eksekusi
-perintah) lalu mengirim hasilnya kembali — begitu seterusnya sampai model memberi jawaban akhir.
+perintah) lalu mengirim hasilnya kembali - begitu seterusnya sampai model memberi jawaban akhir.
 Gateway me-routing setiap putaran ke model upstream, dan semuanya tercatat terpisah di console →
 **Log Permintaan** lengkap dengan token dan biayanya.
 
@@ -101,7 +101,7 @@ Gateway me-routing setiap putaran ke model upstream, dan semuanya tercatat terpi
 ## Tanpa mengubah kode: environment variable
 
 SDK OpenAI membaca `OPENAI_BASE_URL` dan `OPENAI_API_KEY`, sehingga Agents SDK bisa diarahkan ke
-Hostlinku tanpa menyentuh kode — cukup matikan tracing lewat env juga:
+Hostlinku tanpa menyentuh kode - cukup matikan tracing lewat env juga:
 
 ```bash
 export OPENAI_BASE_URL=https://api.hostlinku.com/v1
@@ -112,7 +112,7 @@ python agent.py
 
 ## Responses API atau Chat Completions?
 
-Default SDK adalah Responses API (`/v1/responses`) — disarankan, karena mendukung item `reasoning`
+Default SDK adalah Responses API (`/v1/responses`) - disarankan, karena mendukung item `reasoning`
 dan alur tool yang paling lengkap. Bila ingin Chat Completions (`/v1/chat/completions`):
 
 ```python
@@ -130,7 +130,7 @@ Keduanya memakai API key, saldo, dan Request Logs yang sama.
 <Callout type="important" title="Stateless: jangan pakai previous_response_id / conversation">
   Hostlinku tidak menyimpan response. Biarkan `Runner`/`run` mengelola riwayat (default SDK mengirim
   seluruh riwayat di `input` pada setiap giliran). Jangan set `previous_response_id`,
-  `conversation_id`, atau `OpenAIConversationsSession` — gateway menolaknya dengan
+  `conversation_id`, atau `OpenAIConversationsSession` - gateway menolaknya dengan
   `400 invalid_request_error`. Session lokal seperti `SQLiteSession` tetap bisa dipakai karena
   riwayatnya disimpan di sisi kamu.
 </Callout>
@@ -140,17 +140,17 @@ Keduanya memakai API key, saldo, dan Request Logs yang sama.
 | Fitur Agents SDK | Status |
 |---|---|
 | `function_tool` / `tool()`, parallel tool calls | Ya |
-| Handoffs antar agent (termasuk model berbeda per agent) | Ya — campur `claude-sonnet-4-6` dan `gpt-5-5` dalam satu alur |
+| Handoffs antar agent (termasuk model berbeda per agent) | Ya - campur `claude-sonnet-4-6` dan `gpt-5-5` dalam satu alur |
 | Structured output (`output_type` / Zod) | Ya pada model yang mendukung JSON schema |
 | Streaming (`Runner.run_streamed`, `run(..., { stream: true })`) | Ya |
 | `reasoning={"effort": …}` via `ModelSettings` | Ya, diteruskan ke model |
 | Hosted tools OpenAI (`WebSearchTool`, `FileSearchTool`, `CodeInterpreterTool`) | Tergantung model tujuan; jalankan tool sebagai `function_tool` sendiri bila tidak tersedia |
-| Tracing ke platform OpenAI | Tidak lewat gateway — matikan, atau gunakan trace processor pihak ketiga |
+| Tracing ke platform OpenAI | Tidak lewat gateway - matikan, atau gunakan trace processor pihak ketiga |
 
 ## Troubleshooting
 
-- **Log penuh error *tracing export 401*** — tracing belum dimatikan; panggil
+- **Log penuh error *tracing export 401*** - tracing belum dimatikan; panggil
   `set_tracing_disabled(True)` / `setTracingDisabled(true)` atau set `OPENAI_AGENTS_DISABLE_TRACING=1`.
-- **`400 previous_response_id tidak didukung`** — hapus penggunaan `previous_response_id` /
+- **`400 previous_response_id tidak didukung`** - hapus penggunaan `previous_response_id` /
   `conversation_id`; lihat callout di atas.
-- **`404 model_not_found`** — `model=` harus slug Hostlinku, bukan nama model OpenAI/Anthropic asli.
+- **`404 model_not_found`** - `model=` harus slug Hostlinku, bukan nama model OpenAI/Anthropic asli.

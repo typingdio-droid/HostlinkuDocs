@@ -1,6 +1,6 @@
 ---
 title: "OpenAI Agents SDK"
-description: "Use the OpenAI Agents SDK (Python & TypeScript) with Hostlinku via the Responses API — set_default_openai_client, tracing disabled, tools & handoff still running"
+description: "Use the OpenAI Agents SDK (Python & TypeScript) with Hostlinku via the Responses API - set_default_openai_client, tracing disabled, tools & handoff still running"
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -86,13 +86,13 @@ Run the script; two requests (the tool call and the response) appear in the cons
 
 ## How the agent loop works
 
-Each iteration of the *agent loop* is a single request to the Hostlinku Gateway: the agent sends a prompt, the model responds with a *tool call*, the agent runs the tool locally (reads/writes files, executes commands), and then sends the results back—and so on until the model provides the final answer. The gateway routes each iteration to the upstream model, and everything is logged separately in the console → **Request Log**, complete with the token and associated cost.
+Each iteration of the *agent loop* is a single request to the Hostlinku Gateway: the agent sends a prompt, the model responds with a *tool call*, the agent runs the tool locally (reads/writes files, executes commands), and then sends the results back-and so on until the model provides the final answer. The gateway routes each iteration to the upstream model, and everything is logged separately in the console → **Request Log**, complete with the token and associated cost.
 
 ![Hostlinku agent loop diagram: IDE/coding agent, Hostlinku Gateway, upstream model, Hostlinku Console, and local workspace](/images/integrations/agent-loop-detailed.webp "Agent loop via Hostlinku: the agent sends a prompt to the gateway, the gateway routes it to the upstream model, the tool runs locally, and every request is logged in the console.")
 
 ## Without changing the code: environment variable
 
-The OpenAI SDK reads `OPENAI_BASE_URL` and `OPENAI_API_KEY`, so the Agents SDK can be directed to Hostlinku without modifying the code—just disable tracing via the environment variables as well:
+The OpenAI SDK reads `OPENAI_BASE_URL` and `OPENAI_API_KEY`, so the Agents SDK can be directed to Hostlinku without modifying the code-just disable tracing via the environment variables as well:
 
 ```bash
 export OPENAI_BASE_URL=https://api.hostlinku.com/v1
@@ -103,7 +103,7 @@ python agent.py
 
 ## Responses API or Chat Completions?
 
-The default SDK is the Responses API (`/v1/responses`) — recommended, as it supports `reasoning` items and offers the most comprehensive set of tool workflows. If you want Chat Completions (`/v1/chat/completions`):
+The default SDK is the Responses API (`/v1/responses`) - recommended, as it supports `reasoning` items and offers the most comprehensive set of tool workflows. If you want Chat Completions (`/v1/chat/completions`):
 
 ```python
 from agents import set_default_openai_api
@@ -118,7 +118,7 @@ setOpenAIAPI("chat_completions");
 Both use the same API key, balance, and request logs.
 
 <Callout type="important" title="Stateless: Do not use previous_response_id / conversation">
-Hostlinku does not store responses. Let `Runner`/`run` manage the history (by default, the SDK sends the entire history in `input` on each turn). Do not set `previous_response_id`, `conversation_id`, or `OpenAIConversationsSession`—the gateway will reject them with a `400 invalid_request_error`. Local sessions such as `SQLiteSession` can still be used because the history is stored on your end.
+Hostlinku does not store responses. Let `Runner`/`run` manage the history (by default, the SDK sends the entire history in `input` on each turn). Do not set `previous_response_id`, `conversation_id`, or `OpenAIConversationsSession`-the gateway will reject them with a `400 invalid_request_error`. Local sessions such as `SQLiteSession` can still be used because the history is stored on your end.
 </Callout>
 
 ## Supported via the gateway
@@ -126,17 +126,17 @@ Hostlinku does not store responses. Let `Runner`/`run` manage the history (by de
 | Agents SDK Features | Status |
 |---|---|
 | `function_tool` / `tool()`, parallel tool calls | Yes |
-| Handoffs between agents (including different models per agent) | Yes — mix `claude-sonnet-4-6` and `gpt-5-5` in a single workflow |
+| Handoffs between agents (including different models per agent) | Yes - mix `claude-sonnet-4-6` and `gpt-5-5` in a single workflow |
 | Structured output (`output_type` / Zod) | Yes, for models that support JSON schema |
 | Streaming (`Runner.run_streamed`, `run(..., { stream: true })`) | Yes |
 | `reasoning={"effort": …}` via `ModelSettings` | Yes, passed to the model |
 | OpenAI hosted tools (`WebSearchTool`, `FileSearchTool`, `CodeInterpreterTool`) | Depends on the target model; run the tool as its own `function_tool` if it is not available |
-| Tracing to the OpenAI platform | Not via the gateway — disable it, or use a third-party trace processor |
+| Tracing to the OpenAI platform | Not via the gateway - disable it, or use a third-party trace processor |
 
 ## Troubleshooting
 
-- **Full error log *tracing export 401*** — tracing has not been disabled; call
+- **Full error log *tracing export 401*** - tracing has not been disabled; call
 `set_tracing_disabled(True)` / `setTracingDisabled(true)` or set `OPENAI_AGENTS_DISABLE_TRACING=1`.
-- **`400 previous_response_id is not supported`** — remove the use of `previous_response_id` /
+- **`400 previous_response_id is not supported`** - remove the use of `previous_response_id` /
 `conversation_id`; see the callout above.
-- **`404 model_not_found`** — `model=` must be the Hostlinku slug, not the original OpenAI/Anthropic model name.
+- **`404 model_not_found`** - `model=` must be the Hostlinku slug, not the original OpenAI/Anthropic model name.

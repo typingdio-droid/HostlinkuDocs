@@ -75,9 +75,9 @@ biaya = (token input non-cache  × harga_input_per_token)
 ```
 
 - The cache token is **part of** the input token, not an external addition to it. Tokens served from
-Caches are charged at their respective cache rates, and the remaining input tokens are charged at the input rate—so the same token is never counted twice.
+Caches are charged at their respective cache rates, and the remaining input tokens are charged at the input rate-so the same token is never counted twice.
 - The price per model (input/output, including cache price if applicable) is listed in the catalog. See
-[Model](/en/models) and the **Model** menu in the console. The number in the `GET /v1/models` response is the price per **1M tokens** in <CreditIcon /> (1 <CreditIcon /> = $1) for the Service Mode API key being used—not per token or per 1,000 tokens.
+[Model](/en/models) and the **Model** menu in the console. The number in the `GET /v1/models` response is the price per **1M tokens** in <CreditIcon /> (1 <CreditIcon /> = $1) for the Service Mode API key being used-not per token or per 1,000 tokens.
 - The token is calculated based on the `usage` value in the response; if `usage` is not available, Hostlinku uses
 a conservative estimate, and that is what is billed (which rarely happens).
 - The cache here refers to the **provider's prompt cache** reported in `usage`

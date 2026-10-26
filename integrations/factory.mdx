@@ -5,7 +5,7 @@ description: Tambahkan model Hostlinku sebagai customModels di ~/.factory/settin
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Droid](https://docs.factory.ai/cli/byok/overview) — agent coding dari Factory — mendukung **BYOK
+[Droid](https://docs.factory.ai/cli/byok/overview) - agent coding dari Factory - mendukung **BYOK
 custom models**. Model kustom dibaca dari `~/.factory/settings.json` dan tersedia di Droid CLI serta
 aplikasi desktop Factory (bukan di platform web/mobile Factory). API key tetap lokal, tidak dikirim
 ke server Factory.
@@ -86,7 +86,7 @@ Jalankan `droid`, ketik `/model`, lalu pilih model di bagian **Custom models** (
 
 | Gejala | Solusi |
 |---|---|
-| Model tidak muncul di `/model` | JSON tidak valid atau `provider` salah ketik — periksa dengan `jq . ~/.factory/settings.json`. |
+| Model tidak muncul di `/model` | JSON tidak valid atau `provider` salah ketik - periksa dengan `jq . ~/.factory/settings.json`. |
 | Error variabel tidak ditemukan | `HOSTLINKU_API_KEY` belum di-export di shell yang menjalankan `droid`. |
 | `404` di semua request | Base URL tertukar: `anthropic` tanpa `/v1`, `generic-chat-completion-api` dengan `/v1`. |
 | `404 model_not_found` | `model` harus slug persis dari `GET /v1/models`. |

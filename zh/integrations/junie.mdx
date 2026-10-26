@@ -6,7 +6,7 @@ description: "通过自定义模型配置文件（Chat Completions 或 Anthropic
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) —— JetBrains 面向终端的代理编码工具 —— 支持以 JSON 文件形式定义的 **自定义模型配置文件**。一个配置文件包含端点、API 格式、API 密钥，以及用于轻量级任务的主模型和快速模型（*faster model*）。
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrains 面向终端的代理编码工具 - 支持以 JSON 文件形式定义的 **自定义模型配置文件**。一个配置文件包含端点、API 格式、API 密钥，以及用于轻量级任务的主模型和快速模型（*faster model*）。
 
 有关 JetBrains IDE 中的 AI 助手，请参阅 [JetBrains AI 助手](/zh/integrations/jetbrains)。
 
@@ -71,7 +71,7 @@ junie --model custom:hostlinku
 
 ## 需知事项
 
-- **`${HOSTLINKU_API_KEY}`** 在加载配置文件时从环境变量中读取。如果该变量尚未设置，配置文件加载将失败，且 Junie 会提示缺失的变量名称——这对于提交到代码库的配置文件来说是安全的（`.junie/models/`）。
+- **`${HOSTLINKU_API_KEY}`** 在加载配置文件时从环境变量中读取。如果该变量尚未设置，配置文件加载将失败，且 Junie 会提示缺失的变量名称-这对于提交到代码库的配置文件来说是安全的（`.junie/models/`）。
 - **主力机型与更快的机型。** 为主模型选择具有强大*工具调用*功能的模型（`claude-sonnet-4-6`、`gpt-5-5`）；而对于快速模型（摘要与分类），`claude-haiku-4-5`或`deepseek-v4-flash`等低成本模型已足够。
 - **Responses API (`OpenAIResponses`)** 在 `https://api.hostlinku.com/v1/responses` 中同样可用，但属于 *无状态* 类型 ([详情](/zh/responses))。`OpenAICompletion` 是最安全的选择。
 
@@ -79,7 +79,7 @@ junie --model custom:hostlinku
 
 | 症状 | Solusi |
 |---|---|
-| `404` | `baseUrl` 尚未完成——应以 `/v1/chat/completions` 或 `/v1/messages` 结尾。 |
+| `404` | `baseUrl` 尚未完成-应以 `/v1/chat/completions` 或 `/v1/messages` 结尾。 |
 | 个人资料未显示 | 文件名/位置错误，或 JSON 格式无效。配置文件 = 不包含 `.json` 的文件名。 |
 | 环境变量错误 | 在运行 `junie` 的 shell 中导出 `HOSTLINKU_API_KEY`。 |
-| 呼叫工具失败 / 代理程序无限循环 | 该模型对于代理编码而言过于小——请将主模型替换为[概述](/zh/integrations)中的推荐模型。 |
+| 呼叫工具失败 / 代理程序无限循环 | 该模型对于代理编码而言过于小-请将主模型替换为[概述](/zh/integrations)中的推荐模型。 |

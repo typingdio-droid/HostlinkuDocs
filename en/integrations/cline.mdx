@@ -5,7 +5,7 @@ description: "Configure an OpenAI-compatible provider (or Anthropic with a custo
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Cline](https://cline.bot) — along with its fork, **Roo Code** — provides an **OpenAI-compatible** provider that accepts a base URL, API key, and any model ID. That’s the simplest route for Hostlinku; an alternative route via the **Anthropic** provider is discussed below. Using **Kilo Code**? See the specific guide at [Kilo Code](/en/integrations/kilo-code).
+[Cline](https://cline.bot) - along with its fork, **Roo Code** - provides an **OpenAI-compatible** provider that accepts a base URL, API key, and any model ID. That’s the simplest route for Hostlinku; an alternative route via the **Anthropic** provider is discussed below. Using **Kilo Code**? See the specific guide at [Kilo Code](/en/integrations/kilo-code).
 
 <Steps>
 
@@ -13,7 +13,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 In the Cline panel, click the gear icon (**Settings**) → **API Configuration**.
 
-When Cline first opens, it displays the screen *How will you use Cline?* — select **Bring my own API key**, then **Continue**.
+When Cline first opens, it displays the screen *How will you use Cline?* - select **Bring my own API key**, then **Continue**.
 
 ![Cline home screen: &quot;Bring my own API key&quot; option selected](/images/integrations/cline-setup.webp "New installation: Select &quot;Bring my own API key&quot; to use your own provider.")
 
@@ -38,7 +38,7 @@ Open the **Model Configuration** section so that Cline can manage the context an
 - **Input/Output Price**: Copy from the `pricing` catalog if you want an accurate estimate of Cline's costs;
 The actual bill is the one recorded in the console.
 
-![Complete Cline API Configuration Panel: Hostlinku Base URL, API Key, Model ID, Model Configuration](/images/integrations/cline-byok-openai.webp "Full view of Settings → API Configuration. Custom Headers are optional—Hostlinku only requires an API key.")
+![Complete Cline API Configuration Panel: Hostlinku Base URL, API Key, Model ID, Model Configuration](/images/integrations/cline-byok-openai.webp "Full view of Settings → API Configuration. Custom Headers are optional-Hostlinku only requires an API key.")
 
 ### Verification
 
@@ -52,12 +52,12 @@ Cline can use different models for the **Plan** and **Act** modes. A common cost
 
 ## Alternative: Anthropic
 
-Cline also has a provider called **Anthropic** with a *Use custom base URL* option. Enter `https://api.hostlinku.com` (without `/v1`) and your Hostlinku API key. The difference: the list of models for this provider is **limited to IDs recognized by Cline**—select a Claude model whose slug matches the one in the Hostlinku catalog (e.g., `claude-sonnet-4-6`, `claude-haiku-4-5`). For non-Claude models or slugs not listed, use **OpenAI Compatible**.
+Cline also has a provider called **Anthropic** with a *Use custom base URL* option. Enter `https://api.hostlinku.com` (without `/v1`) and your Hostlinku API key. The difference: the list of models for this provider is **limited to IDs recognized by Cline**-select a Claude model whose slug matches the one in the Hostlinku catalog (e.g., `claude-sonnet-4-6`, `claude-haiku-4-5`). For non-Claude models or slugs not listed, use **OpenAI Compatible**.
 
-![Cline: Anthropic provider with &quot;Use custom base URL&quot; set to https://api.hostlinku.com](/images/integrations/cline-anthropic.webp "Check the &quot;Use custom base URL&quot; box and enter https://api.hostlinku.com — without /v1.")
+![Cline: Anthropic provider with &quot;Use custom base URL&quot; set to https://api.hostlinku.com](/images/integrations/cline-anthropic.webp "Check the &quot;Use custom base URL&quot; box and enter https://api.hostlinku.com - without /v1.")
 
 <Callout type="note" title="Prompt caching">
-Through the Anthropic route, Cline sends `cache_control`, and Hostlinku forwards it—the cache token is reported in `cache_read_input_tokens` and billed at the model cache rate. Through the OpenAI Compatible route, caching is handled automatically by models that support it.
+Through the Anthropic route, Cline sends `cache_control`, and Hostlinku forwards it-the cache token is reported in `cache_read_input_tokens` and billed at the model cache rate. Through the OpenAI Compatible route, caching is handled automatically by models that support it.
 </Callout>
 
 ## Cline CLI
@@ -69,12 +69,12 @@ cline --model claude-sonnet-4-6 "tambahkan validasi input di handler login"
 
 ## Troubleshooting
 
-- **`401`** — Invalid or revoked key. In Roo Code, make sure the key is entered in the **profile** of the provider that is currently
+- **`401`** - Invalid or revoked key. In Roo Code, make sure the key is entered in the **profile** of the provider that is currently
 active, not another profile.
-- **`404 model_not_found`** — Incorrect model ID; copy it from `GET /v1/models`.
-- **`404` on all requests** — the base URL is missing `/v1` (OpenAI path) or actually uses `/v1` in
+- **`404 model_not_found`** - Incorrect model ID; copy it from `GET /v1/models`.
+- **`404` on all requests** - the base URL is missing `/v1` (OpenAI path) or actually uses `/v1` in
 Anthropic path. Compare it to the screenshot above.
-- **Empty response in Act mode** — a model without *tool calling*. Use a model from the recommendations in
+- **Empty response in Act mode** - a model without *tool calling*. Use a model from the recommendations in
 [Overview](/en/integrations).
-- **Context runs out quickly** — set the *Context Window Size* according to the catalog so that Cline truncates the history
+- **Context runs out quickly** - set the *Context Window Size* according to the catalog so that Cline truncates the history
 correctly.

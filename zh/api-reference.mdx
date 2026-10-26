@@ -1,6 +1,6 @@
 ---
 title: "API 参考文档"
-description: "一页简明参考指南——速率限制、Anthropic Messages API、OpenAI、Chat Completions、OpenAI Responses API、错误代码及模型列表"
+description: "一页简明参考指南-速率限制、Anthropic Messages API、OpenAI、Chat Completions、OpenAI Responses API、错误代码及模型列表"
 ---
 
 
@@ -40,7 +40,7 @@ import { Callout } from "/snippets/mdx.jsx";
 
 `POST /v1/messages`
 
-以原生格式 Anthropic 调用模型。请求头必须包含 `x-api-key: YOUR_API_KEY`（或 `Authorization: Bearer`）。 适用于 Anthropic SDK、Claude Code、Cursor 和 Cline —— 只需设置 `ANTHROPIC_BASE_URL=https://api.hostlinku.com` 即可。完整文档：[Anthropic Messages](/zh/anthropic-messages)。
+以原生格式 Anthropic 调用模型。请求头必须包含 `x-api-key: YOUR_API_KEY`（或 `Authorization: Bearer`）。 适用于 Anthropic SDK、Claude Code、Cursor 和 Cline - 只需设置 `ANTHROPIC_BASE_URL=https://api.hostlinku.com` 即可。完整文档：[Anthropic Messages](/zh/anthropic-messages)。
 
 ### 请求正文参数
 
@@ -51,7 +51,7 @@ import { Callout } from "/snippets/mdx.jsx";
 | `max_tokens` | 整数 | 最大输出Token数量 | true |
 | `system` | 字符串 \| 数组 | 系统提示（块数组支持 `cache_control`） | false |
 | `stream` | 布尔型 | SSE流式传输，默认`false` | false |
-| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | — | 符合Anthropic规格 | false |
+| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | - | 符合Anthropic规格 | false |
 
 ### 请求示例
 
@@ -141,7 +141,7 @@ data: {"type":"message_stop"}
 | `messages` | 数组 | 对话消息数组（`system` \| `user` \| `assistant` \| `tool`） | true |
 | `max_tokens` | 整数 | 最大输出Token数量 | false |
 | `stream` | 布尔型 | SSE 流式传输，默认 `false` | false |
-| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | — | 符合 OpenAI 规格（+ thinking 扩展） | false |
+| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | - | 符合 OpenAI 规格（+ thinking 扩展） | false |
 
 ### 请求示例
 
@@ -205,7 +205,7 @@ data: [DONE]
 
 `POST /v1/responses`
 
-**Codex CLI**、**OpenAI Agents SDK** 和 `client.responses.create()` 采用的格式。请求头包含 `Authorization: Bearer YOUR_API_KEY`；基础 URL 为 `https://api.hostlinku.com/v1`。 无状态：`store` 始终为 `false`，`previous_response_id` 被 `400` 拒绝 — 请在 `input` 中发送完整历史记录。 完整文档：[Responses API](/zh/responses)。
+**Codex CLI**、**OpenAI Agents SDK** 和 `client.responses.create()` 采用的格式。请求头包含 `Authorization: Bearer YOUR_API_KEY`；基础 URL 为 `https://api.hostlinku.com/v1`。 无状态：`store` 始终为 `false`，`previous_response_id` 被 `400` 拒绝 - 请在 `input` 中发送完整历史记录。 完整文档：[Responses API](/zh/responses)。
 
 ### 请求正文参数
 
@@ -216,7 +216,7 @@ data: [DONE]
 | `instructions` | 字符串 | 系统提示 | false |
 | `max_output_tokens` | 整数 | 最大输出Token数量 | false |
 | `stream` | 布尔型 | SSE（`event: response.*`）直播，默认 `false` | false |
-| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | — | 符合OpenAI Responses规格 | false |
+| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | - | 符合OpenAI Responses规格 | false |
 
 ### 请求示例
 
@@ -281,7 +281,7 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 | 413 | 请求正文超过最大长度。 | `Payload terlalu besar.` |
 | 422 | 正文验证失败（仅 `/v1/chat/completions`；`/v1/messages` 和 `/v1/responses` 使用 400）。 | `Request body tidak valid.` |
 | 429 | 超出速率限制。 | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
-| 503 | 模型/上游当前不可用——可以安全地采用退避策略重试。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
+| 503 | 模型/上游当前不可用-可以安全地采用退避策略重试。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
 
 错误消息中**绝不会**包含上游提供商的标识或原始文本。OpenAI格式的完整代码列表请参见[错误](/zh/errors)。
 

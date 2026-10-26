@@ -1,6 +1,6 @@
 ---
 title: "Anthropic Messages"
-description: "エンドポイント POST /v1/messages (Anthropic 互換) のリファレンス — Anthropic SDK、Claude Code、または Hostlinku API キーを使用した Cursor をご利用ください"
+description: "エンドポイント POST /v1/messages (Anthropic 互換) のリファレンス - Anthropic SDK、Claude Code、または Hostlinku API キーを使用した Cursor をご利用ください"
 ---
 
 
@@ -83,7 +83,7 @@ const msg = await client.messages.create({
 | `tools`, `tool_choice` | `array`, `any` | ツール使用フォーマット Anthropic（`input_schema`を含む）。 |
 | `thinking` | `object` | 拡張思考、例：`{ "type": "enabled", "budget_tokens": 1024 }`。 |
 | `metadata` | `object` | 例：`{ "user_id": "…" }`。 |
-| `mcp_servers`, `context_management`, `output_format` | — | そのまま転送されます（モデルの対応状況によります）。 |
+| `mcp_servers`, `context_management`, `output_format` | - | そのまま転送されます（モデルの対応状況によります）。 |
 
 リスト外のフィールドは破棄されます。無効なボディは`400 invalid_request_error`として拒否され、フィールドごとの詳細は`error.details.issues`に記載されています。
 
@@ -167,6 +167,6 @@ POST https://api.hostlinku.com/v1/messages/count_tokens
 | 403 | `permission_error` | アカウントが停止されました／アクセスが拒否されました。 |
 | 404 | `not_found_error` | カタログにこのモデルのslugがありません。 |
 | 429 | `rate_limit_error` | リクエストの上限に達しました。 |
-| 503 | `overloaded_error` | モデル/アップストリームが利用できません — 再試行しても問題ありません。 |
+| 503 | `overloaded_error` | モデル/アップストリームが利用できません - 再試行しても問題ありません。 |
 
 エラーメッセージには、アップストリームプロバイダーの識別子が含まれていません。OpenAI 形式のエラーコードの完全な一覧は、[エラー](/ja/errors) に記載されています。

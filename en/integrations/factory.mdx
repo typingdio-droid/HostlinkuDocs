@@ -5,7 +5,7 @@ description: "Add the Hostlinku model as a customModel in ~/.factory/settings.js
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Droid](https://docs.factory.ai/cli/byok/overview) — Factory’s coding agent — supports **BYOK custom models**. Custom models are read from `~/.factory/settings.json` and are available in the Droid CLI and the Factory desktop app (but not on the Factory web or mobile platforms). API keys remain local and are not sent to the Factory server.
+[Droid](https://docs.factory.ai/cli/byok/overview) - Factory’s coding agent - supports **BYOK custom models**. Custom models are read from `~/.factory/settings.json` and are available in the Droid CLI and the Factory desktop app (but not on the Factory web or mobile platforms). API keys remain local and are not sent to the Factory server.
 
 <Steps>
 
@@ -78,7 +78,7 @@ The `anthropic` provider uses the Messages API, so `cache_control` is passed thr
 
 | Symptoms | Solutions |
 |---|---|
-| The model does not appear in `/model` | Invalid JSON or a typo in `provider` — check with `jq . ~/.factory/settings.json`. |
+| The model does not appear in `/model` | Invalid JSON or a typo in `provider` - check with `jq . ~/.factory/settings.json`. |
 | Variable not found | `HOSTLINKU_API_KEY` has not been exported in the shell running `droid`. |
 | `404` on all requests | Incorrect base URLs: `anthropic` without `/v1`, `generic-chat-completion-api` with `/v1`. |
 | `404 model_not_found` | `model` must be the exact slug from `GET /v1/models`. |

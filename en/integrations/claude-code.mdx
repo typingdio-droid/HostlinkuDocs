@@ -1,11 +1,11 @@
 ---
 title: "Claude Code"
-description: "Run Claude Code (CLI, VS Code, JetBrains) via Hostlinku with ANTHROPIC_BASE_URL — use Claude or other models; one balance for all"
+description: "Run Claude Code (CLI, VS Code, JetBrains) via Hostlinku with ANTHROPIC_BASE_URL - use Claude or other models; one balance for all"
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Claude Code](https://code.claude.com/docs) uses the Anthropic Messages protocol. Hostlinku provides a compatible endpoint at [`POST /v1/messages`](/en/anthropic-messages) (including `/v1/messages/count_tokens`), so Claude Code can be directed to Hostlinku simply by setting an environment variable—no additional proxy is needed.
+[Claude Code](https://code.claude.com/docs) uses the Anthropic Messages protocol. Hostlinku provides a compatible endpoint at [`POST /v1/messages`](/en/anthropic-messages) (including `/v1/messages/count_tokens`), so Claude Code can be directed to Hostlinku simply by setting an environment variable-no additional proxy is needed.
 
 <Steps>
 
@@ -20,7 +20,7 @@ If you've previously logged in with an Anthropic/Claude account, run `claude` an
 
 ### Go to Hostlinku
 
-The fastest way — export in the shell (`~/.zshrc` / `~/.bashrc`):
+The fastest way - export in the shell (`~/.zshrc` / `~/.bashrc`):
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
@@ -34,7 +34,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
 claude
 ```
 
-Persistent method — the `env` block in `~/.claude/settings.json` (applies to all projects) or `.claude/settings.local.json` in the project root (applies only to that project; this file is usually gitignored):
+Persistent method - the `env` block in `~/.claude/settings.json` (applies to all projects) or `.claude/settings.local.json` in the project root (applies only to that project; this file is usually gitignored):
 
 ```json
 {
@@ -72,11 +72,11 @@ claude --model deepseek-v4-flash
 | `ANTHROPIC_AUTH_TOKEN` | `Authorization: Bearer sk-…` | Yes (recommended) |
 | `ANTHROPIC_API_KEY` | `x-api-key: sk-…` | Yes |
 
-Both are accepted by the gateway; choose one—do not enter both with different values.
+Both are accepted by the gateway; choose one-do not enter both with different values.
 
 ## VS Code & JetBrains Extensions
 
-The Claude Code extension checks for the login on its own, so the same variables must also be specified in the extension settings — VS Code: `claudeCode.environmentVariables` in `settings.json`:
+The Claude Code extension checks for the login on its own, so the same variables must also be specified in the extension settings - VS Code: `claudeCode.environmentVariables` in `settings.json`:
 
 ```json
 {
@@ -100,7 +100,7 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 ```
 
-Features that depend on the model's capabilities (tool use, *extended thinking*, vision) are determined by the target model's capabilities—check the `capabilities` field in the catalog.
+Features that depend on the model's capabilities (tool use, *extended thinking*, vision) are determined by the target model's capabilities-check the `capabilities` field in the catalog.
 
 <Callout type="note" title="Claude Code does not recognize non-Claude model names">
 When using slugs like `gpt-5-5` or `deepseek-v4-flash`, Claude Code displays an `unrecognized_model` warning and assumes a 200k-token context. The request still runs normally (verified), but adjust the context on the client side if the target model has a larger window.
@@ -111,16 +111,16 @@ Claude Code uses the alias *haiku* for light tasks (summaries, session titles, q
 </Callout>
 
 <Callout type="note" title="Big picture & cache">
-Hostlinku passes along `cache_control` (prompt caching) and reports `cache_read_input_tokens` / `cache_creation_input_tokens` in `usage` — Claude Code utilizes this automatically. Billing follows the pricing for the relevant model cache (see [Billing](/en/billing)).
+Hostlinku passes along `cache_control` (prompt caching) and reports `cache_read_input_tokens` / `cache_creation_input_tokens` in `usage` - Claude Code utilizes this automatically. Billing follows the pricing for the relevant model cache (see [Billing](/en/billing)).
 </Callout>
 
 ## Troubleshooting
 
-- **`401 authentication_error` even though the key is correct** — old OAuth credentials are still being used. Run
+- **`401 authentication_error` even though the key is correct** - old OAuth credentials are still being used. Run
 `/logout`, log out, and make sure `ANTHROPIC_BASE_URL` is accessible (`/status`).
-- **Model not found (`404`)** — meaning it hasn't been pinned yet, so Claude Code sends the model name
+- **Model not found (`404`)** - meaning it hasn't been pinned yet, so Claude Code sends the model name
 by default. Set `ANTHROPIC_DEFAULT_*_MODEL` to the catalog's slug.
-- **`400 max_tokens exceeds the limit`** — reduce `max_tokens` via `CLAUDE_CODE_MAX_OUTPUT_TOKENS`
+- **`400 max_tokens exceeds the limit`** - reduce `max_tokens` via `CLAUDE_CODE_MAX_OUTPUT_TOKENS`
 (e.g., `32000`) if the target model has a smaller output limit.
-- **Rate limit (`429`)** — Claude Code can run multiple sub-agents in parallel. See the limits at
+- **Rate limit (`429`)** - Claude Code can run multiple sub-agents in parallel. See the limits at
 [Usage & Limits](/en/usage-and-limits).

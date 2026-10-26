@@ -6,7 +6,7 @@ description: "Kilo Code で、プロバイダー OpenAI（カスタムベース 
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Kilo Code](https://kilocode.ai) — VS Code および JetBrains 用のコーディングエージェント拡張機能（Cline/Roo Code のフォーク） — は、**Configuration Profile** ごとにプロバイダーの設定を保存します。 Hostlinkuプロファイルを他のプロファイルとは別に作成し、ワンクリックで切り替えることができます。
+[Kilo Code](https://kilocode.ai) - VS Code および JetBrains 用のコーディングエージェント拡張機能（Cline/Roo Code のフォーク） - は、**Configuration Profile** ごとにプロバイダーの設定を保存します。 Hostlinkuプロファイルを他のプロファイルとは別に作成し、ワンクリックで切り替えることができます。
 
 **前提条件：** Kilo Code 拡張機能がインストールされており、[コンソール](https://console.hostlinku.com) → **API Keys** から API キー Hostlinku (`sk-…`) が取得されていること。
 
@@ -56,8 +56,8 @@ Anthropic ルートを通じて、Kilo Code が `cache_control` を送信し、H
 
 | 症状 | Solusi |
 |---|---|
-| `401` | キーが間違っている、または取り外されている、あるいは別のプロフィールに登録されている — **Hostlinku**のプロフィールがアクティブになっていることを確認してください。 |
+| `401` | キーが間違っている、または取り外されている、あるいは別のプロフィールに登録されている - **Hostlinku**のプロフィールがアクティブになっていることを確認してください。 |
 | すべてのリクエストにおける`404` | ベースURLに`/v1`（OpenAIルート）が含まれていないか、あるいはAnthropicルートで`/v1`が使用されている。上のスクリーンショットと比較してください。 |
 | `404 model_not_found` | モデルIDの入力ミス；`GET /v1/models`からコピーしてください。 |
-| モデル「Claude/DeepSeek」がドロップダウンメニューに表示されません | プロバイダー `OpenAI` では、モデル OpenAI のみが表示されています — **OpenAI 互換** をご使用ください。 |
+| モデル「Claude/DeepSeek」がドロップダウンメニューに表示されません | プロバイダー `OpenAI` では、モデル OpenAI のみが表示されています - **OpenAI 互換** をご使用ください。 |
 | Agentはツールを呼び出さずに停止した | *ツール呼び出し*のないモデル。[概要](/ja/integrations) の推奨事項に従ってください。 |

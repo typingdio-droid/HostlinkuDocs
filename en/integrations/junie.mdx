@@ -5,7 +5,7 @@ description: "Connect JetBrains' Junie CLI to Hostlinku using a custom model pro
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) — JetBrains’ terminal-based coding agent — supports **custom model profiles** in the form of JSON files. A single profile contains endpoints, API formats, API keys, as well as the main model and a *faster model* for light tasks.
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrains’ terminal-based coding agent - supports **custom model profiles** in the form of JSON files. A single profile contains endpoints, API formats, API keys, as well as the main model and a *faster model* for light tasks.
 
 For the AI Assistant in JetBrains IDEs, see [JetBrains AI Assistant](/en/integrations/jetbrains).
 
@@ -71,7 +71,7 @@ Then run `junie --model custom:hostlinku-claude`.
 ## What You Need to Know
 
 - **`${HOSTLINKU_API_KEY}`** is read from the environment when the profile is loaded. If the variable has not yet been
-When set, the profile fails to load and Junie reports the missing variable name—it's safe to commit the profile to the repo (`.junie/models/`).
+When set, the profile fails to load and Junie reports the missing variable name-it's safe to commit the profile to the repo (`.junie/models/`).
 - **Main model vs. faster model.** Choose a model with robust *tool calling* for the main model
 (`claude-sonnet-4-6`, `gpt-5-5`); more affordable models like `claude-haiku-4-5` or `deepseek-v4-flash` are sufficient for faster tasks (summarization and classification).
 - **Responses API (`OpenAIResponses`)** is also available at `https://api.hostlinku.com/v1/responses`,
@@ -81,7 +81,7 @@ but it is *stateless* ([details](/en/responses)). `OpenAICompletion` is the safe
 
 | Symptoms | Solutions |
 |---|---|
-| `404` | `baseUrl` is incomplete — it must end with `/v1/chat/completions` or `/v1/messages`. |
+| `404` | `baseUrl` is incomplete - it must end with `/v1/chat/completions` or `/v1/messages`. |
 | Profile not found | Incorrect file name or location, or invalid JSON. Profile = filename without `.json`. |
 | Environment variable error | Export `HOSTLINKU_API_KEY` in the shell running `junie`. |
-| Tool call failed / agent is stuck in a loop | The model is too small for agentic coding — replace the main model with the one recommended in the [Overview](/en/integrations). |
+| Tool call failed / agent is stuck in a loop | The model is too small for agentic coding - replace the main model with the one recommended in the [Overview](/en/integrations). |

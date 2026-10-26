@@ -18,7 +18,7 @@ Content-Type: application/json
 API密钥可在[console.hostlinku.com](https://console.hostlinku.com)的**API密钥**菜单中创建和管理。
 
 <Callout type="important" title="API密钥仅适用于 /v1/*">
-API密钥**仅**在以下网关端点上有效：`/v1/chat/completions`、`/v1/messages`、`/v1/responses` 和 `/v1/models`。 控制台账户端点（`/api/*` — 个人资料、API密钥列表、日志、余额、管理员）**不接受** `403 API_KEY_NOT_ALLOWED` 的 API 密钥，且只能通过控制台登录会话访问。 相反，登录会话（cookie）在 `/v1/*` 上**无效**——网关始终会要求提供 API 密钥（`401`）。 因此，泄露的 API 密钥仅可用于调用模型（受余额、额度和速率限制的约束），无法读取账户数据、创建新 API 密钥或更改设置。
+API密钥**仅**在以下网关端点上有效：`/v1/chat/completions`、`/v1/messages`、`/v1/responses` 和 `/v1/models`。 控制台账户端点（`/api/*` - 个人资料、API密钥列表、日志、余额、管理员）**不接受** `403 API_KEY_NOT_ALLOWED` 的 API 密钥，且只能通过控制台登录会话访问。 相反，登录会话（cookie）在 `/v1/*` 上**无效**-网关始终会要求提供 API 密钥（`401`）。 因此，泄露的 API 密钥仅可用于调用模型（受余额、额度和速率限制的约束），无法读取账户数据、创建新 API 密钥或更改设置。
 </Callout>
 
 ## 创建 API 密钥

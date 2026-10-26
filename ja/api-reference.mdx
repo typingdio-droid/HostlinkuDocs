@@ -1,6 +1,6 @@
 ---
 title: "APIリファレンス"
-description: "1ページにまとめたリファレンス — レート制限、Anthropic Messages API、OpenAI、Chat Completions、OpenAI Responses API、エラーコード、およびモデル一覧"
+description: "1ページにまとめたリファレンス - レート制限、Anthropic Messages API、OpenAI、Chat Completions、OpenAI Responses API、エラーコード、およびモデル一覧"
 ---
 
 
@@ -51,7 +51,7 @@ import { Callout } from "/snippets/mdx.jsx";
 | `max_tokens` | 整数 | 出力トークンの最大数 | true |
 | `system` | 文字列 \| 配列 | システムプロンプト（`cache_control`に対応したブロック配列） | false |
 | `stream` | ブール値 | SSEのストリーミング、デフォルトは`false` | false |
-| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | — | 仕様書 Anthropic に準拠 | false |
+| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | - | 仕様書 Anthropic に準拠 | false |
 
 ### リクエスト例
 
@@ -141,7 +141,7 @@ OpenAI、Chat Completions の形式で任意のモデルを呼び出してくだ
 | `messages` | 配列 | 会話メッセージの配列 (`system` \| `user` \| `assistant` \| `tool`) | true |
 | `max_tokens` | 整数 | 出力トークンの最大数 | false |
 | `stream` | ブール値 | SSEのストリーミング、デフォルトは`false` | false |
-| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | — | 仕様書 OpenAI（+ thinking 拡張機能）に準拠 | false |
+| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | - | 仕様書 OpenAI（+ thinking 拡張機能）に準拠 | false |
 
 ### リクエスト例
 
@@ -205,7 +205,7 @@ data: [DONE]
 
 `POST /v1/responses`
 
-**Codex CLI**、**OpenAI Agents SDK**、および `client.responses.create()` で使用されるフォーマット。リクエストヘッダーには `Authorization: Bearer YOUR_API_KEY` が含まれ、ベース URL は `https://api.hostlinku.com/v1` です。 ステートレス：`store`は常に`false`、`previous_response_id`は`400`で拒否される — `input`で完全な履歴を送信する。 完全なドキュメント：[Responses API](/ja/responses)。
+**Codex CLI**、**OpenAI Agents SDK**、および `client.responses.create()` で使用されるフォーマット。リクエストヘッダーには `Authorization: Bearer YOUR_API_KEY` が含まれ、ベース URL は `https://api.hostlinku.com/v1` です。 ステートレス：`store`は常に`false`、`previous_response_id`は`400`で拒否される - `input`で完全な履歴を送信する。 完全なドキュメント：[Responses API](/ja/responses)。
 
 ### リクエストボディのパラメータ
 
@@ -216,7 +216,7 @@ data: [DONE]
 | `instructions` | 文字列 | システムプロンプト | false |
 | `max_output_tokens` | 整数 | 出力トークンの最大数 | false |
 | `stream` | ブール値 | SSE（`event: response.*`）のストリーミング、デフォルトは`false` | false |
-| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | — | 仕様書 OpenAI Responses に準拠 | false |
+| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | - | 仕様書 OpenAI Responses に準拠 | false |
 
 ### リクエスト例
 
@@ -281,7 +281,7 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 | 413 | リクエストのボディが最大サイズを超えています。 | `Payload terlalu besar.` |
 | 422 | ボディの検証に失敗しました（`/v1/chat/completions`のみ。`/v1/messages`および`/v1/responses`は400を使用）。 | `Request body tidak valid.` |
 | 429 | レート制限を超えました。 | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
-| 503 | モデル/アップストリームが利用できません — バックオフを適用して再試行しても問題ありません。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
+| 503 | モデル/アップストリームが利用できません - バックオフを適用して再試行しても問題ありません。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
 
 エラーメッセージには、**決して**アップストリームプロバイダの識別情報や生のテキストは含まれません。OpenAI 形式のエラーコードの完全な一覧は、[エラー](/ja/errors) に記載されています。
 

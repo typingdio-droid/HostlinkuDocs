@@ -1,6 +1,6 @@
 ---
 title: Claude Code
-description: Jalankan Claude Code (CLI, VS Code, JetBrains) lewat Hostlinku dengan ANTHROPIC_BASE_URL — pakai Claude atau model lain, satu saldo untuk semuanya
+description: Jalankan Claude Code (CLI, VS Code, JetBrains) lewat Hostlinku dengan ANTHROPIC_BASE_URL - pakai Claude atau model lain, satu saldo untuk semuanya
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -8,7 +8,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 [Claude Code](https://code.claude.com/docs) berbicara protokol Anthropic Messages. Hostlinku
 menyediakan endpoint yang kompatibel di [`POST /v1/messages`](/anthropic-messages) (termasuk
 `/v1/messages/count_tokens`), sehingga Claude Code bisa diarahkan ke Hostlinku cukup dengan
-environment variable — tidak perlu proxy tambahan.
+environment variable - tidak perlu proxy tambahan.
 
 <Steps>
 
@@ -24,7 +24,7 @@ Bila sebelumnya kamu pernah login dengan akun Anthropic/Claude, jalankan `claude
 
 ### Arahkan ke Hostlinku
 
-Cara paling cepat — export di shell (`~/.zshrc` / `~/.bashrc`):
+Cara paling cepat - export di shell (`~/.zshrc` / `~/.bashrc`):
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
@@ -38,7 +38,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
 claude
 ```
 
-Cara persisten — blok `env` di `~/.claude/settings.json` (berlaku untuk semua proyek) atau
+Cara persisten - blok `env` di `~/.claude/settings.json` (berlaku untuk semua proyek) atau
 `.claude/settings.local.json` di root proyek (hanya proyek itu; file ini biasanya di-gitignore):
 
 ```json
@@ -85,7 +85,7 @@ Keduanya diterima gateway; pilih salah satu, jangan isi dua-duanya dengan nilai 
 ## Ekstensi VS Code & JetBrains
 
 Ekstensi Claude Code memeriksa login sendiri, jadi variabel yang sama harus diisi juga di setting
-ekstensi — VS Code: `claudeCode.environmentVariables` di `settings.json`:
+ekstensi - VS Code: `claudeCode.environmentVariables` di `settings.json`:
 
 ```json
 {
@@ -112,7 +112,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 ```
 
 Fitur yang bergantung pada kemampuan model (tool use, *extended thinking*, vision) mengikuti
-kapabilitas model tujuan — cek field `capabilities` di katalog.
+kapabilitas model tujuan - cek field `capabilities` di katalog.
 
 <Callout type="note" title="Claude Code tidak mengenali nama model non-Claude">
   Saat memakai slug seperti `gpt-5-5` atau `deepseek-v4-flash`, Claude Code menampilkan peringatan
@@ -128,17 +128,17 @@ kapabilitas model tujuan — cek field `capabilities` di katalog.
 
 <Callout type="note" title="Konteks besar & cache">
   Hostlinku meneruskan `cache_control` (prompt caching) dan melaporkan `cache_read_input_tokens` /
-  `cache_creation_input_tokens` di `usage` — Claude Code memanfaatkannya otomatis. Tagihan mengikuti
+  `cache_creation_input_tokens` di `usage` - Claude Code memanfaatkannya otomatis. Tagihan mengikuti
   harga cache model yang bersangkutan (lihat [Billing](/billing)).
 </Callout>
 
 ## Troubleshooting
 
-- **`401 authentication_error` padahal key benar** — kredensial OAuth lama masih dipakai. Jalankan
+- **`401 authentication_error` padahal key benar** - kredensial OAuth lama masih dipakai. Jalankan
   `/logout`, tutup sesi, pastikan `ANTHROPIC_BASE_URL` terbaca (`/status`).
-- **Model tidak ditemukan (`404`)** — alias belum di-pin, sehingga Claude Code mengirim nama model
+- **Model tidak ditemukan (`404`)** - alias belum di-pin, sehingga Claude Code mengirim nama model
   bawaannya. Isi `ANTHROPIC_DEFAULT_*_MODEL` dengan slug dari katalog.
-- **`400 max_tokens melebihi batas`** — turunkan `max_tokens` lewat `CLAUDE_CODE_MAX_OUTPUT_TOKENS`
+- **`400 max_tokens melebihi batas`** - turunkan `max_tokens` lewat `CLAUDE_CODE_MAX_OUTPUT_TOKENS`
   (mis. `32000`) bila model tujuan punya batas output lebih kecil.
-- **Rate limit (`429`)** — Claude Code dapat menjalankan beberapa sub-agent paralel. Lihat batas di
+- **Rate limit (`429`)** - Claude Code dapat menjalankan beberapa sub-agent paralel. Lihat batas di
   [Pemakaian & Limit](/usage-and-limits).

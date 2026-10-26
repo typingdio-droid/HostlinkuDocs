@@ -62,7 +62,7 @@ Respons (contoh dipotong; nilai persis untuk akun kamu diambil dari endpoint ini
 | `service_mode` (level list & item) | Service Mode API key yang dipakai: `performance` atau `low_cost`. Daftar model berbeda per mode. |
 | `id` | Slug model, nilai yang dipakai di field `model` pada `/v1/chat/completions`, `/v1/messages`, dan `/v1/responses`. |
 | `created` | Waktu model ditambahkan ke katalog (Unix epoch, detik). |
-| `owned_by` | Selalu `"hostlinku"` — penanda bahwa model dikelola oleh katalog Hostlinku. |
+| `owned_by` | Selalu `"hostlinku"` - penanda bahwa model dikelola oleh katalog Hostlinku. |
 | `context_window` | Ukuran konteks maksimum dalam token (input + output). |
 | `capabilities` | Daftar kapabilitas, mis. `vision`, `tool-calling`, `json-mode`, `reasoning`, `long-context`. |
 | `pricing` | Objek harga pada Service Mode tersebut; `null` bila model belum punya harga di mode itu. `pricing.unit` selalu `"1M_tokens"` dan `pricing.currency` berisi simbol kredit (1 <CreditIcon /> = $1). |
@@ -94,11 +94,11 @@ harga publiknya. Query yang didukung: `q` (pencarian nama/deskripsi), `capabilit
 
 | Model | Provider | Konteks | Output maks | Input /1M | Output /1M |
 |---|---|---|---|---|---|
-| [Qwen 3.6 Plus](/models/qwen3-6-plus) | Alibaba | 1,000,000 | — | $0.294 | $1.765 |
-| [Qwen 3.7 Max](/models/qwen3-7-max) | Alibaba | 1,000,000 | — | $1.765 | $5.294 |
-| [Model Baize](/models/model-baize) | Anonymous | 1,000,000 | — | $1.177 | $4.118 |
+| [Qwen 3.6 Plus](/models/qwen3-6-plus) | Alibaba | 1,000,000 | - | $0.294 | $1.765 |
+| [Qwen 3.7 Max](/models/qwen3-7-max) | Alibaba | 1,000,000 | - | $1.765 | $5.294 |
+| [Model Baize](/models/model-baize) | Anonymous | 1,000,000 | - | $1.177 | $4.118 |
 | [Claude Fable 5](/models/claude-fable-5) | Anthropic | 1,000,000 | 128,000 | $10 | $50 |
-| [Claude Fable 5.1](/models/claude-fable-5-1) | Anthropic | 1,000,000 | 128,000 | — | — |
+| [Claude Fable 5.1](/models/claude-fable-5-1) | Anthropic | 1,000,000 | 128,000 | - | - |
 | [Claude Haiku 4.5](/models/claude-haiku-4-5) | Anthropic | 200,000 | 64,000 | $1 | $5 |
 | [Claude Opus 4.6](/models/claude-opus-4-6) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
 | [Claude Opus 4.7](/models/claude-opus-4-7) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
@@ -107,20 +107,20 @@ harga publiknya. Query yang didukung: `q` (pencarian nama/deskripsi), `capabilit
 | [Claude Opus 5.5](/models/claude-opus-5-5) | Anthropic | 1,000,000 | 128,000 | $4 | $20 |
 | [Claude Sonnet 4.6](/models/claude-sonnet-4-6) | Anthropic | 1,000,000 | 64,000 | $3 | $15 |
 | [Claude Sonnet 5](/models/claude-sonnet-5) | Anthropic | 1,000,000 | 64,000 | $2 | $10 |
-| [Claude Sonnet 5.5](/models/claude-sonnet-5-5) | Anthropic | 1,000,000 | 128,000 | — | — |
-| [DeepSeek V4 Flash](/models/deepseek-v4-flash) | DeepSeek | 1,000,000 | — | $0.15 | $0.6 |
+| [Claude Sonnet 5.5](/models/claude-sonnet-5-5) | Anthropic | 1,000,000 | 128,000 | - | - |
+| [DeepSeek V4 Flash](/models/deepseek-v4-flash) | DeepSeek | 1,000,000 | - | $0.15 | $0.6 |
 | [DeepSeek V4 Pro](/models/deepseek-v4-pro) | DeepSeek | 1,000,000 | 64,000 | $0.662 | $1.985 |
 | [DeepSeek-V4.1-Flash](/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 | 384,000 | $0.15 | $0.6 |
-| [DeepSeek-V4.1-Flash Hyper](/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 | 384,000 | — | — |
-| [DeepSeek-V4.1-Flash Hyper Chat](/models/deepseek-v4-1-flash-hyper-chat) | DeepSeek | 1,000,000 | 384,000 | — | — |
-| [DeepSeek-V4.1-Flash Turbo](/models/deepseek-v4-1-flash-turbo) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [DeepSeek-V4.1-Flash Hyper](/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 | 384,000 | - | - |
+| [DeepSeek-V4.1-Flash Hyper Chat](/models/deepseek-v4-1-flash-hyper-chat) | DeepSeek | 1,000,000 | 384,000 | - | - |
+| [DeepSeek-V4.1-Flash Turbo](/models/deepseek-v4-1-flash-turbo) | DeepSeek | 1,000,000 | 384,000 | - | - |
 | [MiniMax M3](/models/minimax-m3) | MiniMax | 1,000,000 | 64,000 | $0.309 | $1.235 |
 | [Kimi K2.6](/models/kimi-k2-6) | Moonshot | 256,000 | 32,000 | $0.956 | $3.971 |
-| [Kimi K2.7 Code](/models/kimi-k2-7-code) | Moonshot | 256,000 | — | $0.956 | $3.971 |
+| [Kimi K2.7 Code](/models/kimi-k2-7-code) | Moonshot | 256,000 | - | $0.956 | $3.971 |
 | [Kimi K3](/models/kimi-k3) | Moonshot | 1,000,000 | 64,000 | $2.941 | $14.706 |
-| [Kimi K3 Hyper](/models/kimi-k3-hyper) | Moonshot | 1,000,000 | 64,000 | — | — |
-| [Kimi K3 Hyper Chat](/models/kimi-k3-hyper-chat) | Moonshot | 1,000,000 | 64,000 | — | — |
-| [Kimi K3 Turbo](/models/kimi-k3-turbo) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [Kimi K3 Hyper](/models/kimi-k3-hyper) | Moonshot | 1,000,000 | 64,000 | - | - |
+| [Kimi K3 Hyper Chat](/models/kimi-k3-hyper-chat) | Moonshot | 1,000,000 | 64,000 | - | - |
+| [Kimi K3 Turbo](/models/kimi-k3-turbo) | Moonshot | 1,000,000 | 64,000 | - | - |
 | [GPT 5.3 Codex](/models/gpt-5-3-codex) | OpenAI | 400,000 | 128,000 | $1.75 | $14 |
 | [GPT-5.5](/models/gpt-5-5) | OpenAI | 1,000,000 | 128,000 | $5 | $30 |
 | [GPT-5.6 Luna](/models/gpt-5-6-luna) | OpenAI | 1,050,000 | 64,000 | $0.2 | $1.2 |
@@ -131,14 +131,14 @@ harga publiknya. Query yang didukung: `q` (pencarian nama/deskripsi), `capabilit
 | [GPT-6 Sol](/models/gpt-6-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
 | [GPT-6.1 Sol](/models/gpt-6-1-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
 | [MiMo V2.5 Pro](/models/mimo-v2-5-pro) | Xiaomi | 1,000,000 | 32,000 | $0.441 | $0.882 |
-| [GLM 5](/models/glm-5) | Zhipu | 200,000 | — | $0.588 | $2.647 |
+| [GLM 5](/models/glm-5) | Zhipu | 200,000 | - | $0.588 | $2.647 |
 | [GLM 5.1](/models/glm-5-1) | Zhipu | 200,000 | 128,000 | $0.882 | $3.529 |
 | [GLM 5.2](/models/glm-5-2) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
 | [GLM 5.3](/models/glm-5-3) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
-| [GLM 5.3 Hyper Chat](/models/glm-5-3-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
-| [GLM-5.3 Flash](/models/glm-5-3-flash) | Zhipu | 1,000,000 | 64,000 | — | — |
-| [GLM-5.3 Flash Hyper](/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 | 64,000 | — | — |
-| [GLM-5.3 Flash Hyper Chat](/models/glm-5-3-flash-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM 5.3 Hyper Chat](/models/glm-5-3-hyper-chat) | Zhipu | 1,000,000 | 64,000 | - | - |
+| [GLM-5.3 Flash](/models/glm-5-3-flash) | Zhipu | 1,000,000 | 64,000 | - | - |
+| [GLM-5.3 Flash Hyper](/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 | 64,000 | - | - |
+| [GLM-5.3 Flash Hyper Chat](/models/glm-5-3-flash-hyper-chat) | Zhipu | 1,000,000 | 64,000 | - | - |
 
 ## Cara memilih model
 

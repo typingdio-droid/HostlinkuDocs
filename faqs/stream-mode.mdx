@@ -30,7 +30,7 @@ data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content
 data: [DONE]
 ```
 
-## Python — SDK OpenAI
+## Python - SDK OpenAI
 
 ```python
 from openai import OpenAI
@@ -51,7 +51,7 @@ for chunk in stream:
         print(delta, end="", flush=True)
 ```
 
-## Python — requests
+## Python - requests
 
 Gunakan `stream=True` pada request dan baca `iter_lines()`. Berhenti saat menerima `data: [DONE]`.
 
@@ -90,7 +90,7 @@ for line in response.iter_lines():
         print(delta, end="", flush=True)
 ```
 
-## Node.js — SDK OpenAI
+## Node.js - SDK OpenAI
 
 ```js
 import OpenAI from "openai";

@@ -1,12 +1,12 @@
 ---
 title: "克劳德·科德"
-description: "通过 Hostlinku 并使用 ANTHROPIC_BASE_URL 运行 Claude Code（CLI、VS Code、JetBrains）——无论使用 Claude 还是其他模型，一个余额即可满足所有需求"
+description: "通过 Hostlinku 并使用 ANTHROPIC_BASE_URL 运行 Claude Code（CLI、VS Code、JetBrains）-无论使用 Claude 还是其他模型，一个余额即可满足所有需求"
 ---
 
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Claude Code](https://code.claude.com/docs) 支持 Anthropic Messages 协议。Hostlinku 在 [`POST /v1/messages`](/zh/anthropic-messages)（包括 `/v1/messages/count_tokens`）上提供兼容的端点，因此只需通过环境变量即可将 Claude Code 重定向至 Hostlinku ——无需额外的代理。
+[Claude Code](https://code.claude.com/docs) 支持 Anthropic Messages 协议。Hostlinku 在 [`POST /v1/messages`](/zh/anthropic-messages)（包括 `/v1/messages/count_tokens`）上提供兼容的端点，因此只需通过环境变量即可将 Claude Code 重定向至 Hostlinku -无需额外的代理。
 
 <Steps>
 
@@ -21,7 +21,7 @@ npm install -g @anthropic-ai/claude-code
 
 ### 请转至 Hostlinku
 
-最快的方法——在shell中导出（`~/.zshrc` / `~/.bashrc`）：
+最快的方法-在shell中导出（`~/.zshrc` / `~/.bashrc`）：
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
@@ -35,7 +35,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
 claude
 ```
 
-持久化方法——将 `env` 块放置在 `~/.claude/settings.json` 中（适用于所有项目），或放置在项目根目录下的 `.claude/settings.local.json` 中（仅限该项目；该文件通常会被添加到 `.gitignore` 中）：
+持久化方法-将 `env` 块放置在 `~/.claude/settings.json` 中（适用于所有项目），或放置在项目根目录下的 `.claude/settings.local.json` 中（仅限该项目；该文件通常会被添加到 `.gitignore` 中）：
 
 ```json
 {
@@ -77,7 +77,7 @@ claude --model deepseek-v4-flash
 
 ## VS Code 和 JetBrains 扩展
 
-Claude Code 扩展会自行检查登录信息，因此还需在扩展设置中填写相同的变量 — VS Code：`claudeCode.environmentVariables` 中的 `settings.json`：
+Claude Code 扩展会自行检查登录信息，因此还需在扩展设置中填写相同的变量 - VS Code：`claudeCode.environmentVariables` 中的 `settings.json`：
 
 ```json
 {
@@ -101,7 +101,7 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 ```
 
-依赖于模型能力的特性（工具使用、*扩展思维*、视觉）遵循目标模型的能力——请查阅目录中的字段 `capabilities`。
+依赖于模型能力的特性（工具使用、*扩展思维*、视觉）遵循目标模型的能力-请查阅目录中的字段 `capabilities`。
 
 <Callout type="note" title="Claude Code 无法识别非 Claude 模型的名称">
 当使用 `gpt-5-5` 或 `deepseek-v4-flash` 这样的 slug 时，Claude Code 会显示 `unrecognized_model` 警告，并假设上下文长度为 200k 个Token。 请求仍会正常运行（已验证），但如果目标模型的上下文窗口更大，请在客户端调整上下文。
@@ -112,12 +112,12 @@ Claude Code 使用 *haiku* 作为别名来处理轻量级任务（摘要、会�
 </Callout>
 
 <Callout type="note" title="大上下文与缓存">
-Hostlinku 继承了 `cache_control`（提示缓存），并在 `usage` 中报告了 `cache_read_input_tokens` / `cache_creation_input_tokens` — Claude Code 会自动利用这些信息。 计费遵循相关模型的缓存定价（参见 [计费](/zh/billing)）。
+Hostlinku 继承了 `cache_control`（提示缓存），并在 `usage` 中报告了 `cache_read_input_tokens` / `cache_creation_input_tokens` - Claude Code 会自动利用这些信息。 计费遵循相关模型的缓存定价（参见 [计费](/zh/billing)）。
 </Callout>
 
 ## 故障排除
 
-- **`401 authentication_error` 尽管密钥正确** — 仍在使用旧的 OAuth 凭据。运行 `/logout`，关闭会话，确保能读取 `ANTHROPIC_BASE_URL`（`/status`）。
-- **未找到模型（`404`）** — 即尚未进行固定，因此Claude Code发送了其默认模型名称。请将`ANTHROPIC_DEFAULT_*_MODEL`填入目录中的别名。
-- **`400 max_tokens melebihi batas`** — 如果目标模型的输出上限较小，则通过 `CLAUDE_CODE_MAX_OUTPUT_TOKENS`（例如 `32000`）将 `max_tokens` 降低。
-- **速率限制 (`429`)** — Claude Code 可以并行运行多个子代理。有关限制的详细信息，请参阅 [使用与限制](/zh/usage-and-limits)。
+- **`401 authentication_error` 尽管密钥正确** - 仍在使用旧的 OAuth 凭据。运行 `/logout`，关闭会话，确保能读取 `ANTHROPIC_BASE_URL`（`/status`）。
+- **未找到模型（`404`）** - 即尚未进行固定，因此Claude Code发送了其默认模型名称。请将`ANTHROPIC_DEFAULT_*_MODEL`填入目录中的别名。
+- **`400 max_tokens melebihi batas`** - 如果目标模型的输出上限较小，则通过 `CLAUDE_CODE_MAX_OUTPUT_TOKENS`（例如 `32000`）将 `max_tokens` 降低。
+- **速率限制 (`429`)** - Claude Code 可以并行运行多个子代理。有关限制的详细信息，请参阅 [使用与限制](/zh/usage-and-limits)。

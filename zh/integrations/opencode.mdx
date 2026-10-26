@@ -57,7 +57,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### 选择模型
 
-运行 `/models` — 系统将显示包含您注册的模型的 **Hostlinku** 组。`small_model` 用于处理轻量级任务（如会话标题、摘要），因此可节省较长会话的时间。
+运行 `/models` - 系统将显示包含您注册的模型的 **Hostlinku** 组。`small_model` 用于处理轻量级任务（如会话标题、摘要），因此可节省较长会话的时间。
 
 </Steps>
 
@@ -80,7 +80,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 }
 ```
 
-**通过 Responses API** — 将 `npm` 替换为 `@ai-sdk/openai`；OpenCode 将使用 [`/v1/responses`](/zh/responses)。 适用于需要 *推理摘要* 的 GPT-5.x 模型。对于大多数用户而言，`@ai-sdk/openai-compatible` (Chat Completions) 已经足够。
+**通过 Responses API** - 将 `npm` 替换为 `@ai-sdk/openai`；OpenCode 将使用 [`/v1/responses`](/zh/responses)。 适用于需要 *推理摘要* 的 GPT-5.x 模型。对于大多数用户而言，`@ai-sdk/openai-compatible` (Chat Completions) 已经足够。
 
 <Callout type="note" title="采用交错推理的模型">
 对于返回 `reasoning_content` 的模型（例如 DeepSeek V4、GLM 5），可在其模型定义中添加 `"reasoning": true` 和 `"interleaved": { "field": "reasoning_content" }` 选项，以便 OpenCode 显示其推理路径。
@@ -88,6 +88,6 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ## 故障排除
 
-- **服务提供商未出现在 `/models` 中** — `/connect` 和 `opencode.json` 中的 ID 不一致，或者 JSON 格式无效。请检查 `opencode auth list`。
-- **`401`** — 该 ID 的密钥尚未保存；请重试 `/connect`。
-- **`404 model_not_found`** — `models`的密钥必须与`GET /v1/models`的密钥完全一致。
+- **服务提供商未出现在 `/models` 中** - `/connect` 和 `opencode.json` 中的 ID 不一致，或者 JSON 格式无效。请检查 `opencode auth list`。
+- **`401`** - 该 ID 的密钥尚未保存；请重试 `/connect`。
+- **`404 model_not_found`** - `models`的密钥必须与`GET /v1/models`的密钥完全一致。
