@@ -1,0 +1,27 @@
+---
+title: "Quickstart"
+description: "Kirim request pertama ke Hostlinku."
+---
+
+<Steps>
+  <Step title="Buat API key">
+    Masuk ke [Console](https://console.hostlinku.com), buka **API Keys**, lalu buat key baru.
+  </Step>
+  <Step title="Simpan key sebagai environment variable">
+    ```bash
+    export HOSTLINKU_API_KEY="sk-..."
+    ```
+  </Step>
+  <Step title="Kirim request pertama">
+    ```bash
+    curl https://api.hostlinku.com/v1/chat/completions       -H "Authorization: Bearer $HOSTLINKU_API_KEY"       -H "Content-Type: application/json"       -d '{
+        "model": "gpt-5",
+        "messages": [{"role": "user", "content": "Halo!"}]
+      }'
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Nama model mengikuti katalog di Console. Cek halaman Models untuk daftar lengkap.
+</Note>
