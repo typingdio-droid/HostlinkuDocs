@@ -1,0 +1,82 @@
+---
+title: "Claude Fable 5.1"
+description: "Model Claude Fable 5.1 dari Anthropic."
+---
+
+Model Claude Fable 5.1 dari Anthropic.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Anthropic |
+| Slug | `claude-fable-5-1` |
+| Konteks | 1,000,000 token |
+| Output maks | 128,000 token |
+| Input | text, image |
+| Output | text |
+| Rilis | — |
+| Tag | creative |
+
+## Kapabilitas
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | — |
+| Output (completion) | — |
+| Cache read | — |
+| Cache write | — |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-fable-5-1",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [Claude Fable 5](/models/claude-fable-5)
+- [Claude Haiku 4.5](/models/claude-haiku-4-5)
+- [Claude Opus 4.6](/models/claude-opus-4-6)
+- [Claude Opus 4.7](/models/claude-opus-4-7)
+- [Claude Opus 4.8](/models/claude-opus-4-8)
+- [Claude Opus 5](/models/claude-opus-5)
+
+[← Kembali ke katalog model](/models)

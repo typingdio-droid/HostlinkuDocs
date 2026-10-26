@@ -1,0 +1,63 @@
+---
+title: "Model Baize"
+description: "Model Model Baize dari Anonymous."
+---
+
+Model Model Baize dari Anonymous.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Anonymous |
+| Slug | `model-baize` |
+| Konteks | 1,000,000 token |
+| Output maks | Tidak dipublikasikan |
+| Input | text |
+| Output | text |
+| Rilis | 2026-08-13 |
+
+## Kapabilitas
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `long-context`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $1.177 |
+| Output (completion) | $4.118 |
+| Cache read | $0.294 |
+| Cache write | — |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "model-baize",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+[← Kembali ke katalog model](/models)

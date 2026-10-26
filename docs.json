@@ -170,7 +170,11 @@
             "tab": "FAQs",
             "pages": [
               "faqs/index",
-              "faqs/stream-mode"
+              "faqs/stream-mode",
+              "faqs/errors",
+              "faqs/rate-limits",
+              "faqs/billing",
+              "faqs/model-unavailable"
             ]
           },
           {
@@ -190,6 +194,58 @@
                   "models",
                   "dedicated",
                   "errors"
+                ]
+              },
+              {
+                "group": "Model",
+                "hidden": true,
+                "searchable": true,
+                "pages": [
+                  "models/qwen3-6-plus",
+                  "models/qwen3-7-max",
+                  "models/model-baize",
+                  "models/claude-fable-5",
+                  "models/claude-fable-5-1",
+                  "models/claude-haiku-4-5",
+                  "models/claude-opus-4-6",
+                  "models/claude-opus-4-7",
+                  "models/claude-opus-4-8",
+                  "models/claude-opus-5",
+                  "models/claude-opus-5-5",
+                  "models/claude-sonnet-4-6",
+                  "models/claude-sonnet-5",
+                  "models/claude-sonnet-5-5",
+                  "models/deepseek-v4-flash",
+                  "models/deepseek-v4-pro",
+                  "models/deepseek-v4-1-flash",
+                  "models/deepseek-v4-1-flash-hyper",
+                  "models/deepseek-v4-1-flash-hyper-chat",
+                  "models/deepseek-v4-1-flash-turbo",
+                  "models/minimax-m3",
+                  "models/kimi-k2-6",
+                  "models/kimi-k2-7-code",
+                  "models/kimi-k3",
+                  "models/kimi-k3-hyper",
+                  "models/kimi-k3-hyper-chat",
+                  "models/kimi-k3-turbo",
+                  "models/gpt-5-3-codex",
+                  "models/gpt-5-5",
+                  "models/gpt-5-6-luna",
+                  "models/gpt-5-6-sol",
+                  "models/gpt-5-6-terra",
+                  "models/gpt-6-astra",
+                  "models/gpt-6-luna",
+                  "models/gpt-6-sol",
+                  "models/gpt-6-1-sol",
+                  "models/mimo-v2-5-pro",
+                  "models/glm-5",
+                  "models/glm-5-1",
+                  "models/glm-5-2",
+                  "models/glm-5-3",
+                  "models/glm-5-3-hyper-chat",
+                  "models/glm-5-3-flash",
+                  "models/glm-5-3-flash-hyper",
+                  "models/glm-5-3-flash-hyper-chat"
                 ]
               }
             ]
@@ -396,7 +452,11 @@
             "tab": "FAQs",
             "pages": [
               "en/faqs/index",
-              "en/faqs/stream-mode"
+              "en/faqs/stream-mode",
+              "en/faqs/errors",
+              "en/faqs/rate-limits",
+              "en/faqs/billing",
+              "en/faqs/model-unavailable"
             ]
           },
           {
@@ -599,5 +659,8 @@
       "destination": "/en/faqs",
       "permanent": true
     }
-  ]
+  ],
+  "seo": {
+    "indexing": "all"
+  }
 }

@@ -1,0 +1,76 @@
+---
+title: "Claude Haiku 4.5"
+description: "Claude Haiku 4.5 is Anthropic's fastest near-frontier model, supporting 200K context, 64K max output, and extended thinking for low-latency, high-volume use."
+---
+
+Claude Haiku 4.5 is Anthropic's fastest near-frontier model, supporting 200K context, 64K max output, and extended thinking for low-latency, high-volume use.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Anthropic |
+| Slug | `claude-haiku-4-5` |
+| Konteks | 200,000 token |
+| Output maks | 64,000 token |
+| Input | text, image |
+| Output | text |
+| Rilis | 2026-04-06 |
+| Tag | fast, budget |
+
+## Kapabilitas
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $1 |
+| Output (completion) | $5 |
+| Cache read | $0.1 |
+| Cache write | $1.25 |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-haiku-4-5",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [Claude Fable 5](/models/claude-fable-5)
+- [Claude Fable 5.1](/models/claude-fable-5-1)
+- [Claude Opus 4.6](/models/claude-opus-4-6)
+- [Claude Opus 4.7](/models/claude-opus-4-7)
+- [Claude Opus 4.8](/models/claude-opus-4-8)
+- [Claude Opus 5](/models/claude-opus-5)
+
+[← Kembali ke katalog model](/models)

@@ -1,0 +1,73 @@
+---
+title: "GLM 5.1"
+description: "GLM-5.1 is Zhipu's flagship text model, with 200K context and 128K max output, strengthened for long-horizon planning, agentic coding, tool use, structured o..."
+---
+
+GLM-5.1 is Zhipu's flagship text model, with 200K context and 128K max output, strengthened for long-horizon planning, agentic coding, tool use, structured output, context caching, and MCP.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Zhipu |
+| Slug | `glm-5-1` |
+| Konteks | 200,000 token |
+| Output maks | 128,000 token |
+| Input | text |
+| Output | text |
+| Rilis | 2026-06-14 |
+
+## Kapabilitas
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $0.882 |
+| Output (completion) | $3.529 |
+| Cache read | $0.191 |
+| Cache write | — |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "glm-5-1",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [GLM 5](/models/glm-5)
+- [GLM 5.2](/models/glm-5-2)
+- [GLM 5.3](/models/glm-5-3)
+- [GLM 5.3 Hyper Chat](/models/glm-5-3-hyper-chat)
+- [GLM-5.3 Flash](/models/glm-5-3-flash)
+- [GLM-5.3 Flash Hyper](/models/glm-5-3-flash-hyper)
+
+[← Kembali ke katalog model](/models)

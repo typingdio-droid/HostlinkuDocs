@@ -1,0 +1,82 @@
+---
+title: "GPT-5.6 Terra"
+description: "The best balance of performance, speed, and cost, making it the ideal default model for businesses and developers."
+---
+
+The best balance of performance, speed, and cost, making it the ideal default model for businesses and developers.
+
+| Properti | Nilai |
+|---|---|
+| Provider | OpenAI |
+| Slug | `gpt-5-6-terra` |
+| Konteks | 1,050,000 token |
+| Output maks | 64,000 token |
+| Input | text, image |
+| Output | text |
+| Rilis | 2026-07-09 |
+| Tag | production |
+
+## Kapabilitas
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $2 |
+| Output (completion) | $12 |
+| Cache read | $0.2 |
+| Cache write | $2.5 |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | native |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5-6-terra",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [GPT 5.3 Codex](/models/gpt-5-3-codex)
+- [GPT-5.5](/models/gpt-5-5)
+- [GPT-5.6 Luna](/models/gpt-5-6-luna)
+- [GPT-5.6 Sol](/models/gpt-5-6-sol)
+- [GPT-6 Astra](/models/gpt-6-astra)
+- [GPT-6 Luna](/models/gpt-6-luna)
+
+[← Kembali ke katalog model](/models)

@@ -1,0 +1,65 @@
+---
+title: "MiMo V2.5 Pro"
+description: "The flagship base model with trillions of parameters can stably complete long-distance tasks involving nearly a thousand rounds of tool calls. Agent capabili..."
+---
+
+The flagship base model with trillions of parameters can stably complete long-distance tasks involving nearly a thousand rounds of tool calls. Agent capabilities have been fully upgraded and are designed for real productivity scenarios.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Xiaomi |
+| Slug | `mimo-v2-5-pro` |
+| Konteks | 1,000,000 token |
+| Output maks | 32,000 token |
+| Input | text |
+| Output | text |
+| Rilis | 2026-07-13 |
+| Tag | reasoning |
+
+## Kapabilitas
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $0.441 |
+| Output (completion) | $0.882 |
+| Cache read | $0.004 |
+| Cache write | — |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "mimo-v2-5-pro",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+[← Kembali ke katalog model](/models)

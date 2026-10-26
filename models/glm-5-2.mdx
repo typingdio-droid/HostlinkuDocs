@@ -1,0 +1,74 @@
+---
+title: "GLM 5.2"
+description: "GLM-5.2 is a flagship model designed for the era of long-context tasks. It supports a truly usable 1-million-token context window—capable of handling project..."
+---
+
+GLM-5.2 is a flagship model designed for the era of long-context tasks. It supports a truly usable 1-million-token context window—capable of handling project-level engineering contexts in real-world testing—and delivers greater stability in executing long-range tasks and higher reliability in adhering to engineering standards, thereby further increasing success rates in development scenarios. It enables the completion of the entire development lifecycle—from requirements to multi-platform deployable artifacts—in a single task.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Zhipu |
+| Slug | `glm-5-2` |
+| Konteks | 1,000,000 token |
+| Output maks | 64,000 token |
+| Input | text |
+| Output | text |
+| Rilis | 2026-06-16 |
+| Tag | reasoning |
+
+## Kapabilitas
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $1.177 |
+| Output (completion) | $4.118 |
+| Cache read | $0.294 |
+| Cache write | — |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "glm-5-2",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [GLM 5](/models/glm-5)
+- [GLM 5.1](/models/glm-5-1)
+- [GLM 5.3](/models/glm-5-3)
+- [GLM 5.3 Hyper Chat](/models/glm-5-3-hyper-chat)
+- [GLM-5.3 Flash](/models/glm-5-3-flash)
+- [GLM-5.3 Flash Hyper](/models/glm-5-3-flash-hyper)
+
+[← Kembali ke katalog model](/models)

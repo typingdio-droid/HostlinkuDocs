@@ -1,0 +1,31 @@
+---
+title: Model unavailable
+description: The difference between 404 and 503, Service Modes, deprecated models, and next steps.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+## 404 or 503?
+
+| Status | Code | Meaning | Action |
+|---|---|---|---|
+| 404 | `MODEL_NOT_FOUND` | Slug is not in the catalog | Copy the slug from `GET /v1/models` |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | Model exists but not for this key's mode | Change key/mode or pick another model |
+| 503 | `MODEL_UNAVAILABLE` | Model is deprecated/temporarily unavailable | Check `replacement_slug` in the error or catalog |
+| 503 | `UPSTREAM_ERROR` | Temporary upstream issue | Retry with backoff |
+
+## Deprecated models
+
+Deprecated models no longer appear in `GET /v1/models`. If the error includes a `replacement_slug`, use that slug. See active models in [Models](/en/models).
+
+## Why did a model disappear from my key?
+
+The catalog can differ by Service Mode. Performance and Low-Cost keys may see different model lists. Check `GET /v1/models` with the correct key, or create a key with the desired mode in Console.
+
+## Is my request routed automatically?
+
+For upstream failures, the gateway tries another route before giving up. If the model is not in the catalog or has no active route, the request still fails. Failover never changes the slug you send.
+
+<Callout type="tip" title="Quick check">
+  Compare the slug with the [model catalog](/en/models), then see [Errors](/en/errors). If it still fails, send the `x-request-id` to [support](/en/support).
+</Callout>

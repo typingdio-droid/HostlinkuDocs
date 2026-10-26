@@ -1,0 +1,68 @@
+---
+title: "Qwen 3.7 Max"
+description: "Qwen3.7-Max is the flagship model in the Qwen3.7 series, built for agent workloads, long-chain reasoning, code understanding, productivity, and complex task..."
+---
+
+Qwen3.7-Max is the flagship model in the Qwen3.7 series, built for agent workloads, long-chain reasoning, code understanding, productivity, and complex task execution.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Alibaba |
+| Slug | `qwen3-7-max` |
+| Konteks | 1,000,000 token |
+| Output maks | Tidak dipublikasikan |
+| Input | text |
+| Output | text |
+| Rilis | 2026-06-14 |
+
+## Kapabilitas
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `agentic`
+- `long-context`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $1.765 |
+| Output (completion) | $5.294 |
+| Cache read | $0.176 |
+| Cache write | $2.206 |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen3-7-max",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [Qwen 3.6 Plus](/models/qwen3-6-plus)
+
+[← Kembali ke katalog model](/models)

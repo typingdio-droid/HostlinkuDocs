@@ -1,0 +1,31 @@
+---
+title: Model tidak tersedia
+description: Perbedaan 404 dan 503, Service Mode, model deprecated, dan langkah yang bisa dilakukan.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+## 404 atau 503?
+
+| Status | Kode | Arti | Tindakan |
+|---|---|---|---|
+| 404 | `MODEL_NOT_FOUND` | Slug tidak ada di katalog | Ambil slug dari `GET /v1/models` |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | Model ada, tapi tidak tersedia untuk mode API key | Ganti key/mode atau pilih model lain |
+| 503 | `MODEL_UNAVAILABLE` | Model deprecated/sedang tidak tersedia | Cek `replacement_slug` di error atau katalog |
+| 503 | `UPSTREAM_ERROR` | Gangguan sementara di upstream | Coba lagi dengan backoff |
+
+## Model deprecated
+
+Model yang deprecated tidak lagi muncul di `GET /v1/models`. Jika pesan error menyertakan `replacement_slug`, gunakan slug tersebut. Daftar model aktif ada di [Model](/models).
+
+## Kenapa model hilang dari key saya?
+
+Katalog bisa berbeda per Service Mode. API key Performance dan Low-Cost dapat melihat daftar model yang berbeda. Cek `GET /v1/models` dengan key yang benar, atau buat key dengan mode yang diinginkan di Console.
+
+## Apakah request otomatis dialihkan?
+
+Untuk gangguan upstream, gateway mencoba jalur lain sebelum menyerah. Namun jika model memang tidak tersedia di katalog atau tidak ada rute aktif, request tetap gagal. Failover tidak mengubah slug yang kamu pakai.
+
+<Callout type="tip" title="Cek cepat">
+  Bandingkan slug dengan [katalog model](/models), lalu lihat detail kode error di [Error](/errors). Jika masih gagal, kirim `x-request-id` ke [dukungan](/support).
+</Callout>

@@ -1,0 +1,45 @@
+---
+title: Common errors
+description: Causes and fixes for the most common Hostlinku error codes.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Every error uses the same envelope: `{"error": {"code": "...", "message": "..."}}`. See the full list in [Errors](/en/errors).
+
+## 401 UNAUTHORIZED
+
+The API key is missing, incorrect, revoked, or expired. Use `Authorization: Bearer sk-...` or `x-api-key`, then check the key status in Console → **API Keys**.
+
+## 402 PAYMENT_REQUIRED
+
+Two common causes:
+
+- **Account balance** is too low for the estimated request cost.
+- **API key credit limit** is reached (daily, weekly, monthly, or total).
+
+Read the error message to tell them apart. Check balance and key limits in Console. Details: [Billing & Balance](/en/billing).
+
+## 404 MODEL_NOT_FOUND
+
+The model slug is not in the catalog. Copy the slug from `GET /v1/models` or the [Models](/en/models) page.
+
+## 400 MODEL_NOT_IN_SERVICE_MODE
+
+The model exists but is not available for the API key's Service Mode. Create a key with the right mode or pick another model.
+
+## 422 VALIDATION_FAILED
+
+The request body failed validation: empty `messages`, wrong field type, or a missing required field. The response includes per-field details.
+
+## 429 RATE_LIMITED
+
+The request limit was exceeded. Read `Retry-After` and `RateLimit-*`, then retry with exponential backoff. Rate-limited requests do not consume balance. Details: [Usage & Limits](/en/usage-and-limits).
+
+## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
+
+The model is deprecated/unavailable, or the upstream has a temporary issue. Retry later for `UPSTREAM_ERROR`; for `MODEL_UNAVAILABLE`, check for a `replacement_slug`.
+
+<Callout type="note" title="Debugging tip">
+  Keep the `x-request-id` response header. It lets support match the request with Console logs.
+</Callout>

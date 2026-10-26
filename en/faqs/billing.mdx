@@ -1,0 +1,31 @@
+---
+title: Billing & top-up
+description: Common questions about balance, top-ups, API key credit limits, and 402 errors.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku uses prepaid credit in US dollars (1 🪙 = $1). There is no monthly subscription; each request is charged for the tokens actually used.
+
+## Why do I get 402 with a balance?
+
+Check two things:
+
+1. **Available balance** — reserved credit cannot be reused. Check the running balance in Console → **Credits/Balance**.
+2. **API key credit limit** — a key can have a daily, weekly, monthly, or total limit. When it is reached, requests fail even if the account balance is positive. Raise the limit or wait for the reset window.
+
+## How do I top up?
+
+Open Console → **Add balance**. Available methods are shown on the top-up page (currently QRIS/virtual account and crypto). Minimum/maximum amounts and exchange rates follow checkout.
+
+## Does payment arrive instantly?
+
+Credit is added after the payment is verified. If the status is still pending, check the transaction history in Console before topping up again. Include the transaction ID when contacting support.
+
+## Can I get a refund?
+
+Unused prepaid credit can be requested under the [Refund Policy](/en/legals/refund-policy). Promotional credit has no cash value.
+
+<Callout type="note" title="Need help?">
+  Email [halo@hostlinku.com](mailto:halo@hostlinku.com) with your account email and transaction ID. See [Billing & Balance](/en/billing).
+</Callout>

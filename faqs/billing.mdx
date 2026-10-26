@@ -1,0 +1,31 @@
+---
+title: Billing & top-up
+description: Pertanyaan umum tentang saldo, top-up, limit kredit API key, dan error 402.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku memakai saldo prabayar dalam dolar AS (1 🪙 = $1). Tidak ada langganan bulanan; biaya dipotong per request berdasarkan token yang benar-benar dipakai.
+
+## Kenapa muncul 402 padahal saldo ada?
+
+Periksa dua hal:
+
+1. **Saldo tersedia** — saldo yang sudah terpakai/reservasi tidak bisa dipakai lagi. Cek saldo berjalan di Console → **Credits/Balance**.
+2. **Limit kredit API key** — key bisa punya batas harian, mingguan, bulanan, atau total. Jika limit tercapai, request ditolak meskipun saldo akun masih ada. Ubah limit atau tunggu jendela reset.
+
+## Bagaimana cara top-up?
+
+Buka Console → **Add balance**. Metode yang tersedia ditampilkan di halaman top-up (saat ini QRIS/virtual account dan aset kripto). Nominal minimum/maksimum dan kurs mengikuti yang tampil saat checkout.
+
+## Apakah pembayaran langsung masuk?
+
+Saldo dikreditkan setelah pembayaran terverifikasi. Jika status masih pending, cek riwayat transaksi di Console sebelum melakukan top-up ulang. Sertakan ID transaksi saat menghubungi dukungan.
+
+## Apakah saldo bisa dikembalikan?
+
+Sisa saldo top-up yang belum terpakai dapat diajukan sesuai [Kebijakan Pengembalian Dana](/legals/refund-policy). Bonus/promo tidak memiliki nilai tunai.
+
+<Callout type="note" title="Butuh bantuan?">
+  Kirim email ke [halo@hostlinku.com](mailto:halo@hostlinku.com) dengan email akun dan ID transaksi. Detail lengkap ada di [Billing & Saldo](/billing).
+</Callout>

@@ -1,0 +1,82 @@
+---
+title: "Claude Opus 5.5"
+description: "Anthropic's model for long-running agentic coding and knowledge work. Adaptive thinking always on (default effort medium), 1M context, 128K max output; cache..."
+---
+
+Anthropic's model for long-running agentic coding and knowledge work. Adaptive thinking always on (default effort medium), 1M context, 128K max output; cache reads billed at 5% of input price.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Anthropic |
+| Slug | `claude-opus-5-5` |
+| Konteks | 1,000,000 token |
+| Output maks | 128,000 token |
+| Input | text, image |
+| Output | text |
+| Rilis | 2026-09-21 |
+| Tag | flagship, long-context, production |
+
+## Kapabilitas
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $4 |
+| Output (completion) | $20 |
+| Cache read | $0.2 |
+| Cache write | $5 |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-opus-5-5",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [Claude Fable 5](/models/claude-fable-5)
+- [Claude Fable 5.1](/models/claude-fable-5-1)
+- [Claude Haiku 4.5](/models/claude-haiku-4-5)
+- [Claude Opus 4.6](/models/claude-opus-4-6)
+- [Claude Opus 4.7](/models/claude-opus-4-7)
+- [Claude Opus 4.8](/models/claude-opus-4-8)
+
+[← Kembali ke katalog model](/models)

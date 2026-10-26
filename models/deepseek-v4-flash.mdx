@@ -1,0 +1,71 @@
+---
+title: "DeepSeek V4 Flash"
+description: "DeepSeek V4 Flash is the efficiency-oriented V4 variant, supporting a 1M context window for everyday chat, summarization, code generation, structured process..."
+---
+
+DeepSeek V4 Flash is the efficiency-oriented V4 variant, supporting a 1M context window for everyday chat, summarization, code generation, structured processing, and high-throughput production calls.
+
+| Properti | Nilai |
+|---|---|
+| Provider | DeepSeek |
+| Slug | `deepseek-v4-flash` |
+| Konteks | 1,000,000 token |
+| Output maks | Tidak dipublikasikan |
+| Input | text |
+| Output | text |
+| Rilis | 2026-07-30 |
+
+## Kapabilitas
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `long-context`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $0.15 |
+| Output (completion) | $0.6 |
+| Cache read | $0.003 |
+| Cache write | — |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4-flash",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [DeepSeek V4 Pro](/models/deepseek-v4-pro)
+- [DeepSeek-V4.1-Flash](/models/deepseek-v4-1-flash)
+- [DeepSeek-V4.1-Flash Hyper](/models/deepseek-v4-1-flash-hyper)
+- [DeepSeek-V4.1-Flash Hyper Chat](/models/deepseek-v4-1-flash-hyper-chat)
+- [DeepSeek-V4.1-Flash Turbo](/models/deepseek-v4-1-flash-turbo)
+
+[← Kembali ke katalog model](/models)

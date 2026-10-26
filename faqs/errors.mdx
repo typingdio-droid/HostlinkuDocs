@@ -1,0 +1,45 @@
+---
+title: Error yang sering muncul
+description: Penyebab dan solusi kode error Hostlinku yang paling sering ditemui.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Semua error memakai envelope yang sama: `{"error": {"code": "...", "message": "..."}}`. Daftar lengkap ada di [Error](/errors).
+
+## 401 UNAUTHORIZED
+
+API key tidak ada, salah salin, sudah dicabut, atau kedaluwarsa. Pastikan header memakai `Authorization: Bearer sk-...` atau `x-api-key`, lalu cek status key di Console → **API Keys**.
+
+## 402 PAYMENT_REQUIRED
+
+Ada dua penyebab:
+
+- **Saldo akun** tidak cukup untuk estimasi biaya request.
+- **Limit kredit API key** tercapai (harian, mingguan, bulanan, atau total).
+
+Baca pesan error untuk membedakannya. Cek saldo dan limit key di Console. Detail: [Billing & Saldo](/billing).
+
+## 404 MODEL_NOT_FOUND
+
+Slug model tidak ada di katalog. Ambil slug persis dari `GET /v1/models` atau halaman [Model](/models). Jangan menebak slug dari nama tampilan.
+
+## 400 MODEL_NOT_IN_SERVICE_MODE
+
+Model ada, tetapi tidak tersedia untuk Service Mode API key yang dipakai. Contoh: key Low-Cost memanggil model yang hanya punya rute Performance. Buat key dengan mode yang sesuai atau pilih model lain.
+
+## 422 VALIDATION_FAILED
+
+Body request tidak lolos validasi: `messages` kosong, tipe field salah, atau field wajib hilang. Respons menyertakan detail per field. Periksa contoh body di [Chat Completions](/chat-completions).
+
+## 429 RATE_LIMITED
+
+Batas request terlampaui. Baca header `Retry-After` dan `RateLimit-*`, lalu ulangi dengan backoff eksponensial. Request yang ditolak limiter tidak memotong saldo. Detail: [Pemakaian & Limit](/usage-and-limits).
+
+## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
+
+Model sedang deprecated/tidak tersedia, atau upstream mengalami gangguan sementara. Untuk `UPSTREAM_ERROR`, coba lagi beberapa saat. Untuk `MODEL_UNAVAILABLE`, cek pesan error apakah ada `replacement_slug`.
+
+<Callout type="note" title="Tips debugging">
+  Simpan `x-request-id` dari header respons. ID itu bisa dipakai untuk mencocokkan request dengan log di Console saat menghubungi dukungan.
+</Callout>

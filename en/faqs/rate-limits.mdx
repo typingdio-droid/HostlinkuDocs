@@ -1,0 +1,34 @@
+---
+title: Rate limits
+description: Hostlinku request limits, response headers, and recommended backoff.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+The main gateway limit is **600 requests per minute per API key** for `/v1/*`. Requests from all models using the same key share the 60-second window.
+
+| Limit | Quota | Scope |
+|---|---|---|
+| Gateway RPM | **600 req/min** | Per API key, all models |
+| RPD | Unlimited | Bounded by balance and key credit limit |
+| TPM | Unlimited | `max_tokens` must still fit the model output limit |
+| `/api/*` endpoints | **120 req/min** | Per IP address |
+| Auth endpoints | **30 attempts / 15 minutes** | Per IP address |
+
+When the limit is exceeded, the gateway returns **HTTP 429** with:
+
+- `Retry-After`: suggested wait time in seconds.
+- `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset`: quota and reset window.
+
+Rate-limited requests **do not** reserve or consume balance.
+
+## Recommended backoff
+
+1. Use `Retry-After` when present.
+2. Otherwise start at 1 second and double each attempt (1, 2, 4, 8 seconds) with jitter.
+3. Cap retries, for example at 5 attempts.
+4. Queue work in your app instead of sending bursts.
+
+<Callout type="tip" title="Need a higher limit?">
+  Contact [halo@hostlinku.com](mailto:halo@hostlinku.com) with your account email and expected load. See [Usage & Limits](/en/usage-and-limits).
+</Callout>

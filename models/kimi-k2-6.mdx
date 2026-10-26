@@ -1,0 +1,74 @@
+---
+title: "Kimi K2.6"
+description: "Kimi K2.6 is Kimi's latest and most intelligent model, featuring enhanced and more stable long-range coding capabilities and significantly improved instructi..."
+---
+
+Kimi K2.6 is Kimi's latest and most intelligent model, featuring enhanced and more stable long-range coding capabilities and significantly improved instruction-following and self-correction abilities; it supports both "thinking" and non-thinking modes, as well as conversational interactions and Agent tasks.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Moonshot |
+| Slug | `kimi-k2-6` |
+| Konteks | 256,000 token |
+| Output maks | 32,000 token |
+| Input | text, image |
+| Output | text |
+| Rilis | 2026-07-13 |
+
+## Kapabilitas
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | $0.956 |
+| Output (completion) | $3.971 |
+| Cache read | $0.162 |
+| Cache write | — |
+
+Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 🪙 = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Contoh request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kimi-k2-6",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Model terkait
+
+- [Kimi K2.7 Code](/models/kimi-k2-7-code)
+- [Kimi K3](/models/kimi-k3)
+- [Kimi K3 Hyper](/models/kimi-k3-hyper)
+- [Kimi K3 Hyper Chat](/models/kimi-k3-hyper-chat)
+- [Kimi K3 Turbo](/models/kimi-k3-turbo)
+
+[← Kembali ke katalog model](/models)

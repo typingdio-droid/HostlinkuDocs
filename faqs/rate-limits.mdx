@@ -1,0 +1,34 @@
+---
+title: Rate limit
+description: Batas request Hostlinku, header yang dikirim, dan cara melakukan backoff.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Batas utama gateway adalah **600 request per menit per API key** untuk endpoint `/v1/*`. Request dari semua model pada key yang sama dihitung bersama dalam jendela 60 detik.
+
+| Limit | Kuota | Cakupan |
+|---|---|---|
+| RPM gateway | **600 req/menit** | Per API key, semua model |
+| RPD | Tidak dibatasi | Dibatasi saldo dan limit kredit key |
+| TPM | Tidak dibatasi | `max_tokens` tetap harus ≤ batas output model |
+| Endpoint `/api/*` | **120 req/menit** | Per alamat IP |
+| Endpoint autentikasi | **30 percobaan / 15 menit** | Per alamat IP |
+
+Saat limit terlampaui, gateway mengembalikan **HTTP 429** dengan:
+
+- `Retry-After`: saran waktu tunggu dalam detik.
+- `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset`: kuota dan sisa jendela.
+
+Request 429 **tidak** membuat reservasi atau memotong saldo.
+
+## Backoff yang disarankan
+
+1. Baca `Retry-After`; jika ada, tunggu selama nilai itu.
+2. Jika tidak ada, mulai dari 1 detik dan gandakan setiap percobaan (1, 2, 4, 8 detik) dengan jitter.
+3. Batasi jumlah percobaan, misalnya 5 kali.
+4. Untuk beban tinggi, antrekan request di sisi aplikasi daripada mengirim burst.
+
+<Callout type="tip" title="Butuh limit lebih tinggi?">
+  Hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com) dengan email akun dan perkiraan beban. Detail pemakaian ada di [Pemakaian & Limit](/usage-and-limits).
+</Callout>
