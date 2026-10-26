@@ -176,7 +176,7 @@ for chunk in stream:
 | Kasus | HTTP | `error.code` |
 |---|---|---|
 | Body tidak lolos validasi (field salah/tipe salah/`messages` kosong) | 422 | `VALIDATION_FAILED` |
-| API key tidak valid / kedaluwarsa | 401 | `UNAUTHORIZED` |
+| The API key is invalid or has expired | 401 | `UNAUTHORIZED` |
 | Saldo atau limit API key tidak cukup | 402 | `PAYMENT_REQUIRED` |
 | Slug model tidak ada di katalog | 404 | `MODEL_NOT_FOUND` |
 | `max_tokens` melebihi batas output model | 400 | `BAD_REQUEST` |

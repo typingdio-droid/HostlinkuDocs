@@ -32,7 +32,7 @@ HTTP/1.1 429 Too Many Requests
   "status": "error",
   "error": {
     "code": "RATE_LIMITED",
-    "message": "Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi."
+    "message": "Rate limit exceeded. Upgrade your plan for a higher limit."
   }
 }
 ```
@@ -86,4 +86,4 @@ estimasi di sisi tampilan.
 | Kode | Arti | Yang harus dilakukan |
 |---|---|---|
 | `429 RATE_LIMITED` | Terlalu banyak request dalam jendela waktu | Tunggu `RateLimit-Reset`, backoff, atau kurangi konkurensi |
-| `402 PAYMENT_REQUIRED` | Masalah kredit: saldo kurang **atau** limit API key tercapai | Cek pesan errornya. Kalau menyebut "Limit kredit API key", tunggu reset atau naikkan limit; kalau "Saldo kredit tidak cukup", lakukan top-up ([Billing & Saldo](/billing)) |
+| `402 PAYMENT_REQUIRED` | Masalah kredit: saldo kurang **atau** limit API key tercapai | Cek pesan errornya. Kalau menyebut "Limit kredit API key", tunggu reset atau naikkan limit; kalau "Insufficient credit balance", lakukan top-up ([Billing & Saldo](/billing)) |

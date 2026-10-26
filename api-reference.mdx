@@ -284,15 +284,15 @@ Envelope error mengikuti protokol endpoint yang dipanggil:
 
 | HTTP Status Code | Description | Example Error Message |
 |---|---|---|
-| 400 | Body tidak valid, `max_tokens` melebihi batas output model, atau model tidak tersedia di Service Mode API key. | `max_tokens (20000) melebihi batas output model 'claude-haiku-4-5' (16000).` |
-| 401 | API key tidak dikirim, tidak valid, dicabut, atau kedaluwarsa. | `API key tidak valid atau sudah dicabut.` |
+| 400 | Body tidak valid, `max_tokens` melebihi batas output model, atau model tidak tersedia di Service Mode API key. | `max_tokens (20000) exceeds the output limit of model 'claude-haiku-4-5' (16000).` |
+| 401 | API key tidak dikirim, tidak valid, dicabut, atau kedaluwarsa. | `The API key is invalid or has been revoked.` |
 | 402 | Saldo tidak cukup untuk estimasi biaya request, atau limit kredit API key tercapai. | `Saldo tidak mencukupi.` |
-| 403 | Akun ditangguhkan / akses ditolak. | `Kamu tidak punya akses ke resource ini.` |
-| 404 | Slug model tidak ada di katalog. | `Model 'xxx' tidak ditemukan.` |
-| 413 | Body request melebihi ukuran maksimum. | `Payload terlalu besar.` |
-| 422 | Validasi body gagal (hanya `/v1/chat/completions`; `/v1/messages` & `/v1/responses` memakai 400). | `Request body tidak valid.` |
-| 429 | Rate limit terlampaui. | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
-| 503 | Model/upstream sedang tidak tersedia - aman untuk di-retry dengan backoff. | `Model sedang tidak tersedia. Coba lagi nanti.` |
+| 403 | Akun ditangguhkan / akses ditolak. | `You do not have access to this resource.` |
+| 404 | Slug model tidak ada di katalog. | `Model 'xxx' was not found.` |
+| 413 | Body request melebihi ukuran maksimum. | `The payload is too large.` |
+| 422 | Validasi body gagal (hanya `/v1/chat/completions`; `/v1/messages` & `/v1/responses` memakai 400). | `The request body is invalid.` |
+| 429 | Rate limit exceeded. | `Rate limit exceeded. Upgrade your plan for a higher limit.` |
+| 503 | Model/upstream sedang tidak tersedia - aman untuk di-retry dengan backoff. | `The model is currently unavailable. Please try again later.` |
 
 Pesan error **tidak pernah** memuat identitas atau teks mentah provider upstream. Daftar kode
 lengkap format OpenAI ada di [Error](/errors).

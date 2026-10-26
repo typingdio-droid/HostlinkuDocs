@@ -53,7 +53,7 @@ API key yang sudah lewat masa berlaku ditolak dengan:
 ```json
 {
   "status": "error",
-  "error": { "code": "UNAUTHORIZED", "message": "API key sudah kedaluwarsa." }
+  "error": { "code": "UNAUTHORIZED", "message": "The API key has expired." }
 }
 ```
 
@@ -101,13 +101,13 @@ Melebihi batas menghasilkan **429 RATE_LIMITED**. Detailnya di
 
 | Situasi | HTTP | `error.code` | Pesan |
 |---|---|---|---|
-| Header `Authorization` tidak ada atau bukan Bearer | 401 | `UNAUTHORIZED` | `Endpoint ini memerlukan API key Hostlinku: kirim header Authorization: Bearer sk-… (atau x-api-key). …` |
-| API key tidak dikenal, salah ketik, atau sudah di-revoke | 401 | `UNAUTHORIZED` | `API key tidak valid atau sudah dicabut.` |
-| API key sudah lewat masa berlaku | 401 | `UNAUTHORIZED` | `API key sudah kedaluwarsa.` |
-| API key dipakai ke endpoint Console `/api/*` | 403 | `API_KEY_NOT_ALLOWED` | `API key hanya berlaku untuk endpoint gateway /v1/* …` |
+| Header `Authorization` tidak ada atau bukan Bearer | 401 | `UNAUTHORIZED` | `This endpoint requires a Hostlinku API key: send the Authorization: Bearer sk-… header (or x-api-key). …` |
+| API key tidak dikenal, salah ketik, atau sudah di-revoke | 401 | `UNAUTHORIZED` | `The API key is invalid or has been revoked.` |
+| API key sudah lewat masa berlaku | 401 | `UNAUTHORIZED` | `The API key has expired.` |
+| API key dipakai ke endpoint Console `/api/*` | 403 | `API_KEY_NOT_ALLOWED` | `API keys are only valid for the /v1/* gateway endpoints …` |
 | API key menabrak limit kreditnya | 402 | `PAYMENT_REQUIRED` | `Limit kredit API key tercapai (…)` |
-| Saldo akun tidak cukup untuk reservasi request | 402 | `PAYMENT_REQUIRED` | `Saldo kredit tidak cukup untuk request ini.` |
-| Melampaui rate limit | 429 | `RATE_LIMITED` | `Rate limit terlampaui. …` |
+| Saldo akun tidak cukup untuk reservasi request | 402 | `PAYMENT_REQUIRED` | `Insufficient credit balance for this request.` |
+| Melampaui rate limit | 429 | `RATE_LIMITED` | `Rate limit exceeded. …` |
 
 <Callout type="important" title="Keamanan API key">
   - Jangan menaruh API key di kode client-side yang berjalan di browser atau di repositori publik.
