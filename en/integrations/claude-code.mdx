@@ -13,7 +13,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ```bash
 npm install -g @anthropic-ai/claude-code
-# atau: curl -fsSL https://claude.ai/install.sh | bash
+# or: curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 If you've previously logged in with an Anthropic/Claude account, run `claude` and then type `/logout` so that your saved OAuth credentials don't override the gateway configuration.
@@ -26,7 +26,7 @@ The fastest way - export in the shell (`~/.zshrc` / `~/.bashrc`):
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
 export ANTHROPIC_AUTH_TOKEN=sk-your-api-key
 
-# Pin model untuk alias yang dipakai Claude Code
+# Pin the model for the alias used by Claude Code
 export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
 export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
@@ -60,7 +60,7 @@ In the Claude Code session, type `/status`: the *API* section should display the
 
 ```bash
 claude --model deepseek-v4-flash
-# atau pin default lewat env: export ANTHROPIC_MODEL=gpt-5-5
+# or pin the default via env: export ANTHROPIC_MODEL=gpt-5-5
 ```
 
 </Steps>
