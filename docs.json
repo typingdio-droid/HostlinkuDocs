@@ -710,6 +710,176 @@
       "source": "/en/faq",
       "destination": "/en/faqs",
       "permanent": true
+    },
+    {
+      "source": "/docs/anthropic-messages",
+      "destination": "/anthropic-messages",
+      "permanent": true
+    },
+    {
+      "source": "/docs/api-reference",
+      "destination": "/api-reference",
+      "permanent": true
+    },
+    {
+      "source": "/docs/authentication",
+      "destination": "/authentication",
+      "permanent": true
+    },
+    {
+      "source": "/docs/billing",
+      "destination": "/billing",
+      "permanent": true
+    },
+    {
+      "source": "/docs/chat-completions",
+      "destination": "/chat-completions",
+      "permanent": true
+    },
+    {
+      "source": "/docs/dedicated",
+      "destination": "/dedicated",
+      "permanent": true
+    },
+    {
+      "source": "/docs/errors",
+      "destination": "/errors",
+      "permanent": true
+    },
+    {
+      "source": "/docs/faq",
+      "destination": "/faq",
+      "permanent": true
+    },
+    {
+      "source": "/docs/getting-started",
+      "destination": "/getting-started",
+      "permanent": true
+    },
+    {
+      "source": "/docs",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/agents-sdk",
+      "destination": "/integrations/agents-sdk",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/aider",
+      "destination": "/integrations/aider",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/claude-code",
+      "destination": "/integrations/claude-code",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/cline",
+      "destination": "/integrations/cline",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/codex-cli",
+      "destination": "/integrations/codex-cli",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/continue",
+      "destination": "/integrations/continue",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/copilot",
+      "destination": "/integrations/copilot",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/cursor",
+      "destination": "/integrations/cursor",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/factory",
+      "destination": "/integrations/factory",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/index",
+      "destination": "/integrations/index",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/jetbrains",
+      "destination": "/integrations/jetbrains",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/junie",
+      "destination": "/integrations/junie",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/kilo-code",
+      "destination": "/integrations/kilo-code",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/opencode",
+      "destination": "/integrations/opencode",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/vscode",
+      "destination": "/integrations/vscode",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/xum",
+      "destination": "/integrations/xum",
+      "permanent": true
+    },
+    {
+      "source": "/docs/integrations/zed",
+      "destination": "/integrations/zed",
+      "permanent": true
+    },
+    {
+      "source": "/docs/models",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/docs/prompt-caching",
+      "destination": "/prompt-caching",
+      "permanent": true
+    },
+    {
+      "source": "/docs/responses",
+      "destination": "/responses",
+      "permanent": true
+    },
+    {
+      "source": "/docs/sdk",
+      "destination": "/sdk",
+      "permanent": true
+    },
+    {
+      "source": "/docs/support",
+      "destination": "/support",
+      "permanent": true
+    },
+    {
+      "source": "/docs/usage-and-limits",
+      "destination": "/usage-and-limits",
+      "permanent": true
+    },
+    {
+      "source": "/docs/",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "seo": {
