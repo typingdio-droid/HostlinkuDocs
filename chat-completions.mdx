@@ -11,7 +11,7 @@ OpenAI resmi bisa dipakai hanya dengan mengganti `base_url` ke `https://api.host
 
 ```http
 POST https://api.hostlinku.com/v1/chat/completions
-Authorization: Bearer sk-isi-api-key-kamu
+Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
@@ -51,7 +51,7 @@ non-streaming, header `x-model` (slug publik model yang melayani request).
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
     "messages": [
@@ -103,7 +103,7 @@ dan slug model yang sama), lalu menutup stream dengan `data: [DONE]`:
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
     "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
@@ -140,7 +140,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="https://api.hostlinku.com/v1",
-    api_key="sk-isi-api-key-kamu",
+    api_key="sk-your-api-key",
 )
 
 # Non-streaming

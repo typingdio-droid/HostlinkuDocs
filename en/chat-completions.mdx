@@ -1,5 +1,5 @@
 ---
-title: "Chat Suggestions"
+title: "Chat Completions"
 description: "Reference for the POST endpoint /v1/chat/completions, including parameters, SSE streaming, and examples using curl and Python"
 ---
 
@@ -9,7 +9,7 @@ Hostlinku's main endpoint. The request and response formats are compatible with 
 
 ```http
 POST https://api.hostlinku.com/v1/chat/completions
-Authorization: Bearer sk-isi-api-key-kamu
+Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
@@ -45,12 +45,12 @@ The body is validated against a strict schema before being forwarded to the prov
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
     "messages": [
-      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
-      { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
+      { "role": "system", "content": "You are a concise assistant." },
+      { "role": "user", "content": "Explain what an API gateway is in two sentences." }
     ],
     "temperature": 0.7,
     "max_tokens": 256
@@ -68,7 +68,7 @@ Response (abridged):
   "choices": [
     {
       "index": 0,
-      "message": { "role": "assistant", "content": "API gateway adalah …" },
+      "message": { "role": "assistant", "content": "An API gateway is …" },
       "finish_reason": "stop"
     }
   ],
@@ -94,10 +94,10 @@ With `stream: true`, the gateway responds with `Content-Type: text/event-stream`
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
+    "messages": [{ "role": "user", "content": "Count from 1 to 5." }],
     "stream": true
   }'
 ```
@@ -132,15 +132,15 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="https://api.hostlinku.com/v1",
-    api_key="sk-isi-api-key-kamu",
+    api_key="sk-your-api-key",
 )
 
 # Non-streaming
 response = client.chat.completions.create(
     model="gpt-5-5",
     messages=[
-        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
-        {"role": "user", "content": "Halo dari SDK OpenAI!"},
+        {"role": "system", "content": "You are a concise assistant."},
+        {"role": "user", "content": "Hello from the OpenAI SDK!"},
     ],
 )
 print(response.choices[0].message.content)
@@ -148,7 +148,7 @@ print(response.choices[0].message.content)
 # Streaming
 stream = client.chat.completions.create(
     model="gpt-5-5",
-    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    messages=[{"role": "user", "content": "Write one short paragraph."}],
     stream=True,
 )
 for chunk in stream:

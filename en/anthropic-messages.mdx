@@ -11,7 +11,7 @@ In addition to the OpenAI format, Hostlinku also provides endpoints compatible w
 
 ```http
 POST https://api.hostlinku.com/v1/messages
-x-api-key: sk-isi-api-key-kamu
+x-api-key: sk-your-api-key
 anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
@@ -30,7 +30,7 @@ Step-by-step guides for each tool (Claude Code, Cline, and others) are available
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
-export ANTHROPIC_API_KEY=sk-isi-api-key-kamu
+export ANTHROPIC_API_KEY=sk-your-api-key
 export ANTHROPIC_MODEL=claude-sonnet-4-6
 claude
 ```
@@ -41,7 +41,7 @@ claude
 import anthropic
 
 client = anthropic.Anthropic(
-    api_key="sk-isi-api-key-kamu",
+    api_key="sk-your-api-key",
     base_url="https://api.hostlinku.com",
 )
 
@@ -59,7 +59,7 @@ print(message.usage.input_tokens, message.usage.output_tokens)
 ```ts
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com" });
+const client = new Anthropic({ apiKey: "sk-your-api-key", baseURL: "https://api.hostlinku.com" });
 const msg = await client.messages.create({
   model: "claude-haiku-4-5",
   max_tokens: 256,

@@ -16,7 +16,7 @@ mengubah provider OpenAI/Anthropic bawaan.
 
 ```bash
 mkdir -p ~/.config/hostlinku
-printf '%s' 'sk-isi-api-key-kamu' > ~/.config/hostlinku/api-key
+printf '%s' 'sk-your-api-key' > ~/.config/hostlinku/api-key
 chmod 600 ~/.config/hostlinku/api-key
 ```
 
@@ -65,7 +65,7 @@ format Chat Completions (**Settings → Providers → OpenAI**, atau di `provide
 ```jsonc
 {
   "openai": {
-    "apiKey": "sk-isi-api-key-kamu",
+    "apiKey": "sk-your-api-key",
     "baseUrl": "https://api.hostlinku.com/v1",
     "wireFormat": "chatCompletions",
   },

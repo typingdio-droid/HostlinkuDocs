@@ -12,18 +12,18 @@ import { Callout } from "/snippets/mdx.jsx";
 
 | 工具 | 使用的API格式 | 基础 URL | 指南 |
 |---|---|---|---|
-| Claude Code（CLI 及 VS Code/JetBrains 扩展） | Anthropic Messages | `https://api.hostlinku.com` | [克劳德·科德](/zh/integrations/claude-code) |
+| Claude Code（CLI 及 VS Code/JetBrains 扩展） | Anthropic Messages | `https://api.hostlinku.com` | [Claude Code](/zh/integrations/claude-code) |
 | Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/zh/integrations/codex-cli) |
-| 光标 | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [光标](/zh/integrations/cursor) |
+| Cursor | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Cursor](/zh/integrations/cursor) |
 | VS Code（内置聊天与代理模式） | OpenAI Chat Completions（或 Anthropic/Responses） | `https://api.hostlinku.com/v1/chat/completions`（完整URL端点） | [VS Code](/zh/integrations/vscode) |
 | GitHub Copilot CLI 和 Copilot 应用 | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [GitHub Copilot](/zh/integrations/copilot) |
-| 泽德（英雄面板） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/zh/integrations/zed) |
-| 克莱恩，Roo Code | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/zh/integrations/cline) |
+| Zed（Agent Panel） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/zh/integrations/zed) |
+| Cline、Roo Code | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/zh/integrations/cline) |
 | Kilo Code | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Kilo Code](/zh/integrations/kilo-code) |
-| 继续（VS Code 和 JetBrains） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [继续](/zh/integrations/continue) |
+| Continue（VS Code 和 JetBrains） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Continue](/zh/integrations/continue) |
 | JetBrains AI 助手（IntelliJ IDEA、PyCharm、WebStorm 等） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [JetBrains](/zh/integrations/jetbrains) |
 | Junie CLI（JetBrains） | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1/chat/completions`（完整URL端点） | [Junie](/zh/integrations/junie) |
-| Factory Droid（命令行界面与桌面版） | Anthropic Messages 或 OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [工厂](/zh/integrations/factory) |
+| Factory Droid（命令行界面与桌面版） | Anthropic Messages 或 OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [Factory Droid](/zh/integrations/factory) |
 | OpenCode | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [OpenCode](/zh/integrations/opencode) |
 | Xum（并行代理） | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Xum](/zh/integrations/xum) |
 | Aider | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Aider](/zh/integrations/aider) |
@@ -72,3 +72,4 @@ import { Callout } from "/snippets/mdx.jsx";
 | *自动完成/Tab* 功能无法正常使用 | 内联自动完成功能通常使用 `/v1/completions`（FIM）端点或工具专用的基础设施。Hostlinku 用于聊天功能，而 Responses 和 Messages 则不属于 FIM。 请使用 Hostlinku 处理聊天/客服代表/编辑功能；自动完成功能请保留在工具的默认提供商中。 |
 
 还需要这里尚未提供的其他工具吗？请发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com) 或查看 [支持](/zh/support)。
+)。

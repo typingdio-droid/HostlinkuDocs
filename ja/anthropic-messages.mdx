@@ -12,7 +12,7 @@ OpenAI 形式に加え、Hostlinku では [Anthropic Messages API](https://docs.
 
 ```http
 POST https://api.hostlinku.com/v1/messages
-x-api-key: sk-isi-api-key-kamu
+x-api-key: sk-your-api-key
 anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
@@ -27,11 +27,11 @@ Content-Type: application/json
 
 各ツール（Claude Code、Clineなど）ごとのステップバイステップガイドは、[IDEとエージェントの統合](/ja/integrations)に記載されています。
 
-**クロード・コード**
+**Claude Code**
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
-export ANTHROPIC_API_KEY=sk-isi-api-key-kamu
+export ANTHROPIC_API_KEY=sk-your-api-key
 export ANTHROPIC_MODEL=claude-sonnet-4-6
 claude
 ```
@@ -42,14 +42,14 @@ claude
 import anthropic
 
 client = anthropic.Anthropic(
-    api_key="sk-isi-api-key-kamu",
+    api_key="sk-your-api-key",
     base_url="https://api.hostlinku.com",
 )
 
 message = client.messages.create(
     model="claude-haiku-4-5",
     max_tokens=256,
-    messages=[{"role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat."}],
+    messages=[{"role": "user", "content": "APIゲートウェイとは何かを2文で説明してください。"}],
 )
 print(message.content[0].text)
 print(message.usage.input_tokens, message.usage.output_tokens)
@@ -60,7 +60,7 @@ print(message.usage.input_tokens, message.usage.output_tokens)
 ```ts
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com" });
+const client = new Anthropic({ apiKey: "sk-your-api-key", baseURL: "https://api.hostlinku.com" });
 const msg = await client.messages.create({
   model: "claude-haiku-4-5",
   max_tokens: 256,

@@ -50,7 +50,7 @@ Semua endpoint gateway berada di `https://api.hostlinku.com`, dengan autentikasi
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
     "messages": [
@@ -115,7 +115,7 @@ Dengan curl, tambahkan `-N` agar output tidak ditahan buffer:
 ```bash
 curl -N https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
 ```
 
