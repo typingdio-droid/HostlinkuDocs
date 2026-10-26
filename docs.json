@@ -168,15 +168,9 @@
           },
           {
             "tab": "FAQs",
-            "icon": "circle-help",
-            "groups": [
-              {
-                "group": "FAQ",
-                "pages": [
-                  "faqs/index",
-                  "faqs/stream-mode"
-                ]
-              }
+            "pages": [
+              "faqs/index",
+              "faqs/stream-mode"
             ]
           },
           {
@@ -400,15 +394,9 @@
           },
           {
             "tab": "FAQs",
-            "icon": "circle-help",
-            "groups": [
-              {
-                "group": "FAQ",
-                "pages": [
-                  "en/faqs/index",
-                  "en/faqs/stream-mode"
-                ]
-              }
+            "pages": [
+              "en/faqs/index",
+              "en/faqs/stream-mode"
             ]
           },
           {
