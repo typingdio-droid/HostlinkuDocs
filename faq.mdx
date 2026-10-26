@@ -1,0 +1,83 @@
+---
+title: FAQ
+description: Pertanyaan yang paling sering muncul tentang gateway Hostlinku
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+## Apakah SDK resmi OpenAI bisa dipakai?
+
+Bisa, tanpa perubahan kode. Arahkan `base_url`/`baseURL` ke `https://api.hostlinku.com/v1` dan
+pakai API key `sk-…` Hostlinku sebagai `api_key`. Contoh lengkap ada di
+[Chat Completions](/chat-completions#contoh-python-sdk-resmi-openai).
+
+## Endpoint apa saja yang tersedia?
+
+Saat ini gateway mengutamakan dua endpoint inti yang kompatibel OpenAI:
+
+- `POST /v1/chat/completions`: [Chat Completions](/chat-completions)
+- `GET /v1/models`: [Model](/models)
+
+Endpoint lain (mis. embeddings) belum tersedia di gateway publik. Katalog publik non-`/v1`
+(untuk situs) tersedia di `/api/public/models`. Halaman konsol memakai endpoint `/api/*` dengan
+sesi cookie, bukan API key.
+
+## Model apa saja yang bisa saya pakai?
+
+Lihat [Model](/models): daftar resminya diambil dari `GET /v1/models` atau menu **Model**
+di console. Katalog mencakup model dari OpenAI, Anthropic, Google, DeepSeek, Qwen, dan lainnya,
+masing-masing dengan slug unik.
+
+## Kenapa request saya ditolak 401?
+
+Penyebab paling umum: header `Authorization` tidak ada atau bukan format `Bearer`, API key salah
+salin, sudah di-revoke, atau sudah lewat masa berlaku. Buat/periksa API key di
+[console.hostlinku.com](https://console.hostlinku.com). Detail lengkap:
+[Autentikasi](/authentication).
+
+## Kenapa muncul 402 padahal saya punya saldo?
+
+Periksa pesan errornya. 402 punya dua sebab: **saldo akun** tidak cukup (`available` kurang dari
+estimasi biaya request), atau **limit kredit API key** tercapai. Kalau pesannya menyebut "Limit
+kredit API key", tunggu jendela reset (harian/mingguan/bulanan) atau ubah limitnya di console.
+Selengkapnya di [Billing & Saldo](/billing).
+
+## Berapa biaya satu request?
+
+Biaya = token input × harga input + token output × harga output (per token, sesuai model). Harga
+tiap model ada di katalog; biaya aktual setiap request muncul di `hostlinku.cost` dan di log
+console. Rincian ada di [Billing & Saldo](/billing).
+
+## Apakah ada rate limit?
+
+Ya: 600 request/menit per API key untuk chat completions, plus batas per IP untuk endpoint
+konsol. Angka lengkap dan strategi backoff ada di [Pemakaian & Limit](/usage-and-limits).
+
+## Bagaimana cara mengirim pesan gambar / multimodal?
+
+Isi `messages[].content` dengan array konten format OpenAI (mis. satu objek bertipe `image_url`
+lalu satu objek bertipe `text`) dan pilih model yang punya kapabilitas `vision`/`image-input` di
+katalog. Tingkat dukungan tergantung provider model.
+
+## Bagaimana cara menghentikan pemakaian API key yang bocor?
+
+Segera **revoke** API key tersebut di console, menu **API Keys**. API key yang di-revoke langsung
+ditolak (401) untuk seluruh request berikutnya. Untuk menghapus permanen, gunakan **purge**.
+Riwayat pemakaian sebelum revoke tetap tercatat untuk audit.
+
+## Apakah log request menyimpan isi percakapan saya?
+
+Log request menyimpan **metadata teknis**: model, status, jumlah token, biaya, latensi, dan ID
+request. Data itu dibutuhkan untuk penagihan dan pemantauan. Untuk pertanyaan soal retensi
+data sesuai kebutuhan kepatuhan kamu, hubungi
+[halo@hostlinku.com](mailto:halo@hostlinku.com).
+
+## Bagaimana cara menghubungi dukungan?
+
+Lihat [Dukungan](/support): email **halo@hostlinku.com**, sebaiknya sertakan
+`x-request-id` dari respons bermasalah.
+
+<Callout type="note" title="Tidak menemukan jawaban?">
+  Kirim pertanyaan ke [halo@hostlinku.com](mailto:halo@hostlinku.com). FAQ ini diperbarui
+  berdasarkan pertanyaan yang paling sering masuk.
+</Callout>

@@ -1,0 +1,106 @@
+---
+title: Aider
+description: Jalankan Aider lewat Hostlinku dengan OPENAI_API_BASE dan prefix model openai/ — plus metadata model agar konteks dan biaya dihitung benar
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Aider](https://aider.chat/docs/llms/openai-compat.html) memakai LiteLLM di dalamnya; endpoint
+OpenAI-compatible cukup diberi `OPENAI_API_BASE` dan nama model berawalan `openai/`.
+
+<Steps>
+
+### Instal Aider
+
+```bash
+python -m pip install -U aider-chat
+# atau: pipx install aider-chat
+```
+
+### Arahkan ke Hostlinku
+
+```bash
+export OPENAI_API_BASE=https://api.hostlinku.com/v1
+export OPENAI_API_KEY=sk-isi-api-key-kamu   # API key Hostlinku
+
+aider --model openai/claude-sonnet-4-6
+```
+
+Prefix `openai/` wajib — itu yang memberi tahu Aider untuk memakai jalur OpenAI-compatible dengan
+`OPENAI_API_BASE`. Bagian setelah prefix adalah slug Hostlinku.
+
+### (Disarankan) Simpan di berkas konfigurasi
+
+`.aider.conf.yml` di home atau root repo:
+
+```yaml
+openai-api-base: https://api.hostlinku.com/v1
+model: openai/claude-sonnet-4-6
+weak-model: openai/claude-haiku-4-5      # commit message & ringkasan
+editor-model: openai/deepseek-v4-flash   # mode architect (opsional)
+```
+
+Simpan API key di `.env` (di-gitignore) agar tidak ikut ter-commit:
+
+```bash
+OPENAI_API_KEY=sk-isi-api-key-kamu
+```
+
+### Beri tahu Aider ukuran konteks & harga
+
+Aider tidak mengenal slug Hostlinku, jadi ia memperingatkan *"model is unknown"* dan menebak
+konteksnya. Buat `.aider.model.metadata.json` (home / root repo):
+
+```json
+{
+  "openai/claude-sonnet-4-6": {
+    "max_input_tokens": 1000000,
+    "max_output_tokens": 64000,
+    "input_cost_per_token": 0.0000024,
+    "output_cost_per_token": 0.0000120,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  },
+  "openai/claude-haiku-4-5": {
+    "max_input_tokens": 200000,
+    "max_output_tokens": 16000,
+    "input_cost_per_token": 0.0000008,
+    "output_cost_per_token": 0.0000040,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  }
+}
+```
+
+Angka harga di atas hanya contoh (mode Performance) — salin dari `pricing` di [katalog](/models),
+yang dinyatakan per **1M token**, lalu **bagi 1.000.000** karena Aider memakai harga per 1 token
+(mis. `pricing.input: 2.4` → `input_cost_per_token: 0.0000024`).
+Estimasi biaya Aider lalu mendekati tagihan nyata di console.
+
+</Steps>
+
+## Mode architect dengan dua model
+
+```bash
+aider --architect \
+  --model openai/claude-opus-4-6 \
+  --editor-model openai/claude-sonnet-4-6
+```
+
+Model *architect* merancang perubahan, model *editor* menulis diff. Keduanya ditagih ke saldo yang
+sama dan tercatat terpisah di **Log Permintaan**.
+
+<Callout type="tip" title="Setelan tambahan per model">
+  Untuk meneruskan parameter ekstra (mis. `reasoning_effort`, `temperature`) ke model tertentu,
+  gunakan `.aider.model.settings.yml` dengan kunci `extra_params`. Lihat dokumentasi *Advanced
+  model settings* Aider.
+</Callout>
+
+## Troubleshooting
+
+- **`AuthenticationError`** — `OPENAI_API_KEY` tidak ter-export atau `.env` tidak terbaca (Aider
+  membaca `.env` dari direktori kerja/git root).
+- **`NotFoundError` model** — lupa prefix `openai/` atau slug salah.
+- **Peringatan *unknown context window*** — belum ada `.aider.model.metadata.json`; lihat langkah 4.
+- **Jawaban terpotong** — naikkan `max_output_tokens` di metadata atau pilih model dengan batas
+  output lebih besar.

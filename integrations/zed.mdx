@@ -1,0 +1,99 @@
+---
+title: Zed
+description: Tambahkan Hostlinku sebagai provider openai_compatible di settings.json Zed dan pakai model apa pun di Agent Panel
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Zed](https://zed.dev/docs/ai/use-api-access) mendukung provider **OpenAI-compatible** kustom
+lewat `settings.json`. Model harus dideklarasikan eksplisit (Zed tidak melakukan discovery), lalu
+API key dimasukkan sekali lewat Agent Panel atau environment variable.
+
+<Steps>
+
+### Deklarasikan provider dan model
+
+Buka `zed: open settings` (⌘/Ctrl + ,) dan tambahkan:
+
+```json
+{
+  "language_models": {
+    "openai_compatible": {
+      "hostlinku": {
+        "api_url": "https://api.hostlinku.com/v1",
+        "available_models": [
+          {
+            "name": "claude-sonnet-4-6",
+            "display_name": "Claude Sonnet 4.6 (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": true, "parallel_tool_calls": true }
+          },
+          {
+            "name": "gpt-5-5",
+            "display_name": "GPT-5.5 (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": true, "parallel_tool_calls": true }
+          },
+          {
+            "name": "deepseek-v4-flash",
+            "display_name": "DeepSeek V4 Flash (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": false }
+          }
+        ]
+      }
+    }
+  },
+  "agent": {
+    "default_model": { "provider": "hostlinku", "model": "claude-sonnet-4-6" }
+  }
+}
+```
+
+`api_url` harus berakhir di `/v1` tanpa garis miring penutup. `max_tokens` adalah ukuran konteks
+model (lihat `context_window` di [katalog](/models)); `name` harus slug persis.
+
+### Masukkan API key
+
+Pilih salah satu:
+
+- **Agent Panel** → ikon pengaturan (`agent: open settings`) → cari provider **hostlinku** → tempel
+  API key `sk-…`. Zed menyimpannya di keychain sistem, bukan di `settings.json`.
+- **Environment variable** dengan nama ID provider dalam huruf kapital + `_API_KEY`:
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+Jalankan Zed dari shell yang sudah meng-export variabel tersebut (atau tambahkan ke profil shell
+lalu login ulang).
+
+### Pilih model di Agent Panel
+
+Buka Agent Panel (⌘/Ctrl + ?) → pemilih model → kelompok **hostlinku**. Kirim satu pesan dan cek
+request-nya di console → **Log Permintaan**.
+
+</Steps>
+
+## Opsi model lanjutan
+
+| Field | Kapan dipakai |
+|---|---|
+| `reasoning_effort` (`"low"`/`"medium"`/`"high"`) | Model reasoning (GPT-5.x, Claude 4.6, DeepSeek V4). |
+| `capabilities.max_tokens_parameter: true` | Hanya bila model menolak `max_completion_tokens`; Hostlinku menerima keduanya, biarkan default. |
+| `capabilities.chat_completions: false` | Mengalihkan model ke Responses API (`/v1/responses`) — juga didukung Hostlinku, tetapi default Chat Completions lebih teruji di Zed. |
+
+<Callout type="note" title="Edit Predictions tidak termasuk">
+  Fitur *edit predictions* (autocomplete inline) Zed dikonfigurasi terpisah di `edit_predictions`
+  dan memakai endpoint `/v1/completions` (FIM) yang tidak disediakan Hostlinku. Pakai Hostlinku
+  untuk Agent Panel, inline assistant, dan thread; biarkan edit predictions pada provider bawaan.
+</Callout>
+
+## Troubleshooting
+
+- **Provider tidak muncul** — `settings.json` tidak valid (koma/kurung). Cek `zed: open log`.
+- **`401`** — key belum dimasukkan untuk provider `hostlinku`, atau env var di-export setelah Zed
+  dibuka; restart Zed.
+- **Tool call diabaikan** — pastikan `capabilities.tools: true` pada model tersebut.
+- **Konteks penuh terlalu cepat** — `max_tokens` terlalu kecil dibanding `context_window` model;
+  sesuaikan dengan katalog.

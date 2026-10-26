@@ -1,0 +1,88 @@
+---
+title: Xum
+description: Daftarkan Hostlinku sebagai custom provider di Xum (dulu Mux) untuk menjalankan banyak coding agent paralel dengan satu API key
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Xum](https://xum.cdr.dev/config/providers) (sebelumnya **Mux**) menjalankan beberapa coding agent
+secara paralel, masing-masing dengan workspace terisolasi, dari desktop atau browser. Xum mendukung
+**custom provider** dengan format API pilihan — cara paling rapi untuk menambahkan Hostlinku tanpa
+mengubah provider OpenAI/Anthropic bawaan.
+
+<Steps>
+
+### Simpan API key di file
+
+```bash
+mkdir -p ~/.config/hostlinku
+printf '%s' 'sk-isi-api-key-kamu' > ~/.config/hostlinku/api-key
+chmod 600 ~/.config/hostlinku/api-key
+```
+
+### Tambahkan provider Hostlinku
+
+Edit `~/.xum/providers.jsonc` dan tambahkan provider baru:
+
+```jsonc
+{
+  // Semua model katalog lewat Chat Completions
+  "hostlinku": {
+    "providerType": "openai-compatible",
+    "displayName": "Hostlinku",
+    "baseUrl": "https://api.hostlinku.com/v1",
+    "apiKeyFile": "~/.config/hostlinku/api-key",
+    "models": ["claude-sonnet-4-6", "gpt-5-5", "deepseek-v4-flash"],
+  },
+  // Opsional: model Claude lewat Anthropic Messages (prompt caching penuh)
+  "hostlinku-claude": {
+    "providerType": "anthropic-messages",
+    "displayName": "Hostlinku (Anthropic)",
+    "baseUrl": "https://api.hostlinku.com",
+    "apiKeyFile": "~/.config/hostlinku/api-key",
+    "models": ["claude-sonnet-4-6", "claude-haiku-4-5"],
+  },
+}
+```
+
+Untuk `anthropic-messages`, Xum menambahkan `/v1` sendiri, jadi base URL ditulis **tanpa** `/v1`.
+ID provider (`hostlinku`, `hostlinku-claude`) harus huruf kecil dan tidak boleh sama dengan nama
+provider bawaan.
+
+### Pilih model
+
+Buka model picker (atau `/model`) dan pilih model dari grup **Hostlinku**. `models` hanya daftar
+saran — slug lain dari [katalog](/models) tetap bisa diketik langsung. Request tampil di
+console → **Log Permintaan**.
+
+</Steps>
+
+## Alternatif: provider OpenAI bawaan
+
+Bila lebih suka satu provider saja, arahkan provider **OpenAI** bawaan ke Hostlinku dengan wire
+format Chat Completions (**Settings → Providers → OpenAI**, atau di `providers.jsonc`):
+
+```jsonc
+{
+  "openai": {
+    "apiKey": "sk-isi-api-key-kamu",
+    "baseUrl": "https://api.hostlinku.com/v1",
+    "wireFormat": "chatCompletions",
+  },
+}
+```
+
+<Callout type="note" title="Kenapa chatCompletions?">
+  Wire format default provider OpenAI adalah Responses API, sementara Responses di Hostlinku bersifat
+  *stateless* ([detail](/responses)). Chat Completions menerima semua model katalog — termasuk
+  Claude — tanpa batasan itu.
+</Callout>
+
+## Troubleshooting
+
+| Gejala | Solusi |
+|---|---|
+| `401` | Isi file `apiKeyFile` salah (ada baris baru/spasi) atau key dicabut. |
+| `404` | `anthropic-messages` dengan `/v1` ganda — tulis base URL `https://api.hostlinku.com`. |
+| Provider tidak muncul | ID provider memakai huruf besar/titik, atau bentrok dengan nama provider bawaan. |
+| `404 model_not_found` | Slug salah ketik — salin dari `GET /v1/models`. |

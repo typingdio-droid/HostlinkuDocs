@@ -1,0 +1,125 @@
+---
+title: Autentikasi
+description: Cara memakai API key Hostlinku, masa berlakunya, limit kredit per API key, dan praktik keamanannya
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Gateway Hostlinku memakai autentikasi **Bearer token** dengan API key berformat `sk-…`.
+Sertakan API key pada setiap request ke endpoint `/v1/*`:
+
+```http
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+Untuk endpoint [Anthropic Messages](/anthropic-messages) header `x-api-key: sk-…` juga diterima.
+
+API key dibuat dan dikelola di [console.hostlinku.com](https://console.hostlinku.com), menu
+**API Keys**.
+
+<Callout type="important" title="API key hanya berlaku untuk /v1/*">
+  API key **hanya** sah di endpoint gateway: `/v1/chat/completions`, `/v1/messages`,
+  `/v1/responses`, dan `/v1/models`. Endpoint akun Console (`/api/*` — profil, daftar API key,
+  log, saldo, admin) **menolak** API key dengan `403 API_KEY_NOT_ALLOWED` dan hanya bisa diakses
+  lewat sesi login Console. Sebaliknya, sesi login (cookie) **tidak** berlaku di `/v1/*` — gateway
+  selalu meminta API key (`401`). Dengan begitu API key yang bocor hanya bisa dipakai memanggil
+  model (dibatasi saldo, limit kredit, dan rate limit), tidak bisa membaca data akun, membuat API
+  key baru, atau mengubah pengaturan.
+</Callout>
+
+## Membuat API key
+
+1. Buka console → **API Keys** → **Buat API key**.
+2. Isi **Nama**, opsional **Kedaluwarsa**, dan opsional **Limit kredit**.
+3. Salin secret yang ditampilkan. Secret hanya muncul sekali.
+
+API key disimpan di server sebagai hash SHA-256: nilai aslinya tidak pernah tersimpan dan tidak
+bisa ditampilkan ulang. API key lama dengan format legacy (`hl_live_…`) tetap berfungsi karena
+autentikasi mencari berdasarkan hash, bukan prefix.
+
+## Masa berlaku API key
+
+Kedaluwarsa opsional saat pembuatan API key:
+
+| Pilihan | Perilaku |
+|---|---|
+| Tidak pernah | API key berlaku sampai di-revoke |
+| 30 / 90 / 365 hari | API key berhenti berlaku otomatis setelah masa itu |
+| Tanggal kustom | Kedaluwarsa pada tanggal yang dipilih |
+
+API key yang sudah lewat masa berlaku ditolak dengan:
+
+```json
+{
+  "status": "error",
+  "error": { "code": "UNAUTHORIZED", "message": "API key sudah kedaluwarsa." }
+}
+```
+
+## Limit kredit per API key
+
+Setiap API key bisa diberi **batas pemakaian dalam USD** (`creditLimit`) dengan jendela reset:
+
+| Reset | Jendela perhitungan (kalender UTC) |
+|---|---|
+| Harian (`daily`) | Sejak 00:00 UTC hari berjalan |
+| Mingguan (`weekly`) | Sejak Senin 00:00 UTC minggu berjalan |
+| Bulanan (`monthly`) | Sejak tanggal 1, 00:00 UTC bulan berjalan |
+| Tanpa reset | Total selama masa aktif API key |
+
+Pemakaian dihitung dari biaya request nyata (`requests.customer_cost`) yang tercatat untuk API
+key tersebut. Saat akumulasi biaya menyentuh limit, request berikutnya ditolak dengan
+**402 PAYMENT_REQUIRED**:
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "PAYMENT_REQUIRED",
+    "message": "Limit kredit API key tercapai (🪙10.0000 dari 🪙10 total)."
+  }
+}
+```
+
+Limit kredit berbeda dari **saldo akun**: limit membatasi satu API key, sedangkan saldo akun
+adalah sumber dana semua API key. Keduanya harus cukup agar request berjalan. Lihat
+[Billing & Saldo](/billing).
+
+## Rate limit
+
+Selain limit kredit, gateway menerapkan rate limit per API key:
+
+- **[`POST /v1/chat/completions`](/chat-completions)**: 600 request per menit per API key.
+- Endpoint konsol/publik (sesi cookie): 120 request per menit per alamat IP.
+- Endpoint autentikasi (login, daftar, reset): 30 percobaan per 15 menit per IP.
+
+Melebihi batas menghasilkan **429 RATE_LIMITED**. Detailnya di
+[Pemakaian & Limit](/usage-and-limits).
+
+## Error autentikasi umum
+
+| Situasi | HTTP | `error.code` | Pesan |
+|---|---|---|---|
+| Header `Authorization` tidak ada atau bukan Bearer | 401 | `UNAUTHORIZED` | `Endpoint ini memerlukan API key Hostlinku: kirim header Authorization: Bearer sk-… (atau x-api-key). …` |
+| API key tidak dikenal, salah ketik, atau sudah di-revoke | 401 | `UNAUTHORIZED` | `API key tidak valid atau sudah dicabut.` |
+| API key sudah lewat masa berlaku | 401 | `UNAUTHORIZED` | `API key sudah kedaluwarsa.` |
+| API key dipakai ke endpoint Console `/api/*` | 403 | `API_KEY_NOT_ALLOWED` | `API key hanya berlaku untuk endpoint gateway /v1/* …` |
+| API key menabrak limit kreditnya | 402 | `PAYMENT_REQUIRED` | `Limit kredit API key tercapai (…)` |
+| Saldo akun tidak cukup untuk reservasi request | 402 | `PAYMENT_REQUIRED` | `Saldo kredit tidak cukup untuk request ini.` |
+| Melampaui rate limit | 429 | `RATE_LIMITED` | `Rate limit terlampaui. …` |
+
+<Callout type="important" title="Keamanan API key">
+  - Jangan menaruh API key di kode client-side yang berjalan di browser atau di repositori publik.
+  - Gunakan environment variable di server (mis. `HOSTLINKU_API_KEY`) dan baca dari situ.
+  - Buat API key terpisah per aplikasi/environment supaya bisa di-revoke satu per satu tanpa
+    mengganggu yang lain.
+  - Manfaatkan **kedaluwarsa** dan **limit kredit** sebagai lapisan pertahanan kalau API key bocor.
+  - API key yang tidak dipakai lagi bisa di-**revoke** (dinonaktifkan, riwayat tetap ada) atau
+    **purge** (dihapus permanen) dari console.
+</Callout>
+
+<Callout type="note" title="Rotasi API key">
+  Alur rotasi yang disarankan: buat API key baru → pasang di aplikasi → verifikasi request sukses →
+  revoke API key lama. Tidak ada downtime karena keduanya aktif bersamaan.
+</Callout>

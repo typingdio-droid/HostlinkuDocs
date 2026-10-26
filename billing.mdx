@@ -1,0 +1,121 @@
+---
+title: Billing & Saldo
+description: Cara kerja saldo kredit Hostlinku, metode top-up, dan dasar perhitungan biaya per token
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Billing Hostlinku berbasis **saldo kredit (prepaid) dalam USD**. Setiap request chat completion
+dipotong dari saldo sesuai token yang benar-benar terpakai; tidak ada langganan bulanan wajib dan
+tidak ada biaya tersembunyi.
+
+## Saldo akun
+
+Saldo dikelola sebagai satu akun kredit per pengguna dengan field berikut:
+
+| Field | Arti |
+|---|---|
+| `balance` | Total saldo akun (USD). |
+| `reserved` | Bagian saldo yang sedang tertahan oleh request berjalan (estimasi). |
+| `available` | `balance − reserved`. Angka inilah yang bisa dipakai request baru. |
+| `lifetimeTopup` | Total akumulasi top-up sejak akun dibuat. |
+| `lifetimeUsage` | Total akumulasi biaya pemakaian. |
+| `lowBalanceThreshold` | Ambang peringatan saldo rendah (default $25) di console. |
+
+Nilai ini terlihat di console → menu **Credits/Saldo**, dan tersedia lewat API sesi
+`GET /api/wallet/account` (dipakai console). Untuk aplikasi kamu, patokan real-time tetap
+`hostlinku.cost` pada setiap respons dan riwayat di log.
+
+## Top-up saldo
+
+1. Masuk ke [console.hostlinku.com](https://console.hostlinku.com) → **Billing → Pembayaran**.
+2. Pilih paket Credit atau isi nominal lain (bonus otomatis untuk paket tertentu).
+3. Pilih metode pembayaran:
+
+| Metode | Provider | Jenis |
+|---|---|---|
+| **QRIS** | iPaymu | Scan dari e-wallet atau m-banking (Rupiah) |
+| **Virtual Account** | iPaymu | Transfer bank BCA, BNI, BRI, Mandiri, dll. (Rupiah) |
+| **Crypto** | BlockBee | USDT, USDC & koin lain lewat halaman pembayaran BlockBee (USD) |
+
+   Metode yang belum diaktifkan admin tetap terlihat dengan label **Belum aktif**.
+4. Kamu diarahkan ke halaman checkout berisi kode QR, nomor VA, atau tautan pembayaran crypto.
+   Halaman ini aman di-refresh dan bisa dibuka lagi dari **Pembayaran tertunda**.
+5. Selesaikan pembayaran. Kredit **masuk otomatis** setelah webhook provider tervalidasi, tanpa
+   konfirmasi manual.
+
+Dari sisi API, prosesnya:
+
+```http
+POST https://api.hostlinku.com/api/wallet/topup
+Content-Type: application/json
+Cookie: hl_session=…   # sesi console
+```
+
+```json
+{
+  "credits": 100,
+  "method": "qris"
+}
+```
+
+`method` = `qris`, `va` (tambahkan `"channel": "bca"` dsb.), atau `crypto`. Respons berisi
+`topupId` beserta kode QR / nomor VA / URL pembayaran; status dipantau lewat
+`GET /api/wallet/topup/{topupId}`. Validasi server menolak nominal di
+luar kebijakan top-up (min/max diatur admin, maksimum teknis $10.000 per transaksi) dengan
+`400 BAD_REQUEST`, dan menolak provider yang belum dikonfigurasi dengan `402 PAYMENT_REQUIRED`.
+
+<Callout type="note" title="Kredit dan pembayaran tidak bisa dicampur">
+  Top-up menambah **saldo akun**, bukan limit API key. Kalau kamu memakai limit kredit per API key
+  (mis. $5/hari), top-up tidak menaikkan limit itu. Ubah limitnya di pengaturan API key.
+</Callout>
+
+## Dasar perhitungan biaya
+
+Biaya setiap request dihitung **per token** dengan harga customer model yang dipakai:
+
+```text
+biaya = (token input non-cache  × harga_input_per_token)
+      + (token output           × harga_output_per_token)
+      + (token cache read       × harga_cache_read)   ← bila model mendukung caching
+      + (token cache write      × harga_cache_write)  ← bila model mendukung caching
+```
+
+- Token cache adalah **bagian dari** token input, bukan tambahan di luarnya. Token yang dilayani dari
+  cache dibebankan dengan harga cache masing-masing, dan sisa token input dibebankan dengan harga
+  input — jadi token yang sama tidak pernah dihitung dua kali.
+- Harga per model (input/output, termasuk harga cache bila ada) tercantum di katalog. Lihat
+  [Model](/models) dan menu **Model** di console. Angka di respons `GET /v1/models`
+  adalah harga per **1M token** dalam 🪙 (1🪙 = $1) pada Service Mode API key yang dipakai —
+  bukan per 1 token atau per 1.000 token.
+- Token dihitung dari `usage` pada respons; bila usage tidak tersedia, Hostlinku memakai
+  estimasi konservatif dan itulah yang ditagihkan (jarang terjadi).
+- Cache di sini adalah **prompt cache milik provider** yang dilaporkan di `usage`
+  (`prompt_tokens_details.cached_tokens` / `cache_write_tokens`). Hostlinku tidak menyimpan
+  salinan respons dan tidak mencampur cache antar provider. Cara mengaktifkannya dan contoh
+  penghematan nyata ada di [Hemat dengan Prompt Caching](/prompt-caching).
+- Untuk streaming, biaya dihitung setelah stream selesai; nilai pada blok `hostlinku.cost`
+  tetap akurat.
+- Perhitungan dilakukan dalam satuan mikro-USD untuk menghindari galat pembulatan floating point,
+  lalu diformat sebagai desimal 8 angka.
+
+## Kapan `402 PAYMENT_REQUIRED` muncul?
+
+Kode 402 selalu berarti **butuh kredit**, tetapi pesannya membedakan sumbernya:
+
+| Pesan | Arti | Tindakan |
+|---|---|---|
+| `Saldo kredit tidak cukup untuk request ini.` | `available` < estimasi biaya request | Top-up saldo di console |
+| `Limit kredit API key tercapai (🪙x dari 🪙y …).` | API key menyentuh `credit_limit` per jendela reset | Tunggu reset, ubah limit, atau pakai API key lain |
+| `Payment provider belum dikonfigurasi.` (saat top-up) | Provider pembayaran nonaktif di pengaturan | Pilih provider lain atau hubungi admin |
+
+## Riwayat transaksi
+
+Semua pergerakan saldo tercatat di ledger dan bisa dilihat di console → **Transaksi**
+(top-up, pemakaian, refund) dengan status, nominal, metode, dan referensi. Lewat API sesi:
+`GET /api/wallet/transactions` (mendukung paginasi keyset dan detail per transaksi).
+
+<Callout type="tip" title="Jaga saldo tetap aman">
+  Atur `lowBalanceThreshold` di console. Kalau saldo menyentuh ambang itu, console akan
+  menandainya supaya kamu bisa top-up sebelum request produksi gagal karena 402.
+</Callout>

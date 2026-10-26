@@ -1,0 +1,94 @@
+---
+title: Cline & Roo Code
+description: Konfigurasi provider OpenAI Compatible (atau Anthropic dengan base URL kustom) di Cline dan Roo Code untuk memakai model Hostlinku
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Cline](https://cline.bot) — beserta fork-nya **Roo Code** — menyediakan
+provider **OpenAI Compatible** yang menerima base URL, API key, dan model ID bebas. Itu jalur
+paling sederhana untuk Hostlinku; jalur alternatif lewat provider **Anthropic** dibahas di bawah.
+Memakai **Kilo Code**? Lihat panduan khususnya di [Kilo Code](/integrations/kilo-code).
+
+<Steps>
+
+### Buka pengaturan provider
+
+Di panel Cline, klik ikon roda gigi (**Settings**) → **API Configuration**.
+
+Saat Cline pertama kali dibuka, ia menampilkan layar *How will you use Cline?* — pilih **Bring my
+own API key**, lalu **Continue**.
+
+![Layar awal Cline: opsi Bring my own API key dipilih](/images/integrations/cline-setup.webp "Instalasi baru: pilih Bring my own API key untuk memakai provider sendiri.")
+
+### Pilih OpenAI Compatible dan isi
+
+| Field | Nilai |
+|---|---|
+| **API Provider** | `OpenAI Compatible` |
+| **Base URL** | `https://api.hostlinku.com/v1` |
+| **API Key** | `sk-…` (API key Hostlinku) |
+| **Model ID** | slug dari [katalog](/models), mis. `claude-sonnet-4-6` |
+
+![Cline: API Provider OpenAI Compatible dengan Base URL https://api.hostlinku.com/v1](/images/integrations/cline-openai.webp "Kolom Base URL berisi https://api.hostlinku.com/v1 (field ter-scroll ke ujung saat diketik).")
+
+### (Disarankan) Lengkapi Model Configuration
+
+Buka bagian **Model Configuration** agar Cline mengelola konteks dan harga dengan benar:
+
+- **Supports Images**: centang untuk model bervisi (`claude-sonnet-4-6`, `gpt-5-5`).
+- **Context Window Size**: `context_window` dari katalog (mis. `1000000`).
+- **Max Output Tokens**: `64000` adalah nilai aman untuk model besar.
+- **Input / Output Price**: salin dari `pricing` katalog bila ingin estimasi biaya Cline akurat;
+  tagihan sebenarnya tetap yang tercatat di console.
+
+![Panel API Configuration Cline lengkap: Base URL Hostlinku, API key, Model ID, Model Configuration](/images/integrations/cline-byok-openai.webp "Tampilan lengkap Settings → API Configuration. Custom Headers tidak wajib — Hostlinku cukup memakai API key.")
+
+### Verifikasi
+
+Klik **Done**, kirim satu tugas kecil (*"ringkas README repo ini"*). Request tampil di console →
+**Log Permintaan**.
+
+</Steps>
+
+## Mode Plan / Act dengan model berbeda
+
+Cline bisa memakai model berbeda untuk mode **Plan** dan **Act**. Kombinasi hemat yang umum:
+**Plan** = `claude-opus-4-6` atau `gpt-5-5` (penalaran), **Act** = `claude-sonnet-4-6` atau
+`deepseek-v4-flash` (eksekusi). Aktifkan *"Use different models for Plan and Act modes"* di
+pengaturan, lalu isi profil provider yang sama dengan model ID berbeda.
+
+## Alternatif: provider Anthropic
+
+Cline juga punya provider **Anthropic** dengan opsi *Use custom base URL*. Isi
+`https://api.hostlinku.com` (tanpa `/v1`) dan API key Hostlinku. Perbedaannya: daftar model pada
+provider ini **terbatas pada ID yang dikenal Cline** — pilih model Claude yang slug-nya identik dengan
+katalog Hostlinku (mis. `claude-sonnet-4-6`, `claude-haiku-4-5`). Untuk model non-Claude atau slug
+yang tidak ada di daftar, pakai **OpenAI Compatible**.
+
+![Cline: provider Anthropic dengan Use custom base URL berisi https://api.hostlinku.com](/images/integrations/cline-anthropic.webp "Centang Use custom base URL dan isi https://api.hostlinku.com — tanpa /v1.")
+
+<Callout type="note" title="Prompt caching">
+  Lewat jalur Anthropic, Cline mengirim `cache_control` dan Hostlinku meneruskannya — token cache
+  dilaporkan di `cache_read_input_tokens` dan ditagih dengan harga cache model. Lewat jalur OpenAI
+  Compatible, cache ditangani otomatis oleh model yang mendukungnya.
+</Callout>
+
+## Cline CLI
+
+```bash
+cline auth -p openai -k "$HOSTLINKU_API_KEY" -b https://api.hostlinku.com/v1
+cline --model claude-sonnet-4-6 "tambahkan validasi input di handler login"
+```
+
+## Troubleshooting
+
+- **`401`** — key salah/dicabut. Di Roo Code pastikan key diisi pada **profil** provider yang sedang
+  aktif, bukan profil lain.
+- **`404 model_not_found`** — Model ID salah ketik; salin dari `GET /v1/models`.
+- **`404` di semua request** — base URL kurang `/v1` (jalur OpenAI) atau malah memakai `/v1` di
+  jalur Anthropic. Bandingkan dengan screenshot di atas.
+- **Respons kosong di Act mode** — model tanpa *tool calling*. Gunakan model dari rekomendasi di
+  [Ikhtisar](/integrations).
+- **Konteks cepat habis** — isi *Context Window Size* sesuai katalog agar Cline memangkas riwayat
+  dengan benar.

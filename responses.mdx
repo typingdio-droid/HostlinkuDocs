@@ -1,0 +1,267 @@
+---
+title: Responses API
+description: Referensi endpoint POST /v1/responses (OpenAI Responses API-compatible) — pakai Codex CLI, OpenAI Agents SDK, atau client.responses.create() dengan API key Hostlinku
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku menyediakan endpoint yang kompatibel dengan
+[OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) — format yang
+dipakai **Codex CLI**, **OpenAI Agents SDK**, dan metode `client.responses.create()` di SDK OpenAI.
+Cukup ganti base URL; API key, saldo, Service Mode, rate limit, dan Request Logs sama dengan
+`/v1/chat/completions` dan `/v1/messages`.
+
+```http
+POST https://api.hostlinku.com/v1/responses
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+Setiap respons menyertakan header `x-request-id` (ID request Hostlinku, format `resp_…`) dan, pada
+respons sukses non-streaming, `x-model`.
+
+<Callout type="note" title="Semua model, satu format">
+  `model` memakai slug publik Hostlinku yang sama dengan [katalog model](/models) — mis.
+  `gpt-5-5`, `claude-sonnet-4-6`, `deepseek-v4-flash`. Model yang tidak menyediakan Responses API
+  secara native (termasuk Claude) tetap bisa dipanggil — gateway yang menerjemahkan.
+</Callout>
+
+## Konfigurasi cepat
+
+Panduan lengkap per tool ada di [Codex CLI](/integrations/codex-cli) dan
+[OpenAI Agents SDK](/integrations/agents-sdk).
+
+**Codex CLI** (`~/.codex/config.toml`)
+
+```toml
+model = "gpt-5-5"
+model_provider = "hostlinku"
+
+[model_providers.hostlinku]
+name = "Hostlinku"
+base_url = "https://api.hostlinku.com/v1"
+env_key = "HOSTLINKU_API_KEY"
+wire_api = "responses"
+```
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+codex
+```
+
+**Python (SDK resmi OpenAI)**
+
+```python
+from openai import OpenAI
+
+client = OpenAI(api_key="sk-isi-api-key-kamu", base_url="https://api.hostlinku.com/v1")
+
+response = client.responses.create(
+    model="gpt-5-5",
+    instructions="Jawab singkat dalam bahasa Indonesia.",
+    input="Apa itu API gateway?",
+    max_output_tokens=256,
+)
+print(response.output_text)
+print(response.usage.input_tokens, response.usage.output_tokens)
+```
+
+**Node.js**
+
+```ts
+import OpenAI from "openai";
+
+const client = new OpenAI({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com/v1" });
+const response = await client.responses.create({
+  model: "claude-sonnet-4-6",
+  input: "Halo!",
+  max_output_tokens: 256,
+});
+console.log(response.output_text);
+```
+
+**OpenAI Agents SDK (Python)**
+
+```python
+from agents import Agent, Runner, set_default_openai_client, set_tracing_disabled
+from openai import AsyncOpenAI
+
+set_default_openai_client(AsyncOpenAI(api_key="sk-isi-api-key-kamu", base_url="https://api.hostlinku.com/v1"))
+set_tracing_disabled(True)  # tracing OpenAI tidak tersedia lewat gateway
+
+agent = Agent(name="Asisten", instructions="Jawab singkat.", model="gpt-5-5")
+result = Runner.run_sync(agent, "Sebutkan 3 bahasa pemrograman.")
+print(result.final_output)
+```
+
+## Parameter body
+
+| Parameter | Tipe | Keterangan |
+|---|---|---|
+| `model` | `string` | **Wajib.** Slug model Hostlinku. |
+| `input` | `string` \| `array` | **Wajib.** Teks tunggal, atau array item: `message` (`role` + `content` berisi `input_text`/`input_image`/…), `function_call`, `function_call_output`, `reasoning`. |
+| `instructions` | `string` | Prompt sistem (developer message). |
+| `max_output_tokens` | `integer` | Batas token output. Ditolak `400` bila melebihi batas output model. |
+| `stream` | `boolean` | `true` untuk SSE (lihat di bawah). |
+| `tools`, `tool_choice`, `parallel_tool_calls` | — | Function calling format Responses (`{ "type": "function", "name", "parameters" }`). |
+| `reasoning` | `object` | Mis. `{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`. |
+| `include` | `string[]` | Mis. `["reasoning.encrypted_content"]` — item reasoning terenkripsi dikembalikan apa adanya agar bisa dikirim ulang pada giliran berikutnya (dipakai Codex CLI). |
+| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | — | Sesuai spesifikasi OpenAI; diteruskan ke model. |
+| `store` | `boolean` | Selalu diperlakukan sebagai `false` (lihat *Stateless*). |
+| `previous_response_id`, `conversation`, `background` | — | **Tidak didukung** → `400 invalid_request_error`. |
+
+Field lain yang tidak dikenal diteruskan ke gateway (parameter yang tidak didukung model akan
+diabaikan). Body tidak valid ditolak `400 invalid_request_error` dengan rincian per field di
+`error.details.issues`.
+
+<Callout type="important" title="Stateless — kirim riwayat penuh di `input`">
+  Hostlinku **tidak menyimpan** response (`store: false`). Untuk percakapan multi-giliran, kirim
+  seluruh riwayat (termasuk item `function_call`, `function_call_output`, dan `reasoning` dari
+  respons sebelumnya) di array `input` — persis cara kerja Codex CLI. `previous_response_id`
+  ditolak dengan pesan yang jelas; `GET`/`DELETE /v1/responses/{id}` menjawab `404`.
+</Callout>
+
+## Respons non-streaming
+
+```json
+{
+  "id": "resp_…",
+  "object": "response",
+  "created_at": 1791850828,
+  "completed_at": 1791850829,
+  "status": "completed",
+  "error": null,
+  "incomplete_details": null,
+  "model": "gpt-5-5",
+  "output": [
+    { "id": "rs_…", "type": "reasoning", "summary": [], "encrypted_content": "…" },
+    {
+      "id": "msg_…",
+      "type": "message",
+      "status": "completed",
+      "role": "assistant",
+      "content": [{ "type": "output_text", "text": "API gateway adalah …", "annotations": [] }]
+    }
+  ],
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 19,
+    "total_tokens": 39,
+    "input_tokens_details": { "cached_tokens": 0 },
+    "output_tokens_details": { "reasoning_tokens": 12 }
+  },
+  "previous_response_id": null,
+  "store": false,
+  "hostlinku": { "cost": 0.00031, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1420 }
+}
+```
+
+`id` dan `model` selalu identitas publik Hostlinku. Blok `hostlinku` adalah ekstensi (SDK OpenAI
+mengabaikannya) berisi biaya 🪙, Service Mode API key, dan latensi. `status: "incomplete"` dengan
+`incomplete_details.reason = "max_output_tokens"` berarti output terpotong oleh `max_output_tokens`
+— tetap ditagih sesuai token nyata.
+
+<Callout type="warning" title="Model reasoning + `max_output_tokens` kecil">
+  Pada model reasoning (mis. DeepSeek V4, GPT-6, Claude dengan thinking), token berpikir ikut
+  dihitung ke `max_output_tokens`. Nilai kecil (mis. `16`) biasanya habis untuk item `reasoning`
+  saja → `status: "incomplete"` dan `output` hanya berisi item `reasoning` tanpa `message`.
+  Gunakan `max_output_tokens` ≥ 256 atau turunkan `reasoning.effort` ke `"low"`.
+</Callout>
+
+<Callout type="note" title="Konvensi usage Responses API">
+  Sama seperti Chat Completions, `input_tokens` **sudah memuat** token cache; rinciannya ada di
+  `input_tokens_details.cached_tokens`. `output_tokens` memuat `reasoning_tokens`. Tagihan Hostlinku
+  dihitung dari komponen tersebut dengan harga masing-masing (lihat [Billing](/billing)).
+</Callout>
+
+## Streaming (`stream: true`)
+
+Gateway mengalirkan event SSE dengan framing Responses API (`event:` + `data:`), termasuk
+`sequence_number` dari upstream:
+
+```text
+event: response.created
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_…","object":"response","status":"in_progress","model":"gpt-5-5","output":[],…}}
+
+event: response.in_progress
+data: {"type":"response.in_progress","sequence_number":1,"response":{…}}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","sequence_number":2,"output_index":0,"item":{"id":"msg_…","type":"message","status":"in_progress","role":"assistant","content":[]}}
+
+event: response.content_part.added
+data: {"type":"response.content_part.added","sequence_number":3,"item_id":"msg_…","output_index":0,"content_index":0,"part":{"type":"output_text","text":"","annotations":[]}}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"API gateway"}
+
+event: response.output_text.done
+data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"API gateway adalah …"}
+
+event: response.content_part.done
+data: {"type":"response.content_part.done","sequence_number":6,…}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","sequence_number":7,"output_index":0,"item":{"id":"msg_…","type":"message","status":"completed",…}}
+
+event: response.completed
+data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_…","status":"completed","model":"gpt-5-5","output":[…],"usage":{"input_tokens":20,"output_tokens":19,"total_tokens":39,…}}}
+```
+
+Catatan:
+
+- Usage final ada di objek `response` pada `response.completed` (atau `response.incomplete`); biaya
+  dihitung dari usage nyata setelah event tersebut.
+- Tool call dialirkan lewat `response.output_item.added` (`type: "function_call"`),
+  `response.function_call_arguments.delta`, dan `response.function_call_arguments.done`.
+- Bila stream gagal di tengah, gateway mengirim `event: error` dengan
+  `{"type":"error","code":…,"message":…}` dan **tidak** mengirim `response.completed` palsu.
+- Error sebelum byte pertama (saldo habis, model tidak ada, rate limit) dikembalikan sebagai
+  respons JSON biasa dengan status HTTP yang benar — SDK OpenAI memetakannya ke exception
+  (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+
+## Tool calling (function calling)
+
+```python
+tools = [{
+    "type": "function",
+    "name": "get_time",
+    "description": "Waktu saat ini di sebuah kota",
+    "parameters": {"type": "object", "properties": {"city": {"type": "string"}}, "required": ["city"]},
+}]
+
+r1 = client.responses.create(model="claude-sonnet-4-6", input="Jam berapa sekarang di Jakarta?", tools=tools, store=False)
+call = next(o for o in r1.output if o.type == "function_call")
+
+# Giliran berikutnya: kirim ulang riwayat + hasil tool (stateless)
+r2 = client.responses.create(
+    model="claude-sonnet-4-6",
+    tools=tools,
+    store=False,
+    input=[
+        {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Jam berapa sekarang di Jakarta?"}]},
+        *[o.model_dump(exclude_none=True) for o in r1.output],
+        {"type": "function_call_output", "call_id": call.call_id, "output": '{"time": "10:00 WIB"}'},
+    ],
+)
+print(r2.output_text)
+```
+
+## Format error
+
+```json
+{ "error": { "message": "API key tidak valid atau sudah dicabut.", "type": "authentication_error", "param": null, "code": "invalid_api_key" } }
+```
+
+| HTTP | `error.type` | `error.code` | Penyebab umum |
+|---|---|---|---|
+| 400 | `invalid_request_error` | `invalid_request` | Body tidak valid, `max_output_tokens` melebihi batas model, `previous_response_id` dikirim, model tidak tersedia di Service Mode key. |
+| 401 | `authentication_error` | `invalid_api_key` | API key salah/dicabut/kedaluwarsa, atau request tanpa API key. |
+| 402 | `insufficient_quota` | `insufficient_quota` | Saldo tidak cukup atau limit kredit API key tercapai. |
+| 403 | `permission_error` | — | Akun ditangguhkan / akses ditolak. |
+| 404 | `not_found_error` | `model_not_found` / `not_found` | Slug model tidak ada; atau `GET /v1/responses/{id}` (stateless). |
+| 429 | `rate_limit_error` | `rate_limit_exceeded` | Batas permintaan tercapai (lihat header `Retry-After`). |
+| 503 | `server_error` | `model_unavailable` / `server_error` | Model/upstream sedang tidak tersedia — aman untuk di-retry. |
+
+Pesan error tidak pernah memuat identitas provider upstream. Daftar lengkap kode untuk format
+Chat Completions ada di [Error](/errors).

@@ -1,0 +1,256 @@
+---
+title: Hemat dengan Prompt Caching
+description: Cara memakai cache_control di Hostlinku agar prompt besar yang berulang hanya ditagih ~10% — untuk Claude Code, Cursor, agent, dan aplikasi dengan system prompt panjang
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+**Prompt caching** membuat bagian prompt yang sama (system prompt panjang, definisi tools,
+dokumen referensi, riwayat percakapan) hanya diproses penuh **sekali**. Pada request berikutnya
+bagian itu dibaca dari cache dan ditagih **sekitar 10% dari harga input normal**. Hostlinku
+meneruskan mekanisme cache Anthropic apa adanya dan tidak menambahkan biaya khusus untuk cache;
+tarif efektif per model ada di [Katalog Model](/models).
+
+<Callout type="tip" title="Hasil uji nyata di Hostlinku">
+  System prompt ±3.600 token ke `claude-sonnet-4-6`: request pertama (cache write, 1,25×)
+  **$0,0135**, request kedua dengan prompt sama (cache read, 0,1×) **$0,00108** — hemat **92%**.
+  Angka ini bisa kamu cek sendiri di console → **Log Permintaan** (kolom *Cache Read* /
+  *Cache Write*).
+</Callout>
+
+## Cara kerja harga
+
+| Jenis token | Tarif relatif ke input normal | Kapan terjadi |
+|---|---|---|
+| Input normal | 1× | Bagian prompt yang tidak di-cache |
+| **Cache write** | **1,25×** | Pertama kali blok ditandai `cache_control` dan belum ada di cache |
+| **Cache read** | **0,1×** | Blok yang sama dikirim lagi dalam masa hidup cache |
+
+Beberapa model terbaru memakai tarif cache read lebih rendah: `claude-opus-5-5` dan
+`claude-sonnet-5-5` **0,05×**, serta `claude-fable-5-1` **0,025×**. Angka pasti per model ada di
+[Katalog Model](/models) — halaman itu menampilkan harga Original dan harga jual per Service
+Mode.
+
+Masa hidup cache default **5 menit** sejak terakhir dipakai (diperpanjang tiap kali kena hit).
+Artinya cache sudah balik modal bila blok yang sama dipakai **minimal 2 kali**; makin sering
+dipakai, makin besar hematnya. Tarif per model ada di [Katalog Model](/models)
+(kolom `cache_read` / `cache_write`).
+
+<Callout type="important" title="Kapan sebaiknya TIDAK dipakai">
+  Untuk prompt yang hanya dikirim sekali, cache write justru 25% lebih mahal. Anthropic juga
+  **mengabaikan** penanda cache bila blok lebih kecil dari ambang minimum model tersebut
+  (request tetap jalan normal tanpa cache, tanpa biaya tambahan). Karena itu Hostlinku tidak
+  memaksakan cache secara default: kamu yang menentukan. Ambang per model ada di bagian
+  **Ambang minimum** di bawah.
+</Callout>
+
+### Ambang minimum per model
+
+Blok di bawah ambang ini tidak akan di-cache, dan `cache_creation_input_tokens` /
+`cache_read_input_tokens` bernilai 0 tanpa pesan error.
+
+| Model | Minimum blok yang bisa di-cache |
+|---|---|
+| `claude-fable-5`, `claude-fable-5-1`, `claude-opus-5`, `claude-opus-5-5`, `claude-sonnet-5-5` | 512 token |
+| `claude-sonnet-5`, `claude-sonnet-4-6`, `claude-opus-4-8` | 1.024 token |
+| `claude-opus-4-7` | 2.048 token |
+| `claude-opus-4-6`, `claude-haiku-4-5` | 4.096 token |
+
+## Prinsip susunan prompt
+
+Cache bekerja berdasarkan **prefix** — semua konten *sebelum* penanda `cache_control` harus
+identik byte-per-byte agar kena hit. Susun prompt dari yang paling statis ke paling dinamis:
+
+1. `tools` (definisi fungsi) — jarang berubah
+2. `system` — instruksi, persona, dokumen referensi
+3. `messages` lama — riwayat percakapan
+4. Pesan user terbaru — selalu berubah, jangan di-cache
+
+Maksimal **4 penanda** `cache_control` per request. Yang paling umum: satu di akhir `system`.
+
+## Format Anthropic (`/v1/messages`)
+
+Dipakai oleh Anthropic SDK, Claude Code, Cursor, Cline, dan tool lain berprotokol Anthropic.
+`system` ditulis sebagai array blok, lalu beri `cache_control` pada blok terakhir yang statis:
+
+```bash
+curl https://api.hostlinku.com/v1/messages \
+  -H "x-api-key: sk-isi-api-key-kamu" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "system": [
+      {
+        "type": "text",
+        "text": "<instruksi panjang + dokumen referensi di sini>",
+        "cache_control": { "type": "ephemeral" }
+      }
+    ],
+    "messages": [
+      { "role": "user", "content": "Ringkas bagian 3 dokumen di atas." }
+    ]
+  }'
+```
+
+Respons melaporkan token cache terpisah dari `input_tokens`:
+
+```json
+"usage": {
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 3601,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 4
+}
+```
+
+Pada request kedua dengan `system` yang sama, nilainya menjadi `cache_creation_input_tokens: 0`
+dan `cache_read_input_tokens: 3601` — itulah tanda cache bekerja.
+
+**Python (Anthropic SDK)**
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+    base_url="https://api.hostlinku.com",
+    api_key="sk-isi-api-key-kamu",
+)
+
+resp = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": DOKUMEN_REFERENSI,  # konten statis & panjang
+            "cache_control": {"type": "ephemeral"},
+        }
+    ],
+    messages=[{"role": "user", "content": "Ringkas bagian 3."}],
+)
+print(resp.usage.cache_read_input_tokens)
+```
+
+## Format OpenAI (`/v1/chat/completions`)
+
+Untuk aplikasi yang memakai OpenAI SDK, tulis `content` system sebagai array *content parts*
+dan letakkan `cache_control` pada part-nya. Hostlinku menerjemahkannya ke Anthropic — hanya
+berlaku untuk model Claude.
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-6",
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": "<instruksi panjang + dokumen referensi di sini>",
+            "cache_control": { "type": "ephemeral" }
+          }
+        ]
+      },
+      { "role": "user", "content": "Ringkas bagian 3 dokumen di atas." }
+    ]
+  }'
+```
+
+Token cache muncul di `usage.prompt_tokens_details`:
+
+```json
+"usage": {
+  "prompt_tokens": 3583,
+  "completion_tokens": 4,
+  "prompt_tokens_details": {
+    "cached_tokens": 3569,
+    "cache_write_tokens": 0
+  }
+}
+```
+
+<Callout type="note" title="Catatan format OpenAI">
+  Berbeda dengan format Anthropic, di sini `prompt_tokens` **sudah termasuk** token cache;
+  `cached_tokens` menunjukkan berapa di antaranya yang dibaca dari cache (tarif 0,1×).
+  Tanpa `cache_control`, system prompt biasa (string) **tidak** di-cache.
+</Callout>
+
+**Python (OpenAI SDK)**
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+
+resp = client.chat.completions.create(
+    model="claude-sonnet-4-6",
+    messages=[
+        {
+            "role": "system",
+            "content": [
+                {
+                    "type": "text",
+                    "text": DOKUMEN_REFERENSI,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+        },
+        {"role": "user", "content": "Ringkas bagian 3."},
+    ],
+)
+print(resp.usage.prompt_tokens_details.cached_tokens)
+```
+
+## Claude Code, Cursor, Cline, dan agent
+
+Tool-tool ini **sudah memasang `cache_control` sendiri** pada system prompt dan definisi tools
+mereka. Begitu kamu mengarahkan base URL ke Hostlinku (lihat [Integrasi IDE & Agent](/integrations)),
+penghematan berjalan otomatis — tidak perlu konfigurasi tambahan. Di log kamu akan melihat
+*Cache Read* yang besar pada hampir setiap request lanjutan dalam satu sesi.
+
+## Cek di console
+
+Buka **Log Permintaan** di console. Setiap baris menampilkan *Input*, *Output*, *Cache Read*,
+*Cache Write* (total), rincian *Cache Write 5m* / *Cache Write 1h*, dan biaya final. Rincian
+per-TTL hanya terisi bila upstream mengirimkannya — bila tidak, kolomnya menampilkan `—`
+(bukan 0), sedangkan totalnya tetap tercatat. Cara cepat memastikan cache bekerja:
+
+<Steps>
+
+### Kirim request pertama
+
+Pastikan `cache_control` terpasang dan blok ≥ ambang minimum. Di log, kolom **Cache Write**
+terisi dan **Cache Read** = 0.
+
+### Kirim request kedua dalam 5 menit
+
+Dengan prefix yang identik. Kolom **Cache Read** kini terisi, **Cache Write** = 0, dan biaya
+baris itu jauh lebih kecil.
+
+### Bandingkan biaya
+
+Selisih kedua baris itulah penghematanmu. Bila *Cache Read* tetap 0, cek: apakah ada bagian
+*sebelum* penanda yang berubah (timestamp, ID sesi, urutan tools), atau blok terlalu kecil.
+
+</Steps>
+
+## Dukungan model
+
+| Model | Prompt caching |
+|---|---|
+| Semua `claude-*` | Ya — eksplisit lewat `cache_control` (kedua format di atas) |
+| `gpt-*`, `deepseek-*`, `glm-*` | **Otomatis dari provider** — tanpa `cache_control`; `cached_tokens` / `cache_read` terisi bila prefix yang sama dikirim lagi dalam masa hidup cache provider |
+| `kimi-*`, `qwen*`, `minimax-*`, `mimo-*` | Tergantung provider; sebagian belum melaporkan cache, jadi nilainya bisa 0 |
+
+<Callout type="note" title="Responses API">
+  `/v1/responses` belum meneruskan `cache_control` — dialek OpenAI Responses memang tidak punya
+  field itu. Artinya request ke model Claude lewat endpoint tersebut belum memakai prompt cache.
+  Untuk memanfaatkan cache, pakai `/v1/messages` atau `/v1/chat/completions`.
+</Callout>
+
+Pertanyaan lain? Lihat [FAQ](/faq) atau hubungi [Bantuan](/support).

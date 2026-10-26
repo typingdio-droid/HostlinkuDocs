@@ -1,0 +1,187 @@
+---
+title: Chat Completions
+description: Referensi endpoint POST /v1/chat/completions, mencakup parameter, streaming SSE, dan contoh curl + Python
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Endpoint utama Hostlinku. Format request dan respons kompatibel dengan
+[OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat), sehingga SDK
+OpenAI resmi bisa dipakai hanya dengan mengganti `base_url` ke `https://api.hostlinku.com/v1`.
+
+```http
+POST https://api.hostlinku.com/v1/chat/completions
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+Setiap respons menyertakan header `x-request-id` (ID request Hostlinku) dan, pada respons sukses
+non-streaming, header `x-model` (slug publik model yang melayani request).
+
+## Parameter body
+
+| Parameter | Tipe | Default | Keterangan |
+|---|---|---|---|
+| `model` | `string` | tidak ada | **Wajib.** Slug model, mis. `gpt-5-5`. Lihat [Model](/models). |
+| `messages` | `array` | tidak ada | **Wajib.** Minimal 1 pesan. Setiap item: `{ role, content, name? }` dengan `role` salah satu dari `system`, `user`, `assistant`, `tool`. |
+| `temperature` | `number` | bawaan provider | Rentang `0`–`2`. Semakin tinggi semakin acak. |
+| `top_p` | `number` | bawaan provider | Rentang `0`–`1`. Alternatif _nucleus sampling_ dari `temperature`. |
+| `n` | `integer` | `1` | Jumlah pilihan jawaban, `1`–`8`. |
+| `stream` | `boolean` | `false` | `true` untuk respons streaming SSE (lihat di bawah). |
+| `stop` | `string` \| `string[]` | tidak ada | Satu atau beberapa urutan teks yang menghentikan generasi. |
+| `max_tokens` | `integer` | bawaan model | Batas token output (positif). |
+| `max_completion_tokens` | `integer` | tidak ada | Alternatif modern `max_tokens` (dipakai sebagian provider). |
+| `presence_penalty` | `number` | `0` | Rentang `-2`–`2`. |
+| `frequency_penalty` | `number` | `0` | Rentang `-2`–`2`. |
+| `user` | `string` | tidak ada | Identifier pengguna akhir untuk pelacakan penyalahgunaan. |
+| `tools` | `array` | tidak ada | Definisi tool/function calling (format OpenAI). |
+| `tool_choice` | `any` | tidak ada | Kontrol pemilihan tool (`"auto"`, `"none"`, `{...}`). |
+| `response_format` | `any` | tidak ada | Mis. `{ "type": "json_object" }` untuk output JSON (tergantung dukungan model). |
+| `seed` | `integer` | tidak ada | Seed determinisme (best-effort, tergantung provider). |
+
+<Callout type="note" title="Hanya parameter di atas yang diproses">
+  Body divalidasi dengan skema ketat sebelum diteruskan ke provider. Field di luar daftar di atas
+  akan **diabaikan** (dibuang dari body), dan body yang tidak valid ditolak dengan
+  `422 VALIDATION_FAILED` beserta detail per field. `messages[].content` menerima string maupun
+  array konten multimodal (format OpenAI) selama model mendukungnya.
+</Callout>
+
+## Contoh: request non-streaming (curl)
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
+      { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
+    ],
+    "temperature": 0.7,
+    "max_tokens": 256
+  }'
+```
+
+Respons (dipotong):
+
+```json
+{
+  "id": "cmpl_…",
+  "object": "chat.completion",
+  "created": 1770000000,
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "API gateway adalah …" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 30, "completion_tokens": 55, "total_tokens": 85 },
+  "hostlinku": {
+    "cost": 0.00021,
+    "latencyMs": 940
+  }
+}
+```
+
+Field `model` selalu berisi slug publik Hostlinku (bukan identitas internal), dan blok tambahan
+`hostlinku` selalu ada pada respons sukses, hanya berisi biaya dan latensi request:
+
+| Field | Arti |
+|---|---|
+| `cost` | Biaya request dalam USD (angka desimal presisi tinggi). |
+| `latencyMs` | Latensi total request dari diterima gateway sampai selesai, milidetik. |
+
+## Streaming (`stream: true`)
+
+Dengan `stream: true`, gateway merespons dengan `Content-Type: text/event-stream` (SSE),
+mengalirkan chunk dengan format OpenAI-compatible (setiap chunk memakai `id` publik Hostlinku
+dan slug model yang sama), lalu menutup stream dengan `data: [DONE]`:
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
+    "stream": true
+  }'
+```
+
+```text
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"1"}}]}
+
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":", 2"}}]}
+
+data: [DONE]
+```
+
+Catatan penting:
+
+- Jika terjadi kegagalan di tengah stream, gateway mengirim satu event error
+  (`data: {"error": { "code": …, "message": … }}`) dan **tidak** mengirim `[DONE]` palsu.
+  Stream yang terputus tidak pernah terlihat seperti stream yang selesai normal.
+- Biaya tetap dihitung dari usage nyata setelah stream selesai; bila usage tidak tersedia,
+  tagihan memakai estimasi yang sudah direservasi saat request masuk.
+- Header `x-request-id` juga dikirim pada respons streaming untuk menghubungkan dengan log di
+  console.
+
+## Contoh: Python (SDK resmi OpenAI)
+
+Tidak ada perubahan kode selain `base_url`. SDK OpenAI bisa langsung dipakai:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key="sk-isi-api-key-kamu",
+)
+
+# Non-streaming
+response = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[
+        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
+        {"role": "user", "content": "Halo dari SDK OpenAI!"},
+    ],
+)
+print(response.choices[0].message.content)
+
+# Streaming
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+<Callout type="tip" title="Ganti base_url di library lain">
+  Pola yang sama berlaku untuk `openai-node` (`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`),
+  LangChain (`baseURL`/`openai_api_base`), dan alat lain yang mendukung endpoint
+  OpenAI-compatible.
+</Callout>
+
+## Error yang umum di endpoint ini
+
+| Kasus | HTTP | `error.code` |
+|---|---|---|
+| Body tidak lolos validasi (field salah/tipe salah/`messages` kosong) | 422 | `VALIDATION_FAILED` |
+| API key tidak valid / kedaluwarsa | 401 | `UNAUTHORIZED` |
+| Saldo atau limit API key tidak cukup | 402 | `PAYMENT_REQUIRED` |
+| Slug model tidak ada di katalog | 404 | `MODEL_NOT_FOUND` |
+| `max_tokens` melebihi batas output model | 400 | `BAD_REQUEST` |
+| Model deprecated / sedang tidak tersedia | 503 | `MODEL_UNAVAILABLE` |
+| Rate limit per API key terlampaui | 429 | `RATE_LIMITED` |
+| Upstream tidak tersedia / gangguan sementara (retryable) | 503 | `UPSTREAM_ERROR` |
+
+Format lengkap error envelope ada di [Error](/errors).

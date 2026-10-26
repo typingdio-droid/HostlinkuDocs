@@ -1,0 +1,65 @@
+---
+title: Pengenalan
+description: Apa itu Hostlinku, cara kerja arsitekturnya, dan urutan membaca dokumentasi ini
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Hostlinku** adalah gateway AI terpadu (_unified AI gateway_): satu API dengan format yang
+kompatibel penuh dengan OpenAI. Request kamu diteruskan ke ratusan model dari berbagai provider
+(OpenAI, Anthropic, Google, DeepSeek, Qwen, dan lainnya) lewat satu API key.
+
+Dengan Hostlinku kamu tidak perlu mengelola akun, API key, dan format request yang berbeda-beda
+untuk setiap provider:
+
+- **Satu API key** untuk semua model (`sk-…`).
+- **Kompatibel OpenAI**: pakai SDK resmi OpenAI (`openai-python`, `openai-node`) cukup dengan
+  mengganti `base_url`.
+- **Streaming SSE**: respons token-per-token dengan format `text/event-stream` seperti OpenAI.
+- **Katalog model terpusat**: slug, harga per token, konteks, dan kapabilitas di satu tempat.
+- **Kontrol pemakaian**: batas kredit per API key, riwayat request, dan log lengkap di console.
+- **Billing fleksibel**: saldo yang bisa diisi via QRIS / Virtual Account (iPaymu) atau crypto
+  (BlockBee).
+
+## Arsitektur singkat
+
+```text
+Aplikasi kamu
+    │  Authorization: Bearer sk-…
+    ▼
+api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
+(v1/chat/completions)        │                        │
+                             │                        ├─► OpenAI
+                             ├─ Reservasi saldo       ├─► Anthropic
+                             ├─ Telemetri & log       ├─► Google
+                             └─ Commit biaya nyata    └─► …dan lainnya
+```
+
+Setiap request melewati alur yang sama: autentikasi API key, pemeriksaan limit kredit, reservasi
+saldo (estimasi), penerusan ke layanan model (dengan percobaan ulang otomatis bila ada
+gangguan), lalu commit biaya berdasarkan token yang benar-benar terpakai dan pencatatan telemetri.
+
+Console Hostlinku (`console.hostlinku.com`) memakai backend yang sama: API key, saldo, riwayat
+request, dan log audit semuanya berasal dari data gateway yang nyata.
+
+## Tautan cepat
+
+| Kebutuhan | Halaman |
+|---|---|
+| Kirim request pertamamu | [Memulai Cepat](/getting-started) |
+| Pahami API key, kedaluwarsa, dan limit per API key | [Autentikasi](/authentication) |
+| Referensi ringkas semua endpoint, rate limit & kode error | [API Reference](/api-reference) |
+| Referensi endpoint `POST /v1/chat/completions` | [Chat Completions](/chat-completions) |
+| Pakai Anthropic SDK / Claude Code lewat `POST /v1/messages` | [Anthropic Messages](/anthropic-messages) |
+| Pakai Codex CLI / OpenAI Agents SDK lewat `POST /v1/responses` | [Responses API](/responses) |
+| Konfigurasi Claude Code, Codex CLI, Cursor, Zed, Cline, Continue, OpenCode, Aider | [Integrasi IDE & Agent](/integrations) |
+| Daftar model dan cara memilihnya | [Model](/models) |
+| Rate limit dan pemantauan pemakaian | [Pemakaian & Limit](/usage-and-limits) |
+| Saldo, top-up, dan biaya per token | [Billing & Saldo](/billing) |
+| Kode error dan format respons error | [Error](/errors) |
+
+<Callout type="tip" title="Butuh akun dulu?">
+  Buat akun di [auth.hostlinku.com](https://auth.hostlinku.com) dan buat API key pertamamu di
+  [console.hostlinku.com](https://console.hostlinku.com). Selengkapnya di
+  [Memulai Cepat](/getting-started).
+</Callout>

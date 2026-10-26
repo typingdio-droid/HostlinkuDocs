@@ -1,0 +1,53 @@
+---
+title: Dukungan
+description: Cara menghubungi tim Hostlinku dan informasi yang perlu disertakan saat melapor
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Butuh bantuan dengan gateway, akun, API key, atau billing? Berikut kanal yang tersedia.
+
+## Kanal dukungan
+
+| Kanal | Kegunaan |
+|---|---|
+| **Email**: [halo@hostlinku.com](mailto:halo@hostlinku.com) | Semua pertanyaan: teknis, akun, billing |
+| **Console**: [console.hostlinku.com](https://console.hostlinku.com) | Cek saldo, API key, log request, dan audit sebelum melapor |
+| **Status**: [status.hostlinku.com](https://status.hostlinku.com) | Cek gangguan atau insiden yang sedang berlangsung |
+
+## Saat melapor, sertakan
+
+Agar tim bisa menelusuri lebih cepat, lampirkan:
+
+1. **`x-request-id`** dari respons yang bermasalah (header respons; ada juga di log console).
+2. **Waktu kejadian** (dengan zona waktu) dan **slug model** yang dipakai.
+3. **HTTP status + `error.code`** dari respons error (mis. `429 RATE_LIMITED`).
+4. **Contoh request minimal** yang bisa direproduksi, tanpa secret. Jangan pernah mengirim
+   API key utuh ke siapa pun; cukup 8 karakter pertama.
+
+Contoh laporan yang baik:
+
+```text
+Waktu     : 2026-10-08 14:32 WIB
+Request ID: cmpl_mfx1a2b3c4
+Model     : gpt-5-5
+Status    : 503 UPSTREAM_ERROR ("Terjadi gangguan saat memproses permintaan. Coba lagi.")
+Akun      : user@contoh.com
+Catatan   : terjadi 3x dalam 10 menit terakhir, endpoint /v1/chat/completions
+```
+
+## Waktu respons
+
+Dukungan dijalankan oleh tim kecil: email dibalas **secepatnya pada hari kerja** (best-effort).
+Untuk insiden yang berdampak luas, pantau halaman status; pembaruan diumumkan di sana.
+
+## Keamanan
+
+Jika menemukan masalah keamanan (mis. potensi kebocoran API key atau celah pada gateway), kirim
+detailnya secara privat ke [halo@hostlinku.com](mailto:halo@hostlinku.com) dengan subjek
+`[SECURITY]`. Jangan mempublikasikan detailnya sebelum ditindaklanjuti.
+
+<Callout type="warning" title="Jangan kirim secret">
+  Tim dukungan tidak pernah meminta API key, password, atau kode OTP kamu. Kalau ada pihak yang
+  mengatasnamakan Hostlinku meminta hal itu, abaikan dan laporkan.
+</Callout>

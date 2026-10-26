@@ -1,0 +1,151 @@
+---
+title: VS Code (Chat)
+description: Pakai model Hostlinku di chat & agent bawaan VS Code lewat provider Custom Endpoint — tanpa login GitHub, cukup API key Hostlinku
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+Chat bawaan [VS Code](https://code.visualstudio.com/docs/agent-customization/language-models)
+(panel Chat, mode Agent, dan inline chat) bisa memakai model dari luar lewat provider **Custom
+Endpoint**. Provider ini mendukung tiga format API — Chat Completions, Responses, dan Anthropic
+Messages — dan ketiganya dilayani Hostlinku. Model BYOK seperti ini **tidak memerlukan login GitHub
+maupun paket Copilot**.
+
+**Prasyarat:** VS Code versi terbaru (Custom Endpoint menggantikan provider *OpenAI Compatible*
+yang sudah deprecated) dan ekstensi
+[GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat).
+
+<Steps>
+
+### Tambahkan provider Custom Endpoint
+
+Buka Command Palette (⌘/Ctrl + Shift + P) → **Chat: Manage Language Models** → **Add Models** →
+**Custom Endpoint**. Lalu isi:
+
+| Prompt | Nilai |
+|---|---|
+| **Group name** | `Hostlinku` |
+| **Display name** | `Hostlinku` |
+| **API key** | `sk-…` (API key Hostlinku) |
+| **API type** | **Chat Completions** |
+
+VS Code menyimpan API key di secret storage dan menulis referensinya
+(`${input:chat.lm.secret.…}`) ke `chatLanguageModels.json`. **Jangan** tempel key mentah ke file
+JSON.
+
+### Daftarkan model Hostlinku
+
+VS Code membuka `chatLanguageModels.json`. Isi array `models` dengan slug dari
+[katalog](/models) — biarkan nilai `apiKey` yang sudah dibuat VS Code:
+
+```json
+[
+  {
+    "name": "Hostlinku",
+    "vendor": "customendpoint",
+    "apiKey": "${input:chat.lm.secret.XXXXX}",
+    "apiType": "chat-completions",
+    "models": [
+      {
+        "id": "claude-sonnet-4-6",
+        "name": "Claude Sonnet 4.6",
+        "url": "https://api.hostlinku.com/v1/chat/completions",
+        "toolCalling": true,
+        "vision": true,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 64000
+      },
+      {
+        "id": "gpt-5-5",
+        "name": "GPT-5.5",
+        "url": "https://api.hostlinku.com/v1/chat/completions",
+        "toolCalling": true,
+        "vision": true,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 64000
+      },
+      {
+        "id": "claude-haiku-4-5",
+        "name": "Claude Haiku 4.5",
+        "url": "https://api.hostlinku.com/v1/chat/completions",
+        "toolCalling": true,
+        "vision": false,
+        "contextWindow": 200000,
+        "maxOutputTokens": 16000
+      }
+    ]
+  }
+]
+```
+
+![chatLanguageModels.json di VS Code berisi provider Hostlinku dengan url https://api.hostlinku.com/v1/chat/completions](/images/integrations/vscode-chatlanguagemodels.webp "chatLanguageModels.json setelah diisi: provider customendpoint Hostlinku, url lengkap ke /v1/chat/completions, apiKey berupa referensi secret.")
+
+Tulis `url` **lengkap dengan path endpoint** (`/v1/chat/completions`) supaya VS Code tidak perlu
+menebak. `toolCalling: true` wajib agar model muncul di mode **Agent**.
+
+### Pilih model di Chat
+
+Simpan file. Model Hostlinku muncul di **Chat: Manage Language Models** lengkap dengan ukuran
+konteks dan kapabilitasnya:
+
+![Dialog Language Models VS Code memuat grup Hostlinku: Claude Haiku 4.5, Claude Sonnet 4.6, GPT-5.5](/images/integrations/vscode-language-models.webp "Chat: Manage Language Models — grup Hostlinku dengan konteks 200K/1M dan kapabilitas Tools/Vision dari chatLanguageModels.json.")
+
+Lalu pilih model dari pemilih model di panel Chat (restart VS Code bila belum muncul). Request
+pertama tampil di console → **Log Permintaan**.
+
+![Pemilih model di panel Chat VS Code menampilkan Claude Sonnet 4.6, Claude Haiku 4.5, dan GPT-5.5 dari Hostlinku](/images/integrations/vscode-chat-model-picker.webp "Pemilih model Chat: model dari provider Hostlinku siap dipakai di mode Agent.")
+
+</Steps>
+
+## Format API lain
+
+Setiap model boleh memakai format berbeda lewat `apiType` per model:
+
+| `apiType` | `url` | Catatan |
+|---|---|---|
+| `chat-completions` | `https://api.hostlinku.com/v1/chat/completions` | Default yang disarankan — semua model katalog. |
+| `messages` | `https://api.hostlinku.com/v1/messages` | Format Anthropic; VS Code mengirim key sebagai `x-api-key` (diterima gateway). |
+| `responses` | `https://api.hostlinku.com/v1/responses` | **Wajib** tambah `"statefulResponses": false` — lihat di bawah. |
+
+<Callout type="important" title="Responses API Hostlinku bersifat stateless">
+  Secara default VS Code mengirim `previous_response_id` untuk model ber-`apiType: "responses"`,
+  sedangkan Hostlinku tidak menyimpan response sehingga request seperti itu ditolak `400`. Bila
+  ingin memakai Responses API, tambahkan `"statefulResponses": false` pada model tersebut agar VS
+  Code mengirim riwayat percakapan penuh. Lihat [Responses API](/responses).
+</Callout>
+
+```json
+{
+  "id": "gpt-5-5",
+  "name": "GPT-5.5 (Responses)",
+  "url": "https://api.hostlinku.com/v1/responses",
+  "apiType": "responses",
+  "statefulResponses": false,
+  "toolCalling": true,
+  "vision": true,
+  "contextWindow": 1000000,
+  "maxOutputTokens": 64000
+}
+```
+
+## Yang perlu diketahui
+
+- **Inline suggestions (autocomplete) tetap memakai Copilot.** BYOK hanya berlaku untuk chat dan
+  utility task; semantic search, embeddings, dan code completions membutuhkan akun GitHub.
+- **Tanpa login GitHub**, VS Code meminta kamu memilih *utility model* (judul sesi, commit message,
+  dll.). Isi setting `chat.utilityModel` dan `chat.utilitySmallModel` dengan model Hostlinku —
+  `claude-haiku-4-5` cocok untuk yang *small*.
+- **Copilot Business/Enterprise:** admin organisasi harus mengaktifkan kebijakan *Bring Your Own
+  Language Model Key in VS Code* di pengaturan Copilot GitHub.
+- **Workspace tidak tepercaya** (Restricted Mode) hanya menampilkan model **Auto**; percayai
+  workspace agar model Hostlinku muncul.
+
+## Troubleshooting
+
+| Gejala | Solusi |
+|---|---|
+| Model tidak muncul di mode Agent | Set `"toolCalling": true` dan pakai model dengan *tool calling* dari katalog. |
+| `401` | API key salah/dicabut — perbarui lewat ikon roda gigi provider di Language Models editor. |
+| `404 model_not_found` | `id` harus slug persis dari `GET /v1/models`. |
+| `400` menyebut `previous_response_id` | Model ber-`apiType: "responses"` tanpa `"statefulResponses": false`. |
+| Model baru tidak tampil | Restart VS Code setelah menyimpan `chatLanguageModels.json`. |

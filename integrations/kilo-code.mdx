@@ -1,0 +1,77 @@
+---
+title: Kilo Code
+description: Buat Configuration Profile Hostlinku di Kilo Code lewat provider OpenAI (custom base URL), OpenAI Compatible, atau Anthropic
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Kilo Code](https://kilocode.ai) — ekstensi coding agent untuk VS Code dan JetBrains (fork dari
+Cline/Roo Code) — menyimpan pengaturan provider per **Configuration Profile**. Kamu bisa membuat
+profil Hostlinku terpisah dari profil lain dan berpindah dengan satu klik.
+
+**Prasyarat:** ekstensi Kilo Code terpasang dan API key Hostlinku (`sk-…`) dari
+[console](https://console.hostlinku.com) → **API Keys**.
+
+<Steps>
+
+### Buat profil
+
+Buka panel Kilo Code → ikon roda gigi (**Settings**) → **Providers**. Di **Configuration Profile**,
+klik **+** dan beri nama profil (mis. `Hostlinku`).
+
+### Isi provider dan base URL
+
+| Field | Nilai |
+|---|---|
+| **API Provider** | `OpenAI` |
+| **Use custom base URL** | dicentang |
+| **Base URL** | `https://api.hostlinku.com/v1` |
+| **OpenAI API Key** | `sk-…` (API key Hostlinku) |
+| **Model** | slug dari [katalog](/models), mis. `gpt-5-5` |
+
+![Kilo Code: provider OpenAI dengan custom base URL https://api.hostlinku.com/v1](/images/integrations/kilo-code-openai.webp "Centang Use custom base URL, lalu isi https://api.hostlinku.com/v1.")
+
+Provider `OpenAI` hanya menampilkan model yang dikenal Kilo Code. Untuk slug lain (Claude,
+DeepSeek, GLM, Kimi, Qwen) pilih **OpenAI Compatible** — base URL dan API key-nya sama, lalu ketik
+slug di **Model ID**.
+
+### Simpan dan coba
+
+Klik **Save**, lalu kirim satu tugas kecil (*"ringkas README repo ini"*). Request tampil di console
+→ **Log Permintaan**.
+
+</Steps>
+
+## Alternatif: provider Anthropic
+
+Pilih **API Provider** `Anthropic`, centang **Use custom base URL**, isi `https://api.hostlinku.com`
+(**tanpa** `/v1`), dan tempel API key Hostlinku di **Anthropic API Key**. Daftar modelnya terbatas
+pada model Claude yang dikenal Kilo Code — pilih yang slug-nya identik dengan katalog Hostlinku
+(mis. `claude-sonnet-4-6`, `claude-haiku-4-5`).
+
+![Kilo Code: provider Anthropic dengan custom base URL https://api.hostlinku.com](/images/integrations/kilo-code-anthropic.png "Jalur Anthropic: base URL https://api.hostlinku.com tanpa /v1.")
+
+<Callout type="note" title="Prompt caching">
+  Lewat jalur Anthropic, Kilo Code mengirim `cache_control` dan Hostlinku meneruskannya — token cache
+  dilaporkan di `cache_read_input_tokens` dan ditagih dengan harga cache model. Lihat
+  [Prompt Caching](/prompt-caching).
+</Callout>
+
+## Yang perlu diketahui
+
+- **Satu profil per mode.** Kilo Code bisa memakai profil berbeda untuk mode *Architect*, *Code*,
+  dan *Debug*. Contoh hemat: Architect = `claude-opus-4-6`, Code = `claude-sonnet-4-6`.
+- **Custom headers tidak diperlukan.** Hostlinku cukup memakai API key; kosongkan bagian custom
+  headers.
+- **Autocomplete inline** Kilo Code memakai endpoint FIM yang tidak dilayani Hostlinku — biarkan
+  fitur itu di provider bawaan (lihat [Ikhtisar](/integrations#masalah-umum)).
+
+## Troubleshooting
+
+| Gejala | Solusi |
+|---|---|
+| `401` | Key salah/dicabut, atau diisi di profil lain — pastikan profil **Hostlinku** yang aktif. |
+| `404` di semua request | Base URL kurang `/v1` (jalur OpenAI) atau malah memakai `/v1` di jalur Anthropic. Bandingkan dengan screenshot di atas. |
+| `404 model_not_found` | Model ID salah ketik; salin dari `GET /v1/models`. |
+| Model Claude/DeepSeek tidak ada di dropdown | Provider `OpenAI` hanya menampilkan model OpenAI — pakai **OpenAI Compatible**. |
+| Agent berhenti tanpa memanggil tool | Model tanpa *tool calling*. Pakai rekomendasi di [Ikhtisar](/integrations). |

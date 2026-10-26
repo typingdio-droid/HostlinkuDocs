@@ -1,0 +1,123 @@
+---
+title: Codex CLI
+description: Jalankan OpenAI Codex CLI lewat Hostlinku dengan provider kustom di ~/.codex/config.toml (wire_api = "responses")
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Codex CLI](https://developers.openai.com/codex/cli) hanya berbicara protokol **OpenAI
+Responses**. Hostlinku menyediakannya di [`POST /v1/responses`](/responses) — stateless, dengan
+dukungan `reasoning.encrypted_content`, function calling, dan streaming persis seperti yang
+diharapkan Codex. Konfigurasinya cukup satu provider kustom.
+
+<Steps>
+
+### Instal Codex CLI
+
+```bash
+npm install -g @openai/codex
+# atau: brew install codex
+```
+
+### Tambahkan provider Hostlinku
+
+Edit `~/.codex/config.toml` (buat bila belum ada). Provider **harus** didefinisikan di file
+pengguna ini — `.codex/config.toml` di dalam proyek tidak boleh menimpa `model_providers` demi
+keamanan.
+
+```toml
+model = "gpt-5-3-codex"
+model_provider = "hostlinku"
+model_reasoning_effort = "medium"
+
+[model_providers.hostlinku]
+name = "Hostlinku"
+base_url = "https://api.hostlinku.com/v1"
+env_key = "HOSTLINKU_API_KEY"
+wire_api = "responses"
+```
+
+### Set API key dan jalankan
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu   # simpan di ~/.zshrc / ~/.bashrc
+codex
+```
+
+Codex membaca key dari variabel yang disebut di `env_key`; key tidak pernah ditulis ke
+`config.toml`.
+
+### Verifikasi
+
+Kirim satu instruksi sederhana (mis. *"jelaskan struktur repo ini"*). Request akan tampil di
+console → **Log Permintaan** dengan model `gpt-5-3-codex`. Bila ingin memastikan endpoint sebelum
+membuka Codex:
+
+```bash
+curl https://api.hostlinku.com/v1/responses \
+  -H "Authorization: Bearer $HOSTLINKU_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "model": "gpt-5-3-codex", "input": "Halo" }'
+```
+
+</Steps>
+
+## Beberapa model lewat profile
+
+Gunakan `[profiles.*]` untuk berpindah model/provider tanpa mengedit konfigurasi:
+
+```toml
+[profiles.cepat]
+model = "gpt-5-6-luna"
+model_provider = "hostlinku"
+model_reasoning_effort = "low"
+
+[profiles.kuat]
+model = "gpt-6-astra"
+model_provider = "hostlinku"
+```
+
+```bash
+codex --profile kuat
+codex --profile cepat "tulis unit test untuk utils/date.ts"
+```
+
+<Callout type="warning" title="Codex hanya untuk model OpenAI">
+  Codex mengirim tool bawaannya sendiri (shell, patch file, dsb.). Model non-OpenAI menolak tipe
+  tool tersebut dan mengembalikan `The requested tool type is not supported by this model`.
+  Artinya `claude-*`, `deepseek-*`, `glm-*`, `qwen*`, `kimi-*`, dan `minimax-*` **tidak bisa** dipakai
+  lewat Codex — gunakan model `gpt-*`. Untuk model lain, pakai klien yang berbicara dialek
+  Anthropic atau Chat Completions (Claude Code, Cline, OpenCode, Aider).
+
+  Model `gpt-*` yang **Responses-native** (tool Codex diteruskan apa adanya): `gpt-5-3-codex`,
+  `gpt-5-6-sol`, `gpt-5-6-luna`, `gpt-5-5`, `gpt-6-1-sol`, `gpt-6-sol`, `gpt-6-luna`, dan
+  `gpt-6-astra`. `gpt-5-6-terra` hanya mendukung Chat Completions sehingga **tidak bisa**
+  menjalankan tool shell Codex.
+</Callout>
+
+<Callout type="note" title="Stateless, persis default Codex">
+  Codex CLI mengirim riwayat percakapan penuh di `input` dan `store: false` pada setiap giliran,
+  serta meminta `include: ["reasoning.encrypted_content"]` agar item reasoning bisa dikirim ulang.
+  Hostlinku mendukung alur ini apa adanya; `previous_response_id` tidak dipakai Codex sehingga
+  sifat stateless gateway tidak berpengaruh. Lihat [Responses API](/responses).
+</Callout>
+
+<Callout type="tip" title="Hanya ingin mengganti endpoint OpenAI bawaan?">
+  Alternatif tanpa provider baru: set `openai_base_url = "https://api.hostlinku.com/v1"` di
+  `config.toml` dan `OPENAI_API_KEY=sk-…` (API key Hostlinku). Provider kustom tetap disarankan
+  karena namanya jelas di UI dan key-nya terpisah dari key OpenAI asli.
+</Callout>
+
+## Troubleshooting
+
+- **`401`** — variabel di `env_key` belum ter-export di shell tempat `codex` dijalankan.
+- **Model menjawab "tidak bisa menjalankan shell" lalu mengarang output** — model tersebut bukan
+  Responses-native, sehingga tool Codex dibuang sebelum sampai ke model. Pilih model dari daftar
+  Codex-ready di atas; jangan pakai `gpt-5-6-terra` untuk Codex.
+- **`400 previous_response_id tidak didukung`** — muncul hanya bila ada plugin/skrip yang memaksa
+  mode *stored responses*. Pastikan `store` tidak dipaksa `true`.
+- **Model tidak muncul / `404`** — slug salah; `/v1/models` menampilkan daftar yang valid untuk
+  key kamu.
+- **Codex versi lama meminta `wire_api = "chat"`** — Hostlinku juga melayani
+  [`/v1/chat/completions`](/chat-completions); namun fitur reasoning Codex bekerja paling baik
+  dengan `responses`.

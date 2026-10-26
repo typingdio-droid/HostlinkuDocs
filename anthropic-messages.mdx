@@ -1,0 +1,187 @@
+---
+title: Anthropic Messages
+description: Referensi endpoint POST /v1/messages (Anthropic-compatible) — pakai Anthropic SDK, Claude Code, atau Cursor dengan API key Hostlinku
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Selain format OpenAI, Hostlinku juga menyediakan endpoint yang kompatibel dengan
+[Anthropic Messages API](https://docs.anthropic.com/en/api/messages). SDK Anthropic resmi,
+**Claude Code**, Cursor, Cline, dan tool lain yang bicara protokol Anthropic bisa dipakai hanya
+dengan mengganti base URL — satu API key dan satu saldo Hostlinku untuk kedua format.
+
+```http
+POST https://api.hostlinku.com/v1/messages
+x-api-key: sk-isi-api-key-kamu
+anthropic-version: 2023-06-01
+Content-Type: application/json
+```
+
+Autentikasi menerima header `x-api-key` (gaya Anthropic) **atau** `Authorization: Bearer sk-…`.
+Setiap respons menyertakan header `request-id` / `x-request-id` (ID request Hostlinku, format
+`msg_…`) dan, pada respons sukses non-streaming, `x-model`.
+
+<Callout type="note" title="Model apa saja, bukan hanya Claude">
+  `model` memakai slug publik Hostlinku yang sama dengan [katalog model](/models) —
+  mis. `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Model non-Claude tetap bisa dipanggil
+  lewat format Anthropic; gateway yang menerjemahkan.
+</Callout>
+
+## Konfigurasi cepat
+
+Panduan langkah demi langkah per tool (Claude Code, Cline, dan lainnya) ada di
+[Integrasi IDE & Agent](/integrations).
+
+**Claude Code**
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hostlinku.com
+export ANTHROPIC_API_KEY=sk-isi-api-key-kamu
+export ANTHROPIC_MODEL=claude-sonnet-4-6
+claude
+```
+
+**Python (SDK resmi Anthropic)**
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+    api_key="sk-isi-api-key-kamu",
+    base_url="https://api.hostlinku.com",
+)
+
+message = client.messages.create(
+    model="claude-haiku-4-5",
+    max_tokens=256,
+    messages=[{"role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat."}],
+)
+print(message.content[0].text)
+print(message.usage.input_tokens, message.usage.output_tokens)
+```
+
+**Node.js**
+
+```ts
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com" });
+const msg = await client.messages.create({
+  model: "claude-haiku-4-5",
+  max_tokens: 256,
+  messages: [{ role: "user", content: "Halo!" }],
+});
+```
+
+## Parameter body
+
+| Parameter | Tipe | Keterangan |
+|---|---|---|
+| `model` | `string` | **Wajib.** Slug model Hostlinku. |
+| `messages` | `array` | **Wajib.** `{ role: "user" \| "assistant", content }`; `content` string atau array blok (`text`, `image`, `tool_use`, `tool_result`, …). |
+| `max_tokens` | `integer` | **Wajib** (sesuai spesifikasi Anthropic). Ditolak `400` bila melebihi batas output model. |
+| `system` | `string` \| `array` | Prompt sistem; array blok mendukung `cache_control`. |
+| `stream` | `boolean` | `true` untuk SSE (lihat di bawah). |
+| `temperature` | `number` | `0`–`1`. |
+| `top_p`, `top_k` | `number`, `integer` | Sampling alternatif. |
+| `stop_sequences` | `string[]` | Maksimal 16. |
+| `tools`, `tool_choice` | `array`, `any` | Tool use format Anthropic (termasuk `input_schema`). |
+| `thinking` | `object` | Extended thinking, mis. `{ "type": "enabled", "budget_tokens": 1024 }`. |
+| `metadata` | `object` | Mis. `{ "user_id": "…" }`. |
+| `mcp_servers`, `context_management`, `output_format` | — | Diteruskan apa adanya (tergantung dukungan model). |
+
+Field di luar daftar dibuang. Body tidak valid ditolak `400 invalid_request_error` dengan
+rincian per field di `error.details.issues`.
+
+## Respons non-streaming
+
+```json
+{
+  "id": "msg_…",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-haiku-4-5",
+  "content": [{ "type": "text", "text": "API gateway adalah …" }],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 30,
+    "output_tokens": 55,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 }
+  },
+  "hostlinku": { "cost": 0.00021, "currency": "🪙", "serviceMode": "performance", "latencyMs": 940 }
+}
+```
+
+`id` dan `model` selalu identitas publik Hostlinku. Blok `hostlinku` adalah ekstensi (SDK Anthropic
+mengabaikannya) berisi biaya 🪙, Service Mode API key, dan latensi.
+
+<Callout type="note" title="Konvensi usage Anthropic">
+  Sesuai spesifikasi Anthropic, `input_tokens` **tidak** memuat token cache; token cache dilaporkan
+  terpisah di `cache_read_input_tokens` / `cache_creation_input_tokens`. Tagihan Hostlinku menghitung
+  ketiganya dengan harga masing-masing — identik dengan jalur `/v1/chat/completions`
+  (lihat [Billing](/billing)).
+</Callout>
+
+## Streaming (`stream: true`)
+
+Gateway mengalirkan event SSE dengan framing Anthropic (`event:` + `data:`):
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_…","type":"message","role":"assistant","model":"claude-haiku-4-5","content":[],"usage":{"input_tokens":22,"output_tokens":1,…}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Apel"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":22,"output_tokens":7,…}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+Catatan:
+
+- Usage final ada di `message_delta`; biaya dihitung dari usage nyata setelah `message_stop`.
+- Bila stream gagal di tengah, gateway mengirim `event: error` dengan
+  `{"type":"error","error":{"type":…,"message":…}}` dan **tidak** mengirim `message_stop` palsu.
+- Error sebelum byte pertama (saldo habis, model tidak ada, rate limit) dikembalikan sebagai
+  respons JSON biasa dengan status HTTP yang benar — SDK Anthropic memetakannya ke exception
+  (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+
+## Hitung token
+
+```http
+POST https://api.hostlinku.com/v1/messages/count_tokens
+```
+
+Body: `model`, `messages`, opsional `system`, `tools`, `tool_choice`, `thinking`. Respons
+`{ "input_tokens": 15 }`. Tidak dikenai biaya.
+
+## Format error
+
+```json
+{ "type": "error", "error": { "type": "authentication_error", "message": "API key tidak valid atau sudah dicabut." } }
+```
+
+| HTTP | `error.type` | Penyebab umum |
+|---|---|---|
+| 400 | `invalid_request_error` | Body tidak valid, `max_tokens` melebihi batas model, model tidak tersedia di Service Mode key. |
+| 401 | `authentication_error` | API key salah/dicabut/kedaluwarsa. |
+| 402 | `billing_error` | Saldo tidak cukup atau limit kredit API key tercapai. |
+| 403 | `permission_error` | Akun ditangguhkan / akses ditolak. |
+| 404 | `not_found_error` | Slug model tidak ada di katalog. |
+| 429 | `rate_limit_error` | Batas permintaan tercapai. |
+| 503 | `overloaded_error` | Model/upstream sedang tidak tersedia — aman untuk di-retry. |
+
+Pesan error tidak pernah memuat identitas provider upstream. Daftar lengkap kode untuk format
+OpenAI ada di [Error](/errors).

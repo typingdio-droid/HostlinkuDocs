@@ -1,0 +1,102 @@
+---
+title: OpenCode
+description: Daftarkan Hostlinku sebagai provider kustom OpenAI-compatible di opencode.json dan pilih model lewat /models
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[OpenCode](https://opencode.ai/docs/providers/) memakai AI SDK sehingga provider mana pun yang
+OpenAI-compatible bisa ditambahkan lewat `opencode.json`. Kredensial disimpan terpisah oleh perintah
+`/connect`.
+
+<Steps>
+
+### Simpan kredensial
+
+Di dalam OpenCode jalankan `/connect`, gulir ke **Other**, isi ID provider `hostlinku`, lalu tempel
+API key `sk-…`. Key disimpan di `~/.local/share/opencode/auth.json`.
+
+```text
+/connect  →  Other  →  provider id: hostlinku  →  API key: sk-…
+```
+
+### Definisikan provider
+
+Buat/ubah `opencode.json` di root proyek (atau `~/.config/opencode/opencode.json` untuk global):
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1"
+      },
+      "models": {
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "gpt-5-5": {
+          "name": "GPT-5.5",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash",
+          "limit": { "context": 1000000, "output": 32000 }
+        }
+      }
+    }
+  },
+  "model": "hostlinku/claude-sonnet-4-6",
+  "small_model": "hostlinku/deepseek-v4-flash"
+}
+```
+
+ID provider di `opencode.json` **harus sama** dengan yang dimasukkan saat `/connect`. Kunci di
+`models` adalah slug Hostlinku; `limit` membantu OpenCode menghitung sisa konteks.
+
+### Pilih model
+
+Jalankan `/models` — grup **Hostlinku** muncul dengan model yang kamu daftarkan. `small_model`
+dipakai untuk tugas ringan (judul sesi, ringkasan) sehingga sesi panjang lebih hemat.
+
+</Steps>
+
+## Variasi konfigurasi
+
+**API key dari environment variable** (tanpa `/connect`):
+
+```json
+{
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1",
+        "apiKey": "{env:HOSTLINKU_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+**Lewat Responses API** — ganti `npm` menjadi `@ai-sdk/openai`; OpenCode akan memakai
+[`/v1/responses`](/responses). Berguna untuk model GPT-5.x bila ingin *reasoning summary*.
+Untuk sebagian besar pengguna, `@ai-sdk/openai-compatible` (Chat Completions) sudah cukup.
+
+<Callout type="note" title="Model dengan reasoning interleaved">
+  Model yang mengembalikan `reasoning_content` (mis. DeepSeek V4, GLM 5) bisa diberi opsi
+  `"reasoning": true` dan `"interleaved": { "field": "reasoning_content" }` pada definisi modelnya
+  agar OpenCode menampilkan jalur berpikirnya.
+</Callout>
+
+## Troubleshooting
+
+- **Provider tidak muncul di `/models`** — ID di `/connect` dan `opencode.json` berbeda, atau JSON
+  tidak valid. Cek `opencode auth list`.
+- **`401`** — key belum tersimpan untuk ID tersebut; ulangi `/connect`.
+- **`404 model_not_found`** — kunci `models` harus slug persis dari `GET /v1/models`.

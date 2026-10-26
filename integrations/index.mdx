@@ -1,0 +1,93 @@
+---
+title: Ikhtisar Integrasi
+description: Pakai Hostlinku di Claude Code, Codex CLI, Cursor, VS Code, GitHub Copilot, Zed, Cline, Kilo Code, Continue, JetBrains AI Assistant, Junie, Factory Droid, OpenCode, Xum, Aider, dan OpenAI Agents SDK — cukup ganti base URL, tanpa mengubah cara kerja tool
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hampir semua coding agent dan IDE AI modern bisa diarahkan ke provider lain lewat **base URL
+kustom**. Karena Hostlinku berbicara tiga protokol sekaligus — OpenAI Chat Completions, OpenAI
+Responses, dan Anthropic Messages — kamu bisa memakai **satu API key dan satu saldo** untuk semua
+tool di bawah ini, lalu memantau seluruh pemakaiannya dari satu Request Logs di console.
+
+## Pilih tool kamu
+
+| Tool | Format API yang dipakai | Base URL | Panduan |
+|---|---|---|---|
+| Claude Code (CLI & ekstensi VS Code/JetBrains) | Anthropic Messages | `https://api.hostlinku.com` | [Claude Code](/integrations/claude-code) |
+| Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/integrations/codex-cli) |
+| Cursor | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Cursor](/integrations/cursor) |
+| VS Code (Chat & mode Agent bawaan) | OpenAI Chat Completions (atau Anthropic/Responses) | `https://api.hostlinku.com/v1/chat/completions` (URL endpoint penuh) | [VS Code](/integrations/vscode) |
+| GitHub Copilot CLI & Copilot app | OpenAI Chat Completions (atau Anthropic) | `https://api.hostlinku.com/v1` | [GitHub Copilot](/integrations/copilot) |
+| Zed (Agent Panel) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/integrations/zed) |
+| Cline, Roo Code | OpenAI Chat Completions (atau Anthropic) | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/integrations/cline) |
+| Kilo Code | OpenAI Chat Completions (atau Anthropic) | `https://api.hostlinku.com/v1` | [Kilo Code](/integrations/kilo-code) |
+| Continue (VS Code & JetBrains) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Continue](/integrations/continue) |
+| JetBrains AI Assistant (IntelliJ IDEA, PyCharm, WebStorm, …) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [JetBrains](/integrations/jetbrains) |
+| Junie CLI (JetBrains) | OpenAI Chat Completions (atau Anthropic) | `https://api.hostlinku.com/v1/chat/completions` (URL endpoint penuh) | [Junie](/integrations/junie) |
+| Factory Droid (CLI & desktop) | Anthropic Messages atau OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [Factory](/integrations/factory) |
+| OpenCode | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [OpenCode](/integrations/opencode) |
+| Xum (agent paralel) | OpenAI Chat Completions (atau Anthropic) | `https://api.hostlinku.com/v1` | [Xum](/integrations/xum) |
+| Aider | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Aider](/integrations/aider) |
+| OpenAI Agents SDK (Python & TypeScript) | OpenAI Responses | `https://api.hostlinku.com/v1` | [Agents SDK](/integrations/agents-sdk) |
+
+Tool lain yang menyediakan opsi *"OpenAI-compatible"* atau *"custom base URL"* (mis. Open WebUI,
+LibreChat, LangChain, Vercel AI SDK, n8n, Dify) mengikuti pola yang sama: base URL
+`https://api.hostlinku.com/v1`, API key `sk-…`, dan slug model dari katalog.
+
+## Tiga hal yang selalu sama
+
+1. **Base URL** — `https://api.hostlinku.com/v1` untuk tool berformat OpenAI; `https://api.hostlinku.com`
+   (tanpa `/v1`) untuk tool berformat Anthropic karena SDK Anthropic menambahkan `/v1/messages`
+   sendiri.
+2. **API key** — secret `sk-…` dari [console.hostlinku.com](https://console.hostlinku.com) → **API
+   Keys**. Dipakai sebagai `Authorization: Bearer sk-…` (OpenAI) atau `x-api-key` (Anthropic);
+   gateway menerima keduanya di semua endpoint `/v1/*`.
+3. **Slug model** — persis seperti di [katalog model](/models), mis. `claude-sonnet-4-6`,
+   `gpt-5-5`, `deepseek-v4-flash`. Setiap format API bisa memanggil model apa pun — mis. Claude
+   lewat Codex CLI, atau GPT lewat Claude Code — karena gateway yang menerjemahkan protokolnya.
+
+## Rekomendasi model untuk coding
+
+Daftar slug yang aktif untuk akun kamu selalu ada di console (menu **Model**) atau
+`GET /v1/models`. Sebagai titik awal:
+
+| Kebutuhan | Slug | Catatan |
+|---|---|---|
+| Agentic coding harian (default yang aman) | `claude-sonnet-4-6` | Tool calling kuat, konteks besar. |
+| Tugas sulit / refactor lintas file | `claude-opus-4-6`, `gpt-5-5` | Lebih mahal; pakai saat Sonnet kurang. |
+| Codex CLI | `gpt-5-3-codex`, `gpt-5-5` | Dioptimalkan untuk alur Codex (apply_patch, shell). |
+| Model cepat & murah untuk sub-agent / commit message / ringkasan | `claude-haiku-4-5`, `deepseek-v4-flash` | Cocok untuk alias *haiku* / *weak model*. |
+| Alternatif open-weight berkonteks besar | `kimi-k2-7-code`, `glm-5-3`, `qwen3-6-plus` | Semua mendukung tool calling. |
+
+## Praktik aman
+
+<Callout type="important" title="Satu API key per tool">
+  Buat API key terpisah untuk setiap tool (mis. `claude-code-laptop`, `cursor-kantor`) dengan
+  **limit kredit** harian/bulanan. Kalau satu key bocor dari file konfigurasi, cukup revoke key itu
+  tanpa mengganggu tool lain. Lihat [Autentikasi](/authentication).
+</Callout>
+
+- **API key hanya berlaku untuk gateway `/v1/*`.** Key `sk-…` tidak bisa dipakai untuk login
+  console, mengubah saldo, atau membuat key baru — jadi key yang tersimpan di konfigurasi IDE tidak
+  bisa mengambil alih akun kamu.
+- **Jangan commit API key.** Simpan di environment variable (`HOSTLINKU_API_KEY`) atau secret
+  store tool masing-masing; semua panduan di sini memakai pola itu.
+- **Pantau pemakaian.** Menu **Log Permintaan** di console menampilkan setiap request dari setiap
+  tool — model, token, biaya, latensi, dan API key yang dipakai. Lihat
+  [Pemakaian & Limit](/usage-and-limits).
+
+## Masalah umum
+
+| Gejala | Penyebab & solusi |
+|---|---|
+| `401` / *authentication error* | API key salah, dicabut, atau kedaluwarsa. Pastikan tidak ada spasi/baris baru ikut tersalin. Di Claude Code, jalankan `/logout` dulu bila sebelumnya login dengan akun Anthropic. |
+| `402` / *insufficient quota* | Saldo habis atau limit kredit API key tercapai. Isi saldo atau naikkan limit di console. |
+| `404` / *model not found* | Slug model salah ketik atau tidak ada di katalog. Salin apa adanya dari `GET /v1/models`. |
+| `400` *not available in Service Mode* | Model tidak tersedia pada Service Mode API key tersebut. Ganti model atau buat key dengan Service Mode lain. |
+| `429` / *rate limit* | Tool mengirim banyak request paralel (sub-agent). Tunggu sesuai header `Retry-After`, atau kurangi paralelisme. Lihat [Pemakaian & Limit](/usage-and-limits). |
+| Tool menolak base URL `localhost` | Beberapa tool (mis. Cursor) memanggil API dari server mereka, bukan dari komputer kamu. `https://api.hostlinku.com` adalah endpoint publik, jadi aman. |
+| Fitur *autocomplete / Tab* tidak jalan | Autocomplete inline biasanya memakai endpoint `/v1/completions` (FIM) atau infrastruktur khusus tool. Hostlinku melayani chat, Responses, dan Messages — bukan FIM. Pakai Hostlinku untuk chat/agent/edit; biarkan autocomplete di provider bawaan tool. |
+
+Butuh tool lain yang belum ada di sini? Kirim ke [halo@hostlinku.com](mailto:halo@hostlinku.com)
+atau lihat [Dukungan](/support).

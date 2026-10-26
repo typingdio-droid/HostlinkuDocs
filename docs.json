@@ -7,16 +7,174 @@
     "light": "#A78BFA",
     "dark": "#6D28D9"
   },
+  "logo": {
+    "light": "/brand/hl-mark-black.png",
+    "dark": "/brand/hl-mark-white.png",
+    "href": "https://hostlinku.com"
+  },
+  "favicon": "/favicon.ico",
   "appearance": {
     "default": "system"
+  },
+  "fonts": {
+    "family": "Geist"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Dokumentasi",
+        "href": "/"
+      },
+      {
+        "label": "Website",
+        "href": "https://hostlinku.com"
+      },
+      {
+        "label": "Status",
+        "href": "https://status.hostlinku.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Console",
+      "href": "https://console.hostlinku.com"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/hostlinku"
+    },
+    "links": [
+      {
+        "header": "PRODUK",
+        "items": [
+          {
+            "label": "Website",
+            "href": "https://hostlinku.com"
+          },
+          {
+            "label": "Console",
+            "href": "https://console.hostlinku.com"
+          },
+          {
+            "label": "Harga",
+            "href": "https://hostlinku.com/pricing"
+          }
+        ]
+      },
+      {
+        "header": "DOKUMENTASI",
+        "items": [
+          {
+            "label": "Memulai",
+            "href": "/getting-started"
+          },
+          {
+            "label": "Autentikasi",
+            "href": "/authentication"
+          },
+          {
+            "label": "Chat Completions",
+            "href": "/chat-completions"
+          },
+          {
+            "label": "Model",
+            "href": "/models"
+          }
+        ]
+      },
+      {
+        "header": "BANTUAN",
+        "items": [
+          {
+            "label": "FAQ",
+            "href": "/faq"
+          },
+          {
+            "label": "Dukungan",
+            "href": "/support"
+          },
+          {
+            "label": "Billing & Saldo",
+            "href": "/billing"
+          },
+          {
+            "label": "Status",
+            "href": "https://status.hostlinku.com"
+          }
+        ]
+      }
+    ]
   },
   "navigation": {
     "groups": [
       {
-        "group": "Getting started",
+        "group": "Mulai",
+        "icon": "rocket",
         "pages": [
-          "introduction",
-          "quickstart"
+          "index",
+          "getting-started",
+          "authentication"
+        ]
+      },
+      {
+        "group": "API",
+        "icon": "square-terminal",
+        "pages": [
+          "api-reference",
+          "sdk",
+          "chat-completions",
+          "anthropic-messages",
+          "responses",
+          "prompt-caching",
+          "models",
+          "dedicated",
+          "errors"
+        ]
+      },
+      {
+        "group": "Integrasi",
+        "icon": "plug",
+        "pages": [
+          "integrations/index",
+          {
+            "group": "Integrasi IDE & Agent",
+            "expanded": true,
+            "pages": [
+              "integrations/claude-code",
+              "integrations/codex-cli",
+              "integrations/cursor",
+              "integrations/vscode",
+              "integrations/copilot",
+              "integrations/zed",
+              "integrations/cline",
+              "integrations/kilo-code",
+              "integrations/continue",
+              "integrations/jetbrains",
+              "integrations/junie",
+              "integrations/factory",
+              "integrations/opencode",
+              "integrations/xum",
+              "integrations/aider",
+              "integrations/agents-sdk"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Akun",
+        "icon": "wallet",
+        "pages": [
+          "usage-and-limits",
+          "billing"
+        ]
+      },
+      {
+        "group": "Bantuan",
+        "icon": "life-buoy",
+        "pages": [
+          "faq",
+          "support"
         ]
       }
     ]

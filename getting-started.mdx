@@ -1,0 +1,141 @@
+---
+title: Memulai Cepat
+description: Dari daftar akun sampai request pertama ke gateway Hostlinku dalam lima menit
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+Halaman ini memandu kamu dari nol sampai berhasil mengirim satu request chat completion lewat
+Hostlinku.
+
+## Prasyarat
+
+- **Akun Hostlinku**: daftar gratis di [auth.hostlinku.com](https://auth.hostlinku.com).
+- **Saldo kredit**: gateway memotong saldo per token. Isi saldo di console sebelum request
+  produksi. Biaya request uji coba biasanya di bawah satu sen, tetapi saldo tetap tidak boleh
+  kosong. Lihat [Billing & Saldo](/billing).
+- **Perkakas uji**: curl sudah cukup. Untuk contoh lanjutan, SDK resmi OpenAI
+  (`pip install openai`) atau Node (`npm install openai`) bisa dipakai tanpa mengubah kode.
+
+## Langkah-langkah
+
+<Steps>
+
+### Daftar atau masuk
+
+Buka [auth.hostlinku.com](https://auth.hostlinku.com): buat akun baru, atau masuk dengan akun
+yang sudah ada (termasuk login SSO bila diaktifkan admin).
+
+### Buat API key
+
+Masuk ke [console.hostlinku.com](https://console.hostlinku.com) → menu **API Keys** → **Buat
+API key**. Di dialog pembuatan API key kamu bisa mengatur:
+
+- **Nama**: untuk identifikasi, mis. `produksi-aplikasi-kamu`.
+- **Kedaluwarsa**: opsional, pilih tidak pernah, 30/90/365 hari, atau tanggal kustom.
+- **Limit kredit**: opsional, batas pemakaian key (mis. $10) per jendela **Harian /
+  Mingguan / Bulanan**, atau tanpa reset (limit total).
+
+<Callout type="warning" title="Secret hanya tampil sekali">
+  Setelah API key dibuat, secret berformat `sk-…` **hanya ditampilkan sekali** di console.
+  Salin dan simpan di tempat aman: server menyimpannya sebagai hash SHA-256 dan tidak bisa
+  menampilkannya lagi. Kalau secret hilang, revoke API key tersebut lalu buat yang baru.
+</Callout>
+
+### Kirim request pertama
+
+Semua endpoint gateway berada di `https://api.hostlinku.com`, dengan autentikasi
+`Authorization: Bearer sk-…`. Contoh request non-streaming:
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "user", "content": "Halo! Perkenalkan dirimu singkat saja." }
+    ]
+  }'
+```
+
+Jika semuanya benar, kamu akan menerima respons JSON bergaya OpenAI, plus blok `hostlinku`
+berisi biaya dan latensi request:
+
+```json
+{
+  "id": "cmpl_…",
+  "object": "chat.completion",
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "Halo! Saya adalah …" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60 },
+  "hostlinku": {
+    "cost": 0.000123,
+    "latencyMs": 812
+  }
+}
+```
+
+Slug model di atas hanya contoh. Daftar slug yang valid untuk akun kamu bisa dilihat di console
+(menu **Model**) atau lewat [endpoint `GET /v1/models`](/models).
+
+### Rekomendasi: pakai streaming
+
+Untuk aplikasi chat, kirim `"stream": true`. Kata pertama tampil begitu model mulai menjawab
+(biasanya di bawah 1–2 detik), tanpa menunggu seluruh jawaban selesai. Total waktunya sama,
+tetapi aplikasi terasa jauh lebih cepat bagi pengguna kamu.
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key=os.environ["HOSTLINKU_API_KEY"],
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Halo!"}],
+    stream=True,
+)
+for chunk in stream:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+```
+
+Dengan curl, tambahkan `-N` agar output tidak ditahan buffer:
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
+```
+
+### Cek saldo dan riwayat
+
+Di console, buka menu **Credits/Saldo** untuk melihat saldo berjalan dan menu **Log Permintaan**
+untuk riwayat request lengkap dengan token, biaya, dan latensi. Endpoint setara tersedia di
+[`GET /api/wallet/account`](/billing) untuk sesi console, sedangkan API publik (API key
+`sk-…`) memakai `/v1/*`.
+
+</Steps>
+
+## Langkah berikutnya
+
+- [Autentikasi](/authentication): detail API key, kedaluwarsa, dan limit kredit.
+- [Chat Completions](/chat-completions): semua parameter, streaming SSE, dan contoh Python.
+- [Model](/models): katalog model dan cara memilih model yang tepat.
+- [Error](/errors): arti setiap kode error dan cara menanganinya.
+
+<Callout type="note" title="Catatan">
+  Butuh bantuan? Hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com), lihat juga
+  [Dukungan](/support).
+</Callout>

@@ -1,0 +1,144 @@
+---
+title: Claude Code
+description: Jalankan Claude Code (CLI, VS Code, JetBrains) lewat Hostlinku dengan ANTHROPIC_BASE_URL — pakai Claude atau model lain, satu saldo untuk semuanya
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Claude Code](https://code.claude.com/docs) berbicara protokol Anthropic Messages. Hostlinku
+menyediakan endpoint yang kompatibel di [`POST /v1/messages`](/anthropic-messages) (termasuk
+`/v1/messages/count_tokens`), sehingga Claude Code bisa diarahkan ke Hostlinku cukup dengan
+environment variable — tidak perlu proxy tambahan.
+
+<Steps>
+
+### Instal Claude Code
+
+```bash
+npm install -g @anthropic-ai/claude-code
+# atau: curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Bila sebelumnya kamu pernah login dengan akun Anthropic/Claude, jalankan `claude` lalu ketik
+`/logout` agar kredensial OAuth yang tersimpan tidak mendahului konfigurasi gateway.
+
+### Arahkan ke Hostlinku
+
+Cara paling cepat — export di shell (`~/.zshrc` / `~/.bashrc`):
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hostlinku.com
+export ANTHROPIC_AUTH_TOKEN=sk-isi-api-key-kamu
+
+# Pin model untuk alias yang dipakai Claude Code
+export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
+export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
+
+claude
+```
+
+Cara persisten — blok `env` di `~/.claude/settings.json` (berlaku untuk semua proyek) atau
+`.claude/settings.local.json` di root proyek (hanya proyek itu; file ini biasanya di-gitignore):
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.hostlinku.com",
+    "ANTHROPIC_AUTH_TOKEN": "sk-isi-api-key-kamu",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5"
+  }
+}
+```
+
+Nilai di `settings.json` **mengalahkan** export shell.
+
+### Verifikasi
+
+Di dalam sesi Claude Code ketik `/status`: bagian *API* harus menampilkan base URL
+`https://api.hostlinku.com` dan metode autentikasi *auth token*. Kirim satu prompt sederhana, lalu
+cek request-nya muncul di console → **Log Permintaan** dengan API key yang kamu pakai.
+
+### (Opsional) Ganti model dari dalam sesi
+
+`/model` menampilkan alias `sonnet` / `opus` / `haiku` yang sudah kamu pin di atas. Untuk memakai
+slug lain sekali jalan:
+
+```bash
+claude --model deepseek-v4-flash
+# atau pin default lewat env: export ANTHROPIC_MODEL=gpt-5-5
+```
+
+</Steps>
+
+## Autentikasi: `AUTH_TOKEN` atau `API_KEY`?
+
+| Variabel | Header yang dikirim | Didukung Hostlinku |
+|---|---|---|
+| `ANTHROPIC_AUTH_TOKEN` | `Authorization: Bearer sk-…` | Ya (disarankan) |
+| `ANTHROPIC_API_KEY` | `x-api-key: sk-…` | Ya |
+
+Keduanya diterima gateway; pilih salah satu, jangan isi dua-duanya dengan nilai berbeda.
+
+## Ekstensi VS Code & JetBrains
+
+Ekstensi Claude Code memeriksa login sendiri, jadi variabel yang sama harus diisi juga di setting
+ekstensi — VS Code: `claudeCode.environmentVariables` di `settings.json`:
+
+```json
+{
+  "claudeCode.environmentVariables": [
+    { "name": "ANTHROPIC_BASE_URL", "value": "https://api.hostlinku.com" },
+    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-isi-api-key-kamu" },
+    { "name": "ANTHROPIC_DEFAULT_SONNET_MODEL", "value": "claude-sonnet-4-6" },
+    { "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL", "value": "claude-haiku-4-5" }
+  ]
+}
+```
+
+Di JetBrains, isi variabel yang sama di *Settings → Tools → Claude Code → Environment variables*
+(atau pastikan IDE dijalankan dari shell yang sudah meng-export variabel tersebut).
+
+## Pakai model non-Claude
+
+Karena gateway menerjemahkan protokol, alias `sonnet`/`haiku` bisa diisi slug apa pun dari
+[katalog](/models):
+
+```bash
+export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
+```
+
+Fitur yang bergantung pada kemampuan model (tool use, *extended thinking*, vision) mengikuti
+kapabilitas model tujuan — cek field `capabilities` di katalog.
+
+<Callout type="note" title="Claude Code tidak mengenali nama model non-Claude">
+  Saat memakai slug seperti `gpt-5-5` atau `deepseek-v4-flash`, Claude Code menampilkan peringatan
+  `unrecognized_model` dan mengasumsikan konteks 200k token. Request tetap berjalan normal
+  (terverifikasi), tetapi sesuaikan konteks di sisi klien bila model tujuan punya jendela lebih besar.
+</Callout>
+
+<Callout type="tip" title="Hemat saldo untuk sub-agent">
+  Claude Code memakai alias *haiku* untuk tugas ringan (ringkasan, judul sesi, sub-agent cepat).
+  Mengisinya dengan `claude-haiku-4-5` atau `deepseek-v4-flash` memangkas biaya sesi panjang secara
+  signifikan tanpa memengaruhi kualitas model utama.
+</Callout>
+
+<Callout type="note" title="Konteks besar & cache">
+  Hostlinku meneruskan `cache_control` (prompt caching) dan melaporkan `cache_read_input_tokens` /
+  `cache_creation_input_tokens` di `usage` — Claude Code memanfaatkannya otomatis. Tagihan mengikuti
+  harga cache model yang bersangkutan (lihat [Billing](/billing)).
+</Callout>
+
+## Troubleshooting
+
+- **`401 authentication_error` padahal key benar** — kredensial OAuth lama masih dipakai. Jalankan
+  `/logout`, tutup sesi, pastikan `ANTHROPIC_BASE_URL` terbaca (`/status`).
+- **Model tidak ditemukan (`404`)** — alias belum di-pin, sehingga Claude Code mengirim nama model
+  bawaannya. Isi `ANTHROPIC_DEFAULT_*_MODEL` dengan slug dari katalog.
+- **`400 max_tokens melebihi batas`** — turunkan `max_tokens` lewat `CLAUDE_CODE_MAX_OUTPUT_TOKENS`
+  (mis. `32000`) bila model tujuan punya batas output lebih kecil.
+- **Rate limit (`429`)** — Claude Code dapat menjalankan beberapa sub-agent paralel. Lihat batas di
+  [Pemakaian & Limit](/usage-and-limits).

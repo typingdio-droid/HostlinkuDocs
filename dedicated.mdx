@@ -1,0 +1,64 @@
+---
+title: Service Mode Dedicated
+description: Model yang berjalan di infrastruktur Hostlinku sendiri — DeepSeek, GLM, dan Kimi dengan konteks 1 juta token.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Dedicated** adalah Service Mode ketiga Hostlinku. Berbeda dari **Performance** dan
+**Low-Cost** yang meneruskan request ke mitra upstream, model Dedicated berjalan di
+**infrastruktur Hostlinku sendiri**.
+
+<Callout type="note" title="Satu API key = satu Service Mode">
+  Mode ini aktif bila API key kamu di-set ke Dedicated oleh admin. Untuk memakai mode lain
+  bersamaan, buat API key terpisah — Service Mode melekat pada key, bukan pada request.
+</Callout>
+
+## Model yang tersedia
+
+Sembilan model, tiga keluarga:
+
+| Keluarga | Model | Konteks |
+|---|---|---|
+| DeepSeek | `deepseek-v4-1-flash`, `deepseek-v4-1-flash-turbo`, `deepseek-v4-1-flash-hyper` | 1.000.000 token |
+| GLM | `glm-5-3`, `glm-5-3-flash`, `glm-5-3-flash-hyper` | 1.000.000 token |
+| Kimi | `kimi-k3`, `kimi-k3-turbo`, `kimi-k3-hyper` | 1.000.000 token |
+
+Varian `-turbo` dan `-hyper` adalah konfigurasi yang lebih cepat/lebih besar dari model
+dasarnya. Model di luar daftar ini **tidak** tersedia di mode Dedicated — gunakan Performance
+atau Low-Cost.
+
+## Endpoint dan autentikasi
+
+Base URL tidak berubah antar mode. Ketiga dialek API didukung:
+
+| Dialek | Endpoint | Header auth |
+|---|---|---|
+| OpenAI Chat | `POST {base}/v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
+| OpenAI Responses | `POST {base}/v1/responses` | `Authorization: Bearer <API_KEY>` |
+| Anthropic Messages | `POST {base}/v1/messages` | `x-api-key: <API_KEY>` |
+
+Cukup arahkan aplikasi ke base URL Hostlinku dan pakai API key bermode Dedicated — tidak ada
+parameter tambahan untuk memilih mode.
+
+## Harga
+
+Harga jual = harga dasar model × multiplier mode Dedicated, ditagih per **1M token**
+(1🪙 = $1). Angka per model ada di [Katalog Model](/models) — pilih tab **Dedicated**
+untuk melihat harga yang berlaku pada key kamu. Contoh: `glm-5-3` saat ini 🪙1,21 input dan
+🪙3,80 output per 1M token.
+
+## Prompt caching
+
+Model Dedicated memakai **auto-cache dari provider**. Kamu tidak perlu mengirim
+`cache_control`: kirim prefix yang sama dalam masa hidup cache, lalu token yang dibaca dari
+cache muncul sebagai `cached_tokens` (`/v1/chat/completions`) atau `cache_read_input_tokens`
+(`/v1/messages`). Lihat [Hemat dengan Prompt Caching](/prompt-caching) untuk cara membaca
+angkanya di console.
+
+## Batasan
+
+- Hanya sembilan model pada tabel di atas; tidak ada fallback otomatis ke mode lain.
+- Varian `-chat` (khusus coding/agentic) tidak dijual di katalog publik.
+- Tool calling, streaming, dan `stream_options.include_usage` didukung. Fitur vendor-spesifik
+  (mis. web search) bergantung pada modelnya dan tidak dijamin tersedia.

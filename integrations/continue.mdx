@@ -1,0 +1,94 @@
+---
+title: Continue
+description: Tambahkan model Hostlinku ke config.yaml Continue (VS Code & JetBrains) dengan provider openai dan apiBase kustom
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Continue](https://docs.continue.dev) dikonfigurasi lewat `config.yaml`. Setiap model
+mendapat `provider`, `apiBase`, `apiKey`, dan daftar `roles` (chat, edit, apply, …). Untuk
+Hostlinku pakai provider `openai` dengan `apiBase` gateway.
+
+<Steps>
+
+### Buka konfigurasi
+
+Di panel Continue klik ikon roda gigi → **Open config file**, atau edit langsung
+`~/.continue/config.yaml` (global) / `.continue/config.yaml` (per proyek).
+
+### Tambahkan model Hostlinku
+
+```yaml
+name: Hostlinku
+version: 0.0.1
+schema: v1
+
+models:
+  - name: Claude Sonnet 4.6 (Hostlinku)
+    provider: openai
+    model: claude-sonnet-4-6
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply]
+    defaultCompletionOptions:
+      contextLength: 1000000
+      maxTokens: 32000
+
+  - name: GPT-5.5 (Hostlinku)
+    provider: openai
+    model: gpt-5-5
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply]
+
+  - name: DeepSeek V4 Flash (Hostlinku)
+    provider: openai
+    model: deepseek-v4-flash
+    apiBase: https://api.hostlinku.com/v1
+    apiKey: ${{ secrets.HOSTLINKU_API_KEY }}
+    roles: [chat, edit, apply, summarize]
+```
+
+### Simpan API key sebagai secret
+
+Buat file `~/.continue/.env` (tidak ikut ter-commit) berisi:
+
+```bash
+HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+Atau ganti `${{ secrets.HOSTLINKU_API_KEY }}` dengan nilai key langsung bila file konfigurasi
+kamu memang privat.
+
+### Muat ulang dan uji
+
+Klik **Reload config** di panel Continue (atau simpan file — Continue memantau perubahan). Pilih
+model *Claude Sonnet 4.6 (Hostlinku)* di dropdown, kirim pesan, lalu cek console → **Log
+Permintaan**.
+
+</Steps>
+
+## Peran (roles) yang didukung
+
+| Role | Dukungan lewat Hostlinku | Catatan |
+|---|---|---|
+| `chat` | Ya | Semua model katalog. |
+| `edit`, `apply` | Ya | Pakai model dengan tool calling; `claude-sonnet-4-6` sangat baik untuk *apply*. |
+| `summarize` | Ya | Model murah seperti `deepseek-v4-flash` / `claude-haiku-4-5`. |
+| `autocomplete` | Tidak | Membutuhkan model FIM lewat `/v1/completions`. Biarkan role ini pada provider lain (mis. model lokal). |
+| `embed`, `rerank` | Tidak | Hostlinku belum menyediakan endpoint embeddings/rerank. |
+
+Bila `edit`/`apply` tidak diberi model khusus, Continue memakai model `chat` yang aktif.
+
+<Callout type="tip" title="YAML anchor untuk mengurangi pengulangan">
+  Definisikan `apiBase` dan `apiKey` sekali sebagai anchor (`&hostlinku`) lalu gunakan
+  `<<: *hostlinku` di setiap model. Lihat referensi `config.yaml` Continue.
+</Callout>
+
+## Troubleshooting
+
+- **Model tidak muncul di dropdown** — indentasi YAML salah atau `roles` tidak memuat `chat`.
+  Lihat *Output → Continue* di VS Code.
+- **`401`** — `~/.continue/.env` belum terbaca; reload config atau restart IDE.
+- **`404 model_not_found`** — `model:` harus slug persis dari `GET /v1/models`.
+- **Streaming tersendat** — pastikan tidak ada proxy korporat yang mem-buffer `text/event-stream`.

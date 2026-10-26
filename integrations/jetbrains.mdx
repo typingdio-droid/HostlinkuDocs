@@ -1,0 +1,81 @@
+---
+title: JetBrains AI Assistant
+description: Pakai model Hostlinku di IntelliJ IDEA, PyCharm, WebStorm, GoLand, dan IDE JetBrains lain lewat provider OpenAI-compatible di AI Assistant
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[JetBrains AI Assistant](https://www.jetbrains.com/help/ai-assistant/) mendukung **third-party AI
+providers**: kamu bisa mengarahkan AI Chat ke endpoint *OpenAI-compatible* mana pun dengan API key
+sendiri. Dengan mengisinya ke Hostlinku, chat di IntelliJ IDEA, PyCharm, WebStorm, GoLand, Rider,
+dan IDE JetBrains lain memakai model dari katalog Hostlinku dan dibebankan ke saldo kamu.
+
+**Prasyarat:** plugin **AI Assistant** terpasang dan aktif, serta API key Hostlinku (`sk-…`) dari
+[console](https://console.hostlinku.com) → **API Keys**.
+
+<Steps>
+
+### Buka pengaturan model
+
+**Settings** (⌘ + , / Ctrl + Alt + S) → **Tools** → **AI Assistant** → **Models & API keys**.
+
+### Tambahkan Hostlinku sebagai third-party provider
+
+Di bagian **Third-party AI providers**:
+
+| Field | Nilai |
+|---|---|
+| **Provider** | `OpenAI-compatible` |
+| **URL** | `https://api.hostlinku.com/v1` |
+| **API Key** | `sk-…` (API key Hostlinku) |
+| **Tool calling** | dicentang |
+
+![JetBrains Settings → Tools → AI Assistant → Models & API keys: URL berisi https://api.hostlinku.com/v1](/images/integrations/jetbrains-ai-settings.webp "Provider OpenAI-compatible dengan URL https://api.hostlinku.com/v1. Klik Test Connection sebelum Apply.")
+
+Klik **Test Connection** — IDE mengirim request uji ke gateway. Bila berhasil, klik **Apply**
+lalu **OK**.
+
+### (Opsional) Atur Model Assignment
+
+Di bagian **Model Assignment** kamu bisa memilih model Hostlinku untuk **Core features** (mis.
+`claude-sonnet-4-6`) dan **Instant helpers** (mis. `claude-haiku-4-5`). Biarkan **Completion model**
+pada *Not selected* — autocomplete inline memakai FIM yang tidak dilayani Hostlinku (lihat
+[Ikhtisar](/integrations#masalah-umum)).
+
+### Pilih model di AI Chat
+
+Buka **AI Chat**, pastikan mode **Chat** aktif, lalu pilih model dari dropdown model. Daftarnya
+diambil dari `GET /v1/models`, jadi slug yang tampil sama dengan [katalog](/models).
+
+![AI Chat JetBrains: dropdown model menampilkan daftar dari provider pihak ketiga](/images/integrations/jetbrains-ai-chat.webp "Dropdown model di AI Chat. Pilih slug dari katalog Hostlinku, lalu mulai chat.")
+
+Request pertama akan muncul di console → **Log Permintaan**.
+
+</Steps>
+
+## Yang perlu diketahui
+
+<Callout type="note" title="Hanya jalur OpenAI-compatible">
+  AI Assistant saat ini hanya mendukung provider *OpenAI-compatible* untuk third-party — belum ada
+  opsi base URL Anthropic. Model Claude tetap bisa dipakai: slug `claude-sonnet-4-6` dipanggil lewat
+  Chat Completions dan gateway yang menerjemahkan ke protokol Anthropic.
+</Callout>
+
+- **Base URL wajib diakhiri `/v1`.** IDE menambahkan `/models` dan `/chat/completions` sendiri;
+  tanpa `/v1`, *Test Connection* gagal dengan `404`.
+- **Tidak ada custom header.** AI Assistant hanya mengirim API key sebagai
+  `Authorization: Bearer sk-…` — itu sudah cukup untuk Hostlinku.
+- **Tidak semua model cocok untuk Chat.** Pilih model dengan *tool calling* (centang **Tool
+  calling** di pengaturan) agar fitur yang memanggil tool di dalam IDE berjalan. Rekomendasi ada di
+  [Ikhtisar](/integrations).
+- **Claude Code di JetBrains** adalah integrasi terpisah (plugin Claude Code memakai CLI-nya). Lihat
+  [Claude Code](/integrations/claude-code).
+
+## Troubleshooting
+
+| Gejala | Solusi |
+|---|---|
+| *Test Connection* gagal `401` | API key salah/dicabut, atau ada spasi ikut tersalin. |
+| *Test Connection* gagal `404` | URL tidak diakhiri `/v1`, atau ada path tambahan seperti `/chat/completions`. |
+| Dropdown model kosong | Koneksi belum di-*Apply*, atau API key tidak punya akses ke model mana pun pada Service Mode-nya. |
+| Chat berhenti dengan `429` | Terlalu banyak request paralel. Lihat [Pemakaian & Limit](/usage-and-limits). |

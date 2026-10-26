@@ -1,0 +1,121 @@
+---
+title: Error
+description: Format envelope error Hostlinku, daftar kode error, dan cara menanganinya
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Semua error dari gateway Hostlinku memakai satu bentuk _envelope_ yang sama, apa pun sumbernya:
+validasi, autentikasi, billing, atau gangguan pada layanan upstream:
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [{ "path": "messages", "message": "Array must contain at least 1 element(s)" }]
+    }
+  }
+}
+```
+
+- `status`: selalu `"error"` pada respons gagal.
+- `error.code`: kode mesin (stabil, aman untuk percabangan logika di kode kamu).
+- `error.message`: pesan manusia, bisa berbahasa Indonesia.
+- `error.details`: opsional; mis. detail per-field saat validasi gagal.
+
+## Daftar kode error
+
+| HTTP | `error.code` | Arti | Umumnya muncul saat |
+|---|---|---|---|
+| 400 | `BAD_REQUEST` | Request tidak dapat diproses | Parameter kombinasi tidak masuk akal (mis. nominal top-up di luar batas, `max_tokens` melebihi batas output model) |
+| 401 | `UNAUTHORIZED` | Autentikasi gagal atau tidak ada | API key salah, sudah di-revoke, atau kedaluwarsa |
+| 402 | `PAYMENT_REQUIRED` | Butuh saldo/kredit | Saldo tidak cukup, limit kredit API key tercapai, provider pembayaran belum dikonfigurasi |
+| 403 | `FORBIDDEN` | Tidak punya izin | Mengakses resource admin dengan akun non-admin |
+| 404 | `NOT_FOUND` | Resource tidak ditemukan | Endpoint salah, ID API key/transaksi/log tidak ada (atau bukan milik kamu) |
+| 404 | `MODEL_NOT_FOUND` | Slug model tidak ada di katalog | Salah ketik slug; cek `GET /v1/models` |
+| 405 | `METHOD_NOT_ALLOWED` | Metode HTTP salah | Memakai `GET` di endpoint yang hanya menerima `POST` |
+| 409 | `CONFLICT` | Konflik state | Operasi bertentangan dengan state saat ini |
+| 422 | `VALIDATION_FAILED` | Body/query tidak valid | Field wajib hilang, tipe salah, di luar rentang |
+| 429 | `RATE_LIMITED` | Terlalu banyak request | Melebihi batas per menit (per API key atau per IP) |
+| 500 | `INTERNAL` | Kesalahan internal server | Bug tak terduga di gateway; sertakan `x-request-id` bila melapor |
+| 503 | `UPSTREAM_ERROR` | Upstream tidak tersedia / gangguan sementara | Upstream gagal merespons (5xx/timeout) setelah Hostlinku mencoba beberapa kali; aman untuk retry dengan backoff |
+| 503 | `PROVIDER_UNAVAILABLE` | Upstream tidak dapat dihubungi | Gangguan koneksi sementara ke upstream, atau layanan pembayaran gagal membuat sesi checkout |
+| 503 | `MODEL_UNAVAILABLE` | Model tidak tersedia | Model sedang status non-`available` atau sudah deprecated |
+
+<Callout type="warning" title="Endpoint tidak dikenal">
+  Path yang tidak ada juga mengembalikan envelope yang sama dengan `404 NOT_FOUND`. Periksa
+  kembali URL dan metode HTTP sebelum menyimpulkan ada gangguan.
+</Callout>
+
+## Detail validasi (422)
+
+Saat validasi gagal, `details.issues` memuat daftar masalah per field:
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [
+        { "path": "messages", "message": "Array must contain at least 1 element(s)" },
+        { "path": "temperature", "message": "Number must be less than or equal to 2" }
+      ]
+    }
+  }
+}
+```
+
+## Error pada streaming
+
+Kegagalan yang terjadi **di tengah** stream SSE dikirim sebagai event data di stream yang sama
+(bukan sebagai HTTP status):
+
+```text
+data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+```
+
+Gateway tidak akan mengirim `data: [DONE]` setelah event error, sehingga stream yang terputus
+selalu bisa dibedakan dari stream yang selesai normal.
+
+## Menangani error di kode
+
+Cara menangani tiap kelompok error:
+
+- **401**: API key salah atau kedaluwarsa. Perbaiki konfigurasi; jangan retry berulang.
+- **402**: top-up saldo atau naikkan/atur ulang limit API key. Lihat [Billing & Saldo](/billing).
+- **422**: perbaiki body request; baca `details.issues` untuk lokasi masalah.
+- **429**: backoff eksponensial dan hormati header rate limit. Lihat
+  [Pemakaian & Limit](/usage-and-limits).
+- **5xx** (`UPSTREAM_ERROR`, `PROVIDER_UNAVAILABLE`, `INTERNAL`): retry dengan backoff beberapa
+  kali; Hostlinku sudah mencoba beberapa kali sebelum menyerah.
+
+Contoh menangkap error dengan SDK OpenAI (Python):
+
+```python
+import openai
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+
+try:
+    response = client.chat.completions.create(
+        model="gpt-5-5",
+        messages=[{"role": "user", "content": "Halo"}],
+    )
+except openai.AuthenticationError as err:      # 401
+    raise SystemExit(f"API key bermasalah: {err}")
+except openai.RateLimitError as err:           # 429
+    raise SystemExit(f"Rate limit: {err}")
+except openai.APIStatusError as err:           # 4xx/5xx lainnya
+    print("status:", err.status_code, "body:", err.response.text)
+```
+
+<Callout type="note" title="Selalu sertakan x-request-id saat melapor">
+  Sebaiknya catat juga header `x-request-id` dari respons yang gagal: tim dukungan memakai ID
+  itu untuk menelusuri request tersebut di log gateway.
+</Callout>

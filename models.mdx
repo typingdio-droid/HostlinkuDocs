@@ -1,0 +1,115 @@
+---
+title: Model
+description: Endpoint GET /v1/models, bentuk data katalog, dan cara memilih model yang tepat
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku menyediakan satu katalog model terpusat. Setiap model punya **slug** unik yang dipakai
+di parameter `model` pada [Chat Completions](/chat-completions), lengkap dengan ukuran
+konteks, kapabilitas, dan harga per token.
+
+## `GET /v1/models`
+
+Mengembalikan semua model yang berstatus `available`, belum deprecated, dan tersedia untuk
+**Service Mode API key** yang dipakai (Performance atau Low-Cost), beserta harga 🪙 per 1M token
+pada mode tersebut.
+
+```http
+GET https://api.hostlinku.com/v1/models
+Authorization: Bearer sk-isi-api-key-kamu
+```
+
+Contoh:
+
+```bash
+curl https://api.hostlinku.com/v1/models \
+  -H "Authorization: Bearer sk-isi-api-key-kamu"
+```
+
+Respons (contoh dipotong; nilai persis untuk akun kamu diambil dari endpoint ini):
+
+```json
+{
+  "object": "list",
+  "service_mode": "performance",
+  "data": [
+    {
+      "id": "claude-haiku-4-5",
+      "object": "model",
+      "created": 1791380432,
+      "owned_by": "hostlinku",
+      "context_window": 200000,
+      "capabilities": ["text", "tool-calling", "function-calling", "structured-outputs", "json-mode", "streaming", "code-generation", "long-context", "multilingual"],
+      "service_mode": "performance",
+      "pricing": {
+        "input": 0.8,
+        "output": 4,
+        "cache_read": 0.08,
+        "cache_write": 1,
+        "unit": "1M_tokens",
+        "currency": "🪙"
+      }
+    }
+  ]
+}
+```
+
+| Field | Arti |
+|---|---|
+| `service_mode` (level list & item) | Service Mode API key yang dipakai: `performance` atau `low_cost`. Daftar model berbeda per mode. |
+| `id` | Slug model, nilai yang dipakai di field `model` pada `/v1/chat/completions`, `/v1/messages`, dan `/v1/responses`. |
+| `created` | Waktu model ditambahkan ke katalog (Unix epoch, detik). |
+| `owned_by` | Selalu `"hostlinku"` — penanda bahwa model dikelola oleh katalog Hostlinku. |
+| `context_window` | Ukuran konteks maksimum dalam token (input + output). |
+| `capabilities` | Daftar kapabilitas, mis. `vision`, `tool-calling`, `json-mode`, `reasoning`, `long-context`. |
+| `pricing` | Objek harga pada Service Mode tersebut; `null` bila model belum punya harga di mode itu. `pricing.unit` selalu `"1M_tokens"` dan `pricing.currency` selalu `"🪙"` (1🪙 = $1). |
+| `pricing.input` / `pricing.output` | Harga per **1M token** (bukan per 1 token atau per 1K) untuk token prompt / token jawaban. |
+| `pricing.cache_read` / `pricing.cache_write` | Harga per 1M token untuk cache read / cache write 5 menit (lihat [Prompt Caching](/prompt-caching)); `null` bila model tidak mendukung. |
+
+<Callout type="note" title="Pricing di respons adalah harga customer">
+  Angka `pricing` adalah harga yang kamu bayar pada Service Mode API key tersebut; margin platform
+  sudah termasuk di dalamnya. Biaya aktual setiap request selalu muncul di blok `hostlinku.cost`
+  pada respons dan di log console.
+</Callout>
+
+## Katalog publik (tanpa autentikasi)
+
+Untuk situs marketing atau eksplorasi tanpa API key, tersedia katalog publik:
+
+```http
+GET https://api.hostlinku.com/api/public/models
+```
+
+Katalog publik hanya menampilkan model Hostlinku beserta slug, nama, konteks, capability, dan
+harga publiknya. Query yang didukung: `q` (pencarian nama/deskripsi), `capability`, `family`,
+`sort` (`popular`, `newest`, `price-asc`, `price-desc`, `context-desc`, `name-asc`), `page`, dan
+`pageSize` (maks 100). Respons `data` memuat `items`, `total`, `page`, `pageSize`, dan `totalPages`.
+
+## Cara memilih model
+
+1. **Tentukan kebutuhan**: chat biasa, penalaran (_reasoning_), vision/multimodal, tool calling,
+   atau output JSON terstruktur. Cek field `capabilities`.
+2. **Perhatikan ukuran konteks**: pastikan `context_window` cukup untuk prompt + output kamu.
+3. **Bandingkan harga**: `pricing.input` untuk token prompt dan `pricing.output` untuk token
+   jawaban; model reasoning umumnya lebih mahal di output.
+4. **Mulai dari model kecil**: untuk pengembangan, model kelas ringan (mis. `gpt-6-luna`,
+   `deepseek-v4-1-flash`, `qwen3-6-plus`) jauh lebih murah; naikkan kelas model hanya bila
+   kualitas kurang.
+5. **Lihat konsol**: menu **Model** di [console.hostlinku.com](https://console.hostlinku.com)
+   menampilkan katalog dengan harga dan kapabilitas yang sama, plus halaman detail per model.
+
+<Callout type="tip" title="Alias slug">
+  Gunakan slug persis seperti yang dikembalikan `GET /v1/models`. Slug tidak case-sensitive di
+  sisi tampilan, tetapi selalu salin apa adanya dari katalog untuk menghindari salah ketik.
+  Slug yang tidak ada di katalog mengembalikan `404 MODEL_NOT_FOUND`; model yang sudah
+  deprecated atau sedang tidak tersedia mengembalikan `503 MODEL_UNAVAILABLE` beserta saran
+  slug penggantinya bila tersedia.
+</Callout>
+
+## Routing dan failover
+
+Hostlinku mengatur sendiri jalur internal yang melayani tiap model. Jika terjadi gangguan pada
+jalur yang sedang dipakai (5xx/timeout), request otomatis dicoba lagi lewat jalur lain sebelum
+menyerah. Kamu tetap memakai slug model yang sama dan tidak perlu mengubah apa pun; detail
+internal ini tidak ditampilkan di respons.

@@ -1,0 +1,356 @@
+---
+title: API Reference
+description: Referensi ringkas satu halaman — rate limit, Anthropic Messages API, OpenAI Chat Completions, OpenAI Responses API, kode error, dan daftar model
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Base URL: `https://api.hostlinku.com`. Semua endpoint gateway berada di bawah `/v1` dan menerima
+API key Hostlinku (`sk-…`) lewat header `Authorization: Bearer` **atau** `x-api-key`.
+
+## Rate Limiting
+
+Untuk menjaga kualitas layanan bagi semua pengguna, gateway memberlakukan batas berikut per API key:
+
+| Limit Type | Quota | Description |
+|---|---|---|
+| RPM (Requests/Minute) | **600 req/min** | Per API key, dibagi untuk semua model |
+| RPD (Requests/Day) | Tidak dibatasi | Dibatasi saldo akun & [limit kredit per API key](/authentication) |
+| TPM (Tokens/Minute) | Tidak dibatasi | `max_tokens` wajib ≤ batas output model (ditolak `400` bila melebihi) |
+
+**Detail rate limit:**
+
+- Jendela 60 detik per API key; request dari semua model dihitung bersama.
+- Request yang ditolak limiter **tidak** menyentuh saldo (tidak ada reservasi kredit).
+- Endpoint konsol & publik (`/api/*`) dibatasi **120 req/min per IP**; endpoint autentikasi
+  **30 percobaan / 15 menit per IP**.
+
+**Saat terkena limit:**
+
+- Mengembalikan HTTP `429 Too Many Requests`.
+- Header `Retry-After` berisi jumlah detik yang disarankan sebelum mencoba lagi.
+- Header `RateLimit-Limit` / `RateLimit-Remaining` / `RateLimit-Reset` (format IETF) menunjukkan kuota RPM saat ini.
+
+<Callout type="note" title="Butuh limit lebih tinggi?">
+  Hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com) dengan menyebutkan email akun dan perkiraan beban.
+</Callout>
+
+## Anthropic Messages API Format
+
+`POST /v1/messages`
+
+Panggil model dengan format native Anthropic. Header request harus memuat `x-api-key: YOUR_API_KEY`
+(atau `Authorization: Bearer`). Cocok untuk Anthropic SDK, Claude Code, Cursor, dan Cline — cukup
+set `ANTHROPIC_BASE_URL=https://api.hostlinku.com`. Dokumentasi lengkap: [Anthropic Messages](/anthropic-messages).
+
+### Request Body Parameters
+
+| Parameter | Type | Description | Required |
+|---|---|---|---|
+| `model` | string | Slug model Hostlinku, mis. `claude-sonnet-4-6` | true |
+| `messages` | array | Array pesan percakapan (`role`: `user` \| `assistant`) | true |
+| `max_tokens` | integer | Jumlah token output maksimum | true |
+| `system` | string \| array | Prompt sistem (array blok mendukung `cache_control`) | false |
+| `stream` | boolean | Streaming SSE, default `false` | false |
+| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | — | Sesuai spesifikasi Anthropic | false |
+
+### Example Request
+
+```bash
+curl --request POST \
+  --url https://api.hostlinku.com/v1/messages \
+  --header 'content-type: application/json' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'anthropic-version: 2023-06-01' \
+  --data '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "system": "You are a professional coding assistant",
+    "messages": [
+      { "role": "user", "content": "Write a quicksort in Python" }
+    ]
+  }'
+```
+
+### Response Example
+
+```json
+{
+  "id": "msg_mv5ujf05qf6ayfbx",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-sonnet-4-6",
+  "content": [
+    { "type": "text", "text": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 86,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 }
+  },
+  "hostlinku": { "cost": 0.0013, "currency": "🪙", "serviceMode": "performance", "latencyMs": 2410 }
+}
+```
+
+### Streaming Output
+
+```bash
+curl -N --request POST \
+  --url https://api.hostlinku.com/v1/messages \
+  --header 'content-type: application/json' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'accept: text/event-stream' \
+  --data '{
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 1024,
+    "messages": [{ "role": "user", "content": [{ "type": "text", "text": "Hello" }] }],
+    "stream": true
+  }'
+```
+
+Respons dikirim per potongan dalam format SSE:
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_…","type":"message","role":"assistant","model":"claude-sonnet-4-6","content":[],"stop_reason":null,"usage":{"input_tokens":10,"output_tokens":1}}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello"}}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":10,"output_tokens":5}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+## OpenAI Protocol (Chat Completions API)
+
+`POST /v1/chat/completions`
+
+Panggil model apa pun dengan format OpenAI Chat Completions. Header request harus memuat
+`Authorization: Bearer YOUR_API_KEY`. SDK OpenAI cukup diarahkan ke `base_url="https://api.hostlinku.com/v1"`.
+Dokumentasi lengkap: [Chat Completions](/chat-completions).
+
+### Request Body Parameters
+
+| Parameter | Type | Description | Required |
+|---|---|---|---|
+| `model` | string | Slug model Hostlinku, mis. `gpt-5-5` | true |
+| `messages` | array | Array pesan percakapan (`system` \| `user` \| `assistant` \| `tool`) | true |
+| `max_tokens` | integer | Jumlah token output maksimum | false |
+| `stream` | boolean | Streaming SSE, default `false` | false |
+| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | — | Sesuai spesifikasi OpenAI (+ ekstensi thinking) | false |
+
+### Example Request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "user", "content": "Write a quicksort in Python" }
+    ],
+    "stream": false
+  }'
+```
+
+### Example Response
+
+```json
+{
+  "id": "cmpl_mv5strfqh3zktr",
+  "object": "chat.completion",
+  "created": 1770000000,
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 12, "completion_tokens": 86, "total_tokens": 98 },
+  "hostlinku": { "cost": 0.0009, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1890 }
+}
+```
+
+### Streaming Output
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hello" }],
+    "stream": true
+  }'
+```
+
+```text
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"Hello"}}]}
+
+data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":5,"completion_tokens":12,"total_tokens":17}}
+
+data: [DONE]
+```
+
+## OpenAI Responses API Format
+
+`POST /v1/responses`
+
+Format yang dipakai **Codex CLI**, **OpenAI Agents SDK**, dan `client.responses.create()`. Header
+request memuat `Authorization: Bearer YOUR_API_KEY`; base URL `https://api.hostlinku.com/v1`.
+Stateless: `store` selalu `false`, `previous_response_id` ditolak `400` — kirim riwayat penuh di
+`input`. Dokumentasi lengkap: [Responses API](/responses).
+
+### Request Body Parameters
+
+| Parameter | Type | Description | Required |
+|---|---|---|---|
+| `model` | string | Slug model Hostlinku, mis. `gpt-5-5` | true |
+| `input` | string \| array | Teks, atau array item `message` / `function_call` / `function_call_output` / `reasoning` | true |
+| `instructions` | string | Prompt sistem | false |
+| `max_output_tokens` | integer | Jumlah token output maksimum | false |
+| `stream` | boolean | Streaming SSE (`event: response.*`), default `false` | false |
+| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | — | Sesuai spesifikasi OpenAI Responses | false |
+
+### Example Request
+
+```bash
+curl https://api.hostlinku.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-5-5",
+    "instructions": "Be concise.",
+    "input": "Write a quicksort in Python",
+    "max_output_tokens": 512
+  }'
+```
+
+### Example Response
+
+```json
+{
+  "id": "resp_mv5xpsggbnpc4x7g",
+  "object": "response",
+  "created_at": 1791850828,
+  "status": "completed",
+  "model": "gpt-5-5",
+  "output": [
+    { "id": "rs_…", "type": "reasoning", "summary": [], "encrypted_content": "…" },
+    { "id": "msg_…", "type": "message", "status": "completed", "role": "assistant",
+      "content": [{ "type": "output_text", "text": "def quicksort(arr): …", "annotations": [] }] }
+  ],
+  "usage": { "input_tokens": 20, "output_tokens": 95, "total_tokens": 115,
+             "input_tokens_details": { "cached_tokens": 0 }, "output_tokens_details": { "reasoning_tokens": 12 } },
+  "previous_response_id": null,
+  "store": false,
+  "hostlinku": { "cost": 0.0011, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1420 }
+}
+```
+
+### Streaming Output
+
+```text
+event: response.created
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_…","status":"in_progress","model":"gpt-5-5","output":[]}}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"def quicksort"}
+
+event: response.completed
+data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_…","status":"completed","output":[…],"usage":{"input_tokens":20,"output_tokens":95,"total_tokens":115}}}
+```
+
+## Error Codes
+
+Envelope error mengikuti protokol endpoint yang dipanggil:
+`/v1/chat/completions` → `{ "status": "error", "error": { "code", "message" } }`;
+`/v1/messages` → `{ "type": "error", "error": { "type", "message" } }`;
+`/v1/responses` → `{ "error": { "message", "type", "param", "code" } }`.
+
+| HTTP Status Code | Description | Example Error Message |
+|---|---|---|
+| 400 | Body tidak valid, `max_tokens` melebihi batas output model, atau model tidak tersedia di Service Mode API key. | `max_tokens (20000) melebihi batas output model 'claude-haiku-4-5' (16000).` |
+| 401 | API key tidak dikirim, tidak valid, dicabut, atau kedaluwarsa. | `API key tidak valid atau sudah dicabut.` |
+| 402 | Saldo tidak cukup untuk estimasi biaya request, atau limit kredit API key tercapai. | `Saldo tidak mencukupi.` |
+| 403 | Akun ditangguhkan / akses ditolak. | `Kamu tidak punya akses ke resource ini.` |
+| 404 | Slug model tidak ada di katalog. | `Model 'xxx' tidak ditemukan.` |
+| 413 | Body request melebihi ukuran maksimum. | `Payload terlalu besar.` |
+| 422 | Validasi body gagal (hanya `/v1/chat/completions`; `/v1/messages` & `/v1/responses` memakai 400). | `Request body tidak valid.` |
+| 429 | Rate limit terlampaui. | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
+| 503 | Model/upstream sedang tidak tersedia — aman untuk di-retry dengan backoff. | `Model sedang tidak tersedia. Coba lagi nanti.` |
+
+Pesan error **tidak pernah** memuat identitas atau teks mentah provider upstream. Daftar kode
+lengkap format OpenAI ada di [Error](/errors).
+
+### 429 Response Headers
+
+| Response Header | Description |
+|---|---|
+| `Retry-After` | Waktu tunggu yang disarankan sebelum mencoba lagi (detik) |
+| `RateLimit-Limit` | Batas RPM |
+| `RateLimit-Remaining` | Sisa request pada jendela berjalan |
+| `RateLimit-Reset` | Detik sampai jendela berikutnya dimulai |
+
+## Query Available Models
+
+`GET /v1/models`
+
+Mengembalikan model yang tersedia untuk **Service Mode API key** yang dipakai, beserta harga 🪙 per
+1M token pada mode tersebut.
+
+### Example Request
+
+```bash
+curl --request GET \
+  --url https://api.hostlinku.com/v1/models \
+  --header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+### Response Example
+
+```json
+{
+  "object": "list",
+  "service_mode": "performance",
+  "data": [
+    {
+      "id": "claude-haiku-4-5",
+      "object": "model",
+      "created": 1760000000,
+      "owned_by": "hostlinku",
+      "context_window": 200000,
+      "capabilities": ["text", "tool-calling", "json-mode", "streaming", "long-context"],
+      "service_mode": "performance",
+      "pricing": { "input": 0.8, "output": 4, "cache_read": 0.08, "cache_write": 1, "unit": "1M_tokens", "currency": "🪙" }
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "object": "model",
+      "created": 1760000000,
+      "owned_by": "hostlinku",
+      "context_window": 1000000,
+      "capabilities": ["text", "vision", "tool-calling", "json-mode", "streaming", "reasoning", "long-context"],
+      "service_mode": "performance",
+      "pricing": { "input": 2.4, "output": 12, "cache_read": 0.24, "cache_write": 3, "unit": "1M_tokens", "currency": "🪙" }
+    }
+  ]
+}
+```
+
+<Callout type="note">
+  Gunakan endpoint ini untuk mengambil nama model terbaru; `id` adalah slug yang dipakai di field
+  `model` pada kedua format API. Katalog lengkap beserta harga ada di [Model](/models).
+</Callout>
