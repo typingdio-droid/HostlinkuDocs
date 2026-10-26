@@ -3,6 +3,8 @@ title: Anthropic Messages
 description: Referensi endpoint POST /v1/messages (Anthropic-compatible) — pakai Anthropic SDK, Claude Code, atau Cursor dengan API key Hostlinku
 ---
 
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
 import { Callout } from "/snippets/mdx.jsx";
 
 Selain format OpenAI, Hostlinku juga menyediakan endpoint yang kompatibel dengan
@@ -116,7 +118,7 @@ rincian per field di `error.details.issues`.
 ```
 
 `id` dan `model` selalu identitas publik Hostlinku. Blok `hostlinku` adalah ekstensi (SDK Anthropic
-mengabaikannya) berisi biaya 🪙, Service Mode API key, dan latensi.
+mengabaikannya) berisi biaya <CreditIcon />, Service Mode API key, dan latensi.
 
 <Callout type="note" title="Konvensi usage Anthropic">
   Sesuai spesifikasi Anthropic, `input_tokens` **tidak** memuat token cache; token cache dilaporkan

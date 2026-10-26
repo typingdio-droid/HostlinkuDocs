@@ -3,6 +3,8 @@ title: Model
 description: Endpoint GET /v1/models, bentuk data katalog, dan cara memilih model yang tepat
 ---
 
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
 import { Callout } from "/snippets/mdx.jsx";
 
 Hostlinku menyediakan satu katalog model terpusat. Setiap model punya **slug** unik yang dipakai
@@ -12,7 +14,7 @@ konteks, kapabilitas, dan harga per token.
 ## `GET /v1/models`
 
 Mengembalikan semua model yang berstatus `available`, belum deprecated, dan tersedia untuk
-**Service Mode API key** yang dipakai (Performance atau Low-Cost), beserta harga 🪙 per 1M token
+**Service Mode API key** yang dipakai (Performance atau Low-Cost), beserta harga <CreditIcon /> per 1M token
 pada mode tersebut.
 
 ```http
@@ -63,7 +65,7 @@ Respons (contoh dipotong; nilai persis untuk akun kamu diambil dari endpoint ini
 | `owned_by` | Selalu `"hostlinku"` — penanda bahwa model dikelola oleh katalog Hostlinku. |
 | `context_window` | Ukuran konteks maksimum dalam token (input + output). |
 | `capabilities` | Daftar kapabilitas, mis. `vision`, `tool-calling`, `json-mode`, `reasoning`, `long-context`. |
-| `pricing` | Objek harga pada Service Mode tersebut; `null` bila model belum punya harga di mode itu. `pricing.unit` selalu `"1M_tokens"` dan `pricing.currency` selalu `"🪙"` (1🪙 = $1). |
+| `pricing` | Objek harga pada Service Mode tersebut; `null` bila model belum punya harga di mode itu. `pricing.unit` selalu `"1M_tokens"` dan `pricing.currency` selalu `"🪙"` (1 <CreditIcon /> = $1). |
 | `pricing.input` / `pricing.output` | Harga per **1M token** (bukan per 1 token atau per 1K) untuk token prompt / token jawaban. |
 | `pricing.cache_read` / `pricing.cache_write` | Harga per 1M token untuk cache read / cache write 5 menit (lihat [Prompt Caching](/prompt-caching)); `null` bila model tidak mendukung. |
 

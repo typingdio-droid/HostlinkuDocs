@@ -3,6 +3,8 @@ title: Responses API
 description: Referensi endpoint POST /v1/responses (OpenAI Responses API-compatible) — pakai Codex CLI, OpenAI Agents SDK, atau client.responses.create() dengan API key Hostlinku
 ---
 
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
 import { Callout } from "/snippets/mdx.jsx";
 
 Hostlinku menyediakan endpoint yang kompatibel dengan
@@ -157,7 +159,7 @@ diabaikan). Body tidak valid ditolak `400 invalid_request_error` dengan rincian 
 ```
 
 `id` dan `model` selalu identitas publik Hostlinku. Blok `hostlinku` adalah ekstensi (SDK OpenAI
-mengabaikannya) berisi biaya 🪙, Service Mode API key, dan latensi. `status: "incomplete"` dengan
+mengabaikannya) berisi biaya <CreditIcon />, Service Mode API key, dan latensi. `status: "incomplete"` dengan
 `incomplete_details.reason = "max_output_tokens"` berarti output terpotong oleh `max_output_tokens`
 — tetap ditagih sesuai token nyata.
 

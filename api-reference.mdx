@@ -3,6 +3,8 @@ title: API Reference
 description: Referensi ringkas satu halaman — rate limit, Anthropic Messages API, OpenAI Chat Completions, OpenAI Responses API, kode error, dan daftar model
 ---
 
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
 import { Callout } from "/snippets/mdx.jsx";
 
 Base URL: `https://api.hostlinku.com`. Semua endpoint gateway berada di bawah `/v1` dan menerima
@@ -308,7 +310,7 @@ lengkap format OpenAI ada di [Error](/errors).
 
 `GET /v1/models`
 
-Mengembalikan model yang tersedia untuk **Service Mode API key** yang dipakai, beserta harga 🪙 per
+Mengembalikan model yang tersedia untuk **Service Mode API key** yang dipakai, beserta harga <CreditIcon /> per
 1M token pada mode tersebut.
 
 ### Example Request
