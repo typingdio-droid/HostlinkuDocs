@@ -55,14 +55,14 @@ footer [data-hl-footer-desc] {
   color: #737373;
 }
 html.dark footer [data-hl-footer-desc] { color: #a3a3a3; }
-footer .advanced-footer .md\:flex-col { gap-y: 12px !important; }
 @media (max-width: 767px) {
   footer [data-hl-footer-desc] { display: none; }
 }
 
 @media (min-width: 768px) {
-  footer .advanced-footer .md\:flex-col {
+  footer div[class*="md:flex-col"] {
     row-gap: 12px !important;
+    gap: 12px !important;
     justify-content: flex-start !important;
   }
 }
