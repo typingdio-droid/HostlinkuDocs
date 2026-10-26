@@ -45,3 +45,17 @@ header a[href*="console.hostlinku.com"] .text-white,
 header a[href*="console.hostlinku.com"] svg {
   color: #ffffff !important;
 }
+
+/* Isi slot brand footer yang kosong. */
+footer [data-hl-footer-desc] {
+  max-width: 320px;
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #737373;
+}
+html.dark footer [data-hl-footer-desc] { color: #a3a3a3; }
+footer .advanced-footer .md\:flex-col { gap-y: 12px !important; }
+@media (max-width: 767px) {
+  footer [data-hl-footer-desc] { display: none; }
+}
