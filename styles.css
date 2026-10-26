@@ -1,7 +1,7 @@
 :root { --hl-surface: #ffffff; --hl-border: rgba(0,0,0,.14); --hl-muted: rgba(0,0,0,.06); }
 html.dark, [data-theme="dark"] { --hl-surface: #0b0b0f; --hl-border: rgba(255,255,255,.16); --hl-muted: rgba(255,255,255,.07); }
 
-.hl-callout { display:flex; gap:12px; margin:1rem 0; padding:16px 20px; border:1px solid color-mix(in srgb, var(--hl-callout-color) 30%, transparent); border-radius:2px; background:color-mix(in srgb, var(--hl-callout-color) 10%, transparent); }
+.hl-callout { display:flex; gap:12px; margin:1rem 0; padding:16px 20px; border:1px solid color-mix(in srgb, var(--hl-callout-color) 30%, transparent); border-radius:4px; background:color-mix(in srgb, var(--hl-callout-color) 10%, transparent); }
 .hl-callout-icon { flex:0 0 auto; margin-top:2px; }
 .hl-callout-title { font-weight:700; color:var(--hl-callout-color); font-size:.92rem; margin-bottom:4px; }
 .hl-callout-content > :first-child { margin-top:0; }
@@ -37,7 +37,7 @@ button,
 [role="dialog"],
 [role="menu"],
 [role="listbox"] {
-  border-radius: 2px !important;
+  border-radius: 4px !important;
 }
 
 /* Kontras tombol Console pada tema monokrom. */
