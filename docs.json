@@ -239,7 +239,119 @@
               }
             ]
           }
-        ]
+        ],
+        "footer": {
+          "socials": {
+            "website": "https://hostlinku.com"
+          },
+          "links": [
+            {
+              "header": "PRODUK",
+              "items": [
+                {
+                  "label": "Website",
+                  "href": "https://hostlinku.com"
+                },
+                {
+                  "label": "Console",
+                  "href": "https://console.hostlinku.com"
+                },
+                {
+                  "label": "Harga",
+                  "href": "https://hostlinku.com/pricing"
+                }
+              ]
+            },
+            {
+              "header": "DOKUMENTASI",
+              "items": [
+                {
+                  "label": "Memulai",
+                  "href": "/getting-started"
+                },
+                {
+                  "label": "Autentikasi",
+                  "href": "/authentication"
+                },
+                {
+                  "label": "Chat Completions",
+                  "href": "/chat-completions"
+                },
+                {
+                  "label": "Model",
+                  "href": "/models"
+                }
+              ]
+            },
+            {
+              "header": "BANTUAN",
+              "items": [
+                {
+                  "label": "FAQ",
+                  "href": "/faq"
+                },
+                {
+                  "label": "Dukungan",
+                  "href": "/support"
+                },
+                {
+                  "label": "Billing & Saldo",
+                  "href": "/billing"
+                },
+                {
+                  "label": "Status",
+                  "href": "https://status.hostlinku.com"
+                }
+              ]
+            },
+            {
+              "header": "LEGAL",
+              "items": [
+                {
+                  "label": "Syarat & Ketentuan",
+                  "href": "/legals/terms-of-service"
+                },
+                {
+                  "label": "Kebijakan Privasi",
+                  "href": "/legals/privacy-policy"
+                },
+                {
+                  "label": "Pengembalian Dana",
+                  "href": "/legals/refund-policy"
+                },
+                {
+                  "label": "Kebijakan Penggunaan",
+                  "href": "/legals/acceptable-use-policy"
+                },
+                {
+                  "label": "Keamanan",
+                  "href": "/legals/security"
+                }
+              ]
+            }
+          ]
+        },
+        "navbar": {
+          "links": [
+            {
+              "label": "Dokumentasi",
+              "href": "/"
+            },
+            {
+              "label": "Website",
+              "href": "https://hostlinku.com"
+            },
+            {
+              "label": "Status",
+              "href": "https://status.hostlinku.com"
+            }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "Console",
+            "href": "https://console.hostlinku.com"
+          }
+        }
       },
       {
         "language": "en",
@@ -345,7 +457,119 @@
               }
             ]
           }
-        ]
+        ],
+        "footer": {
+          "socials": {
+            "website": "https://hostlinku.com"
+          },
+          "links": [
+            {
+              "header": "PRODUCT",
+              "items": [
+                {
+                  "label": "Website",
+                  "href": "https://hostlinku.com"
+                },
+                {
+                  "label": "Console",
+                  "href": "https://console.hostlinku.com"
+                },
+                {
+                  "label": "Pricing",
+                  "href": "https://hostlinku.com/pricing"
+                }
+              ]
+            },
+            {
+              "header": "DOCUMENTATION",
+              "items": [
+                {
+                  "label": "Quickstart",
+                  "href": "/en/getting-started"
+                },
+                {
+                  "label": "Authentication",
+                  "href": "/en/authentication"
+                },
+                {
+                  "label": "Chat Completions",
+                  "href": "/en/chat-completions"
+                },
+                {
+                  "label": "Models",
+                  "href": "/en/models"
+                }
+              ]
+            },
+            {
+              "header": "HELP",
+              "items": [
+                {
+                  "label": "FAQ",
+                  "href": "/en/faq"
+                },
+                {
+                  "label": "Support",
+                  "href": "/en/support"
+                },
+                {
+                  "label": "Billing & Balance",
+                  "href": "/en/billing"
+                },
+                {
+                  "label": "Status",
+                  "href": "https://status.hostlinku.com"
+                }
+              ]
+            },
+            {
+              "header": "LEGAL",
+              "items": [
+                {
+                  "label": "Terms of Service",
+                  "href": "/en/legals/terms-of-service"
+                },
+                {
+                  "label": "Privacy Policy",
+                  "href": "/en/legals/privacy-policy"
+                },
+                {
+                  "label": "Refund Policy",
+                  "href": "/en/legals/refund-policy"
+                },
+                {
+                  "label": "Acceptable Use",
+                  "href": "/en/legals/acceptable-use-policy"
+                },
+                {
+                  "label": "Security",
+                  "href": "/en/legals/security"
+                }
+              ]
+            }
+          ]
+        },
+        "navbar": {
+          "links": [
+            {
+              "label": "Documentation",
+              "href": "/en"
+            },
+            {
+              "label": "Website",
+              "href": "https://hostlinku.com"
+            },
+            {
+              "label": "Status",
+              "href": "https://status.hostlinku.com"
+            }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "Console",
+            "href": "https://console.hostlinku.com"
+          }
+        }
       }
     ]
   },
