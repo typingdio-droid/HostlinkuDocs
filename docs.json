@@ -883,6 +883,9 @@
     }
   ],
   "seo": {
-    "indexing": "all"
+    "indexing": "all",
+    "metatags": {
+      "canonical": "https://docs.hostlinku.com"
+    }
   }
 }
