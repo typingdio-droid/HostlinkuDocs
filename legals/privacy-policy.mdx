@@ -1,0 +1,179 @@
+---
+title: "Kebijakan Privasi"
+description: "Kebijakan privasi Hostlinku: data akun, API key, metadata request, body logging, pembayaran, pihak penerima data, retensi, keamanan, dan hak subjek data sesuai UU PDP."
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Terakhir diperbarui:** 11 Oktober 2026.
+
+<a id="cakupan"></a>
+
+## 1. Cakupan dan pengendali data
+
+Kebijakan ini berlaku untuk situs hostlinku.com, console, dan API Hostlinku. Pengendali data pribadi adalah Hostlinku; identitas badan usaha tercantum pada [bagian Kontak privasi](#kontak). Kebijakan ini disusun dengan mengacu pada Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP) dan merupakan bagian dari [Syarat dan Ketentuan](/legals/terms-of-service).
+
+Jika kamu memakai API untuk memproses data pribadi pengguna akhir kamu, kamu bertindak sebagai pengendali atas data tersebut dan kami memprosesnya atas instruksi kamu (sebagai prosesor) sejauh diperlukan untuk menjalankan Layanan.
+
+<a id="data"></a>
+
+## 2. Data yang kami kumpulkan
+
+### Data akun dan autentikasi
+
+- nama, alamat email, nama perusahaan (opsional), dan foto profil bila disediakan oleh penyedia SSO;
+- hash kata sandi (kami tidak menyimpan kata sandi dalam bentuk asli);
+- identitas akun dari penyedia SSO (misalnya Google, GitHub, Discord) bila kamu masuk melalui SSO;
+- status verifikasi email, kode OTP sementara, peran akun, dan status akun;
+- data sesi login dan catatan audit keamanan seperti waktu login, logout, pendaftaran, perubahan pengaturan, penyesuaian saldo oleh admin, dan aktivitas API key, beserta alamat IP dan user agent terkait.
+
+### API key
+
+Nilai API key hanya disimpan sebagai hash SHA-256 dan tidak dapat kami tampilkan ulang. Kami menyimpan nama key, awalan key untuk identifikasi, scope, masa berlaku, batas kredit, waktu pemakaian terakhir, dan status pencabutan.
+
+### Metadata request
+
+Untuk request yang lolos autentikasi dan pemeriksaan saldo, kami mencatat:
+
+- waktu request, model yang diminta, dan API key yang digunakan;
+- jumlah token input, output, dan cache, serta biaya yang ditagihkan;
+- latensi, waktu hingga token pertama, mode streaming, finish reason, kode status, dan pesan galat;
+- alamat IP asal request;
+- informasi rute upstream internal yang hanya dapat dilihat admin Hostlinku.
+
+Request yang ditolak sebelum tahap tersebut, misalnya karena autentikasi gagal, rate limit, atau saldo tidak cukup, tidak dicatat sebagai baris log request di console dan tidak dikenai biaya.
+
+### Saldo dan pembayaran
+
+Kami menyimpan riwayat top-up, pemakaian, pengembalian, dan penyesuaian saldo, termasuk nominal, metode, status, dan nomor referensi transaksi. Pembayaran diproses oleh iPaymu (QRIS dan virtual account) dan BlockBee (kripto). Kami tidak menerima maupun menyimpan nomor kartu lengkap, CVV, atau kredensial perbankan kamu. Untuk pembayaran kripto, alamat dompet dan hash transaksi dapat tercatat.
+
+### Data teknis dan komunikasi
+
+- alamat IP, jenis browser, perangkat, dan halaman rujukan yang tercatat di log server dan layanan perlindungan Cloudflare;
+- isi korespondensi saat kamu menghubungi support, melaporkan bug, atau mengajukan refund.
+
+<a id="konten-api"></a>
+
+## 3. Isi request dan body logging
+
+Isi request (prompt, pesan, lampiran) dan isi respons model diproses untuk diteruskan ke upstream provider dan dikembalikan ke kamu. Secara default, isi tersebut **tidak disimpan** di database kami; yang tersimpan hanya metadata pada bagian 2.
+
+Admin Hostlinku dapat mengaktifkan **body logging** untuk seluruh platform guna keperluan debugging dan investigasi galat. Selama fitur ini aktif:
+
+- isi request dan respons disimpan bersama log request terkait;
+- field yang berisi kredensial (seperti `authorization`, `api_key`, `password`, `token`) serta identitas upstream diganti `[redacted]` sebelum disimpan. Penyaringan ini berdasarkan nama field, sehingga rahasia yang kamu tulis di dalam teks prompt tidak ikut tersaring;
+- isi yang melebihi batas ukuran tidak disimpan;
+- isi tersebut dihapus otomatis setelah masa retensi yang ditetapkan, secara default 14 hari, sementara metadata request tetap dipertahankan;
+- isi dapat dilihat oleh pemilik akun melalui console dan oleh admin Hostlinku yang berwenang.
+
+<Callout type="note">
+
+Kami tidak menggunakan isi request maupun respons kamu untuk melatih model. Upstream provider memproses isi request sesuai kebijakan privasi masing-masing. Hindari mengirim data pribadi sensitif yang tidak diperlukan.
+
+</Callout>
+
+<a id="tujuan"></a>
+
+## 4. Tujuan dan dasar pemrosesan
+
+- **Menjalankan Layanan**: autentikasi, perutean request, dan pengiriman respons (pelaksanaan perjanjian).
+- **Penagihan**: reservasi dan pemotongan saldo, riwayat transaksi, pemrosesan top-up dan refund (pelaksanaan perjanjian dan kewajiban hukum).
+- **Keamanan**: rate limit, deteksi penyalahgunaan dan penipuan, captcha, audit log (kepentingan yang sah).
+- **Dukungan dan notifikasi**: OTP, reset kata sandi, peringatan saldo rendah, pemberitahuan perubahan layanan (pelaksanaan perjanjian).
+- **Peningkatan layanan**: statistik pemakaian agregat untuk kapasitas dan kualitas (kepentingan yang sah).
+- **Kepatuhan hukum**: menanggapi permintaan otoritas yang sah dan memenuhi kewajiban perpajakan atau akuntansi.
+
+Kami tidak menjual data pribadi kamu.
+
+<a id="penerima"></a>
+
+## 5. Pihak penerima data
+
+Data dibagikan hanya sejauh diperlukan kepada:
+
+- **Upstream provider model**: menerima isi request yang kamu kirim untuk menghasilkan respons. Kami tidak meneruskan email atau identitas akun kamu kepada mereka.
+- **Penyedia pembayaran**: iPaymu dan BlockBee untuk memproses top-up dan refund.
+- **Penyedia email**: Brevo atau Amazon SES untuk mengirim OTP, notifikasi, dan email transaksional.
+- **Penyedia identitas SSO**: Google, GitHub, Discord, atau penyedia lain yang kamu pilih untuk masuk.
+- **Infrastruktur**: Cloudflare (jaringan, perlindungan, Turnstile, dan penyimpanan objek R2) serta penyedia server dan database.
+- **Otoritas**: bila diwajibkan oleh hukum atau perintah yang sah, atau untuk melindungi hak, keamanan, dan properti kami maupun pengguna lain.
+- **Penerus usaha**: dalam penggabungan, pengambilalihan, atau pengalihan usaha, dengan tetap tunduk pada kebijakan ini.
+
+<a id="lintas-negara"></a>
+
+## 6. Transfer lintas negara
+
+Sebagian penerima di atas, termasuk upstream provider dan penyedia pembayaran, memproses data di luar Indonesia. Kami memilih penyedia yang menerapkan pelindungan data yang memadai dan melakukan transfer sesuai ketentuan UU PDP. Dengan memakai Layanan, kamu memahami bahwa isi request diproses di wilayah tempat upstream provider beroperasi.
+
+<a id="retensi"></a>
+
+## 7. Retensi data
+
+- **Data akun dan API key**: selama akun aktif, lalu dihapus atau dianonimkan setelah akun ditutup, kecuali yang wajib disimpan untuk kepentingan hukum.
+- **Isi request dan respons**: tidak disimpan saat body logging nonaktif; bila aktif, dihapus otomatis setelah masa retensi (default 14 hari).
+- **Metadata request dan riwayat transaksi**: disimpan selama akun aktif dan sesudahnya selama diperlukan untuk penagihan, akuntansi, perpajakan, penyelesaian sengketa, dan pencegahan penipuan.
+- **Audit log keamanan**: disimpan selama diperlukan untuk investigasi dan pembuktian.
+- **Kode OTP dan sesi**: kedaluwarsa otomatis; sesi login berlaku paling lama 7 hari.
+
+Salinan cadangan dapat tetap ada untuk jangka terbatas setelah data dihapus dari sistem utama, dan tidak digunakan untuk keperluan lain selain pemulihan.
+
+<a id="keamanan"></a>
+
+## 8. Keamanan
+
+Kami menerapkan langkah teknis dan organisasi yang wajar, antara lain koneksi HTTPS, hash kata sandi dan API key, cookie sesi `HttpOnly`, rate limit, captcha pada formulir publik, pembatasan akses admin, dan audit log. Rincian lebih lanjut ada di halaman [Keamanan](/legals/security). Tidak ada sistem yang sepenuhnya aman; jika terjadi kegagalan pelindungan data pribadi, kami akan memberi tahu kamu dan otoritas sesuai ketentuan UU PDP.
+
+<a id="hak"></a>
+
+## 9. Hak kamu
+
+Sesuai UU PDP, kamu berhak untuk:
+
+- memperoleh informasi tentang pemrosesan data pribadi kamu;
+- mengakses dan memperoleh salinan data pribadi kamu;
+- memperbaiki data yang tidak akurat, sebagian dapat dilakukan langsung di halaman profil console;
+- meminta penghapusan data dan penutupan akun;
+- menarik persetujuan atau mengajukan keberatan atas pemrosesan tertentu;
+- membatasi atau menunda pemrosesan;
+- mengajukan keluhan kepada lembaga yang berwenang di bidang pelindungan data pribadi.
+
+Ajukan permintaan ke [privacy@hostlinku.com](mailto:privacy@hostlinku.com) dari email terdaftar. Kami dapat meminta verifikasi identitas dan akan menanggapi dalam jangka waktu yang ditetapkan peraturan. Sebagian data dapat tetap kami simpan bila diwajibkan hukum, misalnya catatan transaksi. Ajukan refund sisa saldo sebelum meminta penghapusan akun.
+
+<a id="cookie"></a>
+
+## 10. Cookie dan penyimpanan lokal
+
+- `hl_session` dan cookie sesi server: menjaga status login, berlaku hingga 7 hari;
+- cookie state SSO: berumur pendek untuk mengamankan alur masuk melalui penyedia identitas;
+- cookie preferensi tampilan, misalnya status sidebar console;
+- cookie Cloudflare dan Turnstile untuk perlindungan dari bot dan serangan;
+- penyimpanan lokal browser untuk riwayat percakapan playground, yang tersimpan di perangkat kamu dan tidak dikirim ke server kecuali saat kamu mengirim request.
+
+Kami tidak memasang cookie iklan atau analitik pihak ketiga. Menonaktifkan cookie di browser dapat membuat login dan console tidak berfungsi.
+
+<a id="anak"></a>
+
+## 11. Pengguna di bawah umur
+
+Layanan ditujukan untuk developer dan bisnis. Data pribadi anak di bawah 18 tahun hanya boleh diproses dengan persetujuan orang tua atau wali. Jika kami mengetahui data anak diproses tanpa persetujuan tersebut, kami akan menghapusnya.
+
+<a id="komunikasi"></a>
+
+## 12. Email dan komunikasi
+
+Kami mengirim email transaksional yang diperlukan untuk menjalankan akun, seperti OTP verifikasi, reset kata sandi, peringatan saldo rendah, dan pemberitahuan perubahan kebijakan. Email ini tidak dapat dihentikan selama akun aktif. Bila kami mengirim email promosi, setiap email akan memuat cara untuk berhenti berlangganan.
+
+<a id="perubahan"></a>
+
+## 13. Perubahan kebijakan
+
+Kami dapat memperbarui kebijakan ini. Tanggal pembaruan tercantum di bagian atas halaman. Perubahan yang signifikan, misalnya tujuan pemrosesan baru atau penerima data baru, diberitahukan melalui email atau console sebelum berlaku.
+
+<a id="kontak"></a>
+
+## 14. Kontak privasi
+
+HostLinku, Depok, Indonesia. 
+Data Protection Officer (DPO), khusus perlindungan data pribadi: [dpo@hostlinku.com](mailto:dpo@hostlinku.com) 
+Pertanyaan privasi, permintaan penghapusan data, dan hak pengguna: [privacy@hostlinku.com](mailto:privacy@hostlinku.com) 
+Pertanyaan umum dan dukungan pelanggan: [halo@hostlinku.com](mailto:halo@hostlinku.com)

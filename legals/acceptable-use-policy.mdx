@@ -1,0 +1,101 @@
+---
+title: "Kebijakan Penggunaan"
+description: "Kebijakan penggunaan API Hostlinku: penggunaan yang diizinkan, konten dan aktivitas terlarang, rate limit, penegakan, dan cara melaporkan pelanggaran."
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Terakhir diperbarui:** 11 Oktober 2026.
+
+<a id="cakupan"></a>
+
+## 1. Cakupan
+
+Kebijakan ini berlaku untuk setiap akun, API key, dan request ke Hostlinku, termasuk request yang dikirim aplikasi kamu atas nama pengguna akhir. Kebijakan ini merupakan bagian dari [Syarat dan Ketentuan](/legals/terms-of-service). Kamu bertanggung jawab atas pemakaian melalui akun kamu, termasuk oleh pengguna akhir aplikasi kamu.
+
+<a id="diizinkan"></a>
+
+## 2. Penggunaan yang diizinkan
+
+- aplikasi percakapan, asisten, ringkasan, terjemahan, dan generasi teks;
+- embeddings untuk pencarian, rekomendasi, dan klasifikasi;
+- code generation, agent, dan otomatisasi alur kerja;
+- riset, evaluasi, eksperimen, dan prototipe;
+- produk komersial yang dibangun di atas API, selama mematuhi kebijakan ini.
+
+<a id="dilarang"></a>
+
+## 3. Konten dan aktivitas terlarang
+
+- **Eksploitasi anak**: konten seksual atau eksploitatif yang melibatkan anak dalam bentuk apa pun. Pelanggaran dilaporkan ke otoritas berwenang.
+- **Kekerasan dan senjata**: hasutan kekerasan, terorisme, atau instruksi pembuatan senjata, bahan peledak, maupun senjata kimia, biologi, radiologi, atau nuklir.
+- **Penipuan dan rekayasa sosial**: phishing, scam, investasi bodong, pemalsuan dokumen, atau deepfake untuk menipu.
+- **Malware dan intrusi**: membuat malware, ransomware, atau kode untuk menyusupi sistem yang bukan milik kamu atau tanpa izin pemiliknya.
+- **Spam dan manipulasi**: pesan massal tanpa persetujuan, jaringan bot, ulasan palsu, atau manipulasi metrik dan platform pihak ketiga.
+- **Pelanggaran privasi**: memproses data pribadi tanpa dasar hukum, pengawasan atau pelacakan individu tanpa persetujuan, serta pengenalan biometrik terhadap individu tanpa izin.
+- **Diskriminasi**: keputusan otomatis yang merugikan orang berdasarkan ras, agama, gender, disabilitas, atau karakteristik yang dilindungi hukum.
+- **Pelanggaran hak cipta**: mereproduksi materi berhak cipta secara masif atau menghapus watermark dan tanda kepemilikan.
+- **Peniruan identitas**: konten yang menyesatkan seolah berasal dari orang atau organisasi tertentu tanpa izin.
+- **Pelanggaran hukum lain**: aktivitas yang melanggar UU ITE, UU PDP, atau peraturan sektor yang berlaku.
+
+<a id="teknis"></a>
+
+## 4. Larangan teknis
+
+- menghindari rate limit, captcha, verifikasi, atau batas saldo, termasuk dengan banyak akun atau rotasi API key;
+- membanjiri endpoint, menjalankan load test, atau pemindaian kerentanan tanpa izin tertulis;
+- mencoba mengungkap identitas upstream, prompt sistem, atau konfigurasi internal yang tidak kami tampilkan;
+- jailbreak atau prompt injection yang ditujukan untuk melewati kebijakan keamanan model;
+- menggunakan output untuk melatih atau mendistilasi model pesaing bila dilarang oleh ketentuan upstream provider model tersebut;
+- menjual ulang, membagikan, atau mempublikasikan API key.
+
+<a id="aplikasi"></a>
+
+## 5. Kewajiban untuk aplikasi kamu
+
+- Beri tahu pengguna akhir bahwa mereka berinteraksi dengan AI bila hal itu tidak jelas dari konteks.
+- Terapkan moderasi dan pengawasan manusia yang memadai untuk kasus berisiko tinggi seperti kesehatan, hukum, keuangan, dan rekrutmen.
+- Simpan API key di sisi server dan batasi akses pengguna akhir melalui backend kamu sendiri.
+- Sediakan saluran bagi pengguna akhir untuk melaporkan output yang berbahaya.
+
+<a id="upstream"></a>
+
+## 6. Kebijakan upstream provider
+
+Setiap model dijalankan oleh upstream provider yang memiliki kebijakan penggunaannya sendiri. Kamu wajib mematuhi kebijakan tersebut selain kebijakan ini. Request dapat ditolak atau difilter oleh upstream, dan kami dapat membatasi akses ke model tertentu bila provider memintanya.
+
+<a id="rate-limit"></a>
+
+## 7. Rate limit
+
+Batas default saat ini:
+
+- API inferensi: 600 request per menit per API key;
+- API console dan publik: 120 request per menit per alamat IP;
+- endpoint autentikasi (login, daftar, OTP): 30 percobaan per 15 menit.
+
+Request yang melewati batas ditolak dengan status `429` tanpa biaya. Sisa kuota dikirim melalui header `RateLimit-*`. Batas dapat berubah sesuai kapasitas dan dapat dinaikkan untuk akun tertentu; hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com).
+
+<a id="penegakan"></a>
+
+## 8. Penegakan
+
+<Callout type="note">
+
+Bergantung pada tingkat pelanggaran, kami dapat:
+
+- menolak atau menyaring request tertentu;
+- memberi peringatan dan meminta perbaikan dalam waktu tertentu;
+- membatasi rate limit atau akses model;
+- mencabut API key, menangguhkan, atau menutup akun;
+- melaporkan ke otoritas berwenang bila diwajibkan hukum atau menyangkut keselamatan orang.
+
+Saldo pada akun yang ditutup karena pelanggaran diatur dalam [Kebijakan Pengembalian Dana](/legals/refund-policy).
+
+</Callout>
+
+<a id="pelaporan"></a>
+
+## 9. Pelaporan pelanggaran
+
+Laporkan dugaan penyalahgunaan dan kerentanan keamanan ke [halo@hostlinku.com](mailto:halo@hostlinku.com) sesuai panduan di halaman [Keamanan](/legals/security). Sertakan deskripsi, waktu kejadian, dan ID request bila ada.

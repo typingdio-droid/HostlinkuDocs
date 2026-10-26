@@ -103,6 +103,31 @@
             "href": "https://status.hostlinku.com"
           }
         ]
+      },
+      {
+        "header": "LEGAL",
+        "items": [
+          {
+            "label": "Syarat & Ketentuan",
+            "href": "/legals/terms-of-service"
+          },
+          {
+            "label": "Kebijakan Privasi",
+            "href": "/legals/privacy-policy"
+          },
+          {
+            "label": "Pengembalian Dana",
+            "href": "/legals/refund-policy"
+          },
+          {
+            "label": "Kebijakan Penggunaan",
+            "href": "/legals/acceptable-use-policy"
+          },
+          {
+            "label": "Keamanan",
+            "href": "/legals/security"
+          }
+        ]
       }
     ]
   },
@@ -197,6 +222,22 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "Legal",
+            "icon": "scale",
+            "groups": [
+              {
+                "group": "Dokumen Legal",
+                "pages": [
+                  "legals/terms-of-service",
+                  "legals/refund-policy",
+                  "legals/privacy-policy",
+                  "legals/acceptable-use-policy",
+                  "legals/security"
+                ]
+              }
+            ]
           }
         ]
       },
@@ -284,6 +325,22 @@
                       "en/integrations/agents-sdk"
                     ]
                   }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Legal",
+            "icon": "scale",
+            "groups": [
+              {
+                "group": "Legal Documents",
+                "pages": [
+                  "en/legals/terms-of-service",
+                  "en/legals/refund-policy",
+                  "en/legals/privacy-policy",
+                  "en/legals/acceptable-use-policy",
+                  "en/legals/security"
                 ]
               }
             ]

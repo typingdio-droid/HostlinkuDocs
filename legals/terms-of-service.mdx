@@ -1,0 +1,215 @@
+---
+title: "Syarat dan Ketentuan"
+description: "Syarat dan Ketentuan penggunaan Hostlinku: akun, API key, saldo prabayar, penagihan per request, batasan layanan, tanggung jawab, dan penyelesaian sengketa."
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Terakhir diperbarui:** 11 Oktober 2026.
+
+<a id="ruang-lingkup"></a>
+
+## 1. Ruang lingkup dan persetujuan
+
+Hostlinku (selanjutnya **Hostlinku** atau **kami**) adalah layanan yang identitas badan usahanya tercantum pada [bagian Kontak](#kontak). Hostlinku menyediakan satu API yang kompatibel dengan format OpenAI untuk mengakses berbagai model AI dari sejumlah upstream provider, beserta console untuk mengelola API key, saldo, dan riwayat pemakaian (selanjutnya **Layanan**).
+
+Dengan membuat akun, membuat API key, menambah saldo, atau mengirim request ke API, kamu menyatakan telah membaca dan menyetujui Syarat dan Ketentuan ini beserta dokumen yang menjadi bagiannya: [Kebijakan Pengembalian Dana](/legals/refund-policy), [Kebijakan Privasi](/legals/privacy-policy), [Kebijakan Penggunaan](/legals/acceptable-use-policy), dan [Keamanan](/legals/security). Fitur tertentu dapat memiliki ketentuan tambahan yang ditampilkan saat fitur itu digunakan; ketentuan tambahan tersebut berlaku bersama dokumen ini.
+
+Jika kamu menggunakan Layanan atas nama perusahaan atau organisasi, kamu menyatakan berwenang mengikat organisasi tersebut, dan istilah **kamu** mencakup organisasi itu. Jika tidak menyetujui ketentuan ini, jangan gunakan Layanan.
+
+<a id="akun"></a>
+
+## 2. Akun dan kelayakan
+
+- Kamu harus cakap secara hukum untuk membuat perjanjian. Pengguna di bawah 18 tahun hanya boleh menggunakan Layanan dengan persetujuan dan pengawasan orang tua atau wali.
+- Data pendaftaran (nama, email, dan nama perusahaan bila diisi) wajib benar dan diperbarui bila berubah. Alamat email harus diverifikasi melalui kode OTP sebelum akun dapat digunakan sepenuhnya.
+- Kamu dapat mendaftar dengan email dan kata sandi, atau melalui single sign-on (misalnya Google, GitHub, atau Discord) bila diaktifkan. Akun SSO tunduk juga pada ketentuan penyedia identitas tersebut.
+- Satu akun hanya untuk satu orang atau satu organisasi. Membuat banyak akun untuk menghindari pembatasan, penangguhan, atau batas pemakaian dilarang.
+- Kamu bertanggung jawab atas seluruh aktivitas yang terjadi melalui akun kamu, termasuk aktivitas anggota tim atau sistem yang kamu beri akses.
+
+<a id="api-key"></a>
+
+## 3. API key dan keamanan akses
+
+API key adalah kredensial yang mengautentikasi request ke API dan menjadi dasar penagihan. Setiap request yang membawa API key milik akun kamu dianggap sebagai request kamu; biaya dikenakan hanya untuk request yang diproses, sesuai bagian 7.
+
+- API key ditampilkan utuh **satu kali** saat dibuat. Kami hanya menyimpan nilai hash-nya sehingga key yang hilang tidak dapat dipulihkan; buat key baru dan cabut key lama.
+- Kamu dapat membatasi key dengan scope (misalnya `chat`, `embeddings`, `completions`), masa berlaku, dan batas kredit per key melalui [halaman API key](https://console.hostlinku.com/api-keys). Batas tersebut adalah alat bantu kontrol biaya, bukan jaminan bahwa pemakaian tidak akan melampaui angka tertentu dalam kondisi streaming atau request paralel.
+- Simpan API key di sisi server. Jangan menaruhnya di kode frontend, aplikasi mobile, repositori publik, atau log yang dapat diakses pihak lain.
+- Jika kamu menduga API key bocor atau akun diakses tanpa izin, segera cabut key tersebut dan hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com). Biaya yang timbul sebelum key dicabut tetap menjadi tanggung jawab kamu, kecuali kebocoran terbukti disebabkan oleh kelalaian kami.
+- Kami dapat menonaktifkan key yang terindikasi bocor (misalnya ditemukan di repositori publik) untuk melindungi saldo kamu.
+
+<a id="lisensi"></a>
+
+## 4. Lisensi penggunaan layanan
+
+Selama kamu mematuhi ketentuan ini, kami memberikan hak terbatas, tidak eksklusif, tidak dapat dialihkan, dan dapat dicabut untuk mengakses Layanan dan mengintegrasikan API ke aplikasi milik kamu. Kamu boleh membangun produk komersial di atas API, termasuk produk yang melayani pengguna akhir kamu sendiri.
+
+Kamu tidak boleh menjual ulang, menyewakan, atau membagikan akses langsung ke API key atau akun kamu sebagai layanan tersendiri (misalnya menjual key atau menjalankan proxy publik yang meneruskan akses Hostlinku apa adanya) tanpa persetujuan tertulis dari kami.
+
+<a id="penggunaan-terlarang"></a>
+
+## 5. Penggunaan yang dilarang
+
+Penggunaan Layanan tunduk pada [Kebijakan Penggunaan](/legals/acceptable-use-policy). Secara ringkas, kamu dilarang:
+
+- menggunakan Layanan untuk aktivitas yang melanggar hukum Indonesia atau hukum yang berlaku bagi kamu;
+- melakukan reverse engineering, dekompilasi, atau upaya memperoleh kode sumber, model harga internal, atau identitas upstream yang tidak kami tampilkan;
+- menguji penetrasi, memindai kerentanan, atau membebani infrastruktur tanpa izin tertulis, di luar program pelaporan yang dijelaskan di halaman [Keamanan](/legals/security);
+- menghindari rate limit, verifikasi, captcha, batas saldo, atau mekanisme keamanan lain;
+- menggunakan Layanan untuk membangun atau melatih layanan pesaing dengan cara menyalin situs, dokumentasi, atau katalog kami;
+- melanggar kebijakan penggunaan upstream provider yang modelnya kamu akses.
+
+<a id="saldo"></a>
+
+## 6. Saldo prabayar
+
+Layanan menggunakan model **pay-as-you-go** berbasis saldo prabayar dalam dolar Amerika Serikat (USD). Tidak ada langganan dan tidak ada tagihan berulang. Akun baru dimulai dengan saldo nol.
+
+- Saldo ditambah melalui [top-up](https://console.hostlinku.com/add-balance) menggunakan metode yang tersedia, saat ini QRIS dan virtual account (melalui iPaymu) serta aset kripto (melalui BlockBee). Ketersediaan metode, nominal minimum, dan nominal maksimum ditampilkan di halaman top-up dan dapat berubah.
+- Pembayaran dalam rupiah atau aset kripto dikonversi ke USD dengan kurs yang ditampilkan saat checkout. Saldo yang sudah dikreditkan tidak berubah mengikuti fluktuasi kurs.
+- Saldo adalah nilai prabayar untuk membeli Layanan. Saldo bukan simpanan, bukan alat pembayaran, tidak berbunga, dan tidak dapat dipindahkan ke akun lain atau ditukar dengan uang tunai kecuali sebagaimana diatur dalam [Kebijakan Pengembalian Dana](/legals/refund-policy).
+- Bonus top-up, kredit promosi, atau kredit kompensasi tidak memiliki nilai tunai, tidak dapat dikembalikan, dan dapat dibatasi masa berlaku atau penggunaannya sesuai syarat promosi masing-masing.
+- Kami mengirim email peringatan saat saldo tersedia turun melewati ambang saldo rendah akun (default USD 25). Peringatan ini bersifat informatif dan dapat terlambat atau tidak terkirim; memantau saldo tetap tanggung jawab kamu.
+
+<a id="penagihan"></a>
+
+## 7. Harga dan penagihan
+
+Biaya dihitung **per request** berdasarkan harga model yang tercantum di halaman [Model](/models) dan [Harga](https://hostlinku.com/pricing) pada saat request diproses, umumnya per juta token input dan output (termasuk token cache bila berlaku).
+
+1. **Reservasi.** Sebelum request diteruskan ke upstream, kami menahan (mereservasi) perkiraan biaya maksimum dari saldo tersedia. Jika saldo tersedia tidak cukup, request ditolak dengan status HTTP `402` dan tidak dikenai biaya.
+2. **Penyelesaian.** Setelah request selesai, saldo dipotong sebesar biaya aktual berdasarkan jumlah token yang dilaporkan upstream, dan sisa reservasi dilepas kembali ke saldo tersedia.
+3. **Pelepasan.** Jika request gagal sebelum menghasilkan keluaran yang dapat ditagih, reservasi dilepas tanpa biaya. Reservasi yang tertahan karena gangguan sistem dilepas otomatis oleh proses berkala.
+
+Request yang dibatalkan klien di tengah streaming tetap ditagih sesuai token yang sudah diproses upstream. Dalam kondisi tertentu biaya aktual dapat melebihi perkiraan reservasi sehingga saldo bernilai negatif; selisih tersebut merupakan kewajiban kamu dan diperhitungkan dari top-up berikutnya.
+
+Perubahan harga berlaku untuk request yang diproses setelah perubahan dipublikasikan dan tidak berlaku surut. Riwayat transaksi dan biaya per request dapat dilihat di console. Harga belum termasuk pajak yang mungkin dikenakan oleh otoritas atau penyedia pembayaran; pajak tersebut menjadi tanggung jawab kamu kecuali dinyatakan lain saat checkout.
+
+<a id="pembatasan"></a>
+
+## 8. Rate limit dan pembatasan layanan
+
+Untuk menjaga stabilitas, kami menerapkan rate limit per API key dan per alamat IP. Batas yang berlaku dikirim melalui header `RateLimit-*` pada setiap respons, dan request yang melampaui batas ditolak dengan status `429` tanpa biaya. Batas default dapat berubah sewaktu-waktu sesuai kapasitas, dan dapat dinaikkan untuk akun tertentu berdasarkan permintaan.
+
+Kami juga dapat membatasi ukuran request, panjang keluaran, jumlah request paralel, atau akses ke model tertentu, serta menyaring atau menahan request yang terindikasi melanggar Kebijakan Penggunaan atau kebijakan upstream.
+
+<a id="upstream"></a>
+
+## 9. Upstream provider dan ketersediaan
+
+Model yang tersedia melalui Hostlinku dijalankan oleh upstream provider pihak ketiga. Kami dapat merutekan request ke provider atau jalur yang berbeda untuk model yang sama demi ketersediaan dan biaya, tanpa mengubah harga yang berlaku saat request diproses. Identitas jalur upstream tidak selalu ditampilkan kepada pengguna.
+
+- Kami dapat menambah, mengganti nama, menonaktifkan, atau menghentikan model dan endpoint, termasuk ketika upstream menghentikan modelnya. Bila memungkinkan, perubahan yang berdampak besar diumumkan lebih dulu di [blog](https://hostlinku.com/blog).
+- Ketersediaan, latensi, dan kualitas keluaran bergantung pada upstream. Status layanan dapat dipantau di halaman [Status](https://status.hostlinku.com). Tidak ada SLA kecuali disepakati dalam perjanjian tertulis terpisah.
+- Dukungan teknis diberikan dengan upaya terbaik melalui kanal yang tercantum di halaman [Kontak](https://hostlinku.com/contact), tanpa jaminan waktu respons.
+
+<a id="konten"></a>
+
+## 10. Input, output, dan konten
+
+**Input** adalah data yang kamu kirim ke API (prompt, pesan, dokumen, gambar), dan **output** adalah hasil yang dikembalikan model. Di antara kamu dan kami, kamu tetap memiliki input dan, sejauh diizinkan hukum dan ketentuan upstream, memiliki output.
+
+- Kamu memberi kami izin terbatas untuk memproses, meneruskan ke upstream, dan menyimpan sementara input dan output sejauh diperlukan untuk menjalankan Layanan, menagih, mengamankan sistem, dan memenuhi kewajiban hukum, sebagaimana dijelaskan di [Kebijakan Privasi](/legals/privacy-policy).
+- Kami tidak menggunakan input atau output kamu untuk melatih model. Perlakuan data oleh upstream provider tunduk pada kebijakan provider tersebut.
+- Kamu menjamin memiliki hak atas input yang kamu kirim, termasuk izin dari pemilik data pribadi yang terkandung di dalamnya.
+- Output dihasilkan secara otomatis, dapat tidak akurat, dan dapat mirip dengan output pengguna lain. Kamu bertanggung jawab meninjau output sebelum digunakan, terutama untuk keputusan medis, hukum, keuangan, atau keputusan lain yang berdampak pada orang lain.
+
+<a id="hki"></a>
+
+## 11. Hak kekayaan intelektual
+
+Situs, console, dokumentasi, perangkat lunak, desain, nama dan logo Hostlinku adalah milik kami atau pemberi lisensinya. Ketentuan ini tidak memberikan hak atas merek kami. Nama dan merek model maupun provider pihak ketiga adalah milik pemiliknya masing-masing dan digunakan hanya untuk identifikasi.
+
+Saran, laporan bug, atau masukan yang kamu kirimkan boleh kami gunakan untuk memperbaiki Layanan tanpa kewajiban kompensasi. Pemberitahuan dugaan pelanggaran hak cipta atau merek dapat dikirim ke [legal@hostlinku.com](mailto:legal@hostlinku.com) dengan menyertakan identitas pelapor, karya yang dilanggar, dan lokasi konten terkait.
+
+<a id="pihak-ketiga"></a>
+
+## 12. Layanan pihak ketiga
+
+Layanan bergantung pada pihak ketiga, antara lain upstream provider model, penyedia pembayaran (iPaymu, BlockBee), penyedia identitas SSO, penyedia email, dan Cloudflare. Penggunaan layanan pihak ketiga tunduk pada ketentuan masing-masing. Kami tidak bertanggung jawab atas konten, kebijakan, atau kegagalan layanan pihak ketiga di luar kendali wajar kami, termasuk situs yang ditautkan dari Layanan.
+
+<a id="penangguhan"></a>
+
+## 13. Penangguhan dan pengakhiran
+
+Kamu dapat berhenti menggunakan Layanan kapan saja dan meminta penutupan akun melalui [halo@hostlinku.com](mailto:halo@hostlinku.com). Ajukan pengembalian sisa saldo (bila memenuhi syarat) *sebelum* akun ditutup; penutupan akun tidak otomatis mengembalikan saldo.
+
+Kami dapat membatasi, menangguhkan, atau menutup akun maupun API key, dengan atau tanpa pemberitahuan lebih dulu bila diperlukan untuk mencegah kerugian, apabila:
+
+- terjadi pelanggaran ketentuan ini atau Kebijakan Penggunaan;
+- terdapat indikasi penipuan, penyalahgunaan pembayaran, atau chargeback atas transaksi yang sah;
+- diwajibkan oleh hukum, perintah otoritas berwenang, atau upstream provider;
+- aktivitas akun membahayakan keamanan atau stabilitas Layanan bagi pengguna lain;
+- terdapat saldo negatif yang tidak diselesaikan.
+
+Saat akun ditangguhkan, request API ditolak dan login dapat diblokir. Untuk penangguhan yang bukan karena pelanggaran, kami akan berupaya menjelaskan alasannya dan memberi kesempatan untuk menyelesaikannya. Perlakuan saldo pada akun yang ditutup diatur dalam [Kebijakan Pengembalian Dana](/legals/refund-policy). Kami juga dapat menghentikan Layanan secara keseluruhan dengan pemberitahuan wajar lebih dulu.
+
+Ketentuan yang menurut sifatnya tetap berlaku setelah pengakhiran, termasuk kewajiban pembayaran, hak kekayaan intelektual, penafian, pembatasan tanggung jawab, ganti rugi, dan penyelesaian sengketa, tetap mengikat.
+
+<a id="disclaimer"></a>
+
+## 14. Penafian jaminan
+
+<Callout type="note">
+
+Layanan disediakan **sebagaimana adanya** dan **sebagaimana tersedia**. Sejauh diizinkan hukum, kami tidak memberikan jaminan bahwa Layanan akan selalu tersedia, bebas gangguan, bebas kesalahan, atau bahwa output model akurat, lengkap, aman, atau sesuai untuk tujuan tertentu. Hak yang tidak dapat dikesampingkan menurut hukum perlindungan konsumen yang berlaku tetap berlaku.
+
+</Callout>
+
+<a id="tanggung-jawab"></a>
+
+## 15. Pembatasan tanggung jawab
+
+<Callout type="note">
+
+Sejauh diizinkan hukum, kami tidak bertanggung jawab atas kerugian tidak langsung, insidental, khusus, atau konsekuensial, termasuk kehilangan laba, pendapatan, data, atau reputasi, yang timbul dari penggunaan atau ketidakmampuan menggunakan Layanan, termasuk gangguan upstream provider.
+
+Total tanggung jawab kami atas seluruh klaim yang berkaitan dengan Layanan dibatasi pada jumlah yang kamu bayarkan kepada kami dalam 12 bulan sebelum kejadian yang menimbulkan klaim. Pembatasan ini tidak berlaku untuk kerugian yang disebabkan oleh kesengajaan atau kelalaian berat kami, atau tanggung jawab yang menurut hukum tidak dapat dibatasi.
+
+</Callout>
+
+<a id="ganti-rugi"></a>
+
+## 16. Ganti rugi
+
+Kamu setuju membebaskan dan mengganti kerugian Hostlinku beserta pengurus dan karyawannya atas klaim, kerugian, dan biaya wajar (termasuk biaya hukum) yang timbul dari penggunaan Layanan melalui akun kamu, pelanggaran ketentuan ini, input yang kamu kirim, atau penggunaan output oleh kamu maupun pengguna akhir kamu. Kami akan memberi tahu kamu tentang klaim tersebut dan bekerja sama secara wajar dalam penanganannya.
+
+<a id="force-majeure"></a>
+
+## 17. Keadaan kahar
+
+Kami tidak bertanggung jawab atas keterlambatan atau kegagalan yang disebabkan oleh keadaan di luar kendali wajar, antara lain bencana alam, gangguan listrik atau jaringan internet, kegagalan penyedia cloud atau upstream provider, serangan siber berskala besar, kerusuhan, epidemi, atau tindakan pemerintah.
+
+<a id="sengketa"></a>
+
+## 18. Hukum yang berlaku dan penyelesaian sengketa
+
+Ketentuan ini diatur oleh hukum Republik Indonesia, termasuk UU Informasi dan Transaksi Elektronik serta UU Pelindungan Data Pribadi. Sebelum menempuh jalur formal, para pihak wajib berupaya menyelesaikan sengketa secara musyawarah dalam 30 hari sejak salah satu pihak mengirim pemberitahuan tertulis ke pihak lain (untuk kami melalui [legal@hostlinku.com](mailto:legal@hostlinku.com)). Jika tidak tercapai kesepakatan, sengketa diselesaikan melalui arbitrase Badan Arbitrase Nasional Indonesia (BANI) di Jakarta, tanpa mengurangi hak kamu untuk menempuh mekanisme penyelesaian sengketa konsumen yang diatur undang-undang.
+
+<a id="perubahan"></a>
+
+## 19. Perubahan ketentuan
+
+Kami dapat memperbarui ketentuan ini. Tanggal pembaruan tercantum di bagian atas halaman. Untuk perubahan yang berdampak material pada hak atau kewajiban kamu, kami akan memberi tahu melalui email terdaftar atau pemberitahuan di console sebelum perubahan berlaku. Penggunaan Layanan setelah tanggal berlaku berarti kamu menerima perubahan tersebut.
+
+<a id="lain-lain"></a>
+
+## 20. Ketentuan lain
+
+- **Kesepakatan utuh.** Ketentuan ini bersama dokumen yang dirujuk merupakan keseluruhan kesepakatan mengenai Layanan. Perjanjian tertulis yang ditandatangani kedua pihak mengesampingkan ketentuan ini sejauh terjadi pertentangan.
+- **Keterpisahan.** Jika suatu ketentuan dinyatakan tidak sah, ketentuan lain tetap berlaku.
+- **Pengalihan.** Kamu tidak dapat mengalihkan hak atau kewajiban berdasarkan ketentuan ini tanpa persetujuan kami. Kami dapat mengalihkannya dalam rangka penggabungan, pengambilalihan, atau pengalihan usaha.
+- **Komunikasi elektronik.** Kamu setuju menerima pemberitahuan, tagihan, dan komunikasi terkait akun secara elektronik melalui email atau console.
+- **Hubungan para pihak.** Tidak ada hubungan kemitraan, keagenan, atau ketenagakerjaan yang timbul dari ketentuan ini.
+- **Bahasa.** Versi Bahasa Indonesia adalah versi resmi. Bila terdapat terjemahan, versi Bahasa Indonesia yang berlaku jika terjadi perbedaan.
+
+<a id="kontak"></a>
+
+## 21. Kontak
+
+HostLinku, Depok, Indonesia. 
+Pertanyaan umum dan dukungan pelanggan: [halo@hostlinku.com](mailto:halo@hostlinku.com) 
+Urusan hukum, ketentuan layanan, dan perjanjian: [legal@hostlinku.com](mailto:legal@hostlinku.com) 
+Pertanyaan privasi dan hak pengguna: [privacy@hostlinku.com](mailto:privacy@hostlinku.com) 
+Data Protection Officer (DPO): [dpo@hostlinku.com](mailto:dpo@hostlinku.com)

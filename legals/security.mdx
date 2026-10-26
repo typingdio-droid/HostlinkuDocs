@@ -1,0 +1,97 @@
+---
+title: "Keamanan"
+description: "Praktik keamanan Hostlinku: enkripsi, autentikasi, penanganan API key, isolasi data, audit log, respons insiden, dan cara melaporkan kerentanan."
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Terakhir diperbarui:** 11 Oktober 2026.
+
+<a id="transport"></a>
+
+## 1. Enkripsi dan penyimpanan rahasia
+
+- Seluruh lalu lintas ke situs, console, dan API dilayani melalui HTTPS (TLS).
+- Kata sandi disimpan sebagai hash bcrypt, tidak pernah dalam bentuk asli.
+- API key pelanggan disimpan sebagai hash SHA-256.
+- Kredensial integrasi seperti kunci upstream provider dan rahasia SSO dienkripsi di level aplikasi dengan AES-256-GCM, menggunakan kunci yang disimpan terpisah dari database.
+
+<a id="autentikasi"></a>
+
+## 2. Autentikasi akun
+
+- Verifikasi email melalui kode OTP yang berlaku singkat.
+- Opsi masuk melalui SSO (misalnya Google, GitHub, Discord) bila diaktifkan.
+- Cookie sesi bertanda `HttpOnly`, `Secure`, dan `SameSite=Lax`, berlaku paling lama 7 hari.
+- Rate limit percobaan login, pendaftaran, dan OTP, serta Cloudflare Turnstile pada formulir publik.
+- Akun yang ditangguhkan tidak dapat login maupun memakai API.
+
+Autentikasi dua faktor belum tersedia. Halaman ini akan diperbarui ketika fitur tersebut dirilis.
+
+<a id="api-key"></a>
+
+## 3. Penanganan API key
+
+- Key ditampilkan utuh sekali saat dibuat dan tidak dapat dilihat ulang.
+- Key dapat dibatasi scope, masa berlaku, dan batas kredit, serta dicabut kapan saja dari console.
+- Kredensial dalam log body request diganti `[redacted]` sebelum disimpan.
+- Identitas upstream provider dan kredensial upstream tidak pernah dikirim ke pelanggan.
+
+<a id="akses"></a>
+
+## 4. Isolasi dan kontrol akses
+
+- Data request, log, saldo, dan API key dipisahkan per akun; pengguna hanya dapat mengakses data miliknya.
+- Fungsi admin dibatasi untuk peran admin dan setiap perubahan pengaturan sensitif, termasuk pengaktifan body logging dan penyesuaian saldo, dicatat di audit log.
+- Isi request dan respons tidak disimpan secara default; bila body logging diaktifkan, isi dihapus otomatis sesuai masa retensi. Lihat [Kebijakan Privasi](/legals/privacy-policy).
+
+<a id="perlindungan"></a>
+
+## 5. Perlindungan layanan
+
+- Lalu lintas publik melewati Cloudflare untuk mitigasi bot dan serangan volumetrik.
+- Rate limit per API key dan per IP, sebagaimana dijelaskan di [Kebijakan Penggunaan](/legals/acceptable-use-policy).
+- Reservasi saldo sebelum request diteruskan mencegah pemakaian melampaui saldo tersedia secara berlebihan.
+- Pemantauan kesehatan model dan upstream dipublikasikan di halaman [Status](https://status.hostlinku.com).
+
+<a id="audit"></a>
+
+## 6. Audit log
+
+Kami mencatat peristiwa keamanan seperti login, logout, pendaftaran, pembuatan dan pencabutan API key, serta perubahan pengaturan, beserta waktu, alamat IP, dan user agent. Nilai rahasia tidak pernah ikut tercatat.
+
+<a id="tanggung-jawab"></a>
+
+## 7. Tanggung jawab bersama
+
+<Callout type="note">
+
+Keamanan akun juga bergantung pada kamu:
+
+- gunakan kata sandi yang kuat dan unik;
+- simpan API key di sisi server, jangan di kode frontend atau repositori;
+- gunakan key terpisah per aplikasi atau lingkungan, beri batas kredit, dan cabut key yang tidak dipakai;
+- pantau log dan riwayat transaksi di console untuk mendeteksi pemakaian yang tidak wajar.
+
+</Callout>
+
+<a id="insiden"></a>
+
+## 8. Respons insiden
+
+Saat terjadi insiden keamanan, kami melakukan identifikasi, penahanan, pemulihan, dan evaluasi. Bila insiden menyebabkan kegagalan pelindungan data pribadi, kami memberi tahu pengguna terdampak dan otoritas sesuai ketentuan UU PDP. Bila kami mendeteksi API key yang bocor, key tersebut dapat kami nonaktifkan dan pemiliknya diberi tahu.
+
+<a id="laporan"></a>
+
+## 9. Melaporkan kerentanan
+
+Kirim laporan ke [halo@hostlinku.com](mailto:halo@hostlinku.com) dengan deskripsi, langkah reproduksi, dan dampak yang kamu temukan. Kami akan mengonfirmasi penerimaan dalam 5 hari kerja.
+
+Agar pengujian tetap aman:
+
+- uji hanya dengan akun dan data milik kamu sendiri;
+- jangan mengakses, mengubah, atau menghapus data pengguna lain;
+- jangan melakukan denial-of-service, spam, atau rekayasa sosial terhadap staf maupun pengguna;
+- beri kami waktu yang wajar untuk memperbaiki sebelum mempublikasikan temuan.
+
+Kami tidak akan menempuh tindakan hukum terhadap peneliti yang melapor dengan itikad baik dan mengikuti panduan ini.

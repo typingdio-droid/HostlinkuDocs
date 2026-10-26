@@ -1,0 +1,112 @@
+---
+title: "Kebijakan Pengembalian Dana"
+description: "Kebijakan pengembalian dana Hostlinku: pelepasan reservasi saldo otomatis, refund sisa saldo top-up, top-up gagal, tata cara pengajuan, dan pengecualian."
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Terakhir diperbarui:** 11 Oktober 2026.
+
+<a id="model"></a>
+
+## 1. Model prabayar
+
+Hostlinku tidak memakai langganan. Kamu menambah saldo prabayar dalam USD dan saldo dipotong per request sesuai pemakaian. Tidak ada tagihan berulang yang perlu dibatalkan. Kebijakan ini merupakan bagian dari [Syarat dan Ketentuan](/legals/terms-of-service).
+
+Ada dua mekanisme yang berbeda dan tidak boleh dicampuradukkan:
+
+- **Pelepasan reservasi**: saldo yang ditahan untuk sebuah request kembali ke saldo tersedia secara otomatis. Tidak ada uang yang berpindah dan tidak perlu pengajuan.
+- **Pengembalian dana (refund)**: sisa saldo top-up yang belum terpakai dikembalikan sebagai uang ke kamu. Harus diajukan dan diverifikasi.
+
+<a id="otomatis"></a>
+
+## 2. Pelepasan reservasi otomatis
+
+Sebelum request diteruskan ke upstream provider, sistem menahan perkiraan biaya maksimum dari saldo tersedia. Setelah itu:
+
+- Jika request berhasil, saldo dipotong sebesar biaya aktual dan sisa reservasi langsung kembali ke saldo tersedia.
+- Jika request gagal sebelum menghasilkan keluaran yang dapat ditagih (misalnya galat upstream atau timeout), seluruh reservasi dilepas tanpa biaya.
+- Jika reservasi tertahan karena gangguan sistem, proses berkala melepasnya secara otomatis dan mencatat entri pengembalian di riwayat transaksi.
+- Request yang ditolak karena saldo tidak cukup ( `402`) atau rate limit ( `429`) tidak pernah dikenai biaya.
+
+Rincian biaya per request dapat dicek di halaman [log](https://console.hostlinku.com/logs) console. Jika kamu menemukan request gagal yang tetap terpotong, laporkan sesuai bagian 6 dengan menyertakan ID request; koreksi yang disetujui dikreditkan kembali ke saldo, bukan dicairkan sebagai uang.
+
+<a id="kelayakan"></a>
+
+## 3. Refund sisa saldo top-up
+
+Sisa saldo hasil top-up dapat diajukan pengembaliannya bila:
+
+- pengajuan dibuat paling lambat 30 hari sejak top-up yang bersangkutan berhasil;
+- saldo tersebut belum digunakan, atau hanya sebagian digunakan (yang dikembalikan hanya bagian yang belum terpakai);
+- akun tidak sedang ditangguhkan atau ditutup karena pelanggaran;
+- top-up tidak sedang dalam proses sengketa atau chargeback.
+
+Pemakaian dihitung terhadap top-up paling awal lebih dulu. Nilai yang dikembalikan tidak melebihi jumlah yang benar-benar kamu bayarkan untuk top-up tersebut, dan dapat dikurangi biaya pemrosesan yang dikenakan penyedia pembayaran atau bank yang tidak dapat kami tarik kembali.
+
+<a id="tidak-dapat"></a>
+
+## 4. Yang tidak dapat dikembalikan
+
+<Callout type="note">
+
+- saldo yang sudah digunakan untuk request yang berhasil diproses, termasuk request yang dibatalkan klien di tengah streaming;
+- bonus top-up, kredit promosi, kredit referral, dan kredit kompensasi;
+- saldo hasil penyesuaian manual oleh admin yang bukan berasal dari pembayaran;
+- top-up yang sudah melewati batas 30 hari;
+- saldo pada akun yang ditutup karena pelanggaran [Kebijakan Penggunaan](/legals/acceptable-use-policy), penipuan, atau penyalahgunaan pembayaran;
+- biaya pihak ketiga yang sudah terjadi, seperti biaya jaringan blockchain atau selisih kurs.
+
+Bila saldo bernilai negatif, kekurangan tersebut diperhitungkan lebih dulu sebelum sisa saldo apa pun dikembalikan.
+
+</Callout>
+
+<a id="top-up-gagal"></a>
+
+## 5. Top-up gagal atau tertunda
+
+Saldo hanya dikreditkan setelah penyedia pembayaran mengonfirmasi pembayaran berhasil. Jika dana kamu terpotong tetapi saldo tidak bertambah:
+
+- Tunggu konfirmasi dari penyedia pembayaran. QRIS, virtual account, dan kartu umumnya terkonfirmasi dalam hitungan menit; transaksi kripto menunggu jumlah konfirmasi jaringan yang disyaratkan.
+- Jika saldo belum masuk setelah 1 x 24 jam, kirim bukti pembayaran (tanggal, nominal, metode, dan nomor referensi atau hash transaksi) ke [halo@hostlinku.com](mailto:halo@hostlinku.com).
+- Setelah pembayaran terverifikasi, kami akan mengkreditkan saldo yang seharusnya atau, atas permintaan kamu, mengembalikan dananya.
+- Pembayaran kripto yang kurang dari nominal tagihan, dikirim ke jaringan atau alamat yang salah, atau dikirim setelah tagihan kedaluwarsa ditangani kasus per kasus; dana yang tidak dapat dipulihkan dari jaringan berada di luar kendali kami.
+
+<a id="pengajuan"></a>
+
+## 6. Tata cara pengajuan
+
+1. Kirim email ke [halo@hostlinku.com](mailto:halo@hostlinku.com) dari alamat email yang terdaftar di akun.
+2. Sertakan ID transaksi top-up atau ID request terkait, nominal yang diajukan, dan alasan singkat.
+3. Untuk pembayaran QRIS atau virtual account, sertakan rekening bank tujuan atas nama pemilik akun. Untuk kripto, sertakan alamat dompet beserta jaringannya.
+4. Kami dapat meminta verifikasi tambahan untuk memastikan pengajuan berasal dari pemilik akun dan pembayar yang sah.
+
+<a id="proses"></a>
+
+## 7. Waktu dan metode pengembalian
+
+- Kami memberi keputusan atas pengajuan dalam 5 hari kerja sejak data lengkap diterima.
+- Pengajuan yang disetujui dicairkan dalam 7 sampai 14 hari kerja. Waktu dana diterima dapat lebih lama bergantung pada bank, penerbit kartu, atau jaringan blockchain.
+- Pembayaran QRIS dan virtual account dikembalikan melalui transfer bank ke rekening atas nama pemilik akun.
+- Pembayaran kripto dikembalikan dalam aset yang sama ke alamat yang kamu berikan. Jumlah dihitung dari nilai USD saldo yang dikembalikan, dikurangi biaya jaringan.
+- Saldo yang dikembalikan dikurangkan dari akun saat pengajuan disetujui.
+
+Kami dapat menolak pengajuan yang tidak memenuhi bagian 3, tidak dapat diverifikasi, terindikasi penipuan, atau berulang secara tidak wajar. Alasan penolakan akan disampaikan melalui email.
+
+<a id="penutupan"></a>
+
+## 8. Penutupan akun
+
+Penutupan akun tidak otomatis mengembalikan sisa saldo. Ajukan refund lebih dulu, lalu minta penutupan akun setelah refund selesai. Saldo pada akun yang ditangguhkan atau ditutup karena pelanggaran dapat tidak dikembalikan, sesuai [Syarat dan Ketentuan](/legals/terms-of-service).
+
+<a id="sengketa"></a>
+
+## 9. Sengketa tagihan dan chargeback
+
+Jika ada tagihan yang menurut kamu keliru, hubungi kami lebih dulu sebelum mengajukan chargeback ke bank atau penerbit kartu. Kami akan meninjaunya berdasarkan riwayat transaksi dan log per request. Chargeback atas transaksi yang sah dapat menyebabkan akun ditangguhkan sampai sengketa selesai, dan biaya sengketa yang dibebankan kepada kami dapat diperhitungkan ke akun kamu.
+
+<a id="lain"></a>
+
+## 10. Ketentuan lain dan kontak
+
+Perjanjian tertulis yang ditandatangani kedua pihak dapat mengatur ketentuan refund yang berbeda dan mengesampingkan kebijakan ini sejauh terjadi pertentangan. Hak yang dijamin oleh peraturan perlindungan konsumen yang berlaku tetap berlaku. Pertanyaan tentang kebijakan ini dapat dikirim ke [halo@hostlinku.com](mailto:halo@hostlinku.com).
