@@ -1,0 +1,124 @@
+---
+title: Stream Mode
+description: Cara memakai streaming SSE di Hostlinku dengan OpenAI SDK, Python requests, curl, dan Node.js.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Stream mode mengirim jawaban token-per-token lewat SSE (`text/event-stream`). Token pertama muncul lebih cepat, tanpa menunggu seluruh jawaban selesai. Aktifkan dengan `"stream": true`.
+
+## Ringkas: curl
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
+    "stream": true
+  }'
+```
+
+Flag `-N` penting: tanpa itu curl menahan output sampai buffer penuh atau stream selesai.
+
+Format chunk:
+
+```text
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"1"}}]}
+
+data: [DONE]
+```
+
+## Python — SDK OpenAI
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key="sk-isi-api-key-kamu",
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content if chunk.choices else None
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+## Python — requests
+
+Gunakan `stream=True` pada request dan baca `iter_lines()`. Berhenti saat menerima `data: [DONE]`.
+
+```python
+import json
+import requests
+
+response = requests.post(
+    "https://api.hostlinku.com/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer sk-isi-api-key-kamu",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "gpt-5-5",
+        "messages": [{"role": "user", "content": "Halo!"}],
+        "stream": True,
+    },
+    stream=True,
+)
+
+for line in response.iter_lines():
+    if not line:
+        continue
+    text = line.decode("utf-8")
+    if not text.startswith("data: "):
+        continue
+    payload = text[6:]
+    if payload == "[DONE]":
+        break
+    chunk = json.loads(payload)
+    if "error" in chunk:
+        raise RuntimeError(chunk["error"])
+    delta = chunk["choices"][0].get("delta", {}).get("content")
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+## Node.js — SDK OpenAI
+
+```js
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://api.hostlinku.com/v1",
+  apiKey: process.env.HOSTLINKU_API_KEY,
+});
+
+const stream = await client.chat.completions.create({
+  model: "gpt-5-5",
+  messages: [{ role: "user", content: "Halo!" }],
+  stream: true,
+});
+
+for await (const chunk of stream) {
+  const delta = chunk.choices[0]?.delta?.content;
+  if (delta) process.stdout.write(delta);
+}
+```
+
+## Catatan Hostlinku
+
+- Header `x-request-id` tetap dikirim pada respons streaming.
+- Jika stream gagal di tengah, gateway mengirim event `data: {"error": {...}}` dan **tidak** mengirim `[DONE]` palsu.
+- Biaya dihitung dari usage nyata setelah stream selesai; jika usage tidak tersedia, tagihan memakai estimasi reservasi.
+- Jangan buffer respons di reverse proxy atau CDN. Teruskan `text/event-stream` apa adanya.
+
+<Callout type="tip" title="Kapan sebaiknya streaming?">
+  Untuk aplikasi chat atau agent yang butuh respons terasa cepat, pakai `stream: true`. Untuk batch/job yang tidak menampilkan progres, non-streaming lebih sederhana.
+</Callout>

@@ -1,0 +1,124 @@
+---
+title: Stream Mode
+description: How to use SSE streaming in Hostlinku with the OpenAI SDK, Python requests, curl, and Node.js.
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Stream mode sends the answer token by token over SSE (`text/event-stream`). The first token appears sooner, without waiting for the full answer. Enable it with `"stream": true`.
+
+## Quick start: curl
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -d '{
+    "model": "gpt-5-5",
+    "messages": [{ "role": "user", "content": "Count from 1 to 5." }],
+    "stream": true
+  }'
+```
+
+The `-N` flag matters: without it, curl buffers the output until the buffer fills or the stream ends.
+
+Chunk format:
+
+```text
+data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"1"}}]}
+
+data: [DONE]
+```
+
+## Python — OpenAI SDK
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key="sk-isi-api-key-kamu",
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Write one short paragraph."}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content if chunk.choices else None
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+## Python — requests
+
+Set `stream=True` on the request and read `iter_lines()`. Stop when you receive `data: [DONE]`.
+
+```python
+import json
+import requests
+
+response = requests.post(
+    "https://api.hostlinku.com/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer sk-isi-api-key-kamu",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "gpt-5-5",
+        "messages": [{"role": "user", "content": "Hello!"}],
+        "stream": True,
+    },
+    stream=True,
+)
+
+for line in response.iter_lines():
+    if not line:
+        continue
+    text = line.decode("utf-8")
+    if not text.startswith("data: "):
+        continue
+    payload = text[6:]
+    if payload == "[DONE]":
+        break
+    chunk = json.loads(payload)
+    if "error" in chunk:
+        raise RuntimeError(chunk["error"])
+    delta = chunk["choices"][0].get("delta", {}).get("content")
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+## Node.js — OpenAI SDK
+
+```js
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://api.hostlinku.com/v1",
+  apiKey: process.env.HOSTLINKU_API_KEY,
+});
+
+const stream = await client.chat.completions.create({
+  model: "gpt-5-5",
+  messages: [{ role: "user", content: "Hello!" }],
+  stream: true,
+});
+
+for await (const chunk of stream) {
+  const delta = chunk.choices[0]?.delta?.content;
+  if (delta) process.stdout.write(delta);
+}
+```
+
+## Hostlinku notes
+
+- The `x-request-id` header is still sent on streaming responses.
+- If the stream fails midway, the gateway sends a `data: {"error": {...}}` event and **does not** send a fake `[DONE]`.
+- Billing uses actual usage after the stream ends; if usage is unavailable, the reserved estimate is used.
+- Do not buffer the response in a reverse proxy or CDN. Pass `text/event-stream` through as-is.
+
+<Callout type="tip" title="When should you stream?">
+  For chat or agent apps where responsiveness matters, use `stream: true`. For batch jobs that do not show progress, non-streaming is simpler.
+</Callout>

@@ -88,7 +88,7 @@
         "items": [
           {
             "label": "FAQ",
-            "href": "/faq"
+            "href": "/faqs"
           },
           {
             "label": "Dukungan",
@@ -161,8 +161,20 @@
                 "group": "Bantuan",
                 "icon": "life-buoy",
                 "pages": [
-                  "faq",
                   "support"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "FAQs",
+            "icon": "circle-help",
+            "groups": [
+              {
+                "group": "FAQ",
+                "pages": [
+                  "faqs/index",
+                  "faqs/stream-mode"
                 ]
               }
             ]
@@ -288,7 +300,7 @@
               "items": [
                 {
                   "label": "FAQ",
-                  "href": "/faq"
+                  "href": "/faqs"
                 },
                 {
                   "label": "Dukungan",
@@ -381,8 +393,20 @@
                 "group": "Help",
                 "icon": "life-buoy",
                 "pages": [
-                  "en/faq",
                   "en/support"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "FAQs",
+            "icon": "circle-help",
+            "groups": [
+              {
+                "group": "FAQ",
+                "pages": [
+                  "en/faqs/index",
+                  "en/faqs/stream-mode"
                 ]
               }
             ]
@@ -506,7 +530,7 @@
               "items": [
                 {
                   "label": "FAQ",
-                  "href": "/en/faq"
+                  "href": "/en/faqs"
                 },
                 {
                   "label": "Support",
@@ -575,5 +599,17 @@
   },
   "icons": {
     "library": "lucide"
-  }
+  },
+  "redirects": [
+    {
+      "source": "/faq",
+      "destination": "/faqs",
+      "permanent": true
+    },
+    {
+      "source": "/en/faq",
+      "destination": "/en/faqs",
+      "permanent": true
+    }
+  ]
 }
