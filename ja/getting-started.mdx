@@ -41,7 +41,7 @@ APIキーの作成後、`sk-…`という形式のシークレットがコンソ
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
     "messages": [
@@ -102,7 +102,7 @@ curl を使用する場合、出力がバッファに蓄積されないように
 ```bash
 curl -N https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
 ```
 

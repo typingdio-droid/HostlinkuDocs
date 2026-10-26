@@ -273,15 +273,15 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 
 | HTTPステータスコード | 説明 | エラーメッセージの例 |
 |---|---|---|
-| 400 | Bodyが無効です。`max_tokens`がモデルの出力制限を超えています。または、Service Mode API keyでモデルが利用できません。 | `max_tokens (20000) melebihi batas output model 'claude-haiku-4-5' (16000).` |
-| 401 | APIキーが送信されていない、無効である、取り消されている、または有効期限が切れている。 | `API key tidak valid atau sudah dicabut.` |
-| 402 | リクエストの推定費用を賄うのに残高が不足しているか、APIキーのクレジット上限に達しています。 | `Saldo tidak mencukupi.` |
-| 403 | アカウントが停止されました／アクセスが拒否されました。 | `Kamu tidak punya akses ke resource ini.` |
-| 404 | カタログにこのモデルのslugがありません。 | `Model 'xxx' tidak ditemukan.` |
-| 413 | リクエストのボディが最大サイズを超えています。 | `Payload terlalu besar.` |
-| 422 | ボディの検証に失敗しました（`/v1/chat/completions`のみ。`/v1/messages`および`/v1/responses`は400を使用）。 | `Request body tidak valid.` |
-| 429 | レート制限を超えました。 | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
-| 503 | モデル/アップストリームが利用できません - バックオフを適用して再試行しても問題ありません。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
+| 400 | Bodyが無効です。`max_tokens`がモデルの出力制限を超えています。または、Service Mode API keyでモデルが利用できません。 | `max_tokens (20000) がモデル 'claude-haiku-4-5' の出力上限 (16000) を超えています。` |
+| 401 | APIキーが送信されていない、無効である、取り消されている、または有効期限が切れている。 | `APIキーが無効であるか、取り消されています。` |
+| 402 | リクエストの推定費用を賄うのに残高が不足しているか、APIキーのクレジット上限に達しています。 | `残高が不足しています。` |
+| 403 | アカウントが停止されました／アクセスが拒否されました。 | `このリソースへのアクセス権がありません。` |
+| 404 | カタログにこのモデルのslugがありません。 | `モデル 'xxx' が見つかりません。` |
+| 413 | リクエストのボディが最大サイズを超えています。 | `ペイロードが大きすぎます。` |
+| 422 | ボディの検証に失敗しました（`/v1/chat/completions`のみ。`/v1/messages`および`/v1/responses`は400を使用）。 | `リクエストボディが無効です。` |
+| 429 | レート制限を超えました。 | `レート制限を超えました。上限の高いプランにアップグレードしてください。` |
+| 503 | モデル/アップストリームが利用できません - バックオフを適用して再試行しても問題ありません。 | `モデルは現在利用できません。後でもう一度お試しください。` |
 
 エラーメッセージには、**決して**アップストリームプロバイダの識別情報や生のテキストは含まれません。OpenAI 形式のエラーコードの完全な一覧は、[エラー](/ja/errors) に記載されています。
 

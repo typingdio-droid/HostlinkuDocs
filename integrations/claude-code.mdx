@@ -28,7 +28,7 @@ Cara paling cepat - export di shell (`~/.zshrc` / `~/.bashrc`):
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
-export ANTHROPIC_AUTH_TOKEN=sk-isi-api-key-kamu
+export ANTHROPIC_AUTH_TOKEN=sk-your-api-key
 
 # Pin model untuk alias yang dipakai Claude Code
 export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
@@ -45,7 +45,7 @@ Cara persisten - blok `env` di `~/.claude/settings.json` (berlaku untuk semua pr
 {
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.hostlinku.com",
-    "ANTHROPIC_AUTH_TOKEN": "sk-isi-api-key-kamu",
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-api-key",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5"
@@ -91,7 +91,7 @@ ekstensi - VS Code: `claudeCode.environmentVariables` di `settings.json`:
 {
   "claudeCode.environmentVariables": [
     { "name": "ANTHROPIC_BASE_URL", "value": "https://api.hostlinku.com" },
-    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-isi-api-key-kamu" },
+    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-your-api-key" },
     { "name": "ANTHROPIC_DEFAULT_SONNET_MODEL", "value": "claude-sonnet-4-6" },
     { "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL", "value": "claude-haiku-4-5" }
   ]

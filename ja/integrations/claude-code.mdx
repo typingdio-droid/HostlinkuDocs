@@ -1,5 +1,5 @@
 ---
-title: "クロード・コード"
+title: "Claude Code"
 description: "Hostlinku 経由で Claude Code（CLI、VS Code、JetBrains）を実行し、ANTHROPIC_BASE_URL を指定 - Claude や他のモデルを利用でき、1つの残高ですべてに対応"
 ---
 
@@ -25,9 +25,9 @@ npm install -g @anthropic-ai/claude-code
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
-export ANTHROPIC_AUTH_TOKEN=sk-isi-api-key-kamu
+export ANTHROPIC_AUTH_TOKEN=sk-your-api-key
 
-# Pin model untuk alias yang dipakai Claude Code
+# Claude Code のエイリアスに使うモデルをピン留め
 export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
 export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
@@ -41,7 +41,7 @@ claude
 {
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.hostlinku.com",
-    "ANTHROPIC_AUTH_TOKEN": "sk-isi-api-key-kamu",
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-api-key",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5"
@@ -49,7 +49,7 @@ claude
 }
 ```
 
-`settings.json`の値は、export shellを**上回った**。
+`settings.json`の値は、export shellを**上書きします**。
 
 ### 確認
 
@@ -83,7 +83,7 @@ Claude Code 拡張機能はログイン情報を独自に確認するため、�
 {
   "claudeCode.environmentVariables": [
     { "name": "ANTHROPIC_BASE_URL", "value": "https://api.hostlinku.com" },
-    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-isi-api-key-kamu" },
+    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-your-api-key" },
     { "name": "ANTHROPIC_DEFAULT_SONNET_MODEL", "value": "claude-sonnet-4-6" },
     { "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL", "value": "claude-haiku-4-5" }
   ]

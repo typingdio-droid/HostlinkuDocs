@@ -41,7 +41,7 @@ API密钥创建后，格式为`sk-…`的密钥密文**仅在控制台中显示�
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
     "messages": [
@@ -102,7 +102,7 @@ for chunk in stream:
 ```bash
 curl -N https://api.hostlinku.com/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
 ```
 

@@ -1,18 +1,18 @@
 ---
-title: "继续"
+title: "Continue"
 description: "将模型 Hostlinku 添加到 config.yaml 文件中（VS Code 和 JetBrains），并使用 openai 提供商和自定义 apiBase"
 ---
 
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[继续](https://docs.continue.dev) 通过 `config.yaml` 进行配置。 每个模型都拥有 `provider`、`apiBase`、`apiKey` 以及 `roles` 列表（聊天、编辑、应用等）。 对于 Hostlinku，请使用 `openai` 提供商和 `apiBase` 网关。
+[Continue](https://docs.continue.dev) 通过 `config.yaml` 进行配置。 每个模型都拥有 `provider`、`apiBase`、`apiKey` 以及 `roles` 列表（聊天、编辑、应用等）。 对于 Hostlinku，请使用 `openai` 提供商和 `apiBase` 网关。
 
 <Steps>
 
 ### 打开配置
 
-在“继续”面板中，点击齿轮图标 → **打开配置文件**，或直接编辑 `~/.continue/config.yaml`（全局）/ `.continue/config.yaml`（按项目）。
+在“Continue”面板中，点击齿轮图标 → **打开配置文件**，或直接编辑 `~/.continue/config.yaml`（全局）/ `.continue/config.yaml`（按项目）。
 
 ### 添加模型 Hostlinku
 
@@ -52,7 +52,7 @@ models:
 创建文件 `~/.continue/.env`（不提交），内容如下：
 
 ```bash
-HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
 或者，如果你的配置文件确实是私有的，请直接将 `${{ secrets.HOSTLINKU_API_KEY }}` 替换为密钥值。

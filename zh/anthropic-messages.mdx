@@ -12,7 +12,7 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ```http
 POST https://api.hostlinku.com/v1/messages
-x-api-key: sk-isi-api-key-kamu
+x-api-key: sk-your-api-key
 anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
@@ -27,11 +27,11 @@ Content-Type: application/json
 
 各工具（Claude Code、Cline 等）的分步指南请参见 [IDE 与代理的集成](/zh/integrations)。
 
-**克劳德·科德**
+**Claude Code**
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
-export ANTHROPIC_API_KEY=sk-isi-api-key-kamu
+export ANTHROPIC_API_KEY=sk-your-api-key
 export ANTHROPIC_MODEL=claude-sonnet-4-6
 claude
 ```
@@ -42,14 +42,14 @@ claude
 import anthropic
 
 client = anthropic.Anthropic(
-    api_key="sk-isi-api-key-kamu",
+    api_key="sk-your-api-key",
     base_url="https://api.hostlinku.com",
 )
 
 message = client.messages.create(
     model="claude-haiku-4-5",
     max_tokens=256,
-    messages=[{"role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat."}],
+    messages=[{"role": "user", "content": "用两句话解释什么是 API 网关。"}],
 )
 print(message.content[0].text)
 print(message.usage.input_tokens, message.usage.output_tokens)
@@ -60,7 +60,7 @@ print(message.usage.input_tokens, message.usage.output_tokens)
 ```ts
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com" });
+const client = new Anthropic({ apiKey: "sk-your-api-key", baseURL: "https://api.hostlinku.com" });
 const msg = await client.messages.create({
   model: "claude-haiku-4-5",
   max_tokens: 256,

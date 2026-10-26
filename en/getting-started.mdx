@@ -38,7 +38,7 @@ Go to [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** �
 All gateway endpoints live at `https://api.hostlinku.com`, authenticated with `Authorization: Bearer sk-…`. Non-streaming example:
 
 ```bash
-curl https://api.hostlinku.com/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-isi-api-key-kamu"   -d '{
+curl https://api.hostlinku.com/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-your-api-key"   -d '{
     "model": "gpt-5-5",
     "messages": [
       { "role": "user", "content": "Hello! Introduce yourself briefly." }
@@ -96,7 +96,7 @@ for chunk in stream:
 With curl, add `-N` so output is not buffered:
 
 ```bash
-curl -N https://api.hostlinku.com/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-isi-api-key-kamu"   -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Hello!" }] }'
+curl -N https://api.hostlinku.com/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-your-api-key"   -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Hello!" }] }'
 ```
 
 ### Check balance and history

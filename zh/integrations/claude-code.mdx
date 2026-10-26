@@ -1,5 +1,5 @@
 ---
-title: "克劳德·科德"
+title: "Claude Code"
 description: "通过 Hostlinku 并使用 ANTHROPIC_BASE_URL 运行 Claude Code（CLI、VS Code、JetBrains）-无论使用 Claude 还是其他模型，一个余额即可满足所有需求"
 ---
 
@@ -25,9 +25,9 @@ npm install -g @anthropic-ai/claude-code
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
-export ANTHROPIC_AUTH_TOKEN=sk-isi-api-key-kamu
+export ANTHROPIC_AUTH_TOKEN=sk-your-api-key
 
-# Pin model untuk alias yang dipakai Claude Code
+# 为 Claude Code 使用的别名固定模型
 export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
 export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
@@ -41,7 +41,7 @@ claude
 {
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.hostlinku.com",
-    "ANTHROPIC_AUTH_TOKEN": "sk-isi-api-key-kamu",
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-api-key",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5"
@@ -49,7 +49,7 @@ claude
 }
 ```
 
-`settings.json`中的数值**超过了**export shell。
+`settings.json` 中的值会**覆盖** shell 的 export。
 
 ### 验证
 
@@ -83,7 +83,7 @@ Claude Code 扩展会自行检查登录信息，因此还需在扩展设置中�
 {
   "claudeCode.environmentVariables": [
     { "name": "ANTHROPIC_BASE_URL", "value": "https://api.hostlinku.com" },
-    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-isi-api-key-kamu" },
+    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-your-api-key" },
     { "name": "ANTHROPIC_DEFAULT_SONNET_MODEL", "value": "claude-sonnet-4-6" },
     { "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL", "value": "claude-haiku-4-5" }
   ]

@@ -75,7 +75,7 @@ Dipakai oleh Anthropic SDK, Claude Code, Cursor, Cline, dan tool lain berprotoko
 
 ```bash
 curl https://api.hostlinku.com/v1/messages \
-  -H "x-api-key: sk-isi-api-key-kamu" \
+  -H "x-api-key: sk-your-api-key" \
   -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" \
   -d '{
@@ -115,7 +115,7 @@ import anthropic
 
 client = anthropic.Anthropic(
     base_url="https://api.hostlinku.com",
-    api_key="sk-isi-api-key-kamu",
+    api_key="sk-your-api-key",
 )
 
 resp = client.messages.create(
@@ -141,7 +141,7 @@ berlaku untuk model Claude.
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
-  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Authorization: Bearer sk-your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "claude-sonnet-4-6",
@@ -185,7 +185,7 @@ Token cache muncul di `usage.prompt_tokens_details`:
 ```python
 from openai import OpenAI
 
-client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-your-api-key")
 
 resp = client.chat.completions.create(
     model="claude-sonnet-4-6",

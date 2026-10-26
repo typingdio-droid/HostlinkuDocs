@@ -27,7 +27,7 @@ pip install anthropic
 import anthropic
 
 client = anthropic.Anthropic(
-    api_key="sk-isi-api-key-kamu",
+    api_key="sk-your-api-key",
     base_url="https://api.hostlinku.com",
 )
 
@@ -61,7 +61,7 @@ pip install openai
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-isi-api-key-kamu", base_url="https://api.hostlinku.com/v1")
+client = OpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v1")
 
 response = client.chat.completions.create(
     model="gpt-6-astra",
@@ -123,7 +123,7 @@ npm install @anthropic-ai/sdk
 import Anthropic from "@anthropic-ai/sdk";
 
 const client = new Anthropic({
-  apiKey: "sk-isi-api-key-kamu",
+  apiKey: "sk-your-api-key",
   baseURL: "https://api.hostlinku.com",
 });
 
@@ -158,7 +158,7 @@ npm install openai
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  apiKey: "sk-isi-api-key-kamu",
+  apiKey: "sk-your-api-key",
   baseURL: "https://api.hostlinku.com/v1",
 });
 
