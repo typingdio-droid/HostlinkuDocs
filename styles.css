@@ -39,3 +39,9 @@ button,
 [role="listbox"] {
   border-radius: 6px !important;
 }
+
+/* Kontras tombol Console pada tema monokrom. */
+header a[href*="console.hostlinku.com"] .text-white,
+header a[href*="console.hostlinku.com"] svg {
+  color: #ffffff !important;
+}
