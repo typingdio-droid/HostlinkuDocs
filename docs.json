@@ -107,88 +107,183 @@
     ]
   },
   "navigation": {
-    "tabs": [
+    "languages": [
       {
-        "tab": "Dokumentasi",
-        "icon": "book-open",
-        "groups": [
+        "language": "id",
+        "tabs": [
           {
-            "group": "Mulai",
-            "icon": "rocket",
-            "pages": [
-              "index",
-              "getting-started",
-              "authentication"
-            ]
-          },
-          {
-            "group": "Akun",
-            "icon": "wallet",
-            "pages": [
-              "usage-and-limits",
-              "billing"
-            ]
-          },
-          {
-            "group": "Bantuan",
-            "icon": "life-buoy",
-            "pages": [
-              "faq",
-              "support"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API",
-        "icon": "square-terminal",
-        "groups": [
-          {
-            "group": "API",
-            "icon": "square-terminal",
-            "pages": [
-              "api-reference",
-              "sdk",
-              "chat-completions",
-              "anthropic-messages",
-              "responses",
-              "prompt-caching",
-              "models",
-              "dedicated",
-              "errors"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Integrasi",
-        "icon": "plug",
-        "groups": [
-          {
-            "group": "Integrasi",
-            "icon": "plug",
-            "pages": [
-              "integrations/index",
+            "tab": "Dokumentasi",
+            "icon": "book-open",
+            "groups": [
               {
-                "group": "Integrasi IDE & Agent",
-                "expanded": false,
+                "group": "Mulai",
+                "icon": "rocket",
                 "pages": [
-                  "integrations/claude-code",
-                  "integrations/codex-cli",
-                  "integrations/cursor",
-                  "integrations/vscode",
-                  "integrations/copilot",
-                  "integrations/zed",
-                  "integrations/cline",
-                  "integrations/kilo-code",
-                  "integrations/continue",
-                  "integrations/jetbrains",
-                  "integrations/junie",
-                  "integrations/factory",
-                  "integrations/opencode",
-                  "integrations/xum",
-                  "integrations/aider",
-                  "integrations/agents-sdk"
+                  "index",
+                  "getting-started",
+                  "authentication"
+                ]
+              },
+              {
+                "group": "Akun",
+                "icon": "wallet",
+                "pages": [
+                  "usage-and-limits",
+                  "billing"
+                ]
+              },
+              {
+                "group": "Bantuan",
+                "icon": "life-buoy",
+                "pages": [
+                  "faq",
+                  "support"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API",
+            "icon": "square-terminal",
+            "groups": [
+              {
+                "group": "API",
+                "icon": "square-terminal",
+                "pages": [
+                  "api-reference",
+                  "sdk",
+                  "chat-completions",
+                  "anthropic-messages",
+                  "responses",
+                  "prompt-caching",
+                  "models",
+                  "dedicated",
+                  "errors"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Integrasi",
+            "icon": "plug",
+            "groups": [
+              {
+                "group": "Integrasi",
+                "icon": "plug",
+                "pages": [
+                  "integrations/index",
+                  {
+                    "group": "Integrasi IDE & Agent",
+                    "expanded": false,
+                    "pages": [
+                      "integrations/claude-code",
+                      "integrations/codex-cli",
+                      "integrations/cursor",
+                      "integrations/vscode",
+                      "integrations/copilot",
+                      "integrations/zed",
+                      "integrations/cline",
+                      "integrations/kilo-code",
+                      "integrations/continue",
+                      "integrations/jetbrains",
+                      "integrations/junie",
+                      "integrations/factory",
+                      "integrations/opencode",
+                      "integrations/xum",
+                      "integrations/aider",
+                      "integrations/agents-sdk"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "icon": "book-open",
+            "groups": [
+              {
+                "group": "Getting started",
+                "icon": "rocket",
+                "pages": [
+                  "en/index",
+                  "en/getting-started",
+                  "en/authentication"
+                ]
+              },
+              {
+                "group": "Account",
+                "icon": "wallet",
+                "pages": [
+                  "en/usage-and-limits",
+                  "en/billing"
+                ]
+              },
+              {
+                "group": "Help",
+                "icon": "life-buoy",
+                "pages": [
+                  "en/faq",
+                  "en/support"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API",
+            "icon": "square-terminal",
+            "groups": [
+              {
+                "group": "API",
+                "pages": [
+                  "en/api-reference",
+                  "en/sdk",
+                  "en/chat-completions",
+                  "en/anthropic-messages",
+                  "en/responses",
+                  "en/prompt-caching",
+                  "en/models",
+                  "en/dedicated",
+                  "en/errors"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Integrations",
+            "icon": "plug",
+            "groups": [
+              {
+                "group": "Integrations",
+                "pages": [
+                  "en/integrations/index",
+                  {
+                    "group": "IDE & Agent Integrations",
+                    "expanded": false,
+                    "pages": [
+                      "en/integrations/claude-code",
+                      "en/integrations/codex-cli",
+                      "en/integrations/cursor",
+                      "en/integrations/vscode",
+                      "en/integrations/copilot",
+                      "en/integrations/zed",
+                      "en/integrations/cline",
+                      "en/integrations/kilo-code",
+                      "en/integrations/continue",
+                      "en/integrations/jetbrains",
+                      "en/integrations/junie",
+                      "en/integrations/factory",
+                      "en/integrations/opencode",
+                      "en/integrations/xum",
+                      "en/integrations/aider",
+                      "en/integrations/agents-sdk"
+                    ]
+                  }
                 ]
               }
             ]

@@ -1,0 +1,118 @@
+---
+title: Quickstart
+description: From creating an account to your first request to the Hostlinku gateway in five minutes
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+This page walks you from zero to a successful chat completion request through Hostlinku.
+
+## Prerequisites
+
+- **Hostlinku account**: sign up for free at [auth.hostlinku.com](https://auth.hostlinku.com).
+- **Credit balance**: the gateway charges per token. Top up in the console before production requests. Test requests usually cost less than a cent, but your balance must not be empty. See [Billing & Balance](/en/billing).
+- **Test tools**: curl is enough. For advanced examples, the official OpenAI SDK (`pip install openai`) or Node (`npm install openai`) works without code changes.
+
+## Steps
+
+<Steps>
+
+### Sign up or sign in
+
+Open [auth.hostlinku.com](https://auth.hostlinku.com): create a new account, or sign in with an existing one (including SSO if enabled by an admin).
+
+### Create an API key
+
+Go to [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** → **Create API key**. In the creation dialog you can set:
+
+- **Name**: for identification, e.g. `production-your-app`.
+- **Expiry**: optional — never, 30/90/365 days, or a custom date.
+- **Credit limit**: optional — a usage limit for the key (e.g. $10) per **Daily / Weekly / Monthly** window, or no reset (total limit).
+
+<Callout type="warning" title="The secret is shown only once">
+  After the API key is created, the `sk-…` secret is **shown only once** in the console. Copy and store it safely: the server stores only a SHA-256 hash and cannot display it again. If you lose the secret, revoke the key and create a new one.
+</Callout>
+
+### Send your first request
+
+All gateway endpoints live at `https://api.hostlinku.com`, authenticated with `Authorization: Bearer sk-…`. Non-streaming example:
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-isi-api-key-kamu"   -d '{
+    "model": "gpt-5-5",
+    "messages": [
+      { "role": "user", "content": "Hello! Introduce yourself briefly." }
+    ]
+  }'
+```
+
+If everything is correct, you receive an OpenAI-style JSON response plus a `hostlinku` block with the request cost and latency:
+
+```json
+{
+  "id": "cmpl_…",
+  "object": "chat.completion",
+  "model": "gpt-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "Hello! I am …" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60 },
+  "hostlinku": {
+    "cost": 0.000123,
+    "latencyMs": 812
+  }
+}
+```
+
+The model slug above is just an example. See the valid slugs for your account in the console (**Models**) or via the [`GET /v1/models` endpoint](/en/models).
+
+### Recommendation: use streaming
+
+For chat applications, send `"stream": true`. The first token appears as soon as the model starts answering (usually under 1–2 seconds) without waiting for the full answer. Total time is the same, but your app feels much faster to users.
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.hostlinku.com/v1",
+    api_key=os.environ["HOSTLINKU_API_KEY"],
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5-5",
+    messages=[{"role": "user", "content": "Hello!"}],
+    stream=True,
+)
+for chunk in stream:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+```
+
+With curl, add `-N` so output is not buffered:
+
+```bash
+curl -N https://api.hostlinku.com/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer sk-isi-api-key-kamu"   -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Hello!" }] }'
+```
+
+### Check balance and history
+
+In the console, open **Credits/Balance** to see your running balance and **Request Log** for request history with tokens, cost, and latency. An equivalent endpoint is available at [`GET /api/wallet/account`](/en/billing) for console sessions, while the public API (`sk-…` keys) uses `/v1/*`.
+
+</Steps>
+
+## Next steps
+
+- [Authentication](/en/authentication): API key details, expiry, and credit limits.
+- [Chat Completions](/en/chat-completions): all parameters, SSE streaming, and Python examples.
+- [Models](/en/models): model catalog and how to choose the right model.
+- [Errors](/en/errors): what each error code means and how to handle it.
+
+<Callout type="note" title="Note">
+  Need help? Contact [halo@hostlinku.com](mailto:halo@hostlinku.com), or see
+  [Support](/en/support).
+</Callout>

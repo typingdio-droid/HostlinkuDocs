@@ -1,0 +1,57 @@
+---
+title: Introduction
+description: What Hostlinku is, how it works, and how to read this documentation
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+**Hostlinku** is a unified AI gateway: one API that is fully compatible with OpenAI. Your requests are routed to hundreds of models from multiple providers (OpenAI, Anthropic, Google, DeepSeek, Qwen, and others) through a single API key.
+
+With Hostlinku you don't need to manage separate accounts, API keys, and request formats for every provider:
+
+- **One API key** for every model (`sk-…`).
+- **OpenAI-compatible**: use the official OpenAI SDKs (`openai-python`, `openai-node`) by changing only `base_url`.
+- **SSE streaming**: token-by-token responses in `text/event-stream` format, just like OpenAI.
+- **Centralized model catalog**: slugs, per-token pricing, context windows, and capabilities in one place.
+- **Usage controls**: per-key credit limits, request history, and full logs in the console.
+- **Flexible billing**: top up with QRIS / Virtual Account (iPaymu) or crypto (BlockBee).
+
+## Architecture at a glance
+
+```text
+Your application
+    │  Authorization: Bearer sk-…
+    ▼
+api.hostlinku.com  ──►  Hostlinku Gateway  ──►  Routing & failover
+(v1/chat/completions)        │                        │
+                             │                        ├─► OpenAI
+                             ├─ Reserve balance      ├─► Anthropic
+                             ├─ Telemetry & logs     ├─► Google
+                             └─ Commit actual cost   └─► …and more
+```
+
+Every request follows the same path: API key authentication, credit-limit checks, balance reservation (estimate), forwarding to the model service (with automatic retries on failure), then committing the actual cost based on tokens used and recording telemetry.
+
+The Hostlinku Console (`console.hostlinku.com`) uses the same backend: API keys, balance, request history, and audit logs all come from real gateway data.
+
+## Quick links
+
+| Need | Page |
+|---|---|
+| Send your first request | [Quickstart](/en/getting-started) |
+| Understand API keys, expiry, and per-key limits | [Authentication](/en/authentication) |
+| Concise reference for every endpoint, rate limit, and error code | [API Reference](/en/api-reference) |
+| `POST /v1/chat/completions` reference | [Chat Completions](/en/chat-completions) |
+| Use the Anthropic SDK / Claude Code via `POST /v1/messages` | [Anthropic Messages](/en/anthropic-messages) |
+| Use Codex CLI / OpenAI Agents SDK via `POST /v1/responses` | [Responses API](/en/responses) |
+| Configure Claude Code, Codex CLI, Cursor, Zed, Cline, Continue, OpenCode, Aider | [IDE & Agent Integrations](/en/integrations) |
+| Model list and how to choose | [Models](/en/models) |
+| Rate limits and usage monitoring | [Usage & Limits](/en/usage-and-limits) |
+| Balance, top-ups, and per-token pricing | [Billing & Balance](/en/billing) |
+| Error codes and error response format | [Errors](/en/errors) |
+
+<Callout type="tip" title="Need an account first?">
+  Create an account at [auth.hostlinku.com](https://auth.hostlinku.com) and create your first API key in
+  [console.hostlinku.com](https://console.hostlinku.com). Learn more in
+  [Quickstart](/en/getting-started).
+</Callout>
