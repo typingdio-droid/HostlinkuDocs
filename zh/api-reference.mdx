@@ -275,7 +275,7 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 |---|---|---|
 | 400 | 正文无效，`max_tokens` 超出了模型的输出限制，或者 Service Mode API key 中未提供该模型。 | `max_tokens (20000) exceeds the output limit of model 'claude-haiku-4-5' (16000).` |
 | 401 | API密钥未发送、无效、已被撤销或已过期。 | `The API key is invalid or has been revoked.` |
-| 402 | 余额不足以支付请求的预估费用，或者API密钥的额度已用尽。 | `Saldo tidak mencukupi.` |
+| 402 | 余额不足以支付请求的预估费用，或者API密钥的额度已用尽。 | `余额不足。` |
 | 403 | 账户已被暂停/访问被拒绝。 | `You do not have access to this resource.` |
 | 404 | 该模型的Slug未收录在产品目录中。 | `Model 'xxx' was not found.` |
 | 413 | 请求正文超过最大长度。 | `The payload is too large.` |

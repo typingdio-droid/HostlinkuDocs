@@ -14,7 +14,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ```bash
 npm install -g @openai/codex
-# atau: brew install codex
+# または: brew install codex
 ```
 
 ### プロバイダー Hostlinku を追加する
@@ -72,7 +72,7 @@ model_provider = "hostlinku"
 
 ```bash
 codex --profile kuat
-codex --profile cepat "tulis unit test untuk utils/date.ts"
+codex --profile cepat "utils/date.ts のユニットテストを書いて"
 ```
 
 <Callout type="warning" title="CodexはOpenAIモデルのみに対応しています">
@@ -93,6 +93,6 @@ Codex CLIは、各ターンで`input`および`store: false`の会話履歴全�
 
 - **`401`** - `env_key` の変数が、`codex` が実行されているシェルにはエクスポートされていません。
 - **モデルが「シェルを実行できない」と回答し、出力をでっち上げた** - このモデルはResponsesネイティブではないため、モデルに到達する前にCodexツールが除外されてしまいます。上記のCodex対応モデル一覧からモデルを選択してください。Codexには`gpt-5-6-terra`を使用しないでください。
-- **`400 previous_response_id tidak didukung`** - *stored responses* モードを強制するプラグインやスクリプトが存在する場合にのみ発生します。`store` が `true` を強制していないことを確認してください。
+- **`400 previous_response_id はサポートされていません`** - *stored responses* モードを強制するプラグインやスクリプトが存在する場合にのみ発生します。`store` が `true` を強制していないことを確認してください。
 - **モデルが表示されない / `404`** - slugが間違っています。`/v1/models` には、あなたのキーに対応する有効なリストが表示されます。
 - **旧バージョンのCodexでは`wire_api = "chat"`が必要** - Hostlinkuも[`/v1/chat/completions`](/ja/chat-completions)に対応していますが、Codexの推論機能は`responses`で最も良好に動作します。

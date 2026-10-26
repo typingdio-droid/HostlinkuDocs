@@ -82,7 +82,7 @@ from agents import Agent, Runner, set_default_openai_client, set_tracing_disable
 from openai import AsyncOpenAI
 
 set_default_openai_client(AsyncOpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v1"))
-set_tracing_disabled(True)  # tracing OpenAI tidak tersedia lewat gateway
+set_tracing_disabled(True)  # OpenAI トレースはゲートウェイ経由では利用できません
 
 agent = Agent(name="Asisten", instructions="Jawab singkat.", model="gpt-5-5")
 result = Runner.run_sync(agent, "Sebutkan 3 bahasa pemrograman.")
@@ -130,7 +130,7 @@ Hostlinku **は** レスポンス（`store: false`）を保存しません。 �
       "type": "message",
       "status": "completed",
       "role": "assistant",
-      "content": [{ "type": "output_text", "text": "API gateway adalah …", "annotations": [] }]
+      "content": [{ "type": "output_text", "text": "APIゲートウェイとは …", "annotations": [] }]
     }
   ],
   "usage": {
@@ -177,7 +177,7 @@ event: response.output_text.delta
 data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"API gateway"}
 
 event: response.output_text.done
-data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"API gateway adalah …"}
+data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"APIゲートウェイとは …"}
 
 event: response.content_part.done
 data: {"type":"response.content_part.done","sequence_number":6,…}

@@ -74,7 +74,7 @@ Hostlinku网关的所有错误都采用相同的_envelope_格式，无论其来�
 发生在 SSE 流**中间**的故障将作为事件数据发送到同一流中（而非作为 HTTP 状态）：
 
 ```text
-data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+data: {"error":{"code":"UPSTREAM_ERROR","message":"上游当前不可用。请稍后重试。","type":"upstream_error"}}
 ```
 
 网关在发生错误事件后不会发送 `data: [DONE]`，因此断开的流始终可以与正常结束的流区分开来。

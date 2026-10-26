@@ -74,7 +74,7 @@ Hostlinkuゲートウェイからのすべてのエラーは、その原因が�
 SSEストリームの**途中**で発生した失敗は、同じストリーム上でイベントデータとして送信されます（HTTPステータスとしてではなく）：
 
 ```text
-data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+data: {"error":{"code":"UPSTREAM_ERROR","message":"アップストリームは現在利用できません。後でもう一度お試しください。","type":"upstream_error"}}
 ```
 
 ゲートウェイはエラー発生後に`data: [DONE]`を送信しないため、切断されたストリームと正常に終了したストリームを常に区別することができます。
