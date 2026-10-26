@@ -44,7 +44,7 @@ API密钥以SHA-256哈希值的形式存储在服务器上：其原始值从未�
 ```json
 {
   "status": "error",
-  "error": { "code": "UNAUTHORIZED", "message": "API key sudah kedaluwarsa." }
+  "error": { "code": "UNAUTHORIZED", "message": "The API key has expired." }
 }
 ```
 
@@ -87,13 +87,13 @@ API密钥以SHA-256哈希值的形式存储在服务器上：其原始值从未�
 
 | 情况 | HTTP | `error.code` | 消息 |
 |---|---|---|---|
-| `Authorization` 标头不存在或不是 Bearer 标头 | 401 | `UNAUTHORIZED` | `Endpoint ini memerlukan API key Hostlinku: kirim header Authorization: Bearer sk-… (atau x-api-key). …` |
-| API密钥未知、输入有误或已被撤销 | 401 | `UNAUTHORIZED` | `API key tidak valid atau sudah dicabut.` |
-| API密钥已过期 | 401 | `UNAUTHORIZED` | `API key sudah kedaluwarsa.` |
-| API密钥用于`/api/*`控制台的端点 | 403 | `API_KEY_NOT_ALLOWED` | `API key hanya berlaku untuk endpoint gateway /v1/* …` |
+| `Authorization` 标头不存在或不是 Bearer 标头 | 401 | `UNAUTHORIZED` | `This endpoint requires a Hostlinku API key: send the Authorization: Bearer sk-… header (or x-api-key). …` |
+| API密钥未知、输入有误或已被撤销 | 401 | `UNAUTHORIZED` | `The API key is invalid or has been revoked.` |
+| API密钥已过期 | 401 | `UNAUTHORIZED` | `The API key has expired.` |
+| API密钥用于`/api/*`控制台的端点 | 403 | `API_KEY_NOT_ALLOWED` | `API keys are only valid for the /v1/* gateway endpoints …` |
 | API密钥已达到额度上限 | 402 | `PAYMENT_REQUIRED` | `Limit kredit API key tercapai (…)` |
-| 账户余额不足以完成预订请求 | 402 | `PAYMENT_REQUIRED` | `Saldo kredit tidak cukup untuk request ini.` |
-| 超出速率限制 | 429 | `RATE_LIMITED` | `Rate limit terlampaui. …` |
+| 账户余额不足以完成预订请求 | 402 | `PAYMENT_REQUIRED` | `Insufficient credit balance for this request.` |
+| 超出速率限制 | 429 | `RATE_LIMITED` | `Rate limit exceeded. …` |
 
 <Callout type="important" title="API密钥的安全性">
   - 请勿将 API 密钥放在浏览器中运行的客户端代码或公共代码库中。- 在服务器上使用环境变量（例如 `HOSTLINKU_API_KEY`），并从中读取。 - 为每个应用程序/环境创建独立的 API 密钥，以便能够逐个撤销，而不会影响其他密钥。- 利用 **过期** 和 **额度限制** 作为防御层，以防 API 密钥泄露。 - 不再使用的 API 密钥可通过控制台进行 **撤销**（停用，历史记录仍保留）或 **清除**（永久删除）。

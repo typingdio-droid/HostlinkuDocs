@@ -273,15 +273,15 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 
 | HTTP 状态码 | 描述 | 错误消息示例 |
 |---|---|---|
-| 400 | 正文无效，`max_tokens` 超出了模型的输出限制，或者 Service Mode API key 中未提供该模型。 | `max_tokens (20000) melebihi batas output model 'claude-haiku-4-5' (16000).` |
-| 401 | API密钥未发送、无效、已被撤销或已过期。 | `API key tidak valid atau sudah dicabut.` |
+| 400 | 正文无效，`max_tokens` 超出了模型的输出限制，或者 Service Mode API key 中未提供该模型。 | `max_tokens (20000) exceeds the output limit of model 'claude-haiku-4-5' (16000).` |
+| 401 | API密钥未发送、无效、已被撤销或已过期。 | `The API key is invalid or has been revoked.` |
 | 402 | 余额不足以支付请求的预估费用，或者API密钥的额度已用尽。 | `Saldo tidak mencukupi.` |
-| 403 | 账户已被暂停/访问被拒绝。 | `Kamu tidak punya akses ke resource ini.` |
-| 404 | 该模型的Slug未收录在产品目录中。 | `Model 'xxx' tidak ditemukan.` |
-| 413 | 请求正文超过最大长度。 | `Payload terlalu besar.` |
-| 422 | 正文验证失败（仅 `/v1/chat/completions`；`/v1/messages` 和 `/v1/responses` 使用 400）。 | `Request body tidak valid.` |
-| 429 | 超出速率限制。 | `Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi.` |
-| 503 | 模型/上游当前不可用-可以安全地采用退避策略重试。 | `Model sedang tidak tersedia. Coba lagi nanti.` |
+| 403 | 账户已被暂停/访问被拒绝。 | `You do not have access to this resource.` |
+| 404 | 该模型的Slug未收录在产品目录中。 | `Model 'xxx' was not found.` |
+| 413 | 请求正文超过最大长度。 | `The payload is too large.` |
+| 422 | 正文验证失败（仅 `/v1/chat/completions`；`/v1/messages` 和 `/v1/responses` 使用 400）。 | `The request body is invalid.` |
+| 429 | 超出速率限制。 | `Rate limit exceeded. Upgrade your plan for a higher limit.` |
+| 503 | 模型/上游当前不可用-可以安全地采用退避策略重试。 | `The model is currently unavailable. Please try again later.` |
 
 错误消息中**绝不会**包含上游提供商的标识或原始文本。OpenAI格式的完整代码列表请参见[错误](/zh/errors)。
 

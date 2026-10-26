@@ -44,7 +44,7 @@ APIキーの作成時のオプションの有効期限：
 ```json
 {
   "status": "error",
-  "error": { "code": "UNAUTHORIZED", "message": "API key sudah kedaluwarsa." }
+  "error": { "code": "UNAUTHORIZED", "message": "The API key has expired." }
 }
 ```
 
@@ -87,13 +87,13 @@ APIキーの作成時のオプションの有効期限：
 
 | 状況 | HTTP | `error.code` | メッセージ |
 |---|---|---|---|
-| ヘッダー「`Authorization`」が存在しないか、Bearer ではない | 401 | `UNAUTHORIZED` | `Endpoint ini memerlukan API key Hostlinku: kirim header Authorization: Bearer sk-… (atau x-api-key). …` |
-| APIキーが認識されない、入力ミスがある、または無効化されている | 401 | `UNAUTHORIZED` | `API key tidak valid atau sudah dicabut.` |
-| APIキーの有効期限が切れています | 401 | `UNAUTHORIZED` | `API key sudah kedaluwarsa.` |
-| APIキーは、`/api/*`コンソールのエンドポイントで使用されます。 | 403 | `API_KEY_NOT_ALLOWED` | `API key hanya berlaku untuk endpoint gateway /v1/* …` |
+| ヘッダー「`Authorization`」が存在しないか、Bearer ではない | 401 | `UNAUTHORIZED` | `This endpoint requires a Hostlinku API key: send the Authorization: Bearer sk-… header (or x-api-key). …` |
+| APIキーが認識されない、入力ミスがある、または無効化されている | 401 | `UNAUTHORIZED` | `The API key is invalid or has been revoked.` |
+| APIキーの有効期限が切れています | 401 | `UNAUTHORIZED` | `The API key has expired.` |
+| APIキーは、`/api/*`コンソールのエンドポイントで使用されます。 | 403 | `API_KEY_NOT_ALLOWED` | `API keys are only valid for the /v1/* gateway endpoints …` |
 | APIキーがクレジット制限に達しました | 402 | `PAYMENT_REQUIRED` | `Limit kredit API key tercapai (…)` |
-| 予約リクエストを行うには、アカウントの残高が不足しています | 402 | `PAYMENT_REQUIRED` | `Saldo kredit tidak cukup untuk request ini.` |
-| レート制限を超過 | 429 | `RATE_LIMITED` | `Rate limit terlampaui. …` |
+| 予約リクエストを行うには、アカウントの残高が不足しています | 402 | `PAYMENT_REQUIRED` | `Insufficient credit balance for this request.` |
+| レート制限を超過 | 429 | `RATE_LIMITED` | `Rate limit exceeded. …` |
 
 <Callout type="important" title="APIキーのセキュリティ">
   - ブラウザ上で実行されるクライアントサイドのコードや、公開リポジトリにAPIキーを記載しないでください。 - サーバー上の環境変数（例：`HOSTLINKU_API_KEY`）を使用し、そこから読み込んでください。 - アプリケーションや環境ごとに個別のAPIキーを作成し、他のキーに影響を与えることなく個別に無効化できるようにしてください。- APIキーが漏洩した場合の防御策として、**有効期限**と**クレジット制限**を活用してください。 - 不要になったAPIキーは、コンソールから**失効**（無効化、履歴は残る）または**削除**（完全に削除）することができます。

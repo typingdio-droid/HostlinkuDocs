@@ -13,7 +13,7 @@ validasi, autentikasi, billing, atau gangguan pada layanan upstream:
   "status": "error",
   "error": {
     "code": "VALIDATION_FAILED",
-    "message": "Request body tidak valid.",
+    "message": "The request body is invalid.",
     "details": {
       "issues": [{ "path": "messages", "message": "Array must contain at least 1 element(s)" }]
     }
@@ -59,7 +59,7 @@ Saat validasi gagal, `details.issues` memuat daftar masalah per field:
   "status": "error",
   "error": {
     "code": "VALIDATION_FAILED",
-    "message": "Request body tidak valid.",
+    "message": "The request body is invalid.",
     "details": {
       "issues": [
         { "path": "messages", "message": "Array must contain at least 1 element(s)" },
