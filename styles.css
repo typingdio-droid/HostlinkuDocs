@@ -12,3 +12,10 @@ html.dark, [data-theme="dark"] { --hl-surface: #0b0b0f; --hl-border: rgba(255,25
 .hl-steps h3 { counter-increment:step; position:relative; }
 .hl-steps h3::before { content:counter(step); position:absolute; left:-44px; top:50%; transform:translateY(-50%); display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--hl-muted); border:1px solid var(--hl-border); outline:6px solid var(--hl-surface); font-size:.875rem; font-weight:600; }
 
+
+/* Kolom konten lebih lebar; TOC sedikit dipersempit. */
+#content-container { max-width: none; }
+#content-side-layout { width: 240px; max-width: 240px; }
+#table-of-contents-layout { width: 240px; padding-left: 20px; }
+#table-of-contents { width: 220px; }
+#content-area { padding-left: 32px; padding-right: 0; }
