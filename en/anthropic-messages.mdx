@@ -1,8 +1,173 @@
 ---
 title: "Anthropic Messages"
-description: "Reference for POST /v1/messages (Anthropic-compatible)"
+description: "POST /v1/messages endpoint reference (Anthropic-compatible) — use the Anthropic SDK, Claude Code, or Cursor with your Hostlink API key"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/anthropic-messages).
-</Note>
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+In addition to the OpenAI format, Hostlinku also provides endpoints compatible with the [Anthropic Messages API](https://docs.anthropic.com/en/api/messages). The official Anthropic SDK, **Claude Code**, Cursor, Cline, and other tools that support the Anthropic protocol can be used simply by changing the base URL—one API key and one Hostlinku balance cover both formats.
+
+```http
+POST https://api.hostlinku.com/v1/messages
+x-api-key: sk-isi-api-key-kamu
+anthropic-version: 2023-06-01
+Content-Type: application/json
+```
+
+Authentication accepts the `x-api-key` header (Anthropic style) **or** `Authorization: Bearer sk-…`. Each response includes the `request-id` / `x-request-id` header (Hostlinku request ID, in the format `msg_…`) and, for successful non-streaming responses, `x-model`.
+
+<Callout type="note" title="Any model, not just Claude">
+`model` uses the same Hostlinku public slug as the [model catalog](/en/models) — e.g., `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Non-Claude models can still be invoked via the Anthropic format; the gateway handles the translation.
+</Callout>
+
+## Quick Setup
+
+Step-by-step guides for each tool (Claude Code, Cline, and others) are available at [IDE & Agent Integration](/en/integrations).
+
+**Claude Code**
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hostlinku.com
+export ANTHROPIC_API_KEY=sk-isi-api-key-kamu
+export ANTHROPIC_MODEL=claude-sonnet-4-6
+claude
+```
+
+**Python (Anthropic's official SDK)**
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(
+    api_key="sk-isi-api-key-kamu",
+    base_url="https://api.hostlinku.com",
+)
+
+message = client.messages.create(
+    model="claude-haiku-4-5",
+    max_tokens=256,
+    messages=[{"role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat."}],
+)
+print(message.content[0].text)
+print(message.usage.input_tokens, message.usage.output_tokens)
+```
+
+**Node.js**
+
+```ts
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com" });
+const msg = await client.messages.create({
+  model: "claude-haiku-4-5",
+  max_tokens: 256,
+  messages: [{ role: "user", content: "Halo!" }],
+});
+```
+
+## Body Parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `model` | `string` | **Required.** Hostlinku model slug. |
+| `messages` | `array` | **Required.** `{ role: "user" \| "assistant", content }`; `content` is a string or an array of blocks (`text`, `image`, `tool_use`, `tool_result`, …). |
+| `max_tokens` | `integer` | **Required** (as per the Anthropic specification). Returns a `400` error if the model's output limit is exceeded. |
+| `system` | `string` \| `array` | System prompt; block arrays support `cache_control`. |
+| `stream` | `boolean` | `true` for SSE (see below). |
+| `temperature` | `number` | `0`–`1`. |
+| `top_p`, `top_k` | `number`, `integer` | Alternative sampling. |
+| `stop_sequences` | `string[]` | Maximum of 16. |
+| `tools`, `tool_choice` | `array`, `any` | Uses the Anthropic tool format (including `input_schema`). |
+| `thinking` | `object` | Extended thinking, e.g., `{ "type": "enabled", "budget_tokens": 1024 }`. |
+| `metadata` | `object` | E.g., `{ "user_id": "…" }`. |
+| `mcp_servers`, `context_management`, `output_format` | — | Passed through as-is (depending on model support). |
+
+Fields not in the list are discarded. An invalid body results in a `400 invalid_request_error` response, with details for each field in `error.details.issues`.
+
+## Non-streaming response
+
+```json
+{
+  "id": "msg_…",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-haiku-4-5",
+  "content": [{ "type": "text", "text": "API gateway adalah …" }],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 30,
+    "output_tokens": 55,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 }
+  },
+  "hostlinku": { "cost": 0.00021, "currency": "🪙", "serviceMode": "performance", "latencyMs": 940 }
+}
+```
+
+`id` and `model` are always Hostlinku's public identifiers. The `hostlinku` block is an extension (the Anthropic SDK ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency.
+
+<Callout type="note" title="Anthropic usage conventions">
+According to Anthropic's specifications, `input_tokens` **does not** include cache tokens; cache tokens are reported separately in `cache_read_input_tokens` / `cache_creation_input_tokens`. Hostlinku’s billing calculates all three at their respective rates—identical to the `/v1/chat/completions` endpoint (see [Billing](/en/billing)).
+</Callout>
+
+## Streaming (`stream: true`)
+
+The gateway streams SSE events using the Anthropic framing (`event:` + `data:`):
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_…","type":"message","role":"assistant","model":"claude-haiku-4-5","content":[],"usage":{"input_tokens":22,"output_tokens":1,…}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Apel"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":22,"output_tokens":7,…}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+Note:
+
+- Final usage is recorded in `message_delta`; charges are calculated based on actual usage after `message_stop`.
+- If the stream fails midway, the gateway sends an `event: error` with
+`{"type":"error","error":{"type":…,"message":…}}` and **do not** send a fake `message_stop`.
+- Errors occurring before the first byte (insufficient balance, model not found, rate limit) are returned as
+A standard JSON response with the correct HTTP status code — the Anthropic SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+
+## Count tokens
+
+```http
+POST https://api.hostlinku.com/v1/messages/count_tokens
+```
+
+Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`. Response: `{ "input_tokens": 15 }`. No charge.
+
+## Format error
+
+```json
+{ "type": "error", "error": { "type": "authentication_error", "message": "API key tidak valid atau sudah dicabut." } }
+```
+
+| HTTP | `error.type` | Common causes |
+|---|---|---|
+| 400 | `invalid_request_error` | Invalid body; `max_tokens` exceeds the model limit; model not available in Service Mode key. |
+| 401 | `authentication_error` | Invalid, revoked, or expired API key. |
+| 402 | `billing_error` | Insufficient balance or API key credit limit reached. |
+| 403 | `permission_error` | Account suspended / access denied. |
+| 404 | `not_found_error` | The model slug does not exist in the catalog. |
+| 429 | `rate_limit_error` | Request limit reached. |
+| 503 | `overloaded_error` | The model/upstream is currently unavailable — it is safe to retry. |
+
+Error messages never include the upstream provider's identifier. A complete list of codes for the OpenAI format is available at [Error](/en/errors).

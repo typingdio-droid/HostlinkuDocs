@@ -1,0 +1,82 @@
+---
+title: "GPT-5.6 Sol"
+description: "OpenAI's most capable flagship model, built for complex reasoning, advanced coding, and intelligent agent workflows."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| Property | Value |
+|---|---|
+| Provider | OpenAI |
+| Slug | `gpt-5-6-sol` |
+| Context | 1,050,000 tokens |
+| Max output | 64,000 tokens |
+| Input | text, image |
+| Output | text |
+| Release | 2026-07-09 |
+| Tags | flagship |
+
+## Capabilities
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | $4 |
+| Output (completion) | $20 |
+| Cache read | $0.4 |
+| Cache write | $5 |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | native |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5-6-sol",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Related models
+
+- [GPT 5.3 Codex](/en/models/gpt-5-3-codex)
+- [GPT-5.5](/en/models/gpt-5-5)
+- [GPT-5.6 Luna](/en/models/gpt-5-6-luna)
+- [GPT-5.6 Terra](/en/models/gpt-5-6-terra)
+- [GPT-6 Astra](/en/models/gpt-6-astra)
+- [GPT-6 Luna](/en/models/gpt-6-luna)
+
+[← Back to the model catalog](/en/models)

@@ -1,0 +1,78 @@
+---
+title: "Kimi K2.6"
+description: "Kimi K2.6 is Kimi's latest and most intelligent model, featuring enhanced and more stable long-range coding capabilities and significantly improved instructi..."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## Overview
+
+Kimi K2.6 is Kimi's latest and most intelligent model, featuring enhanced and more stable long-range coding capabilities and significantly improved instruction-following and self-correction abilities; it supports both "thinking" and non-thinking modes, as well as conversational interactions and Agent tasks.
+
+| Property | Value |
+|---|---|
+| Provider | Moonshot |
+| Slug | `kimi-k2-6` |
+| Context | 256,000 tokens |
+| Max output | 32,000 tokens |
+| Input | text, image |
+| Output | text |
+| Release | 2026-07-13 |
+
+## Capabilities
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | $0.956 |
+| Output (completion) | $3.971 |
+| Cache read | $0.162 |
+| Cache write | — |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kimi-k2-6",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Related models
+
+- [Kimi K2.7 Code](/en/models/kimi-k2-7-code)
+- [Kimi K3](/en/models/kimi-k3)
+- [Kimi K3 Hyper](/en/models/kimi-k3-hyper)
+- [Kimi K3 Hyper Chat](/en/models/kimi-k3-hyper-chat)
+- [Kimi K3 Turbo](/en/models/kimi-k3-turbo)
+
+[← Back to the model catalog](/en/models)

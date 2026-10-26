@@ -1,8 +1,101 @@
 ---
 title: "Codex CLI"
-description: "Run OpenAI Codex CLI through Hostlinku with a custom provider"
+description: "Run the OpenAI Codex CLI via Hostlinku with a custom provider in ~/.codex/config.toml (wire_api = \"responses\")"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/codex-cli).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Codex CLI](https://developers.openai.com/codex/cli) only supports the **OpenAI Responses** protocol. Hostlinku provides it at [`POST /v1/responses`](/en/responses) — stateless, with support for `reasoning.encrypted_content`, function calling, and streaming, exactly as Codex expects. The configuration requires only one custom provider.
+
+<Steps>
+
+### Install Codex CLI
+
+```bash
+npm install -g @openai/codex
+# atau: brew install codex
+```
+
+### Add Hostlinku as a provider
+
+Edit `~/.codex/config.toml` (create it if it doesn't exist). Providers **must** be defined in this user file—the `.codex/config.toml` file within the project must not override `model_providers` for security reasons.
+
+```toml
+model = "gpt-5-3-codex"
+model_provider = "hostlinku"
+model_reasoning_effort = "medium"
+
+[model_providers.hostlinku]
+name = "Hostlinku"
+base_url = "https://api.hostlinku.com/v1"
+env_key = "HOSTLINKU_API_KEY"
+wire_api = "responses"
+```
+
+### Set the API key and run it
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu   # simpan di ~/.zshrc / ~/.bashrc
+codex
+```
+
+Codex reads the key from the variable specified in `env_key`; the key is never written to `config.toml`.
+
+### Verification
+
+Send a simple instruction (e.g., *"explain the structure of this repo"*). The request will appear in the console → **Request Log** using the `gpt-5-3-codex` model. If you want to verify the endpoint before opening Codex:
+
+```bash
+curl https://api.hostlinku.com/v1/responses \
+  -H "Authorization: Bearer $HOSTLINKU_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "model": "gpt-5-3-codex", "input": "Halo" }'
+```
+
+</Steps>
+
+## Some models via their profiles
+
+Use `[profiles.*]` to switch models/providers without editing the configuration:
+
+```toml
+[profiles.cepat]
+model = "gpt-5-6-luna"
+model_provider = "hostlinku"
+model_reasoning_effort = "low"
+
+[profiles.kuat]
+model = "gpt-6-astra"
+model_provider = "hostlinku"
+```
+
+```bash
+codex --profile kuat
+codex --profile cepat "tulis unit test untuk utils/date.ts"
+```
+
+<Callout type="warning" title="Codex is for OpenAI models only">
+Codex sends its own built-in tools (shell, patch files, etc.). Non-OpenAI models reject these types of tools and return `The requested tool type is not supported by this model`. This means that `claude-*`, `deepseek-*`, `glm-*`, `qwen*`, `kimi-*`, and `minimax-*` **cannot** be used via Codex—use the `gpt-*` models instead. For other models, use a client that supports the Anthropic or Chat Completions dialects (Claude Code, Cline, OpenCode, Aider).
+
+**Responses-native** `gpt-*` models (Codex tool responses are passed through as-is): `gpt-5-3-codex`, `gpt-5-6-sol`, `gpt-5-6-luna`, `gpt-5-5`, `gpt-6-1-sol`, `gpt-6-sol`, `gpt-6-luna`, and `gpt-6-astra`. `gpt-5-6-terra` only supports Chat Completions, so it **cannot** run the Codex shell tool.
+</Callout>
+
+<Callout type="note" title="Stateless, exactly as the Codex default">
+The Codex CLI sends the full conversation history in `input` and `store: false` on every turn, and requests `include: ["reasoning.encrypted_content"]` so that reasoning items can be resent. Hostlinku supports this flow as-is; `previous_response_id` is not used by Codex, so the stateless nature of the gateway has no impact. See [Responses API](/en/responses).
+</Callout>
+
+<Callout type="tip" title="Just want to change the default OpenAI endpoint?">
+Alternative without a new provider: set `openai_base_url = "https://api.hostlinku.com/v1"` in `config.toml` and `OPENAI_API_KEY=sk-…` (your Hostlink API key). A custom provider is still recommended because its name is clearly displayed in the UI and its key is separate from the original OpenAI key.
+</Callout>
+
+## Troubleshooting
+
+- **`401`** — The variable in `env_key` has not been exported in the shell where `codex` is running.
+- **The model responds, "Cannot run the shell," and then generates output** — that model is not
+Responses are native, so the Codex tool is removed before reaching the model. Select a model from the list of Codex-ready models above; do not use `gpt-5-6-terra` for Codex.
+- **`400 previous_response_id not supported`** — appears only if a plugin or script forces it
+*stored responses* mode. Make sure `store` is not set to `true`.
+- **Model not found / `404`** — incorrect slug; `/v1/models` displays a valid list for
+Your key.
+- **The old version of the Codex requires `wire_api = "chat""`** — Hostlinku also supports this
+[`/v1/chat/completions`](/en/chat-completions); however, the Codex reasoning feature works best with `responses`.

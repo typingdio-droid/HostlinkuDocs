@@ -1,8 +1,92 @@
 ---
 title: "Zed"
-description: "Add Hostlinku as an openai_compatible provider in Zed settings"
+description: "Add Hostlinku as an openai_compatible provider in Zed's settings.json and use any model in the Agent Panel"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/zed).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Zed](https://zed.dev/docs/ai/use-api-access) supports custom **OpenAI-compatible** providers via `settings.json`. Models must be explicitly declared (Zed does not perform discovery), and the API key must be entered once via the Agent Panel or an environment variable.
+
+<Steps>
+
+### Declare the provider and model
+
+Open `zed: open settings` (⌘/Ctrl + ,) and add:
+
+```json
+{
+  "language_models": {
+    "openai_compatible": {
+      "hostlinku": {
+        "api_url": "https://api.hostlinku.com/v1",
+        "available_models": [
+          {
+            "name": "claude-sonnet-4-6",
+            "display_name": "Claude Sonnet 4.6 (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": true, "parallel_tool_calls": true }
+          },
+          {
+            "name": "gpt-5-5",
+            "display_name": "GPT-5.5 (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": true, "parallel_tool_calls": true }
+          },
+          {
+            "name": "deepseek-v4-flash",
+            "display_name": "DeepSeek V4 Flash (Hostlinku)",
+            "max_tokens": 1000000,
+            "capabilities": { "tools": true, "images": false }
+          }
+        ]
+      }
+    }
+  },
+  "agent": {
+    "default_model": { "provider": "hostlinku", "model": "claude-sonnet-4-6" }
+  }
+}
+```
+
+`api_url` must end with `/v1` without a trailing slash. `max_tokens` is the model's context size (see `context_window` in the [catalog](/en/models)); `name` must be the exact slug.
+
+### Enter the API key
+
+Select one of the following:
+
+- **Agent Panel** → settings icon (`agent: open settings`) → search for the **hostlinku** provider → paste
+API key `sk-…`. Zed stores it in the system keychain, not in `settings.json`.
+- **Environment variable** named "provider ID" in uppercase letters + `_API_KEY`:
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+Run Zed from a shell that has already exported those variables (or add them to your shell profile and then log in again).
+
+### Select a model in the Agent Panel
+
+Open the Agent Panel (⌘/Ctrl + ?) → model selector → **hostlinku** group. Send a message and check the request in the console → **Request Log**.
+
+</Steps>
+
+## Advanced Model Options
+
+| Field | When to use |
+|---|---|
+| `reasoning_effort` (`"low"`/`"medium"`/`"high"`) | Model reasoning (GPT-5.x, Claude 4.6, DeepSeek V4). |
+| `capabilities.max_tokens_parameter: true` | Only if the model rejects `max_completion_tokens`; Hostlinku accepts both, so leave it at the default. |
+| `capabilities.chat_completions: false` | Switches the model to the Responses API (`/v1/responses`) — also supported by Hostlinku, but the default Chat Completions are more thoroughly tested in Zed. |
+
+<Callout type="note" title="Edit Predictions not included">
+Zed’s *edit predictions* (inline autocomplete) feature is configured separately in `edit_predictions` and uses the `/v1/completions` (FIM) endpoint, which is not provided by Hostlinku. Use Hostlinku for the Agent Panel, inline assistant, and threads; leave edit predictions with the default provider.
+</Callout>
+
+## Troubleshooting
+
+- **Provider not found** — Invalid `settings.json` (comma/parentheses). Check `zed: open log`.
+- **`401`** — No key has been provided for the `hostlinku` provider, or the environment variable was exported after Zed
+Open; restart Zed.
+- **Tool call ignored** — make sure `capabilities.tools: true` is set for that model.
+- **Full context is processed too quickly** — `max_tokens` is too small compared to the model's `context_window`;
+Adjust according to the catalog.

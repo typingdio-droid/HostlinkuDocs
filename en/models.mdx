@@ -1,8 +1,152 @@
 ---
-title: "Models"
-description: "GET /v1/models endpoint, catalog data shape, and how to choose a model"
+title: "Model"
+description: "GET /v1/models endpoint, catalog data format, and how to choose the right model"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/models).
-</Note>
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku provides a single centralized model catalog. Each model has a unique **slug** that is used in the `model` parameter in [Chat Completions](/en/chat-completions), along with context size, capabilities, and price per token.
+
+## `GET /v1/models`
+
+Returns all models that are marked as `available`, not yet deprecated, and available for the **Service Mode API key** being used (Performance or Low-Cost), along with the price <CreditIcon /> per 1M tokens in that mode.
+
+```http
+GET https://api.hostlinku.com/v1/models
+Authorization: Bearer sk-isi-api-key-kamu
+```
+
+Example:
+
+```bash
+curl https://api.hostlinku.com/v1/models \
+  -H "Authorization: Bearer sk-isi-api-key-kamu"
+```
+
+Response (example truncated; the exact value for your account is retrieved from this endpoint):
+
+```json
+{
+  "object": "list",
+  "service_mode": "performance",
+  "data": [
+    {
+      "id": "claude-haiku-4-5",
+      "object": "model",
+      "created": 1791380432,
+      "owned_by": "hostlinku",
+      "context_window": 200000,
+      "capabilities": ["text", "tool-calling", "function-calling", "structured-outputs", "json-mode", "streaming", "code-generation", "long-context", "multilingual"],
+      "service_mode": "performance",
+      "pricing": {
+        "input": 0.8,
+        "output": 4,
+        "cache_read": 0.08,
+        "cache_write": 1,
+        "unit": "1M_tokens",
+        "currency": "🪙"
+      }
+    }
+  ]
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `service_mode` (level list & item) | Service Mode API key used: `performance` or `low_cost`. The list of models varies by mode. |
+| `id` | Model slug; the value used in the `model` field in `/v1/chat/completions`, `/v1/messages`, and `/v1/responses`. |
+| `created` | The time the model was added to the catalog (Unix epoch, seconds). |
+| `owned_by` | Always `"hostlinku"` — indicates that the model is managed by the Hostlinku catalog. |
+| `context_window` | Maximum context size in tokens (input + output). |
+| `capabilities` | List of capabilities, e.g., `vision`, `tool-calling`, `json-mode`, `reasoning`, `long-context`. |
+| `pricing` | The pricing object for that Service Mode; `null` if the model does not yet have a price for that mode. `pricing.unit` is always `"1M_tokens"`, and `pricing.currency` contains the credit symbol (1 <CreditIcon /> = $1). |
+| `pricing.input` / `pricing.output` | Price per **1M tokens** (not per token or per 1K) for prompt tokens / response tokens. |
+| `pricing.cache_read` / `pricing.cache_write` | Price per 1M tokens for a 5-minute cache read / cache write (see [Prompt Caching](/en/prompt-caching)); `null` if the model does not support it. |
+
+<Callout type="note" title="The price in the response is the customer's price">
+The `pricing` value is the price you pay for that Service Mode API key; the platform margin is already included in it. The actual cost of each request always appears in the `hostlinku.cost` block in the response and in the console log.
+</Callout>
+
+## Public catalog (no authentication required)
+
+For marketing or exploratory use without an API key, a public catalog is available:
+
+```http
+GET https://api.hostlinku.com/api/public/models
+```
+
+The public catalog displays only Hostlinku models along with their slugs, names, contexts, capabilities, and public prices. Supported queries: `q` (search by name/description), `capability`, `family`, `sort` (`popular`, `newest`, `price-asc`, `price-desc`, `context-desc`, `name-asc`), `page`, and `pageSize` (max 100). The `data` response contains `items`, `total`, `page`, `pageSize`, and `totalPages`.
+
+## List of Models
+
+There are currently 45 models available. Click a model name to view its context, capabilities, price, and supported endpoints.
+
+| Model | Provider | Context | Max Output | Input /1M | Output /1M |
+|---|---|---|---|---|---|
+| [Qwen 3.6 Plus](/en/models/qwen3-6-plus) | Alibaba | 1,000,000 | — | $0.294 | $1.765 |
+| [Qwen 3.7 Max](/en/models/qwen3-7-max) | Alibaba | 1,000,000 | — | $1.765 | $5.294 |
+| [Baize Model](/en/models/model-baize) | Anonymous | 1,000,000 | — | $1.177 | $4.118 |
+| [Claude Fable 5](/en/models/claude-fable-5) | Anthropic | 1,000,000 | 128,000 | $10 | $50 |
+| [Claude Fable 5.1](/en/models/claude-fable-5-1) | Anthropic | 1,000,000 | 128,000 | — | — |
+| [Claude Haiku 4.5](/en/models/claude-haiku-4-5) | Anthropic | 200,000 | 64,000 | $1 | $5 |
+| [Claude Opus 4.6](/en/models/claude-opus-4-6) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
+| [Claude Opus 4.7](/en/models/claude-opus-4-7) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
+| [Claude Opus 4.8](/en/models/claude-opus-4-8) | Anthropic | 1,000,000 | 128,000 | $5 | $25 |
+| [Claude Opus 5](/en/models/claude-opus-5) | Anthropic | 1,000,000 | 64,000 | $5 | $25 |
+| [Claude Opus 5.5](/en/models/claude-opus-5-5) | Anthropic | 1,000,000 | 128,000 | $4 | $20 |
+| [Claude Sonnet 4.6](/en/models/claude-sonnet-4-6) | Anthropic | 1,000,000 | 64,000 | $3 | $15 |
+| [Claude Sonnet 5](/en/models/claude-sonnet-5) | Anthropic | 1,000,000 | 64,000 | $2 | $10 |
+| [Claude Sonnet 5.5](/en/models/claude-sonnet-5-5) | Anthropic | 1,000,000 | 128,000 | — | — |
+| [DeepSeek V4 Flash](/en/models/deepseek-v4-flash) | DeepSeek | 1,000,000 | — | $0.15 | $0.6 |
+| [DeepSeek V4 Pro](/en/models/deepseek-v4-pro) | DeepSeek | 1,000,000 | 64,000 | $0.662 | $1.985 |
+| [DeepSeek-V4.1-Flash](/en/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 | 384,000 | $0.15 | $0.6 |
+| [DeepSeek-V4.1-Flash Hyper](/en/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [DeepSeek-V4.1-Flash Hyper Chat](/en/models/deepseek-v4-1-flash-hyper-chat) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [DeepSeek-V4.1-Flash Turbo](/en/models/deepseek-v4-1-flash-turbo) | DeepSeek | 1,000,000 | 384,000 | — | — |
+| [MiniMax M3](/en/models/minimax-m3) | MiniMax | 1,000,000 | 64,000 | $0.309 | $1.235 |
+| [Kimi K2.6](/en/models/kimi-k2-6) | Moonshot | 256,000 | 32,000 | $0.956 | $3.971 |
+| [Kimi K2.7 Code](/en/models/kimi-k2-7-code) | Moonshot | 256,000 | — | $0.956 | $3.971 |
+| [Kimi K3](/en/models/kimi-k3) | Moonshot | 1,000,000 | 64,000 | $2.941 | $14.706 |
+| [Kimi K3 Hyper](/en/models/kimi-k3-hyper) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [Kimi K3 Hyper Chat](/en/models/kimi-k3-hyper-chat) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [Kimi K3 Turbo](/en/models/kimi-k3-turbo) | Moonshot | 1,000,000 | 64,000 | — | — |
+| [GPT 5.3 Codex](/en/models/gpt-5-3-codex) | OpenAI | 400,000 | 128,000 | $1.75 | $14 |
+| [GPT-5.5](/en/models/gpt-5-5) | OpenAI | 1,000,000 | 128,000 | $5 | $30 |
+| [GPT-5.6 Luna](/en/models/gpt-5-6-luna) | OpenAI | 1,050,000 | 64,000 | $0.2 | $1.2 |
+| [GPT-5.6 Sol](/en/models/gpt-5-6-sol) | OpenAI | 1,050,000 | 64,000 | $4 | $20 |
+| [GPT-5.6 Terra](/en/models/gpt-5-6-terra) | OpenAI | 1,050,000 | 64,000 | $2 | $12 |
+| [GPT-6 Astra](/en/models/gpt-6-astra) | OpenAI | 1,050,000 | 128,000 | $10 | $50 |
+| [GPT-6 Luna](/en/models/gpt-6-luna) | OpenAI | 1,050,000 | 128,000 | $0.1 | $0.5 |
+| [GPT-6 Sol](/en/models/gpt-6-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
+| [GPT-6.1 Sol](/en/models/gpt-6-1-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
+| [MiMo V2.5 Pro](/en/models/mimo-v2-5-pro) | Xiaomi | 1,000,000 | 32,000 | $0.441 | $0.882 |
+| [GLM 5](/en/models/glm-5) | Zhipu | 200,000 | — | $0.588 | $2.647 |
+| [GLM 5.1](/en/models/glm-5-1) | Zhipu | 200,000 | 128,000 | $0.882 | $3.529 |
+| [GLM 5.2](/en/models/glm-5-2) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
+| [GLM 5.3](/en/models/glm-5-3) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
+| [GLM 5.3 Hyper Chat](/en/models/glm-5-3-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM-5.3 Flash](/en/models/glm-5-3-flash) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM-5.3 Flash Hyper](/en/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 | 64,000 | — | — |
+| [GLM-5.3 Flash Hyper Chat](/en/models/glm-5-3-flash-hyper-chat) | Zhipu | 1,000,000 | 64,000 | — | — |
+
+## How to Choose a Model
+
+1. **Determine your needs**: general chat, reasoning, vision/multimodal, tool invocation,
+or structured JSON output. Check the `capabilities` field.
+2. **Pay attention to the context size**: make sure `context_window` is large enough to accommodate your prompt and output.
+3. **Compare prices**: `pricing.input` for prompt tokens and `pricing.output` for tokens
+Answer: Reasoning models generally have higher output costs.
+4. **Start with a small model**: for development, use a lightweight model (e.g., `gpt-6-luna`,
+`deepseek-v4-1-flash`, `qwen3-6-plus`) are much cheaper; only upgrade the model if the quality is insufficient.
+5. **View the console**: the **Model** menu at [console.hostlinku.com](https://console.hostlinku.com)
+displays a catalog with the same prices and features, plus a detail page for each model.
+
+<Callout type="tip" title="Alias slug">
+Use the exact slug returned by `GET /v1/models`. Slugs are not case-sensitive on the front end, but always copy them exactly as they appear in the catalog to avoid typos. A slug that does not exist in the catalog returns a `404 MODEL_NOT_FOUND` error; a model that has been deprecated or is currently unavailable returns a `503 MODEL_UNAVAILABLE` error along with a suggested replacement slug, if available.
+</Callout>
+
+## Routing and Failover
+
+Hostlinku automatically manages the internal routes that serve each model. If an error occurs on the route currently being used (5xx/timeout), the request is automatically retried via another route before giving up. You continue to use the same model slug and don’t need to change anything; these internal details are not displayed in the response.

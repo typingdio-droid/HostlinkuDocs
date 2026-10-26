@@ -1,0 +1,75 @@
+---
+title: "DeepSeek V4 Flash"
+description: "DeepSeek V4 Flash is the efficiency-oriented V4 variant, supporting a 1M context window for everyday chat, summarization, code generation, structured process..."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## Overview
+
+DeepSeek V4 Flash is the efficiency-oriented V4 variant, supporting a 1M context window for everyday chat, summarization, code generation, structured processing, and high-throughput production calls.
+
+| Property | Value |
+|---|---|
+| Provider | DeepSeek |
+| Slug | `deepseek-v4-flash` |
+| Context | 1,000,000 tokens |
+| Max output | Not published |
+| Input | text |
+| Output | text |
+| Release | 2026-07-30 |
+
+## Capabilities
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `long-context`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | $0.15 |
+| Output (completion) | $0.6 |
+| Cache read | $0.003 |
+| Cache write | — |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4-flash",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Related models
+
+- [DeepSeek V4 Pro](/en/models/deepseek-v4-pro)
+- [DeepSeek-V4.1-Flash](/en/models/deepseek-v4-1-flash)
+- [DeepSeek-V4.1-Flash Hyper](/en/models/deepseek-v4-1-flash-hyper)
+- [DeepSeek-V4.1-Flash Hyper Chat](/en/models/deepseek-v4-1-flash-hyper-chat)
+- [DeepSeek-V4.1-Flash Turbo](/en/models/deepseek-v4-1-flash-turbo)
+
+[← Back to the model catalog](/en/models)

@@ -1,8 +1,97 @@
 ---
 title: "Aider"
-description: "Run Aider through Hostlinku with OPENAI_API_BASE"
+description: "Run Aider via Hostlinku with OPENAI_API_BASE and the model prefix openai/ — plus the model metadata so that the context and cost are calculated correctly"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/aider).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Aider](https://aider.chat/docs/llms/openai-compat.html) uses LiteLLM internally; OpenAI-compatible endpoints simply require the `OPENAI_API_BASE` setting and a model name starting with `openai/`.
+
+<Steps>
+
+### Install Aider
+
+```bash
+python -m pip install -U aider-chat
+# atau: pipx install aider-chat
+```
+
+### Go to Hostlinku
+
+```bash
+export OPENAI_API_BASE=https://api.hostlinku.com/v1
+export OPENAI_API_KEY=sk-isi-api-key-kamu   # API key Hostlinku
+
+aider --model openai/claude-sonnet-4-6
+```
+
+The `openai/` prefix is required—it tells Aider to use an OpenAI-compatible path with `OPENAI_API_BASE`. The part after the prefix is my Hostlink slug.
+
+### (Recommended) Save to a configuration file
+
+`.aider.conf.yml` in the home directory or the root of the repository:
+
+```yaml
+openai-api-base: https://api.hostlinku.com/v1
+model: openai/claude-sonnet-4-6
+weak-model: openai/claude-haiku-4-5      # commit message & ringkasan
+editor-model: openai/deepseek-v4-flash   # mode architect (opsional)
+```
+
+Save the API key in `.env` (in `.gitignore`) so it isn't committed:
+
+```bash
+OPENAI_API_KEY=sk-isi-api-key-kamu
+```
+
+### Let Aider know the context and price
+
+Aider doesn't recognize the Hostlinku slug, so it issues a *"model is unknown"* warning and makes an educated guess based on the context. Create `.aider.model.metadata.json` (home / root repo):
+
+```json
+{
+  "openai/claude-sonnet-4-6": {
+    "max_input_tokens": 1000000,
+    "max_output_tokens": 64000,
+    "input_cost_per_token": 0.0000024,
+    "output_cost_per_token": 0.0000120,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  },
+  "openai/claude-haiku-4-5": {
+    "max_input_tokens": 200000,
+    "max_output_tokens": 16000,
+    "input_cost_per_token": 0.0000008,
+    "output_cost_per_token": 0.0000040,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  }
+}
+```
+
+The prices above are just examples (Performance mode) — copied from `pricing` in the [catalog](/en/models), which are stated per **1M tokens**, then **divide by 1,000,000** because Aider uses a price per 1 token (e.g., `pricing.input: 2.4` → `input_cost_per_token: 0.0000024`). Aider’s cost estimate will then be close to the actual bill shown in the console.
+
+</Steps>
+
+## Architect mode with two models
+
+```bash
+aider --architect \
+  --model openai/claude-opus-4-6 \
+  --editor-model openai/claude-sonnet-4-6
+```
+
+The *architect* model designs changes, and the *editor* model writes diffs. Both are charged to the same balance and recorded separately in the **Request Log**.
+
+<Callout type="tip" title="Additional settings by model">
+To pass extra parameters (e.g., `reasoning_effort`, `temperature`) to a specific model, use `.aider.model.settings.yml` with the `extra_params` key. See Aider's *Advanced model settings* documentation.
+</Callout>
+
+## Troubleshooting
+
+- **`AuthenticationError`** — `OPENAI_API_KEY` is not exported or `.env` cannot be read (Aider
+read the `.env` file from the working directory or the Git root directory).
+- **`NotFoundError` model** — missing the `openai/` prefix or incorrect slug.
+- **Warning: *unknown context window*** — no `.aider.model.metadata.json` file yet; see step 4.
+- **Truncated response** — increase `max_output_tokens` in the metadata or select a model with a different limit
+greater output.

@@ -1,8 +1,93 @@
 ---
 title: "OpenCode"
-description: "Register Hostlinku as a custom OpenAI-compatible provider"
+description: "Register Hostlinku as a custom OpenAI-compatible provider in opencode.json and select a model via /models"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/opencode).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[OpenCode](https://opencode.ai/docs/providers/) uses an AI SDK, so any OpenAI-compatible provider can be added via `opencode.json`. Credentials are stored separately using the `/connect` command.
+
+<Steps>
+
+### Save credentials
+
+In OpenCode, run `/connect`, scroll to **Other**, enter the provider ID `hostlinku`, and then paste the API key `sk-…`. The key is stored in `~/.local/share/opencode/auth.json`.
+
+```text
+/connect  →  Other  →  provider id: hostlinku  →  API key: sk-…
+```
+
+### Define a provider
+
+Create or edit `opencode.json` in the project root (or `~/.config/opencode/opencode.json` for global settings):
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1"
+      },
+      "models": {
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "gpt-5-5": {
+          "name": "GPT-5.5",
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash",
+          "limit": { "context": 1000000, "output": 32000 }
+        }
+      }
+    }
+  },
+  "model": "hostlinku/claude-sonnet-4-6",
+  "small_model": "hostlinku/deepseek-v4-flash"
+}
+```
+
+The provider ID in `opencode.json` **must match** the one entered during `/connect`. The key in `models` is your Hostlinku slug; `limit` helps OpenCode calculate the remaining contexts.
+
+### Select a model
+
+Run `/models` — the **Hostlinku** group will appear with the models you’ve registered. `small_model` is used for light tasks (session titles, summaries), making longer sessions more efficient.
+
+</Steps>
+
+## Configuration Variations
+
+**API key from the environment variable** (without `/connect`):
+
+```json
+{
+  "provider": {
+    "hostlinku": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hostlinku",
+      "options": {
+        "baseURL": "https://api.hostlinku.com/v1",
+        "apiKey": "{env:HOSTLINKU_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+**Via the Responses API** — replace `npm` with `@ai-sdk/openai`; OpenCode will use [`/v1/responses`](/en/responses). Useful for GPT-5.x models when you want a *reasoning summary*. For most users, `@ai-sdk/openai-compatible` (Chat Completions) is sufficient.
+
+<Callout type="note" title="Model with interleaved reasoning">
+Models that return `reasoning_content` (e.g., DeepSeek V4, GLM 5) can be configured with the options `"reasoning": true` and `"interleaved": { "field": "reasoning_content" }` in their model definitions so that OpenCode displays their reasoning paths.
+</Callout>
+
+## Troubleshooting
+
+- **The provider does not appear in `/models`** — The IDs in `/connect` and `opencode.json` are different, or the JSON
+Invalid. Check `opencode auth list`.
+- **`401`** — No key has been saved for that ID; repeat `/connect`.
+- **`404 model_not_found`** — The `models` key must match the exact slug from `GET /v1/models`.

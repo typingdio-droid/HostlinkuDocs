@@ -1,8 +1,106 @@
 ---
 title: "Billing & Balance"
-description: "How Hostlinku credits work, top-up methods, and per-token pricing"
+description: "How Hostlinku credit balances work, top-up methods, and the basis for calculating the cost per token"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/billing).
-</Note>
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku billing is based on a **prepaid credit balance in USD**. Each completed chat request is deducted from the balance based on the tokens actually used; there are no mandatory monthly subscriptions and no hidden fees.
+
+## Account Balance
+
+Balances are managed as a single credit account per user with the following fields:
+
+| Field | Meaning |
+|---|---|
+| `balance` | Total account balance (USD). |
+| `reserved` | The portion of the balance currently held by an active request (estimate). |
+| `available` | `balance − reserved`. This is the amount available for new requests. |
+| `lifetimeTopup` | Total accumulated top-ups since the account was created. |
+| `lifetimeUsage` | Total accumulated usage charges. |
+| `lowBalanceThreshold` | Low balance warning threshold (default $25) in the console. |
+
+This value is displayed in the console → **Credits/Balance** menu, and is available via the `GET /api/wallet/account` session API (used by the console). For your application, the real-time reference remains `hostlinku.cost` in every response and in the log history.
+
+## Top Up Balance
+
+1. Go to [console.hostlinku.com](https://console.hostlinku.com) → **Billing → Payments**.
+2. Select a Credit package or enter another amount (automatic bonus for certain packages).
+3. Select a payment method:
+
+| Method | Provider | Type |
+|---|---|---|
+| **QRIS** | iPaymu | Scan from an e-wallet or mobile banking app (Rupiah) |
+| **Virtual Account** | iPaymu | Bank transfers via BCA, BNI, BRI, Mandiri, etc. (Rupiah) |
+| **Crypto** | BlockBee | USDT, USDC, and other coins via the BlockBee payment page (USD) |
+
+Methods that have not been enabled by the admin are still displayed with the label **Not active**.
+4. You will be redirected to a checkout page containing a QR code, a virtual account number, or a crypto payment link.
+It is safe to refresh this page, and you can access it again from **Pending Payment**.
+5. Complete the payment. The credit will be **automatically credited** once the provider’s webhook is validated, without
+Manual confirmation.
+
+From the API perspective, the process is as follows:
+
+```http
+POST https://api.hostlinku.com/api/wallet/topup
+Content-Type: application/json
+Cookie: hl_session=…   # sesi console
+```
+
+```json
+{
+  "credits": 100,
+  "method": "qris"
+}
+```
+
+`method` = `qris`, `va` (add `"channel": "bca"`, etc.), or `crypto`. The response contains the `topupId` along with the QR code / VA number / payment URL; the status can be checked via `GET /api/wallet/topup/{topupId}`. Server validation rejects amounts outside the top-up policy (min/max set by the admin, technical maximum of $10,000 per transaction) with a `400 BAD_REQUEST` error, and rejects unconfigured providers with a `402 PAYMENT_REQUIRED` error.
+
+<Callout type="note" title="Loans and payments cannot be combined">
+A top-up increases your **account balance**, not your API key limit. If you’re using a credit limit per API key (e.g., $5/day), a top-up won’t increase that limit. Change the limit in your API key settings.
+</Callout>
+
+## Basis for Cost Calculation
+
+The cost of each request is calculated **per token** based on the pricing of the customer model being used:
+
+```text
+biaya = (token input non-cache  × harga_input_per_token)
+      + (token output           × harga_output_per_token)
+      + (token cache read       × harga_cache_read)   ← bila model mendukung caching
+      + (token cache write      × harga_cache_write)  ← bila model mendukung caching
+```
+
+- The cache token is **part of** the input token, not an external addition to it. Tokens served from
+Caches are charged at their respective cache rates, and the remaining input tokens are charged at the input rate—so the same token is never counted twice.
+- The price per model (input/output, including cache price if applicable) is listed in the catalog. See
+[Model](/en/models) and the **Model** menu in the console. The number in the `GET /v1/models` response is the price per **1M tokens** in <CreditIcon /> (1 <CreditIcon /> = $1) for the Service Mode API key being used—not per token or per 1,000 tokens.
+- The token is calculated based on the `usage` value in the response; if `usage` is not available, Hostlinku uses
+a conservative estimate, and that is what is billed (which rarely happens).
+- The cache here refers to the **provider's prompt cache** reported in `usage`
+(`prompt_tokens_details.cached_tokens` / `cache_write_tokens`). Hostlinku does not store copies of responses and does not mix caches across providers. Instructions on how to enable it and examples of real-world savings can be found in [Save Money with Prompt Caching](/en/prompt-caching).
+- For streaming, the cost is calculated after the stream is complete; the value in the `hostlinku.cost` block
+remains accurate.
+- Calculations are performed in micro-USD units to avoid floating-point rounding errors,
+then formatted as an 8-digit decimal number.
+
+## When does a `402 PAYMENT_REQUIRED` error occur?
+
+Code 402 always means **credit required**, but the message specifies the source:
+
+| Message | Meaning | Action |
+|---|---|---|
+| `Insufficient credit balance for this request.` | `available` < estimated request cost | Top up your balance in the console |
+| `API key credit limit reached (x credits out of y …).` | API key has reached the `credit_limit` per reset window | Wait for the reset, change the limit, or use a different API key |
+| `The payment provider has not been configured.` (during top-up) | Payment provider is disabled in settings | Select another provider or contact the admin |
+
+## Transaction History
+
+All balance changes are recorded in the ledger and can be viewed in the console → **Transactions** (top-ups, usage, refunds), along with the status, amount, method, and reference. Via the API endpoint: `GET /api/wallet/transactions` (supports pagination by keyset and transaction details).
+
+<Callout type="tip" title="Keep your balance secure">
+Set `lowBalanceThreshold` in the console. If the balance reaches that threshold, the console will flag it so you can top it up before a production request fails with a 402 error.
+</Callout>

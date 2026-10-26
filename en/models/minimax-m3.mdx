@@ -1,0 +1,68 @@
+---
+title: "MiniMax M3"
+description: "Latest M-series language models for agent inference, tool invocation, code and long-context tasks."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| Property | Value |
+|---|---|
+| Provider | MiniMax |
+| Slug | `minimax-m3` |
+| Context | 1,000,000 tokens |
+| Max output | 64,000 tokens |
+| Input | text, image |
+| Output | text |
+| Release | 2026-07-13 |
+| Tags | reasoning |
+
+## Capabilities
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | $0.309 |
+| Output (completion) | $1.235 |
+| Cache read | $0.062 |
+| Cache write | — |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "minimax-m3",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+[← Back to the model catalog](/en/models)

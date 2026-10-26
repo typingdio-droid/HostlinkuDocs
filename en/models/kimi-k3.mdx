@@ -1,0 +1,80 @@
+---
+title: "Kimi K3"
+description: "Kimi K3 is Kimi's flagship model, designed for long-range programming and end-to-end knowledge work; it features a 1-million-token context window and deliver..."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## Overview
+
+Kimi K3 is Kimi's flagship model, designed for long-range programming and end-to-end knowledge work; it features a 1-million-token context window and delivers leading-edge comprehensive intelligence.
+
+| Property | Value |
+|---|---|
+| Provider | Moonshot |
+| Slug | `kimi-k3` |
+| Context | 1,000,000 tokens |
+| Max output | 64,000 tokens |
+| Input | text, image |
+| Output | text |
+| Release | 2026-07-16 |
+| Tags | flagship |
+
+## Capabilities
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | $2.941 |
+| Output (completion) | $14.706 |
+| Cache read | $0.2941 |
+| Cache write | — |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kimi-k3",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Related models
+
+- [Kimi K2.6](/en/models/kimi-k2-6)
+- [Kimi K2.7 Code](/en/models/kimi-k2-7-code)
+- [Kimi K3 Hyper](/en/models/kimi-k3-hyper)
+- [Kimi K3 Hyper Chat](/en/models/kimi-k3-hyper-chat)
+- [Kimi K3 Turbo](/en/models/kimi-k3-turbo)
+
+[← Back to the model catalog](/en/models)

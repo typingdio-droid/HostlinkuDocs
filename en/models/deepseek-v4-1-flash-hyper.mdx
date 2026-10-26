@@ -1,0 +1,80 @@
+---
+title: "DeepSeek-V4.1-Flash Hyper"
+description: "DeepSeek-V4.1-Flash is a multimodal mixture-of-experts model built on an asymmetric Causal Encoder–Decoder architecture, with native visual understanding. It..."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## Overview
+
+DeepSeek-V4.1-Flash is a multimodal mixture-of-experts model built on an asymmetric Causal Encoder–Decoder architecture, with native visual understanding. It supports a 1M-token context window, up to 384K output tokens, thinking and non-thinking modes, tool calls, and structured JSON output. Available on the Hostlinku Dedicated channel with a higher throughput lane.
+
+| Property | Value |
+|---|---|
+| Provider | DeepSeek |
+| Slug | `deepseek-v4-1-flash-hyper` |
+| Context | 1,000,000 tokens |
+| Max output | 384,000 tokens |
+| Input | text, image |
+| Output | text |
+| Release | 2026-09-13 |
+| Tags | fast, budget, dedicated |
+
+## Capabilities
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | — |
+| Output (completion) | — |
+| Cache read | — |
+| Cache write | — |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4-1-flash-hyper",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Related models
+
+- [DeepSeek V4 Flash](/en/models/deepseek-v4-flash)
+- [DeepSeek V4 Pro](/en/models/deepseek-v4-pro)
+- [DeepSeek-V4.1-Flash](/en/models/deepseek-v4-1-flash)
+- [DeepSeek-V4.1-Flash Hyper Chat](/en/models/deepseek-v4-1-flash-hyper-chat)
+- [DeepSeek-V4.1-Flash Turbo](/en/models/deepseek-v4-1-flash-turbo)
+
+[← Back to the model catalog](/en/models)

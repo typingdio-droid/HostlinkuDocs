@@ -1,0 +1,82 @@
+---
+title: "Claude Fable 5.1"
+description: "Model Claude Fable 5.1 from Anthropic."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| Property | Value |
+|---|---|
+| Provider | Anthropic |
+| Slug | `claude-fable-5-1` |
+| Context | 1,000,000 tokens |
+| Max output | 128,000 tokens |
+| Input | text, image |
+| Output | text |
+| Release | — |
+| Tags | creative |
+
+## Capabilities
+
+- `text`
+- `vision`
+- `image-input`
+- `file-input`
+- `pdf-input`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `extended-thinking`
+- `code-execution`
+- `web-search`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `multimodal`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | — |
+| Output (completion) | — |
+| Cache read | — |
+| Cache write | — |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-fable-5-1",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Related models
+
+- [Claude Fable 5](/en/models/claude-fable-5)
+- [Claude Haiku 4.5](/en/models/claude-haiku-4-5)
+- [Claude Opus 4.6](/en/models/claude-opus-4-6)
+- [Claude Opus 4.7](/en/models/claude-opus-4-7)
+- [Claude Opus 4.8](/en/models/claude-opus-4-8)
+- [Claude Opus 5](/en/models/claude-opus-5)
+
+[← Back to the model catalog](/en/models)

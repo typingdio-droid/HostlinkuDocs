@@ -1,8 +1,87 @@
 ---
 title: "Junie CLI"
-description: "Connect JetBrains Junie CLI to Hostlinku"
+description: "Connect JetBrains' Junie CLI to Hostlinku using a custom model profile (Chat Completions or Anthropic Messages)"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/junie).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) — JetBrains’ terminal-based coding agent — supports **custom model profiles** in the form of JSON files. A single profile contains endpoints, API formats, API keys, as well as the main model and a *faster model* for light tasks.
+
+For the AI Assistant in JetBrains IDEs, see [JetBrains AI Assistant](/en/integrations/jetbrains).
+
+<Steps>
+
+### Install the Junie CLI and save your API key
+
+```bash
+curl -fsSL https://junie.jetbrains.com/install.sh | bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+```
+
+### Create a Hostlinku Profile
+
+Junie searches for profiles in `~/.junie/models/*.json` (user level) and `.junie/models/*.json` (project level). The filename without the `.json` extension becomes the profile ID. Create `~/.junie/models/hostlinku.json`:
+
+```json
+{
+  "displayName": "Hostlinku",
+  "id": "claude-sonnet-4-6",
+  "baseUrl": "https://api.hostlinku.com/v1/chat/completions",
+  "apiType": "OpenAICompletion",
+  "apiKey": "${HOSTLINKU_API_KEY}",
+  "maxContextLength": 1000000,
+  "fasterModel": {
+    "id": "claude-haiku-4-5",
+    "maxContextLength": 200000
+  }
+}
+```
+
+<Callout type="important" title="baseUrl is the full endpoint URL">
+Junie **does not** add any path to `baseUrl`. For `OpenAICompletion`, write up to `/v1/chat/completions`; for `Anthropic`, up to `/v1/messages`.
+</Callout>
+
+### Run with a profile
+
+```bash
+junie --model custom:hostlinku
+```
+
+The profile also appears in the **Custom** tab of the model list in TUI and via the `/model` command. The first request appears in the console → **Request Log**.
+
+</Steps>
+
+## Variant: Anthropic format
+
+For the Claude model with the Messages API (full prompt caching), create a second profile, e.g., `~/.junie/models/hostlinku-claude.json`:
+
+```json
+{
+  "displayName": "Hostlinku (Anthropic)",
+  "id": "claude-sonnet-4-6",
+  "baseUrl": "https://api.hostlinku.com/v1/messages",
+  "apiType": "Anthropic",
+  "apiKey": "${HOSTLINKU_API_KEY}",
+  "fasterModel": { "id": "claude-haiku-4-5" }
+}
+```
+
+Then run `junie --model custom:hostlinku-claude`.
+
+## What You Need to Know
+
+- **`${HOSTLINKU_API_KEY}`** is read from the environment when the profile is loaded. If the variable has not yet been
+When set, the profile fails to load and Junie reports the missing variable name—it's safe to commit the profile to the repo (`.junie/models/`).
+- **Main model vs. faster model.** Choose a model with robust *tool calling* for the main model
+(`claude-sonnet-4-6`, `gpt-5-5`); more affordable models like `claude-haiku-4-5` or `deepseek-v4-flash` are sufficient for faster tasks (summarization and classification).
+- **Responses API (`OpenAIResponses`)** is also available at `https://api.hostlinku.com/v1/responses`,
+but it is *stateless* ([details](/en/responses)). `OpenAICompletion` is the safest option.
+
+## Troubleshooting
+
+| Symptoms | Solutions |
+|---|---|
+| `404` | `baseUrl` is incomplete — it must end with `/v1/chat/completions` or `/v1/messages`. |
+| Profile not found | Incorrect file name or location, or invalid JSON. Profile = filename without `.json`. |
+| Environment variable error | Export `HOSTLINKU_API_KEY` in the shell running `junie`. |
+| Tool call failed / agent is stuck in a loop | The model is too small for agentic coding — replace the main model with the one recommended in the [Overview](/en/integrations). |

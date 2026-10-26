@@ -1,14 +1,219 @@
 ---
-title: "Terms of Service"
-description: "Hostlinku terms of service: accounts, API keys, prepaid credits, billing, liability, and dispute resolution."
+title: "Terms and Conditions"
+description: "Hostlinku Terms and Conditions: accounts, API keys, prepaid balances, per-request billing, service limitations, liability, and dispute resolution."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-<Callout type="note" title="Note">
+<Callout type="note" title="English translation">
 
-This legal document is currently available in Indonesian. The Indonesian version is the authoritative version.
+This English translation is provided for convenience. The Indonesian version is the authoritative version.
 
 [Read the Indonesian version](/legals/terms-of-service).
 
 </Callout>
+
+**Last updated:** October 11, 2026.
+
+<a id="ruang-lingkup"></a>
+
+## 1. Scope and Approval
+
+Hostlinku (hereinafter **Hostlinku** or **we**) is a service whose business entity information is listed in the [Contact section](#kontak). Hostlinku provides a single API compatible with the OpenAI format for accessing various AI models from a number of upstream providers, along with a console for managing API keys, balances, and usage history (hereinafter referred to as the **Service**).
+
+By creating an account, generating an API key, adding funds, or sending a request to the API, you acknowledge that you have read and agree to these Terms and Conditions and the documents that form part of them: [Refund Policy](/en/legals/refund-policy), [Privacy Policy](/en/legals/privacy-policy), [Usage Policy](/en/legals/acceptable-use-policy), and [Security](/en/legals/security). Certain features may have additional terms that are displayed when you use them; those additional terms apply in conjunction with this document.
+
+If you are using the Service on behalf of a company or organization, you represent that you are authorized to bind that organization, and the term **you** includes that organization. If you do not agree to these terms, do not use the Service.
+
+<a id="akun"></a>
+
+## 2. Accounts and Eligibility
+
+- You must have legal capacity to enter into an agreement. Users under the age of 18 may only use the Service with the consent and supervision of a parent or guardian.
+- Registration information (name, email address, and company name, if provided) must be accurate and updated if it changes. The email address must be verified using an OTP code before the account can be fully activated.
+- You can sign up with an email address and password, or via single sign-on (such as Google, GitHub, or Discord) if enabled. SSO accounts are also subject to the terms and conditions of the respective identity providers.
+- One account is for one person or one organization only. Creating multiple accounts to circumvent restrictions, suspensions, or usage limits is prohibited.
+- You are responsible for all activity that occurs through your account, including activity by team members or systems to which you have granted access.
+
+<a id="api-key"></a>
+
+## 3. API Keys and Access Security
+
+An API key is a credential that authenticates requests to the API and serves as the basis for billing. Any request that includes your account’s API key is considered to be your request; charges are applied only to requests that are processed, as described in Section 7.
+
+- The API key is displayed in full **only once** when it is created. We only store its hash value, so a lost key cannot be recovered; create a new key and revoke the old one.
+- You can set limits on keys based on scope (e.g., `chat`, `embeddings`, `completions`), expiration, and credit limits per key via the [API key page](https://console.hostlinku.com/api-keys). These limits are cost-control tools; they do not guarantee that usage will not exceed a certain threshold under streaming or parallel request conditions.
+- Store the API key on the server side. Do not include it in frontend code, mobile apps, public repositories, or logs that are accessible to third parties.
+- If you suspect that your API key has been compromised or that your account has been accessed without authorization, immediately revoke the key and contact [halo@hostlinku.com](mailto:halo@hostlinku.com). You remain responsible for any charges incurred before the key is revoked, unless the leak is proven to have been caused by our negligence.
+- We may disable keys that appear to have been compromised (for example, those found in public repositories) to protect your balance.
+
+<a id="lisensi"></a>
+
+## 4. Service License Agreement
+
+As long as you comply with these terms, we grant you a limited, non-exclusive, non-transferable, and revocable right to access the Service and integrate the API into your application. You may build commercial products using the API, including products that serve your own end users.
+
+You may not resell, rent, or share direct access to your API key or account as a separate service (for example, selling the key or operating a public proxy that forwards Hostlinku access as-is) without our written consent.
+
+<a id="penggunaan-terlarang"></a>
+
+## 5. Prohibited Uses
+
+Use of the Service is subject to the [Terms of Use](/en/legals/acceptable-use-policy). In summary, you are prohibited from:
+
+- using the Service for activities that violate Indonesian law or the laws applicable to you;
+- reverse engineering, decompiling, or attempting to obtain source code, internal pricing models, or the identities of upstream parties that we do not disclose;
+- conducting penetration testing, scanning for vulnerabilities, or overloading the infrastructure without written permission, outside of the reporting program described on the [Security](/en/legals/security) page;
+- circumventing rate limits, verification, CAPTCHAs, balance limits, or other security measures;
+- using the Service to build or develop competing services by copying our website, documentation, or catalog;
+- violates the usage policy of the upstream provider whose service you are accessing.
+
+<a id="saldo"></a>
+
+## 6. Prepaid Balance
+
+The service uses a **pay-as-you-go** model based on a prepaid balance in U.S. dollars (USD). There are no subscriptions and no recurring charges. New accounts start with a zero balance.
+
+- You can add funds to your balance via [top-up](https://console.hostlinku.com/add-balance) using the available methods, which currently include QRIS, virtual accounts (via iPaymu), and cryptocurrency (via BlockBee). The available payment methods, minimum amount, and maximum amount are displayed on the top-up page and are subject to change.
+- Payments in rupiah or cryptocurrency are converted to USD at the exchange rate displayed at checkout. Balances that have already been credited do not change in response to exchange rate fluctuations.
+- A balance is a prepaid amount used to purchase Services. The balance is not a deposit, is not a means of payment, does not accrue interest, and cannot be transferred to another account or exchanged for cash, except as provided in the [Refund Policy](/en/legals/refund-policy).
+- Top-up bonuses, promotional credits, or compensation credits have no cash value, are non-refundable, and may be subject to expiration dates or usage restrictions in accordance with the terms of each promotion.
+- We send an email alert when your available balance falls below the account's low-balance threshold (default: $25). These alerts are for informational purposes only and may be delayed or not delivered; it is your responsibility to monitor your balance.
+
+<a id="penagihan"></a>
+
+## 7. Pricing and Billing
+
+Fees are calculated **per request** based on the model prices listed on the [Models](/en/models) and [Pricing](https://hostlinku.com/pricing) pages at the time the request is processed, typically per million input and output tokens (including cache tokens, if applicable).
+
+1. **Reservation.** Before a request is forwarded to the upstream server, we set aside (reserve) the estimated maximum cost from the available balance. If the available balance is insufficient, the request is rejected with an HTTP status code of `402` and no charges are incurred.
+2. **Settlement.** Once the request is complete, the balance is debited by the actual fee based on the number of tokens reported upstream, and the remaining reservation is released back to the available balance.
+3. **Release.** If a request fails before generating billable output, the reservation is released at no charge. Reservations held due to system outages are automatically released by a periodic process.
+
+Requests canceled by the client during a stream will still be billed based on the tokens that have already been processed upstream. Under certain circumstances, the actual charges may exceed the reservation estimate, resulting in a negative balance; this difference is your responsibility and will be deducted from your next top-up.
+
+Price changes apply to requests processed after the changes are published and are not retroactive. You can view your transaction history and fees per request in the console. Prices do not include any taxes that may be imposed by authorities or payment providers; such taxes are your responsibility unless otherwise stated at checkout.
+
+<a id="pembatasan"></a>
+
+## 8. Rate limits and service restrictions
+
+To maintain stability, we enforce rate limits per API key and per IP address. The current limits are included in the `RateLimit-*` headers of each response, and requests that exceed the limits are rejected with a `429` status code at no charge. Default limits are subject to change at any time based on capacity and may be increased for specific accounts upon request.
+
+We may also limit request size, output length, the number of concurrent requests, or access to specific models, as well as filter or block requests that appear to violate our Acceptable Use Policy or upstream policies.
+
+<a id="upstream"></a>
+
+## 9. Upstream Provider and Availability
+
+The models available through Hostlinku are operated by third-party upstream providers. We may route requests to different providers or paths for the same model based on availability and cost, without changing the price in effect when the request is processed. The identity of the upstream path is not always displayed to users.
+
+- We may add, rename, disable, or discontinue models and endpoints, including when an upstream provider discontinues its model. Whenever possible, major changes are announced in advance on our [blog](https://hostlinku.com/blog).
+- Availability, latency, and output quality depend on the upstream provider. Service status can be monitored on the [Status](https://status.hostlinku.com) page. There is no SLA unless agreed upon in a separate written agreement.
+- Technical support is provided to the best of our ability through the channels listed on the [Contact](https://hostlinku.com/contact) page, with no guarantee of response time.
+
+<a id="konten"></a>
+
+## 10. Input, Output, and Content
+
+**Input** is the data you send to the API (prompts, messages, documents, images), and **output** is the result returned by the model. Between you and us, you retain ownership of the input and, to the extent permitted by law and upstream terms, ownership of the output.
+
+- You grant us limited permission to process, transmit to upstream providers, and temporarily store inputs and outputs to the extent necessary to operate the Service, bill users, secure the system, and comply with legal obligations, as described in [Privacy Policy](/en/legals/privacy-policy).
+- We do not use your input or output to train the model. The handling of data by the upstream provider is subject to that provider’s policies.
+- You warrant that you have the rights to the input you submit, including permission from the owners of the personal data contained therein.
+- The output is generated automatically, may be inaccurate, and may resemble the output of other users. You are responsible for reviewing the output before using it, especially for medical, legal, financial, or other decisions that affect others.
+
+<a id="hki"></a>
+
+## 11. Intellectual Property Rights
+
+The Hostlinku website, console, documentation, software, designs, names, and logos are our property or that of our licensors. These terms do not grant any rights to our trademarks. The names and trademarks of third-party models and providers are the property of their respective owners and are used solely for identification purposes.
+
+We may use any suggestions, bug reports, or feedback you submit to improve the Service without any obligation to provide compensation. Notifications of alleged copyright or trademark infringement may be sent to [legal@hostlinku.com](mailto:legal@hostlinku.com), including the reporter’s identity, the infringed work, and the location of the relevant content.
+
+<a id="pihak-ketiga"></a>
+
+## 12. Third-Party Services
+
+The Service relies on third parties, including upstream providers, payment providers (iPaymu, BlockBee), SSO identity providers, email providers, and Cloudflare. The use of third-party services is subject to their respective terms and conditions. We are not responsible for the content, policies, or service failures of third parties beyond our reasonable control, including websites linked from the Service.
+
+<a id="penangguhan"></a>
+
+## 13. Suspension and Termination
+
+You can stop using the Service at any time and request to close your account via [halo@hostlinku.com](mailto:halo@hostlinku.com). Request a refund of your remaining balance (if eligible) *before* your account is closed; closing your account does not automatically refund your balance.
+
+We may restrict, suspend, or terminate an account or API key, with or without prior notice, if necessary to prevent loss, if:
+
+- there is a violation of these terms or the Terms of Use;
+- there are indications of fraud, payment misuse, or a chargeback related to a legitimate transaction;
+- required by law, an order from a competent authority, or an upstream provider;
+- account activity that jeopardizes the security or stability of the Service for other users;
+- There is an outstanding negative balance.
+
+When an account is suspended, API requests are rejected and logins may be blocked. For suspensions not resulting from a violation, we will endeavor to explain the reason and provide an opportunity to resolve the issue. The handling of balances in closed accounts is governed by the [Refund Policy](/en/legals/refund-policy). We may also discontinue the Service entirely with reasonable prior notice.
+
+Provisions that, by their nature, remain in effect after termination—including payment obligations, intellectual property rights, disclaimers, limitations of liability, indemnification, and dispute resolution—remain binding.
+
+<a id="disclaimer"></a>
+
+## 14. Disclaimer of Warranty
+
+<Callout type="note">
+
+The Services are provided **"as is"** and **"as available"**. To the extent permitted by law, we make no warranty that the Services will always be available, uninterrupted, or error-free, or that the model’s output is accurate, complete, secure, or suitable for any particular purpose. Rights that cannot be excluded under applicable consumer protection laws remain in effect.
+
+</Callout>
+
+<a id="tanggung-jawab"></a>
+
+## 15. Limitation of Liability
+
+<Callout type="note">
+
+To the extent permitted by law, we are not liable for any indirect, incidental, special, or consequential damages, including loss of profits, revenue, data, or reputation, arising from the use of or inability to use the Service, including disruptions caused by upstream providers.
+
+Our total liability for all claims related to the Service is limited to the amount you paid us in the 12 months prior to the event giving rise to the claim. This limitation does not apply to losses caused by our willful misconduct or gross negligence, or to liability that cannot be limited by law.
+
+</Callout>
+
+<a id="ganti-rugi"></a>
+
+## 16. Compensation
+
+You agree to indemnify and hold harmless Hostlinku, its officers, and employees from any claims, losses, and reasonable expenses (including legal fees) arising from the use of the Service through your account, a violation of these terms, the input you submit, or the use of the output by you or your end users. We will notify you of such claims and cooperate reasonably in their resolution.
+
+<a id="force-majeure"></a>
+
+## 17. Force majeure
+
+We are not liable for any delays or failures caused by circumstances beyond our reasonable control, including, but not limited to, natural disasters, power or internet outages, failures by cloud or upstream providers, large-scale cyberattacks, civil unrest, epidemics, or government actions.
+
+<a id="sengketa"></a>
+
+## 18. Governing Law and Dispute Resolution
+
+These terms are governed by the laws of the Republic of Indonesia, including the Law on Electronic Information and Transactions and the Law on Personal Data Protection. Before pursuing formal legal action, the parties must attempt to resolve the dispute through mutual consultation within 30 days of one party sending a written notice to the other party (for us, via [legal@hostlinku.com](mailto:legal@hostlinku.com)). If no agreement is reached, the dispute shall be resolved through arbitration by the Indonesian National Arbitration Board (BANI) in Jakarta, without prejudice to your right to pursue consumer dispute resolution mechanisms as provided by law.
+
+<a id="perubahan"></a>
+
+## 19. Changes to the Terms
+
+We may update these terms. The update date is listed at the top of the page. For changes that materially affect your rights or obligations, we will notify you via your registered email address or through a notification in the console before the changes take effect. Your continued use of the Service after the effective date constitutes your acceptance of those changes.
+
+<a id="lain-lain"></a>
+
+## 20. Other Provisions
+
+- **Entire Agreement.** These Terms, together with the documents referred to herein, constitute the entire agreement regarding the Services. Any written agreement signed by both parties shall supersede these Terms to the extent of any conflict.
+- **Severability.** If any provision is held to be invalid, the remaining provisions shall remain in full force and effect.
+- **Assignment.** You may not assign any rights or obligations under these terms without our consent. We may assign them in connection with a merger, acquisition, or business transfer.
+- **Electronic communications.** You agree to receive notifications, bills, and account-related communications electronically via email or the console.
+- **Relationship Between the Parties.** No partnership, agency, or employment relationship is created by these terms.
+- **Language.** The Indonesian version is the official version. If there is a translation, the Indonesian version shall prevail in the event of any discrepancies.
+
+<a id="kontak"></a>
+
+## 21. Contact
+
+HostLinku, Depok, Indonesia. Frequently Asked Questions and Customer Support: [halo@hostlinku.com](mailto:halo@hostlinku.com) Legal Matters, Terms of Service, and Agreements: [legal@hostlinku.com](mailto:legal@hostlinku.com) Privacy questions and user rights: [privacy@hostlinku.com](mailto:privacy@hostlinku.com) Data Protection Officer (DPO): [dpo@hostlinku.com](mailto:dpo@hostlinku.com)

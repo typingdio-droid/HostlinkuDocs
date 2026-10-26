@@ -1,8 +1,109 @@
 ---
 title: "Authentication"
-description: "How to use Hostlinku API keys, their expiry, and per-key credit limits"
+description: "How to use a Hostlinku API key, its validity period, the credit limit per API key, and security practices"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/authentication).
-</Note>
+import { Callout } from "/snippets/mdx.jsx";
+
+The Hostlinku gateway uses **Bearer token** authentication with an API key in the format `sk-…`. Include the API key in every request to the `/v1/*` endpoint:
+
+```http
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+For the [Anthropic Messages](/en/anthropic-messages) endpoint, the `x-api-key: sk-…` header is also accepted.
+
+API keys are created and managed at [console.hostlinku.com](https://console.hostlinku.com), under the **API Keys** menu.
+
+<Callout type="important" title="The API key is only valid for /v1/*">
+The API key is **only** valid at the following gateway endpoints: `/v1/chat/completions`, `/v1/messages`, `/v1/responses`, and `/v1/models`. Console account endpoints (`/api/*` — profile, API key list, logs, balance, admin) **reject** API keys with a `403 API_KEY_NOT_ALLOWED` error and can only be accessed via a Console login session. Conversely, login sessions (cookies) **do not** apply to `/v1/*` — the gateway always requires an API key (`401`). As a result, a leaked API key can only be used to call models (subject to balance, credit limit, and rate limit restrictions); it cannot be used to read account data, create new API keys, or change settings.
+</Callout>
+
+## Creating an API Key
+
+1. Open the console → **API Keys** → **Create API Key**.
+2. Enter the **Name**, the optional **Expiration Date**, and the optional **Credit Limit**.
+3. Copy the secret that appears. The secret appears only once.
+
+API keys are stored on the server as SHA-256 hashes: the original values are never stored and cannot be retrieved. Old API keys in the legacy format (`hl_live_…`) still work because authentication is based on the hash, not the prefix.
+
+## API Key Validity Period
+
+Optional expiration date when creating an API key:
+
+| Choice | Behavior |
+|---|---|
+| Never | API key is valid until revoked |
+| 30 / 90 / 365 days | The API key automatically expires after that period |
+| Custom date | Expires on the selected date |
+
+Expired API keys are rejected with the following message:
+
+```json
+{
+  "status": "error",
+  "error": { "code": "UNAUTHORIZED", "message": "API key sudah kedaluwarsa." }
+}
+```
+
+## Credit Limit per API Key
+
+Each API key can be assigned a **usage limit in USD** (`creditLimit`) with a reset window:
+
+| Reset | Calculation window (UTC calendar) |
+|---|---|
+| Daily (`daily`) | Since 00:00 UTC today |
+| Weekly (`weekly`) | Starting at 00:00 UTC on Monday of the current week |
+| Monthly (`monthly`) | Starting at 00:00 UTC on the 1st of the current month |
+| No reset | Total during the API key's active period |
+
+Usage is calculated based on the actual request costs (`requests.customer_cost`) recorded for that API key. When the cumulative cost reaches the limit, subsequent requests are rejected with a **402 PAYMENT_REQUIRED** error:
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "PAYMENT_REQUIRED",
+    "message": "Limit kredit API key tercapai (🪙10.0000 dari 🪙10 total)."
+  }
+}
+```
+
+The credit limit is different from the **account balance**: the limit applies to a single API key, while the account balance is the funding source for all API keys. Both must be sufficient for requests to succeed. See [Billing & Balance](/en/billing).
+
+## Rate Limit
+
+In addition to credit limits, the gateway enforces rate limits per API key:
+
+- **[`POST /v1/chat/completions`](/en/chat-completions)**: 600 requests per minute per API key.
+- Console/public endpoint (cookie-based session): 120 requests per minute per IP address.
+- Authentication endpoints (login, sign-up, reset): 30 attempts per 15 minutes per IP address.
+
+Exceeding the limit results in **429 RATE_LIMITED**. For details, see [Usage & Limits](/en/usage-and-limits).
+
+## Common Authentication Errors
+
+| Status | HTTP | `error.code` | Message |
+|---|---|---|---|
+| The `Authorization` header is missing or is not "Bearer" | 401 | `UNAUTHORIZED` | `This endpoint requires a Hostlinku API key: send the `Authorization` header as "Bearer sk-…" (or `x-api-key`). …` |
+| Unknown, mistyped, or revoked API key | 401 | `UNAUTHORIZED` | `Invalid or revoked API key.` |
+| API key has expired | 401 | `UNAUTHORIZED` | `The API key has expired.` |
+| The API key is used with the Console endpoint `/api/*` | 403 | `API_KEY_NOT_ALLOWED` | `The API key is only valid for the gateway endpoint /v1/* …` |
+| API key has reached its credit limit | 402 | `PAYMENT_REQUIRED` | `API key credit limit reached (…)` |
+| Insufficient account balance for reservation request | 402 | `PAYMENT_REQUIRED` | `Insufficient credit balance for this request.` |
+| Rate limit exceeded | 429 | `RATE_LIMITED` | `Rate limit exceeded. …` |
+
+<Callout type="important" title="API Key Security">
+- Do not store API keys in client-side code that runs in a browser or in a public repository.
+- Use an environment variable on the server (e.g., `HOSTLINKU_API_KEY`) and read from it.
+- Create a separate API key for each application/environment so that they can be revoked one by one without
+disturb others.
+- Use **expiration dates** and **credit limits** as a layer of defense in case an API key is compromised.
+- API keys that are no longer in use can be **revoked** (deactivated; the history remains) or
+**purge** (permanently deleted) from the console.
+</Callout>
+
+<Callout type="note" title="API Key Rotation">
+Recommended workflow: create a new API key → integrate it into the application → verify that the request was successful → revoke the old API key. There is no downtime because both keys remain active simultaneously.
+</Callout>

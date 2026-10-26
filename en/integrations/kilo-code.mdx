@@ -1,8 +1,65 @@
 ---
 title: "Kilo Code"
-description: "Create a Hostlinku Configuration Profile"
+description: "Create a Hostlinku configuration profile in Kilo Code using the OpenAI provider (custom base URL), OpenAI Compatible, or Anthropic"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/kilo-code).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Kilo Code](https://kilocode.ai) — a coding agent extension for VS Code and JetBrains (a fork of Cline/Roo Code) — saves provider settings per **Configuration Profile**. You can create a separate Hostlinku profile from other profiles and switch between them with a single click.
+
+**Prerequisites:** The Kilo Code extension must be installed, and you must have a Hostlinku API key (`sk-…`) from the [console](https://console.hostlinku.com) → **API Keys**.
+
+<Steps>
+
+### Create a profile
+
+Open the Kilo Code panel → gear icon (**Settings**) → **Providers**. In **Configuration Profile**, click **+** and name the profile (e.g., `Hostlinku`).
+
+### Enter the provider and base URL
+
+| Field | Value |
+|---|---|
+| **API Provider** | `OpenAI` |
+| **Use custom base URL** | checked |
+| **Base URL** | `https://api.hostlinku.com/v1` |
+| **OpenAI API Key** | `sk-…` (Hostlinku API key) |
+| **Model** | slug from the [catalog](/en/models), e.g., `gpt-5-5` |
+
+![Kilo Code: OpenAI provider with a custom base URL https://api.hostlinku.com/v1](/images/integrations/kilo-code-openai.webp "Check the &quot;Use custom base URL&quot; box, then enter https://api.hostlinku.com/v1.")
+
+The `OpenAI` provider only displays models recognized by Kilo Code. For other slugs (Claude, DeepSeek, GLM, Kimi, Qwen), select **OpenAI Compatible**—the base URL and API key are the same—and then enter the slug in the **Model ID** field.
+
+### Save and try it
+
+Click **Save**, then submit a small task (*"a brief README for this repo"*). The request appears in the console → **Request Log**.
+
+</Steps>
+
+## Alternative: Anthropic
+
+Select **API Provider** `Anthropic`, check **Use custom base URL**, enter `https://api.hostlinku.com` (**without** `/v1`), and paste your Hostlink API key into the **Anthropic API Key** field. The list of models is limited to Claude models recognized by Kilo Code—select the ones whose slugs match those in the Hostlinku catalog (e.g., `claude-sonnet-4-6`, `claude-haiku-4-5`).
+
+![Kilo Code: provider Anthropic with custom base URL https://api.hostlinku.com](/images/integrations/kilo-code-anthropic.png "Anthropic API: base URL https://api.hostlinku.com without /v1.")
+
+<Callout type="note" title="Prompt caching">
+Through the Anthropic pipeline, Kilo Code sends `cache_control`, and Hostlinku forwards it—the cache token is reported in `cache_read_input_tokens` and billed at the model cache rate. See [Prompt Caching](/en/prompt-caching).
+</Callout>
+
+## What You Need to Know
+
+- **One profile per mode.** Kilo Code can use different profiles for *Architect* and *Code* modes,
+and *Debug*. Example: Architect = `claude-opus-4-6`, Code = `claude-sonnet-4-6`.
+- **Custom headers are not required.** Hostlinku only needs an API key; leave the custom section blank
+headers.
+- **Inline autocomplete** Kilo Code uses a FIM endpoint that isn't served by Hostlinku — leave it as is
+That feature is available in the default provider (see [Overview](/en/integrations#masalah-umum)).
+
+## Troubleshooting
+
+| Symptoms | Solutions |
+|---|---|
+| `401` | Invalid or revoked key, or entered in another profile — make sure your **Hostlinku** profile is active. |
+| `404` on all requests | The base URL is missing `/v1` (OpenAI path) or, conversely, uses `/v1` in the Anthropic path. Compare with the screenshot above. |
+| `404 model_not_found` | Incorrect model ID; copy it from `GET /v1/models`. |
+| The Claude/DeepSeek model is not in the dropdown | The `OpenAI` provider only displays OpenAI models — use **OpenAI Compatible**. |
+| The agent stops without calling a tool | Model without *tool calling*. Follow the recommendations in [Overview](/en/integrations). |

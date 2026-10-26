@@ -1,8 +1,116 @@
 ---
-title: "Errors"
-description: "Hostlinku error envelope, error codes, and how to handle them"
+title: "Error"
+description: "Hostlinku Envelope Format Error, List of Error Codes, and How to Resolve Them"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/errors).
-</Note>
+import { Callout } from "/snippets/mdx.jsx";
+
+All errors from the Hostlinku gateway use the same _envelope_ format, regardless of the source: validation, authentication, billing, or an issue with the upstream service:
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [{ "path": "messages", "message": "Array must contain at least 1 element(s)" }]
+    }
+  }
+}
+```
+
+- `status`: always `"error"` in a failed response.
+- `error.code`: machine code (stable, safe for use in conditional logic in your code).
+- `error.message`: human-readable message; can be in Indonesian.
+- `error.details`: optional; e.g., per-field details when validation fails.
+
+## List of Error Codes
+
+| HTTP | `error.code` | Meaning | Typically occurs when |
+|---|---|---|---|
+| 400 | `BAD_REQUEST` | Request cannot be processed | Invalid parameter combination (e.g., top-up amount outside the limit, `max_tokens` exceeds the model's output limit) |
+| 401 | `UNAUTHORIZED` | Authentication failed or none | API key is incorrect, has been revoked, or has expired |
+| 402 | `PAYMENT_REQUIRED` | Balance/credit required | Insufficient balance, API key credit limit reached, payment provider not configured |
+| 403 | `FORBIDDEN` | No permission | Accessing an admin resource with a non-admin account |
+| 404 | `NOT_FOUND` | Resource not found | Incorrect endpoint; API key/transaction/log ID does not exist (or does not belong to you) |
+| 404 | `MODEL_NOT_FOUND` | The model slug does not exist in the catalog | The slug is misspelled; check `GET /v1/models` |
+| 405 | `METHOD_NOT_ALLOWED` | Invalid HTTP method | Using `GET` on an endpoint that only accepts `POST` |
+| 409 | `CONFLICT` | State conflict | Operation conflicts with the current state |
+| 422 | `VALIDATION_FAILED` | Invalid body/query | Required field missing, incorrect type, out of range |
+| 429 | `RATE_LIMITED` | Too many requests | Exceeded the per-minute limit (per API key or per IP) |
+| 500 | `INTERNAL` | Internal server error | Unexpected bug in the gateway; include `x-request-id` when reporting |
+| 503 | `UPSTREAM_ERROR` | Upstream unavailable / temporary outage | Upstream failed to respond (5xx/timeout) after Hostlinku tried several times; it is safe to retry with backoff |
+| 503 | `PROVIDER_UNAVAILABLE` | Upstream cannot be reached | Temporary connection issue with the upstream, or the payment service failed to create a checkout session |
+| 503 | `MODEL_UNAVAILABLE` | Model unavailable | The model is in a non-`available` state or has been deprecated |
+
+<Callout type="warning" title="Unknown endpoint">
+A nonexistent path also returns the same response as `404 NOT_FOUND`. Double-check the URL and HTTP method before concluding that there is an issue.
+</Callout>
+
+## Validation Details (422)
+
+When validation fails, `details.issues` contains a list of issues by field:
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request body tidak valid.",
+    "details": {
+      "issues": [
+        { "path": "messages", "message": "Array must contain at least 1 element(s)" },
+        { "path": "temperature", "message": "Number must be less than or equal to 2" }
+      ]
+    }
+  }
+}
+```
+
+## Streaming Error
+
+Errors that occur **in the middle** of an SSE stream are sent as data events in the same stream (not as HTTP status codes):
+
+```text
+data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+```
+
+The gateway will not send `data: [DONE]` after an error event, so a disconnected stream can always be distinguished from a stream that completed normally.
+
+## Handling Errors in Code
+
+How to handle each error category:
+
+- **401**: Invalid or expired API key. Correct the configuration; do not retry repeatedly.
+- **402**: Top up your balance or increase/reset your API key limit. See [Billing & Balance](/en/billing).
+- **422**: Fix the request body; see `details.issues` for the location of the problem.
+- **429**: Exponential backoff and respect the rate limit header. See
+[Usage & Limits](/en/usage-and-limits).
+- **5xx** (`UPSTREAM_ERROR`, `PROVIDER_UNAVAILABLE`, `INTERNAL`): retry with a backoff of several
+times; Hostlinku tried several times before giving up.
+
+Example of handling errors with the OpenAI SDK (Python):
+
+```python
+import openai
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-isi-api-key-kamu")
+
+try:
+    response = client.chat.completions.create(
+        model="gpt-5-5",
+        messages=[{"role": "user", "content": "Halo"}],
+    )
+except openai.AuthenticationError as err:      # 401
+    raise SystemExit(f"API key bermasalah: {err}")
+except openai.RateLimitError as err:           # 429
+    raise SystemExit(f"Rate limit: {err}")
+except openai.APIStatusError as err:           # 4xx/5xx lainnya
+    print("status:", err.status_code, "body:", err.response.text)
+```
+
+<Callout type="note" title="Always include the x-request-id when reporting">
+You should also note the `x-request-id` header from the failed response: the support team uses that ID to track down the request in the gateway logs.
+</Callout>

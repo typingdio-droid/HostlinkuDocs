@@ -1,8 +1,75 @@
 ---
 title: "Cursor"
-description: "Use Hostlinku models in Cursor via Override OpenAI Base URL"
+description: "Use the Hostlinku model in Cursor by overriding the OpenAI base URL—chat, Cmd-K, and Agent—with your own API key"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/cursor).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Cursor](https://cursor.com) allows you to use your own API key with *Override OpenAI Base URL*. By pointing it to Hostlinku, chat, Cmd-K (inline edit), and Agent will use models from the Hostlinku catalog and be charged to your balance, not your Cursor quota.
+
+<Steps>
+
+### Open model settings
+
+`Cursor Settings` (⌘/Ctrl + Shift + J) → **Models** tab.
+
+### Enter the API key and base URL
+
+In the **API Keys** section:
+
+1. Enable the **OpenAI API Key** and paste your Hostlinku API key (`sk-…`).
+2. Enable **Override OpenAI Base URL** and enter:
+
+```text
+https://api.hostlinku.com/v1
+```
+
+![Cursor Settings → Models: The &quot;Override OpenAI Base URL&quot; field contains https://api.hostlinku.com/v1](/images/integrations/cursor-openai-base-url.jpg "Enter https://api.hostlinku.com/v1 in the &quot;Override OpenAI Base URL&quot; field, then click Save.")
+
+Don't add `/chat/completions` at the end—Cursor adds the path itself. Click **Save**, then **Verify** next to the API key field; Cursor sends a test request to the gateway.
+
+### Add a Hostlinku model
+
+Still on the **Models** → **Add Custom Model** tab, enter the exact slugs from the [catalog](/en/models), one by one:
+
+```text
+claude-sonnet-4-6
+gpt-5-5
+deepseek-v4-flash
+```
+
+Disable any built-in models you don't want to use to keep the model list concise.
+
+### Select a model in the chat
+
+In the Chat/Agent panel, select the newly added model from the model dropdown. The first request will appear in the console → **Request Log**.
+
+</Steps>
+
+## What You Need to Know
+
+<Callout type="warning" title="Overrides are global">
+While **Override OpenAI Base URL** is enabled, all OpenAI family models in Cursor—including those managed by Cursor—are redirected to Hostlinku. Use a Hostlinku slug for all of them, or turn off the override toggle when you want to revert to Cursor’s default models.
+</Callout>
+
+- **The request is sent from the Cursor server**, not from your computer. Therefore, the base URL must be
+public — `https://api.hostlinku.com` meets this requirement (the `localhost` address is rejected by Cursor).
+- **The Tab cursor (autocomplete) is not affected.** The Tab feature uses Cursor's specialized infrastructure and
+It cannot be transferred to any other provider. Hostlinku supports chat, Cmd-K, and Agent.
+- **Agent mode** requires models with *tool calling* and *streaming* capabilities — all models that
+As recommended in the [Overview](/en/integrations), make sure to follow these instructions. If the Agent returns a *BAD_MODEL_NAME* error, double-check the slug and ensure the **OpenAI API Key** toggle is enabled.
+- **Connection hangs / protocol error** — in the same settings, change *HTTP Compatibility*
+Mode* to **HTTP/1.1**.
+
+<Callout type="tip" title="The Claude model via OpenAI">
+You do not need to fill in the *Anthropic API Key* field. The slug `claude-sonnet-4-6` is called via the same OpenAI Chat Completions endpoint; the gateway translates it to the Anthropic protocol.
+</Callout>
+
+## Troubleshooting
+
+| Symptoms | Solutions |
+|---|---|
+| *Verify* failed `401` | The API key is incorrect or has been revoked, or a space was accidentally copied. |
+| *Model not found* | Typo in the slug — copied from `GET /v1/models`. |
+| Incomplete response | The model has a smaller output limit than what the cursor requested; try a different model or a different service mode. |
+| Agent stopped midway with `429` | The agent is sending multiple parallel requests. See [Usage & Limits](/en/usage-and-limits). |

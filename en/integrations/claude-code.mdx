@@ -1,8 +1,126 @@
 ---
 title: "Claude Code"
-description: "Run Claude Code (CLI, VS Code, JetBrains) through Hostlinku"
+description: "Run Claude Code (CLI, VS Code, JetBrains) via Hostlinku with ANTHROPIC_BASE_URL — use Claude or other models; one balance for all"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/claude-code).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[Claude Code](https://code.claude.com/docs) uses the Anthropic Messages protocol. Hostlinku provides a compatible endpoint at [`POST /v1/messages`](/en/anthropic-messages) (including `/v1/messages/count_tokens`), so Claude Code can be directed to Hostlinku simply by setting an environment variable—no additional proxy is needed.
+
+<Steps>
+
+### Install Claude Code
+
+```bash
+npm install -g @anthropic-ai/claude-code
+# atau: curl -fsSL https://claude.ai/install.sh | bash
+```
+
+If you've previously logged in with an Anthropic/Claude account, run `claude` and then type `/logout` so that your saved OAuth credentials don't override the gateway configuration.
+
+### Go to Hostlinku
+
+The fastest way — export in the shell (`~/.zshrc` / `~/.bashrc`):
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hostlinku.com
+export ANTHROPIC_AUTH_TOKEN=sk-isi-api-key-kamu
+
+# Pin model untuk alias yang dipakai Claude Code
+export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
+export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
+
+claude
+```
+
+Persistent method — the `env` block in `~/.claude/settings.json` (applies to all projects) or `.claude/settings.local.json` in the project root (applies only to that project; this file is usually gitignored):
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.hostlinku.com",
+    "ANTHROPIC_AUTH_TOKEN": "sk-isi-api-key-kamu",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5"
+  }
+}
+```
+
+The value in `settings.json` **overrides** the shell export.
+
+### Verification
+
+In the Claude Code session, type `/status`: the *API* section should display the base URL `https://api.hostlinku.com` and the *auth token* authentication method. Send a simple prompt, then check that the request appears in the console → **Request Log** with the API key you’re using.
+
+### (Optional) Change the model within the session
+
+`/model` displays the `sonnet` / `opus` / `haiku` aliases that you pinned above. To use a different slug just this once:
+
+```bash
+claude --model deepseek-v4-flash
+# atau pin default lewat env: export ANTHROPIC_MODEL=gpt-5-5
+```
+
+</Steps>
+
+## Authentication: `AUTH_TOKEN` or `API_KEY`?
+
+| Variable | Header Sent | Supported by Hostlinku |
+|---|---|---|
+| `ANTHROPIC_AUTH_TOKEN` | `Authorization: Bearer sk-…` | Yes (recommended) |
+| `ANTHROPIC_API_KEY` | `x-api-key: sk-…` | Yes |
+
+Both are accepted by the gateway; choose one—do not enter both with different values.
+
+## VS Code & JetBrains Extensions
+
+The Claude Code extension checks for the login on its own, so the same variables must also be specified in the extension settings — VS Code: `claudeCode.environmentVariables` in `settings.json`:
+
+```json
+{
+  "claudeCode.environmentVariables": [
+    { "name": "ANTHROPIC_BASE_URL", "value": "https://api.hostlinku.com" },
+    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "sk-isi-api-key-kamu" },
+    { "name": "ANTHROPIC_DEFAULT_SONNET_MODEL", "value": "claude-sonnet-4-6" },
+    { "name": "ANTHROPIC_DEFAULT_HAIKU_MODEL", "value": "claude-haiku-4-5" }
+  ]
+}
+```
+
+In JetBrains, set the same variable in *Settings → Tools → Claude Code → Environment variables* (or make sure the IDE is running from a shell that has already exported that variable).
+
+## Use a non-Claude model
+
+Since the gateway translates protocols, the `sonnet`/`haiku` alias can be set to any slug from the [catalog](/en/models):
+
+```bash
+export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
+```
+
+Features that depend on the model's capabilities (tool use, *extended thinking*, vision) are determined by the target model's capabilities—check the `capabilities` field in the catalog.
+
+<Callout type="note" title="Claude Code does not recognize non-Claude model names">
+When using slugs like `gpt-5-5` or `deepseek-v4-flash`, Claude Code displays an `unrecognized_model` warning and assumes a 200k-token context. The request still runs normally (verified), but adjust the context on the client side if the target model has a larger window.
+</Callout>
+
+<Callout type="tip" title="Save your balance for sub-agents">
+Claude Code uses the alias *haiku* for light tasks (summaries, session titles, quick sub-agents). Loading it with `claude-haiku-4-5` or `deepseek-v4-flash` significantly reduces the cost of long sessions without affecting the quality of the main model.
+</Callout>
+
+<Callout type="note" title="Big picture & cache">
+Hostlinku passes along `cache_control` (prompt caching) and reports `cache_read_input_tokens` / `cache_creation_input_tokens` in `usage` — Claude Code utilizes this automatically. Billing follows the pricing for the relevant model cache (see [Billing](/en/billing)).
+</Callout>
+
+## Troubleshooting
+
+- **`401 authentication_error` even though the key is correct** — old OAuth credentials are still being used. Run
+`/logout`, log out, and make sure `ANTHROPIC_BASE_URL` is accessible (`/status`).
+- **Model not found (`404`)** — meaning it hasn't been pinned yet, so Claude Code sends the model name
+by default. Set `ANTHROPIC_DEFAULT_*_MODEL` to the catalog's slug.
+- **`400 max_tokens exceeds the limit`** — reduce `max_tokens` via `CLAUDE_CODE_MAX_OUTPUT_TOKENS`
+(e.g., `32000`) if the target model has a smaller output limit.
+- **Rate limit (`429`)** — Claude Code can run multiple sub-agents in parallel. See the limits at
+[Usage & Limits](/en/usage-and-limits).

@@ -1,8 +1,76 @@
 ---
 title: "Usage & Limits"
-description: "Gateway rate limits, per-key credit limits, and how to monitor usage"
+description: "Gateway rate limits, credit limits per API key, and how to monitor usage in the console"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/usage-and-limits).
-</Note>
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku enforces usage limits across three complementary layers: **rate limit** (number of requests per time period), **credit limit per API key** (cost per reset window), and **account balance** (funding source). All three are checked on the server side before a request is forwarded to the provider.
+
+## Rate Limit
+
+| Coverage | Limit | Limit Determinant |
+|---|---|---|
+| `POST /v1/chat/completions` | **600 requests per minute** | Per API key (`sk-…`) |
+| Console & public endpoints (`/api/*`) | **120 requests per minute** | Per IP address |
+| Authentication endpoints (login, sign-up, OTP, reset) | **30 attempts / 15 minutes** | Per IP address |
+
+Every response that passes through the limiter includes standard headers (IETF `RateLimit-*` format): `RateLimit-Limit`, `RateLimit-Remaining`, and `RateLimit-Reset`. Check the `Reset` value to determine when the next window begins.
+
+When the limit is exceeded, the response is:
+
+```http
+HTTP/1.1 429 Too Many Requests
+```
+
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "Rate limit terlampaui. Tingkat plan untuk limit lebih tinggi."
+  }
+}
+```
+
+<Callout type="tip" title="The Correct Backoff Strategy">
+For 429, wait for the `RateLimit-Reset` (or an exponential backoff of 1s → 2s → 4s… with jitter), then try again. Don’t retry immediately; that will only prolong the block in the current window.
+</Callout>
+
+## Credit Limit per API Key
+
+In addition to the rate limit, each API key can be assigned a **cost limit** (USD) with a daily, weekly, or monthly reset window (UTC calendar), or a total limit with no reset. Usage is calculated based on the actual cost of requests per API key. API keys that reach the limit will be rejected with a **402 PAYMENT_REQUIRED** error until the next window begins. Configuration details can be found in [Authentication](/en/authentication).
+
+## Reserve the balance when making a request
+
+For each request, the gateway:
+
+1. **Reserve** the estimated cost (based on the prompt length and `max_tokens`) from the account balance.
+2. Forward the request to the provider.
+3. **Commit** the actual cost based on the tokens used, and release the remaining reservation.
+
+This means: the balance in the console is divided into `balance` (total) and `reserved` (held for ongoing requests). The amount available for new requests is `balance − reserved` (`available`). Failed requests **are not charged**; their reservations are automatically released.
+
+## Monitoring usage in the console
+
+Go to [console.hostlinku.com](https://console.hostlinku.com):
+
+| Menu | Contents |
+|---|---|
+| **Dashboard / Usage** | Summary of requests, token in/out, cache, and costs by time period (24 hours, 7/30/90 days). |
+| **Request Log** | Complete list of requests: model, status, token, cost, latency (including TTFT for streaming), and details for each request. |
+| **Audit Log** | Account activity history: API key creation/revocation, top-ups, setting changes, etc. |
+| **API Keys** | Usage per API key: requests, tokens, costs, `lastUsed`, expiration, and limits. |
+
+All figures come from the same backend telemetry table used for billing, with no estimates on the front end.
+
+<Callout type="note" title="Cost per API request">
+For your own application, the `hostlinku.cost` block in each chat completion response contains the cost of that request, and the `x-request-id` header links it to a log entry in the console.
+</Callout>
+
+## Summary of Behaviors 429 and 402
+
+| Code | Meaning | What to Do |
+|---|---|---|
+| `429 RATE_LIMITED` | Too many requests within the time window | Wait for `RateLimit-Reset`, back off, or reduce concurrency |
+| `402 PAYMENT_REQUIRED` | Credit issue: insufficient balance **or** API key limit reached | Check the error message. If it says "API key credit limit," wait for it to reset or increase the limit; if it says "Insufficient credit balance," top up your balance ([Billing & Balance](/en/billing)) |

@@ -1,14 +1,120 @@
 ---
 title: "Refund Policy"
-description: "Hostlinku refund policy for unused prepaid credits and failed top-ups."
+description: "Hostlinku Refund Policy: automatic release of reservation balances, refunds for remaining top-up balances, failed top-ups, refund request procedures, and exceptions."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-<Callout type="note" title="Note">
+<Callout type="note" title="English translation">
 
-This legal document is currently available in Indonesian. The Indonesian version is the authoritative version.
+This English translation is provided for convenience. The Indonesian version is the authoritative version.
 
 [Read the Indonesian version](/legals/refund-policy).
 
 </Callout>
+
+**Last updated:** October 11, 2026.
+
+<a id="model"></a>
+
+## 1. Prepaid Model
+
+Hostlinku does not use subscriptions. You add prepaid credit in USD, and the balance is deducted per request based on usage. There are no recurring charges to cancel. This policy is part of the [Terms and Conditions](/en/legals/terms-of-service).
+
+There are two distinct mechanisms that should not be confused:
+
+- **Reservation release**: The amount held for a request is automatically returned to the available balance. No funds are transferred, and no request is required.
+- **Refund**: Any unused balance from your top-up will be refunded to you. A refund request must be submitted and verified.
+
+<a id="otomatis"></a>
+
+## 2. Automatic Reservation Cancellation
+
+Before the request is forwarded to the upstream provider, the system reserves the estimated maximum cost from the available balance. After that:
+
+- If the request is successful, the balance is deducted by the actual fee, and the remaining reservation amount is immediately returned to the available balance.
+- If a request fails before generating billable output (e.g., an upstream error or a timeout), all reservations are released at no charge.
+- If a reservation is held up due to a system malfunction, a periodic process automatically releases it and records a reversal entry in the transaction history.
+- Requests that are rejected due to insufficient balance (`402`) or rate limits (`429`) are never charged.
+
+You can view the cost details for each request on the [log](https://console.hostlinku.com/logs) page in the console. If you find a failed request that remains truncated, report it according to Section 6, including the request ID; approved corrections are credited back to your balance rather than being paid out as cash.
+
+<a id="kelayakan"></a>
+
+## 3. Refund of Remaining Top-Up Balance
+
+A refund for the remaining balance from a top-up can be requested if:
+
+- The request must be submitted no later than 30 days after the relevant top-up was successfully processed;
+- the balance has not been used, or only part of it has been used (only the unused portion is refunded);
+- the account is not currently suspended or closed due to a violation;
+- The top-up is not currently the subject of a dispute or chargeback.
+
+Usage is deducted from the earliest top-up first. The refund amount will not exceed the amount you actually paid for that top-up, and may be reduced by any processing fees charged by the payment provider or bank that we are unable to recover.
+
+<a id="tidak-dapat"></a>
+
+## 4. Non-refundable
+
+<Callout type="note">
+
+- the balance already used for successfully processed requests, including requests canceled by the client during streaming;
+- top-up bonuses, promotional credits, referral credits, and compensation credits;
+- a balance resulting from manual adjustments made by an administrator that does not come from payments;
+- top-ups that are more than 30 days past the deadline;
+- balances in accounts that have been closed due to violations of the [Terms of Use](/en/legals/acceptable-use-policy), fraud, or payment abuse;
+- third-party fees that have already been incurred, such as blockchain network fees or exchange rate differences.
+
+If the balance is negative, the shortfall is deducted first before any remaining balance is refunded.
+
+</Callout>
+
+<a id="top-up-gagal"></a>
+
+## 5. Top-up Failed or Delayed
+
+Your balance will only be credited after the payment provider confirms that the payment was successful. If funds were deducted but your balance hasn't increased:
+
+- Wait for confirmation from the payment provider. QRIS, virtual accounts, and cards are typically confirmed within minutes; crypto transactions require the required number of network confirmations.
+- If the balance has not been credited after 24 hours, please send proof of payment (date, amount, payment method, and reference number or transaction hash) to [halo@hostlinku.com](mailto:halo@hostlinku.com).
+- Once the payment has been verified, we will credit the appropriate amount to your account or, at your request, issue a refund.
+- Crypto payments that are less than the invoice amount, sent to the wrong network or address, or sent after the invoice has expired are handled on a case-by-case basis; funds that cannot be recovered from the network are beyond our control.
+
+<a id="pengajuan"></a>
+
+## 6. Application Procedures
+
+1. Send an email to [halo@hostlinku.com](mailto:halo@hostlinku.com) from the email address registered to your account.
+2. Include the top-up transaction ID or the relevant request ID, the amount requested, and a brief explanation.
+3. For QRIS or virtual account payments, include the recipient’s bank account in the account holder’s name. For cryptocurrency, include the wallet address and its network.
+4. We may request additional verification to ensure that the submission comes from the account owner and the legitimate payer.
+
+<a id="proses"></a>
+
+## 7. Return Time and Method
+
+- We will issue a decision on the application within 5 business days of receiving all required information.
+- Approved applications are disbursed within 7 to 14 business days. The time it takes to receive the funds may be longer depending on the bank, card issuer, or blockchain network.
+- Payments made via QRIS and virtual accounts are refunded via bank transfer to an account in the account holder's name.
+- Crypto payments are refunded in the same asset to the address you provide. The amount is calculated based on the USD value of the refunded balance, minus network fees.
+- The refunded amount is deducted from the account when the request is approved.
+
+We may reject applications that do not comply with Section 3, cannot be verified, are suspected of fraud, or are submitted with an unusually high frequency. The reason for rejection will be communicated via email.
+
+<a id="penutupan"></a>
+
+## 8. Account Closure
+
+Closing your account does not automatically refund your remaining balance. Request a refund first, then request to close your account after the refund is processed. Balances in accounts that have been suspended or closed due to a violation may not be refunded, in accordance with the [Terms and Conditions](/en/legals/terms-of-service).
+
+<a id="sengketa"></a>
+
+## 9. Billing Disputes and Chargebacks
+
+If you believe a charge is incorrect, please contact us first before filing a chargeback with your bank or card issuer. We will review it based on your transaction history and request logs. A chargeback on a valid transaction may result in your account being suspended until the dispute is resolved, and any dispute fees charged to us may be applied to your account.
+
+<a id="lain"></a>
+
+## 10. Other Terms and Contact Information
+
+A written agreement signed by both parties may stipulate different refund terms and supersede this policy in the event of any conflict. Rights guaranteed by applicable consumer protection laws remain in effect. Questions regarding this policy may be sent to [halo@hostlinku.com](mailto:halo@hostlinku.com).

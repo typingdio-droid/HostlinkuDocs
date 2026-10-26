@@ -1,8 +1,132 @@
 ---
 title: "GitHub Copilot"
-description: "Use Hostlinku models in GitHub Copilot CLI and Copilot Chat"
+description: "Use the Hostlinku model in the GitHub Copilot CLI and the GitHub Copilot app via BYOK, plus Copilot limitations in the IDE"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/copilot).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[GitHub Copilot](https://docs.github.com/en/copilot) supports **BYOK (Bring Your Own Key)** in some contexts. In places that accept a custom *base URL*, you can point it to Hostlinku and use models from the catalog with your Hostlinku balance.
+
+| Copilot Interface | Can I connect to Hostlinku? | Guide |
+|---|---|---|
+| **Copilot CLI** (`copilot`) | Yes — `COPILOT_PROVIDER_*` environment variable | [below](#copilot-cli) |
+| **GitHub Copilot app** (desktop) | Yes — *Settings → Model providers* (public preview) | [below](#github-copilot-app) |
+| **Copilot Chat in VS Code** | Yes — *Custom Endpoint* provider | [VS Code](/en/integrations/vscode) |
+| Copilot in JetBrains, Visual Studio, Xcode; inline autocomplete | No — no base URL setting | [Limitations](#batasan) |
+
+<a id="copilot-cli"></a>
+
+## Copilot CLI
+
+When the BYOK variable is set, Copilot CLI sends all model requests to your provider. **A GitHub login is not required** for this mode.
+
+<Steps>
+
+### Set an environment variable
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu   # API key Hostlinku
+export COPILOT_PROVIDER_BASE_URL=https://api.hostlinku.com/v1
+export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
+export COPILOT_MODEL=claude-sonnet-4-6
+```
+
+`COPILOT_PROVIDER_TYPE` defaults to `openai` (Chat Completions), so there's no need to set it. Copilot adds `/chat/completions` on its own—the base URL just needs to end at `/v1`.
+
+### (Recommended) Specify the model token limit
+
+The Copilot CLI doesn't recognize the "Hostlinku" slug, so fill in the delimiter from the [catalog](/en/models) so that the context is truncated correctly:
+
+```bash
+export COPILOT_PROVIDER_MAX_PROMPT_TOKENS=1000000
+export COPILOT_PROVIDER_MAX_OUTPUT_TOKENS=64000
+```
+
+Check with `env | grep '^COPILOT_' | sort` in the same shell before running `copilot`:
+
+![Terminal: Export COPILOT_PROVIDER_BASE_URL, COPILOT_PROVIDER_API_KEY, COPILOT_MODEL, and the token limit, then run `env | grep COPILOT_`](/images/integrations/copilot-terminal-env.webp "All COPILOT_PROVIDER_* variables are filled in: base URL https://api.hostlinku.com/v1, API key, model slug, and token limit.")
+
+### Run
+
+```bash
+copilot
+# atau ganti model per sesi
+copilot --model gpt-5-5
+```
+
+The first request appears in the console → **Request Log**.
+
+</Steps>
+
+### Variant: Anthropic format
+
+For the Claude model via the Messages API (full prompt caching), use the `anthropic` provider with a base URL **without** `/v1`:
+
+```bash
+export COPILOT_PROVIDER_TYPE=anthropic
+export COPILOT_PROVIDER_BASE_URL=https://api.hostlinku.com
+export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
+export COPILOT_MODEL=claude-sonnet-4-6
+```
+
+<Callout type="note" title="The model must support calling and streaming">
+Copilot CLI rejects models without *tool calling* or *streaming*, and recommends a minimum context size of 128K tokens. All recommendations in the [Overview](/en/integrations) meet this requirement — `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`, `glm-5-3`.
+</Callout>
+
+- **Leave the API wire set to the default (Chat Completions).** The Responses API on Hostlinku is *stateless*
+([details](/en/responses)); Chat Completions supports all catalog models without any restrictions.
+- **Without GitHub login**, features that rely on GitHub servers (`/delegate`, the GitHub MCP server,
+(code search) is not available. Log in with `copilot login` if you need that feature—the request model remains with Hostlinku.
+- **`COPILOT_OFFLINE=true`** disables all connections to GitHub (including telemetry). The prompt remains the same
+sent to `api.hostlinku.com`.
+
+<a id="github-copilot-app"></a>
+
+## GitHub Copilot app
+
+The GitHub Copilot desktop app supports custom model providers (public preview). You still need to sign in to GitHub, but **you don't need a Copilot plan** if you're only using a custom provider.
+
+<Steps>
+
+### Add a provider
+
+Open the app settings → **Model providers** → **Add provider** → select **OpenAI-compatible**.
+
+### Provider Details
+
+| Field | Value |
+|---|---|
+| **Display name** | `Hostlinku` |
+| **Base URL** | `https://api.hostlinku.com/v1` |
+| **API key** | `sk-…` (Hostlinku API key) |
+
+Click **Add provider**. The key is stored in the operating system's credential store.
+
+### Select a model per session
+
+The Hostlinku model appears in the model picker next to the GitHub model. Select one when starting an agent session.
+
+</Steps>
+
+For the Claude model, you can also select the **Anthropic** provider and enter the base URL `https://api.hostlinku.com` (without `/v1`) — this option is available if the provider form includes a base URL field.
+
+<a id="batasan"></a>
+
+## Limitations
+
+- **Copilot in JetBrains, Visual Studio, and Xcode** does not have a base URL or provider setting
+Customizable per user. At JetBrains, use the [JetBrains AI Assistant](/en/integrations/jetbrains) or [Junie CLI](/en/integrations/junie) for the Hostlinku model.
+- **Inline autocomplete (ghost text)** in all editors always uses the Copilot infrastructure. BYOK
+Applies only to chat and agents.
+- **Copilot Business/Enterprise:** Organization administrators must enable BYOK (and Copilot CLI for
+(Copilot app) in the Copilot policy settings.
+
+## Troubleshooting
+
+| Symptoms | Solutions |
+|---|---|
+| `401` | `COPILOT_PROVIDER_API_KEY` is empty or incorrect in the shell running `copilot`. Check it with `echo ${COPILOT_PROVIDER_API_KEY:0:6}`. |
+| `404` on all requests | The `openai` provider without `/v1`, or the `anthropic` provider with `/v1`. |
+| `404 model_not_found` | `COPILOT_MODEL` must be the exact slug from `GET /v1/models`. |
+| Error: Model does not support tool calling | Switch to a *tool calling* model from the [catalog](/en/models). |
+| Still using the GitHub model | Variables are exported to other shells — run `copilot` from the same shell or add it to `~/.zshrc`. |

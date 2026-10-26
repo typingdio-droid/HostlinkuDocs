@@ -1,14 +1,105 @@
 ---
 title: "Security"
-description: "Hostlinku security practices, encryption, access controls, and incident response."
+description: "Hostlinku security practices: encryption, authentication, API key management, data isolation, audit logs, incident response, and how to report vulnerabilities."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-<Callout type="note" title="Note">
+<Callout type="note" title="English translation">
 
-This legal document is currently available in Indonesian. The Indonesian version is the authoritative version.
+This English translation is provided for convenience. The Indonesian version is the authoritative version.
 
 [Read the Indonesian version](/legals/security).
 
 </Callout>
+
+**Last updated:** October 11, 2026.
+
+<a id="transport"></a>
+
+## 1. Encryption and Secure Storage
+
+- All traffic to the site, console, and API is served over HTTPS (TLS).
+- Passwords are stored as bcrypt hashes, never in their original form.
+- Customer API keys are stored as SHA-256 hashes.
+- Integration credentials, such as upstream provider keys and SSO secrets, are encrypted at the application level using AES-256-GCM, with keys stored separately from the database.
+
+<a id="autentikasi"></a>
+
+## 2. Account Authentication
+
+- Verify your email using a one-time password (OTP) that is valid for a limited time.
+- The option to log in via SSO (e.g., Google, GitHub, Discord), if enabled.
+- Session cookies marked with `HttpOnly`, `Secure`, and `SameSite=Lax` are valid for a maximum of 7 days.
+- Rate limits for login attempts, sign-ups, and OTPs, as well as Cloudflare Turnstile on public forms.
+- Suspended accounts cannot log in or use the API.
+
+Two-factor authentication is not yet available. This page will be updated when the feature is released.
+
+<a id="api-key"></a>
+
+## 3. Handling API Keys
+
+- The key is displayed in its entirety only once when it is generated and cannot be viewed again.
+- Keys can be restricted in terms of scope, validity period, and credit limits, and can be revoked at any time from the console.
+- Credentials in the request body are replaced with `[redacted]` before being stored.
+- The upstream provider's identity and credentials are never sent to the customer.
+
+<a id="akses"></a>
+
+## 4. Isolation and Access Control
+
+- Data requests, logs, balances, and API keys are separated by account; users can only access their own data.
+- Admin functions are restricted to the admin role, and any changes to sensitive settings—including enabling body logging and adjusting balances—are recorded in the audit log.
+- Request and response content is not stored by default; if body logging is enabled, the content is automatically deleted according to the retention period. See the [Privacy Policy](/en/legals/privacy-policy).
+
+<a id="perlindungan"></a>
+
+## 5. Service Protection
+
+- Public traffic passes through Cloudflare to mitigate bots and volumetric attacks.
+- Rate limits per API key and per IP address, as described in the [Usage Policy](/en/legals/acceptable-use-policy).
+- Reserving funds before a request is processed prevents excessive use beyond the available balance.
+- Model and upstream health monitoring is published on the [Status](https://status.hostlinku.com) page.
+
+<a id="audit"></a>
+
+## 6. Audit log
+
+We log security events such as logins, logouts, registrations, the creation and revocation of API keys, and changes to settings, along with the time, IP address, and user agent. Secret values are never logged.
+
+<a id="tanggung-jawab"></a>
+
+## 7. Shared Responsibility
+
+<Callout type="note">
+
+Account security also depends on you:
+
+- Use strong, unique passwords;
+- Store the API key on the server side, not in the frontend code or the repository;
+- Use a separate key for each application or environment, set credit limits, and revoke unused keys;
+- Monitor logs and transaction history in the console to detect unusual usage.
+
+</Callout>
+
+<a id="insiden"></a>
+
+## 8. Incident Response
+
+When a security incident occurs, we identify, contain, remediate, and evaluate it. If the incident results in a breach of personal data protection, we notify the affected users and the relevant authorities in accordance with the provisions of the Personal Data Protection Act. If we detect a leaked API key, we can deactivate it and notify its owner.
+
+<a id="laporan"></a>
+
+## 9. Reporting Vulnerabilities
+
+Please submit a report to [halo@hostlinku.com](mailto:halo@hostlinku.com) with a description, steps to reproduce the issue, and the impact you observed. We will confirm receipt within 5 business days.
+
+To ensure testing remains safe:
+
+- Test only with your own account and data;
+- Do not access, modify, or delete other users' data;
+- Do not engage in denial-of-service attacks, spam, or social engineering against staff or users;
+- Please give us a reasonable amount of time to make corrections before publishing the findings.
+
+We will not take legal action against researchers who report in good faith and follow these guidelines.

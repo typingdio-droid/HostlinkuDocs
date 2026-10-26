@@ -1,8 +1,245 @@
 ---
-title: "Responses API"
-description: "Reference for POST /v1/responses (OpenAI Responses API-compatible)"
+title: "API Responses"
+description: "POST endpoint reference: /v1/responses (OpenAI Responses API-compatible) — use the Codex CLI, OpenAI Agents SDK, or client.responses.create() with your Hostlink API key"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/responses).
-</Note>
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+import { Callout } from "/snippets/mdx.jsx";
+
+Hostlinku provides an endpoint compatible with the [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses)—the format used by the **Codex CLI**, **OpenAI Agents SDK**, and the `client.responses.create()` method in the OpenAI SDK. Simply replace the base URL; the API key, balance, Service Mode, rate limit, and Request Logs are the same as for `/v1/chat/completions` and `/v1/messages`.
+
+```http
+POST https://api.hostlinku.com/v1/responses
+Authorization: Bearer sk-isi-api-key-kamu
+Content-Type: application/json
+```
+
+Each response includes an `x-request-id` header (Hostlinku request ID, in the format `resp_…`) and, for successful non-streaming responses, an `x-model` header.
+
+<Callout type="note" title="All models, one format">
+`model` uses the same Hostlinku public slug as the [model catalog](/en/models) — e.g., `gpt-5-5`, `claude-sonnet-4-6`, `deepseek-v4-flash`. Models that do not natively provide a Responses API (including Claude) can still be called—the gateway handles the translation.
+</Callout>
+
+## Quick Setup
+
+Complete guides for each tool are available in the [Codex CLI](/en/integrations/codex-cli) and the [OpenAI Agents SDK](/en/integrations/agents-sdk).
+
+**Codex CLI** (`~/.codex/config.toml`)
+
+```toml
+model = "gpt-5-5"
+model_provider = "hostlinku"
+
+[model_providers.hostlinku]
+name = "Hostlinku"
+base_url = "https://api.hostlinku.com/v1"
+env_key = "HOSTLINKU_API_KEY"
+wire_api = "responses"
+```
+
+```bash
+export HOSTLINKU_API_KEY=sk-isi-api-key-kamu
+codex
+```
+
+**Python (Official OpenAI SDK)**
+
+```python
+from openai import OpenAI
+
+client = OpenAI(api_key="sk-isi-api-key-kamu", base_url="https://api.hostlinku.com/v1")
+
+response = client.responses.create(
+    model="gpt-5-5",
+    instructions="Jawab singkat dalam bahasa Indonesia.",
+    input="Apa itu API gateway?",
+    max_output_tokens=256,
+)
+print(response.output_text)
+print(response.usage.input_tokens, response.usage.output_tokens)
+```
+
+**Node.js**
+
+```ts
+import OpenAI from "openai";
+
+const client = new OpenAI({ apiKey: "sk-isi-api-key-kamu", baseURL: "https://api.hostlinku.com/v1" });
+const response = await client.responses.create({
+  model: "claude-sonnet-4-6",
+  input: "Halo!",
+  max_output_tokens: 256,
+});
+console.log(response.output_text);
+```
+
+**OpenAI Agents SDK (Python)**
+
+```python
+from agents import Agent, Runner, set_default_openai_client, set_tracing_disabled
+from openai import AsyncOpenAI
+
+set_default_openai_client(AsyncOpenAI(api_key="sk-isi-api-key-kamu", base_url="https://api.hostlinku.com/v1"))
+set_tracing_disabled(True)  # tracing OpenAI tidak tersedia lewat gateway
+
+agent = Agent(name="Asisten", instructions="Jawab singkat.", model="gpt-5-5")
+result = Runner.run_sync(agent, "Sebutkan 3 bahasa pemrograman.")
+print(result.final_output)
+```
+
+## Body Parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `model` | `string` | **Required.** Hostlinku model slug. |
+| `input` | `string` \| `array` | **Required.** A single text string or an array of items: `message` (`role` + `content` containing `input_text`/`input_image`/…), `function_call`, `function_call_output`, `reasoning`. |
+| `instructions` | `string` | System prompt (developer message). |
+| `max_output_tokens` | `integer` | Output token limit. Returns a `400` error if the model's output limit is exceeded. |
+| `stream` | `boolean` | `true` for SSE (see below). |
+| `tools`, `tool_choice`, `parallel_tool_calls` | — | Function calling format Responses (`{ "type": "function", "name", "parameters" }`). |
+| `reasoning` | `object` | E.g., `{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`. |
+| `include` | `string[]` | E.g., `["reasoning.encrypted_content"]` — encrypted reasoning items are returned as-is so they can be resent on the next turn (used by the Codex CLI). |
+| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | — | As specified by OpenAI; passed to the model. |
+| `store` | `boolean` | Always treated as `false` (see *Stateless*). |
+| `previous_response_id`, `conversation`, `background` | — | **Not supported** → `400 invalid_request_error`. |
+
+Any other unknown fields are passed to the gateway (parameters not supported by the model will be ignored). An invalid body results in a `400 invalid_request_error` response, with details for each field provided in `error.details.issues`.
+
+<Callout type="important" title="Stateless — send the full history in `input`">
+Hostlinku **does not store** the response (`store: false`). For multi-turn conversations, send the entire history (including the `function_call`, `function_call_output`, and `reasoning` items from the previous response) in the `input` array—exactly as the Codex CLI does. `previous_response_id` is rejected with a clear message; `GET`/`DELETE /v1/responses/{id}` returns a `404`.
+</Callout>
+
+## Non-streaming response
+
+```json
+{
+  "id": "resp_…",
+  "object": "response",
+  "created_at": 1791850828,
+  "completed_at": 1791850829,
+  "status": "completed",
+  "error": null,
+  "incomplete_details": null,
+  "model": "gpt-5-5",
+  "output": [
+    { "id": "rs_…", "type": "reasoning", "summary": [], "encrypted_content": "…" },
+    {
+      "id": "msg_…",
+      "type": "message",
+      "status": "completed",
+      "role": "assistant",
+      "content": [{ "type": "output_text", "text": "API gateway adalah …", "annotations": [] }]
+    }
+  ],
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 19,
+    "total_tokens": 39,
+    "input_tokens_details": { "cached_tokens": 0 },
+    "output_tokens_details": { "reasoning_tokens": 12 }
+  },
+  "previous_response_id": null,
+  "store": false,
+  "hostlinku": { "cost": 0.00031, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1420 }
+}
+```
+
+`id` and `model` are always Hostlinku’s public identifiers. The `hostlinku` block is an extension (the OpenAI SDK ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency. `status: "incomplete"` with `incomplete_details.reason = "max_output_tokens"` means the output was truncated by `max_output_tokens`—you’ll still be billed based on the actual number of tokens.
+
+<Callout type="warning" title="Reasoning model + small `max_output_tokens`">
+In reasoning models (e.g., DeepSeek V4, GPT-6, Claude with "thinking"), "thinking" tokens are included in the `max_output_tokens` count. A small value (e.g., `16`) is usually exhausted by the `reasoning` items alone → `status: "incomplete"` and `output` contains only the `reasoning` items without a `message`. Use `max_output_tokens` ≥ 256 or set `reasoning.effort` to `"low"`.
+</Callout>
+
+<Callout type="note" title="Responses API Usage Conventions">
+Just like Chat Completions, `input_tokens` **already contains** cached tokens; the details are in `input_tokens_details.cached_tokens`. `output_tokens` contains `reasoning_tokens`. Your Hostlinku bill is calculated based on these components at their respective prices (see [Billing](/en/billing)).
+</Callout>
+
+## Streaming (`stream: true`)
+
+The gateway forwards SSE events using the Responses API framing (`event:` + `data:`), including the `sequence_number` from the upstream:
+
+```text
+event: response.created
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_…","object":"response","status":"in_progress","model":"gpt-5-5","output":[],…}}
+
+event: response.in_progress
+data: {"type":"response.in_progress","sequence_number":1,"response":{…}}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","sequence_number":2,"output_index":0,"item":{"id":"msg_…","type":"message","status":"in_progress","role":"assistant","content":[]}}
+
+event: response.content_part.added
+data: {"type":"response.content_part.added","sequence_number":3,"item_id":"msg_…","output_index":0,"content_index":0,"part":{"type":"output_text","text":"","annotations":[]}}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"API gateway"}
+
+event: response.output_text.done
+data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"API gateway adalah …"}
+
+event: response.content_part.done
+data: {"type":"response.content_part.done","sequence_number":6,…}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","sequence_number":7,"output_index":0,"item":{"id":"msg_…","type":"message","status":"completed",…}}
+
+event: response.completed
+data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_…","status":"completed","model":"gpt-5-5","output":[…],"usage":{"input_tokens":20,"output_tokens":19,"total_tokens":39,…}}}
+```
+
+Note:
+
+- The final usage is in the `response` object at `response.completed` (or `response.incomplete`); cost
+calculated based on actual usage following that event.
+- The tool call is passed via `response.output_item.added` (`type: "function_call"`),
+`response.function_call_arguments.delta`, and `response.function_call_arguments.done`.
+- If the stream fails midway, the gateway sends an `event: error` with
+`{"type":"error","code":…,"message":…}` and **do not** send a fake `response.completed`.
+- Errors occurring before the first byte (insufficient balance, model not found, rate limit) are returned as
+A standard JSON response with the correct HTTP status code — the OpenAI SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+
+## Tool calling (function calling)
+
+```python
+tools = [{
+    "type": "function",
+    "name": "get_time",
+    "description": "Waktu saat ini di sebuah kota",
+    "parameters": {"type": "object", "properties": {"city": {"type": "string"}}, "required": ["city"]},
+}]
+
+r1 = client.responses.create(model="claude-sonnet-4-6", input="Jam berapa sekarang di Jakarta?", tools=tools, store=False)
+call = next(o for o in r1.output if o.type == "function_call")
+
+# Giliran berikutnya: kirim ulang riwayat + hasil tool (stateless)
+r2 = client.responses.create(
+    model="claude-sonnet-4-6",
+    tools=tools,
+    store=False,
+    input=[
+        {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Jam berapa sekarang di Jakarta?"}]},
+        *[o.model_dump(exclude_none=True) for o in r1.output],
+        {"type": "function_call_output", "call_id": call.call_id, "output": '{"time": "10:00 WIB"}'},
+    ],
+)
+print(r2.output_text)
+```
+
+## Format error
+
+```json
+{ "error": { "message": "API key tidak valid atau sudah dicabut.", "type": "authentication_error", "param": null, "code": "invalid_api_key" } }
+```
+
+| HTTP | `error.type` | `error.code` | Common causes |
+|---|---|---|---|
+| 400 | `invalid_request_error` | `invalid_request` | Invalid body, `max_output_tokens` exceeds the model limit, `previous_response_id` was sent, model not available in Service Mode key. |
+| 401 | `authentication_error` | `invalid_api_key` | Invalid, revoked, or expired API key, or request made without an API key. |
+| 402 | `insufficient_quota` | `insufficient_quota` | Insufficient balance or API key credit limit reached. |
+| 403 | `permission_error` | — | Account suspended / access denied. |
+| 404 | `not_found_error` | `model_not_found` / `not_found` | The model slug does not exist; or `GET /v1/responses/{id}` (stateless). |
+| 429 | `rate_limit_error` | `rate_limit_exceeded` | The request limit has been reached (see the `Retry-After` header). |
+| 503 | `server_error` | `model_unavailable` / `server_error` | The model or upstream is currently unavailable — it is safe to retry. |
+
+Error messages never include the upstream provider's identity. A complete list of codes for the Chat Completions format is available at [Error](/en/errors).

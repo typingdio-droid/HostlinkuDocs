@@ -1,8 +1,81 @@
 ---
-title: "Integrations Overview"
-description: "Use Hostlinku with Claude Code, Codex CLI, Cursor, VS Code, and more"
+title: "Integration Overview"
+description: "Use Hostlinku with Claude Code, Codex CLI, Cursor, VS Code, GitHub Copilot, Zed, Cline, Kilo Code, Continue, JetBrains AI Assistant, Junie, Factory Droid, OpenCode, Xum, Aider, and the OpenAI Agents SDK—just change the base URL, without altering how the tools work"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations).
-</Note>
+import { Callout } from "/snippets/mdx.jsx";
+
+Almost all modern AI coding agents and IDEs can be configured to use other providers via a **custom base URL**. Since Hostlinku supports three protocols at once—OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages—you can use **a single API key and a single balance** for all the tools listed below, then monitor all usage from a single Request Logs view in the console.
+
+## Choose your tool
+
+| Tool | API Format Used | Base URL | Guide |
+|---|---|---|---|
+| Claude Code (CLI & VS Code/JetBrains extensions) | Anthropic Messages | `https://api.hostlinku.com` | [Claude Code](/en/integrations/claude-code) |
+| Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/en/integrations/codex-cli) |
+| Cursor | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Cursor](/en/integrations/cursor) |
+| VS Code (built-in Chat & Agent modes) | OpenAI Chat Completions (or Anthropic/Responses) | `https://api.hostlinku.com/v1/chat/completions` (full endpoint URL) | [VS Code](/en/integrations/vscode) |
+| GitHub Copilot CLI & Copilot app | OpenAI Chat Completions (or Anthropic) | `https://api.hostlinku.com/v1` | [GitHub Copilot](/en/integrations/copilot) |
+| Zed (Agent Panel) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/en/integrations/zed) |
+| Cline, Roo Code | OpenAI Chat Completions (or Anthropic) | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/en/integrations/cline) |
+| Kilo Code | OpenAI Chat Completions (or Anthropic) | `https://api.hostlinku.com/v1` | [Kilo Code](/en/integrations/kilo-code) |
+| Continue (VS Code & JetBrains) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Continue](/en/integrations/continue) |
+| JetBrains AI Assistant (IntelliJ IDEA, PyCharm, WebStorm, …) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [JetBrains](/en/integrations/jetbrains) |
+| Junie CLI (JetBrains) | OpenAI Chat Completions (or Anthropic) | `https://api.hostlinku.com/v1/chat/completions` (full endpoint URL) | [Junie](/en/integrations/junie) |
+| Factory Droid (CLI & desktop) | Anthropic Messages or OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [Factory](/en/integrations/factory) |
+| OpenCode | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [OpenCode](/en/integrations/opencode) |
+| Xum (parallel agent) | OpenAI Chat Completions (or Anthropic) | `https://api.hostlinku.com/v1` | [Xum](/en/integrations/xum) |
+| Aider | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Aider](/en/integrations/aider) |
+| OpenAI Agents SDK (Python & TypeScript) | OpenAI Responses | `https://api.hostlinku.com/v1` | [Agents SDK](/en/integrations/agents-sdk) |
+
+Other tools that offer *"OpenAI-compatible"* or *"custom base URL"* options (e.g., Open WebUI, LibreChat, LangChain, Vercel AI SDK, n8n, Dify) follow the same pattern: base URL `https://api.hostlinku.com/v1`, API key `sk-…`, and a model slug from the catalog.
+
+## Three Things That Always Stay the Same
+
+1. **Base URL** — `https://api.hostlinku.com/v1` for OpenAI-formatted tools; `https://api.hostlinku.com`
+(without `/v1`) for Anthropic-formatted tools, since the Anthropic SDK adds `/v1/messages` on its own.
+2. **API key** — the `sk-…` secret from [console.hostlinku.com](https://console.hostlinku.com) → **API
+Keys**. Used as `Authorization: Bearer sk-…` (OpenAI) or `x-api-key` (Anthropic); the gateway accepts both at all `/v1/*` endpoints.
+3. **Model slug** — exactly as listed in the [model catalog](/en/models), e.g., `claude-sonnet-4-6`,
+`gpt-5-5`, `deepseek-v4-flash`. Each API format can call any model—for example, Claude via the Codex CLI, or GPT via Claude Code—because the gateway translates the protocols.
+
+## Recommended models for coding
+
+A list of active slugs for your account is always available in the console (under the **Model** menu) or at `GET /v1/models`. To get started:
+
+| Requirement | Slug | Notes |
+|---|---|---|
+| Daily agentic coding (safe default) | `claude-sonnet-4-6` | Powerful tool calling, large context. |
+| Difficult tasks / cross-file refactoring | `claude-opus-4-6`, `gpt-5-5` | More expensive; use when Sonnet isn't enough. |
+| Codex CLI | `gpt-5-3-codex`, `gpt-5-5` | Optimized for Codex workflows (apply_patch, shell). |
+| Fast & inexpensive models for sub-agents / commit messages / summaries | `claude-haiku-4-5`, `deepseek-v4-flash` | Suitable for *haiku* aliases / *weak models*. |
+| Large-scale open-weight alternatives | `kimi-k2-7-code`, `glm-5-3`, `qwen3-6-plus` | All support tool calling. |
+
+## Safe Practices
+
+<Callout type="important" title="One API key per tool">
+Create a separate API key for each tool (e.g., `claude-code-laptop`, `cursor-office`) with daily/monthly **credit limits**. If one key is leaked from a configuration file, simply revoke that key without affecting the other tools. See [Authentication](/en/authentication).
+</Callout>
+
+- **The API key is only valid for the `/v1/*` gateway.** The `sk-…` key cannot be used to log in
+console, change your balance, or create a new key—so the key stored in the IDE's configuration cannot take over your account.
+- **Do not commit your API key.** Store it in an environment variable (`HOSTLINKU_API_KEY`) or as a secret
+their respective store tools; all the guides here follow that pattern.
+- **Monitor usage.** The **Request Log** menu in the console displays every request from each
+tool — model, token, cost, latency, and API key used. See [Usage & Limits](/en/usage-and-limits).
+
+<a id="masalah-umum"></a>
+
+## Common Issues
+
+| Symptoms | Causes & Solutions |
+|---|---|
+| `401` / *authentication error* | The API key is incorrect, revoked, or expired. Make sure no spaces or newlines were copied along with it. In Claude Code, run `/logout` first if you were previously logged in with an Anthropic account. |
+| `402` / *insufficient quota* | Balance is low or the API key credit limit has been reached. Top up your balance or increase the limit in the console. |
+| `404` / *model not found* | The model slug is misspelled or does not exist in the catalog. Copy it exactly as it appears from `GET /v1/models`. |
+| `400` *not available in Service Mode* | The model is not available in the Service Mode of that API key. Change the model or create a key with a different Service Mode. |
+| `429` / *rate limit* | The tool is sending too many parallel requests (sub-agents). Please wait for the time specified in the `Retry-After` header, or reduce the number of parallel requests. See [Usage & Limits](/en/usage-and-limits). |
+| The tool rejects the base URL `localhost` | Some tools (e.g., Cursor) call the API from their own servers, not from your computer. `https://api.hostlinku.com` is a public endpoint, so it's safe. |
+| The *autocomplete / Tab* feature isn't working | Inline autocomplete typically uses the `/v1/completions` endpoint (FIM) or the tool's proprietary infrastructure. Hostlinku handles chat, Responses, and Messages—not FIM. Use Hostlinku for chat/agent/edit; leave autocomplete to the tool’s built-in provider. |
+
+Need another tool that isn't listed here? Send it to [halo@hostlinku.com](mailto:halo@hostlinku.com) or check out [Support](/en/support).

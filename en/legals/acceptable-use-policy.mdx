@@ -1,14 +1,109 @@
 ---
-title: "Acceptable Use Policy"
-description: "Rules for acceptable use of the Hostlinku gateway and API."
+title: "Terms of Use"
+description: "Hostlinku API Usage Policy: permitted uses, prohibited content and activities, rate limits, enforcement, and how to report violations."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-<Callout type="note" title="Note">
+<Callout type="note" title="English translation">
 
-This legal document is currently available in Indonesian. The Indonesian version is the authoritative version.
+This English translation is provided for convenience. The Indonesian version is the authoritative version.
 
 [Read the Indonesian version](/legals/acceptable-use-policy).
 
 </Callout>
+
+**Last updated:** October 11, 2026.
+
+<a id="cakupan"></a>
+
+## 1. Scope
+
+This policy applies to every account, API key, and request to Hostlinku, including requests sent by your application on behalf of end users. This policy is part of the [Terms and Conditions](/en/legals/terms-of-service). You are responsible for all usage through your account, including usage by end users of your application.
+
+<a id="diizinkan"></a>
+
+## 2. Permitted Uses
+
+- chat apps, virtual assistants, summarization, translation, and text generation;
+- embeddings for search, recommendations, and classification;
+- code generation, agents, and workflow automation;
+- research, evaluation, experimentation, and prototyping;
+- commercial products built on the API, provided they comply with this policy.
+
+<a id="dilarang"></a>
+
+## 3. Prohibited Content and Activities
+
+- **Child exploitation**: sexual or exploitative content involving children in any form. Violations are reported to the appropriate authorities.
+- **Violence and Weapons**: incitement to violence, terrorism, or instructions on how to make weapons, explosives, or chemical, biological, radiological, or nuclear weapons.
+- **Fraud and social engineering**: phishing, scams, fraudulent investment schemes, document forgery, or deepfakes used to deceive.
+- **Malware and intrusions**: creating malware, ransomware, or code to infiltrate systems that do not belong to you or without the owner’s permission.
+- **Spam and manipulation**: unsolicited mass messages, bot networks, fake reviews, or manipulation of metrics and third-party platforms.
+- **Privacy violations**: processing personal data without a legal basis; monitoring or tracking individuals without their consent; and performing biometric identification of individuals without their permission.
+- **Discrimination**: automated decisions that harm people based on race, religion, gender, disability, or other legally protected characteristics.
+- **Copyright infringement**: mass reproduction of copyrighted material or removal of watermarks and ownership marks.
+- **Impersonation**: misleading content that purports to come from a specific person or organization without permission.
+- **Other legal violations**: activities that violate the ITE Law, the PDP Law, or applicable sector-specific regulations.
+
+<a id="teknis"></a>
+
+## 4. Technical Restrictions
+
+- avoid rate limits, CAPTCHAs, verification, or balance limits, including by using multiple accounts or rotating API keys;
+- flooding endpoints, running load tests, or performing vulnerability scans without written permission;
+- attempting to uncover the identity of the upstream server, system prompts, or internal configurations that we do not display;
+- a jailbreak or prompt injection intended to bypass the model's security policies;
+- using the output to train or distill a competing model if prohibited by the terms of that model’s upstream provider;
+- resell, share, or publish the API key.
+
+<a id="aplikasi"></a>
+
+## 5. Requirements for Your App
+
+- Inform end users that they are interacting with AI if it is not clear from the context.
+- Implement adequate moderation and human oversight for high-risk cases such as those involving health, legal matters, finance, and recruitment.
+- Store the API key on the server side and restrict end-user access through your own backend.
+- Provide a channel for end users to report harmful output.
+
+<a id="upstream"></a>
+
+## 6. Upstream Provider Policy
+
+Each model is hosted by an upstream provider that has its own usage policies. You must comply with those policies in addition to these policies. Requests may be rejected or filtered by the upstream provider, and we may restrict access to certain models if the provider requests it.
+
+<a id="rate-limit"></a>
+
+## 7. Rate Limit
+
+Current default limit:
+
+- Inference API: 600 requests per minute per API key;
+- Console and public APIs: 120 requests per minute per IP address;
+- Authentication endpoints (login, sign-up, OTP): 30 attempts per 15 minutes.
+
+Requests that exceed the limit are rejected with a `429` status code at no charge. The remaining quota is returned via the `RateLimit-*` headers. Limits may vary based on capacity and can be increased for specific accounts; contact [halo@hostlinku.com](mailto:halo@hostlinku.com).
+
+<a id="penegakan"></a>
+
+## 8. Enforcement
+
+<Callout type="note">
+
+Depending on the severity of the violation, we may:
+
+- rejecting or filtering certain requests;
+- issuing a warning and requesting corrective action within a specified time frame;
+- set rate limits or restrict access to the model;
+- revoke an API key, suspend, or close an account;
+- report to the appropriate authorities when required by law or when human safety is at stake.
+
+Balances in accounts that have been closed due to violations are governed by the [Refund Policy](/en/legals/refund-policy).
+
+</Callout>
+
+<a id="pelaporan"></a>
+
+## 9. Reporting Violations
+
+Report suspected abuse and security vulnerabilities to [halo@hostlinku.com](mailto:halo@hostlinku.com) following the guidelines on the [Security](/en/legals/security) page. Include a description, the time of the incident, and the request ID, if available.

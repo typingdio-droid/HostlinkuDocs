@@ -1,8 +1,49 @@
 ---
 title: "Support"
-description: "How to contact the Hostlinku team and what information to include"
+description: "How to contact the Hostlinku team and what information to include when submitting a report"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/support).
-</Note>
+import { Callout } from "/snippets/mdx.jsx";
+
+Need help with the gateway, your account, API key, or billing? Here are the available channels.
+
+## Support Channels
+
+| Channel | Purpose |
+|---|---|
+| **Email**: [halo@hostlinku.com](mailto:halo@hostlinku.com) | All inquiries: technical, account, billing |
+| **Console**: [console.hostlinku.com](https://console.hostlinku.com) | Check your balance, API key, request logs, and audit logs before submitting a report |
+| **Status**: [status.hostlinku.com](https://status.hostlinku.com) | Check for ongoing outages or incidents |
+
+## When filing a report, include
+
+To help the team investigate the issue more quickly, please include:
+
+1. **`x-request-id`** from the problematic response (response header; also found in the console log).
+2. **Time of occurrence** (with time zone) and **post slug** used.
+3. **HTTP status + `error.code`** from the error response (e.g., `429 RATE_LIMITED`).
+4. **A minimal, reproducible example request**, without any secrets. Never send
+You don't need to share the entire API key with anyone; just the first 8 characters are enough.
+
+Example of a good report:
+
+```text
+Waktu     : 2026-10-08 14:32 WIB
+Request ID: cmpl_mfx1a2b3c4
+Model     : gpt-5-5
+Status    : 503 UPSTREAM_ERROR ("Terjadi gangguan saat memproses permintaan. Coba lagi.")
+Akun      : user@contoh.com
+Catatan   : terjadi 3x dalam 10 menit terakhir, endpoint /v1/chat/completions
+```
+
+## Response Time
+
+Support is handled by a small team: emails are answered **as soon as possible on business days** (best-effort basis). For incidents with widespread impact, check the status page; updates are posted there.
+
+## Security
+
+If you discover a security issue (e.g., a potential API key leak or a vulnerability in the gateway), please send the details privately to [halo@hostlinku.com](mailto:halo@hostlinku.com) with the subject line `[SECURITY]`. Do not publish the details until the issue has been addressed.
+
+<Callout type="warning" title="Do not send secrets">
+Our support team will never ask for your API key, password, or OTP code. If anyone claiming to represent Hostlinku asks for this information, please ignore them and report it.
+</Callout>

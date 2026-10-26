@@ -1,8 +1,69 @@
 ---
 title: "JetBrains AI Assistant"
-description: "Use Hostlinku models in IntelliJ IDEA, PyCharm, WebStorm"
+description: "Use the Hostlinku model in IntelliJ IDEA, PyCharm, WebStorm, GoLand, and other JetBrains IDEs via the OpenAI-compatible provider in AI Assistant"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/integrations/jetbrains).
-</Note>
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[JetBrains AI Assistant](https://www.jetbrains.com/help/ai-assistant/) supports **third-party AI providers**: you can route AI Chat to any *OpenAI-compatible* endpoint using your own API key. By entering it into Hostlinku, chats in IntelliJ IDEA, PyCharm, WebStorm, GoLand, Rider, and other JetBrains IDEs use models from the Hostlinku catalog and are charged to your balance.
+
+**Prerequisites:** The **AI Assistant** plugin must be installed and enabled, and you must have a Hostlinku API key (`sk-…`) from the [console](https://console.hostlinku.com) → **API Keys**.
+
+<Steps>
+
+### Open model settings
+
+**Settings** (⌘ + , / Ctrl + Alt + S) → **Tools** → **AI Assistant** → **Models & API keys**.
+
+### Add Hostlinku as a third-party provider
+
+In the **Third-party AI providers** section:
+
+| Field | Value |
+|---|---|
+| **Provider** | `OpenAI-compatible` |
+| **URL** | `https://api.hostlinku.com/v1` |
+| **API Key** | `sk-…` (Hostlinku API key) |
+| **Tool calling** | checked |
+
+![JetBrains Settings → Tools → AI Assistant → Models & API keys: URL containing https://api.hostlinku.com/v1](/images/integrations/jetbrains-ai-settings.webp "An OpenAI-compatible provider with the URL https://api.hostlinku.com/v1. Click &quot;Test Connection&quot; before clicking &quot;Apply.&quot;")
+
+Click **Test Connection** — The IDE sends a test request to the gateway. If successful, click **Apply**, then **OK**.
+
+### (Optional) Configure the Assignment Model
+
+In the **Model Assignment** section, you can select a Hostlinku model for **Core features** (e.g., `claude-sonnet-4-6`) and **Instant helpers** (e.g., `claude-haiku-4-5`). Leave the **Completion model** set to *Not selected* — inline autocomplete uses FIM, which is not supported by Hostlinku (see [Overview](/en/integrations#masalah-umum)).
+
+### Select a model in AI Chat
+
+Open **AI Chat**, make sure **Chat** mode is enabled, and then select a model from the model dropdown. The list is retrieved from `GET /v1/models`, so the displayed slugs match those in the [catalog](/en/models).
+
+![JetBrains AI Chat: The model dropdown displays a list of third-party providers](/images/integrations/jetbrains-ai-chat.webp "Dropdown menu in AI Chat. Select a slug from the Hostlinku catalog, then start a chat.")
+
+The first request will appear in the console → **Request Log**.
+
+</Steps>
+
+## What You Need to Know
+
+<Callout type="note" title="OpenAI-compatible paths only">
+The AI Assistant currently only supports *OpenAI-compatible* third-party providers—there is no Anthropic base URL option yet. The Claude model can still be used: the `claude-sonnet-4-6` slug is invoked via Chat Completions and a gateway that translates to the Anthropic protocol.
+</Callout>
+
+- **The base URL must end with `/v1`.** The IDE adds `/models` and `/chat/completions` on its own;
+Without `/v1`, *Test Connection* fails with a `404`.
+- **No custom header.** The AI Assistant only sends the API key as
+`Authorization: Bearer sk-…` — that's all Hostlinku needs.
+- **Not all models are suitable for Chat.** Choose a model with *calling tools* (check **Tool
+"calling**" in the settings) so that the feature that calls the tool within the IDE works. Recommendations can be found in the [Overview](/en/integrations).
+- **Claude Code on JetBrains** is a separate integration (the Claude Code plugin uses its own CLI). See
+[Claude Code](/en/integrations/claude-code).
+
+## Troubleshooting
+
+| Symptoms | Solutions |
+|---|---|
+| *Test Connection* failed `401` | The API key is incorrect or has been revoked, or a space was accidentally copied along with it. |
+| *Test Connection* failed `404` | The URL does not end with `/v1`, or there is an additional path such as `/chat/completions`. |
+| Empty dropdown model | The connection has not been *applied*, or the API key does not have access to any models in Service Mode. |
+| Chat stopped with `429` | Too many parallel requests. See [Usage & Limits](/en/usage-and-limits). |

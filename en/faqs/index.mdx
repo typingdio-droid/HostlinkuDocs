@@ -1,16 +1,67 @@
 ---
 title: "FAQ"
-description: "Frequently asked questions about the Hostlinku gateway"
+description: "Frequently Asked Questions About the Hostlinku Gateway"
 ---
 
-<Note>
-This page is being translated into English. In the meantime, read the [Indonesian version](/faqs).
-</Note>
+import { Callout } from "/snippets/mdx.jsx";
 
-## Topics
+## Topic
 
 - [Stream Mode](/en/faqs/stream-mode): how to use SSE with the OpenAI SDK, Python `requests`, and curl.
 - [Common errors](/en/faqs/errors): 401, 402, 404, 422, 429, and 503.
-- [Rate limits](/en/faqs/rate-limits): quotas, `Retry-After`, and backoff.
-- [Billing & top-up](/en/faqs/billing): balance, key limits, and 402 errors.
-- [Model unavailable](/en/faqs/model-unavailable): 404 vs 503, deprecation, and Service Modes.
+- [Rate limit](/en/faqs/rate-limits): quota, `Retry-After` header, and backoff.
+- [Billing & Top-Up](/en/faqs/billing): balance, key limit, and error 402.
+- [Model not available](/en/faqs/model-unavailable): 404 vs. 503, deprecated, and Service Mode.
+
+## Can the official OpenAI SDK be used?
+
+Yes, without any code changes. Set `base_url`/`baseURL` to `https://api.hostlinku.com/v1` and use your Hostlinku API key starting with `sk-…` as the `api_key`. A complete example is available at [Chat Completions](/en/chat-completions#contoh-python-sdk-resmi-openai).
+
+## What endpoints are available?
+
+Currently, the gateway prioritizes two core OpenAI-compatible endpoints:
+
+- `POST /v1/chat/completions`: [Chat Completions](/en/chat-completions)
+- `GET /v1/models`: [Model](/en/models)
+
+Other endpoints (e.g., embeddings) are not yet available on the public gateway. The non-`/v1` public catalog (for sites) is available at `/api/public/models`. The console page uses the `/api/*` endpoint with a session cookie instead of an API key.
+
+## What models can I use?
+
+See [Models](/en/models): the official list is retrieved from `GET /v1/models` or the **Models** menu in the console. The catalog includes models from OpenAI, Anthropic, Google, DeepSeek, Qwen, and others, each with a unique slug.
+
+## Why was my request rejected with a 401 error?
+
+Most common causes: The `Authorization` header is missing or not in `Bearer` format; the API key was copied incorrectly, has been revoked, or has expired. Create or check your API key at [console.hostlinku.com](https://console.hostlinku.com). Full details: [Authentication](/en/authentication).
+
+## Why am I getting a 402 error even though I have a balance?
+
+Check the error message. A 402 error has two possible causes: insufficient **account balance** (`available` is less than the estimated cost of the request), or the **API key credit limit** has been reached. If the message mentions "API key credit limit," wait for the reset window (daily/weekly/monthly) or change the limit in the console. For more details, see [Billing & Balance](/en/billing).
+
+## How much does a single request cost?
+
+Cost = input tokens × input price + output tokens × output price (per token, depending on the model). Prices for each model are listed in the catalog; the actual cost of each request appears in `hostlinku.cost` and in the console log. Details are available at [Billing & Balance](/en/billing).
+
+## Is there a rate limit?
+
+Yes: 600 requests per minute per API key for chat completions, plus a per-IP limit for the console endpoint. Full details and backoff strategies are available at [Usage & Limits](/en/usage-and-limits).
+
+## How do I send an image or multimodal message?
+
+Populate `messages[].content` with an array of content in the OpenAI format (e.g., one object of type `image_url` followed by one object of type `text`) and select a model with `vision`/`image-input` capabilities from the catalog. The level of support depends on the model provider.
+
+## How can I stop the use of a leaked API key?
+
+Immediately **revoke** the API key in the console, under the **API Keys** menu. Revoked API keys will be immediately rejected (401) for all subsequent requests. To permanently delete an API key, use **purge**. Usage history prior to revocation remains recorded for auditing purposes.
+
+## Do request logs store the content of my conversations?
+
+Request logs store **technical metadata**: model, status, number of tokens, cost, latency, and request ID. This data is required for billing and monitoring. For questions regarding data retention in accordance with your compliance requirements, please contact [halo@hostlinku.com](mailto:halo@hostlinku.com).
+
+## How do I contact support?
+
+See [Support](/en/support): email **halo@hostlinku.com**; please include the `x-request-id` from the problematic response.
+
+<Callout type="note" title="Can't find the answer?">
+Send your questions to [halo@hostlinku.com](mailto:halo@hostlinku.com). This FAQ is updated based on the most frequently asked questions.
+</Callout>

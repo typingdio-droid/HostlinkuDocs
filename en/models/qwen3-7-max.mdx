@@ -1,0 +1,72 @@
+---
+title: "Qwen 3.7 Max"
+description: "Qwen3.7-Max is the flagship model in the Qwen3.7 series, built for agent workloads, long-chain reasoning, code understanding, productivity, and complex task..."
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## Overview
+
+Qwen3.7-Max is the flagship model in the Qwen3.7 series, built for agent workloads, long-chain reasoning, code understanding, productivity, and complex task execution.
+
+| Property | Value |
+|---|---|
+| Provider | Alibaba |
+| Slug | `qwen3-7-max` |
+| Context | 1,000,000 tokens |
+| Max output | Not published |
+| Input | text |
+| Output | text |
+| Release | 2026-06-14 |
+
+## Capabilities
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `agentic`
+- `long-context`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | $1.765 |
+| Output (completion) | $5.294 |
+| Cache read | $0.176 |
+| Cache write | $2.206 |
+
+Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+
+## Example request
+
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-isi-api-key-kamu" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen3-7-max",
+    "messages": [{ "role": "user", "content": "Hello!" }]
+  }'
+```
+
+## Related models
+
+- [Qwen 3.6 Plus](/en/models/qwen3-6-plus)
+
+[← Back to the model catalog](/en/models)

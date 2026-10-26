@@ -1,14 +1,184 @@
 ---
 title: "Privacy Policy"
-description: "How Hostlinku collects, uses, stores, and protects personal data."
+description: "Hostlinku Privacy Policy: account data, API keys, request metadata, body logging, payments, data recipients, retention, security, and data subject rights in accordance with the Personal Data Protection Act."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-<Callout type="note" title="Note">
+<Callout type="note" title="English translation">
 
-This legal document is currently available in Indonesian. The Indonesian version is the authoritative version.
+This English translation is provided for convenience. The Indonesian version is the authoritative version.
 
 [Read the Indonesian version](/legals/privacy-policy).
 
 </Callout>
+
+**Last updated:** October 11, 2026.
+
+<a id="cakupan"></a>
+
+## 1. Scope and Data Controllers
+
+This policy applies to the hostlinku.com website, the Hostlinku console, and the Hostlinku API. Hostlinku is the data controller; the business entity’s identity is listed in the [Privacy Contact section](#kontak). This policy was drafted in accordance with Law No. 27 of 2022 on Personal Data Protection (PDP Law) and is part of the [Terms and Conditions](/en/legals/terms-of-service).
+
+If you use the API to process your end users’ personal data, you act as the data controller, and we process that data on your instructions (as a data processor) to the extent necessary to provide the Service.
+
+<a id="data"></a>
+
+## 2. The data we collect
+
+### Account Data and Authentication
+
+- name, email address, company name (optional), and profile photo, if provided by the SSO provider;
+- password hash (we do not store passwords in their original form);
+- your account credentials from the SSO provider (e.g., Google, GitHub, Discord) if you log in via SSO;
+- email verification status, temporary OTP code, account role, and account status;
+- login session data and security audit logs, such as login and logout times, registration, changes to settings, balance adjustments by the admin, and API key activity, along with the associated IP addresses and user agents.
+
+### API Key
+
+API keys are stored only as SHA-256 hashes, and we cannot reproduce them. We store the key name, the key prefix for identification, the scope, the expiration date, the credit limit, the last access time, and the revocation status.
+
+### Metadata Request
+
+For requests that pass authentication and balance verification, we record:
+
+- the request time, the requested model, and the API key used;
+- the number of input, output, and cache tokens, as well as the charges incurred;
+- latency, time to first token, streaming mode, finish reason, status code, and error message;
+- the IP address from which the request originated;
+- Internal upstream route information that is visible only to Hostlinku administrators.
+
+Requests that are rejected before that stage—for example, due to failed authentication, rate limits, or insufficient balance—are not recorded as request log entries in the console and are not charged.
+
+### Balance and Payments
+
+We store a history of top-ups, usage, refunds, and balance adjustments, including the amount, payment method, status, and transaction reference number. Payments are processed by iPaymu (QRIS and virtual accounts) and BlockBee (cryptocurrency). We do not accept or store your full card number, CVV, or banking credentials. For cryptocurrency payments, wallet addresses and transaction hashes may be recorded.
+
+### Technical and Communication Data
+
+- IP addresses, browser types, devices, and referring pages recorded in server logs and Cloudflare’s security services;
+- The content of your correspondence when you contact support, report a bug, or request a refund.
+
+<a id="konten-api"></a>
+
+## 3. Request and Body Logging
+
+The request content (prompt, message, attachments) and the model’s response are processed to be forwarded to the upstream provider and returned to you. By default, this content is **not stored** in our database; only the metadata described in section 2 is stored.
+
+Hostlinku administrators can enable **body logging** across all platforms for debugging and error investigation purposes. While this feature is enabled:
+
+- The request and response bodies are stored along with the corresponding request log;
+- Fields containing credentials (such as `authorization`, `api_key`, `password`, `token`) and upstream identities are replaced with `[redacted]` before being saved. This filtering is based on field names, so any secrets you include in the prompt text are not filtered out;
+- Content that exceeds the size limit will not be saved;
+- The content is automatically deleted after the specified retention period—14 days by default—while the request metadata is retained;
+- The content can be viewed by the account owner via the console and by authorized Hostlinku administrators.
+
+<Callout type="note">
+
+We do not use the content of your requests or responses to train our models. Upstream providers process the content of requests in accordance with their own privacy policies. Avoid sending sensitive personal data that is not necessary.
+
+</Callout>
+
+<a id="tujuan"></a>
+
+## 4. Purpose and Legal Basis for Processing
+
+- **Running the Service**: authentication, request routing, and response delivery (fulfillment of the agreement).
+- **Billing**: reservations and balance deductions, transaction history, processing of top-ups and refunds (fulfillment of agreements and legal obligations).
+- **Security**: rate limits, abuse and fraud detection, CAPTCHA, audit logs (legitimate interests).
+- **Support and notifications**: OTP, password reset, low balance alerts, notifications of service changes (contract fulfillment).
+- **Service improvements**: aggregate usage statistics for capacity and quality (legitimate interest).
+- **Legal compliance**: responding to requests from legitimate authorities and fulfilling tax or accounting obligations.
+
+We do not sell your personal data.
+
+<a id="penerima"></a>
+
+## 5. Data Recipients
+
+Data is shared only to the extent necessary with:
+
+- **Upstream provider model**: receives the request content you send to generate a response. We do not forward your email or account information to them.
+- **Payment providers**: iPaymu and BlockBee for processing top-ups and refunds.
+- **Email provider**: Brevo or Amazon SES for sending OTPs, notifications, and transactional emails.
+- **SSO identity providers**: Google, GitHub, Discord, or another provider you choose to sign in with.
+- **Infrastructure**: Cloudflare (network, security, Turnstile, and R2 object storage) as well as server and database providers.
+- **Authorities**: when required by law or a valid order, or to protect our rights, safety, and property, as well as those of other users.
+- **Successor entity**: in the event of a merger, acquisition, or transfer of the business, while remaining subject to this policy.
+
+<a id="lintas-negara"></a>
+
+## 6. Cross-border transfers
+
+Some of the recipients listed above, including upstream providers and payment providers, process data outside of Indonesia. We select providers that implement adequate data protection measures and conduct data transfers in accordance with the provisions of the Personal Data Protection Act (PDP Act). By using the Service, you acknowledge that the content of your requests is processed in the jurisdiction where the upstream provider operates.
+
+<a id="retensi"></a>
+
+## 7. Data Retention
+
+- **Account data and API keys**: retained for as long as the account is active, then deleted or anonymized after the account is closed, unless required to be retained for legal purposes.
+- **Request and response content**: Not stored when body logging is disabled; if enabled, it is automatically deleted after the retention period (default: 14 days).
+- **Metadata requests and transaction history**: retained for as long as the account is active and thereafter for as long as necessary for billing, accounting, tax purposes, dispute resolution, and fraud prevention.
+- **Security audit logs**: retained for as long as necessary for investigations and evidence-gathering.
+- **OTP and session codes**: expire automatically; login sessions are valid for up to 7 days.
+
+Backup copies may remain for a limited period after the data is deleted from the main system, and are not used for any purpose other than recovery.
+
+<a id="keamanan"></a>
+
+## 8. Security
+
+We implement reasonable technical and organizational measures, including HTTPS connections, password and API key hashing, `HttpOnly` session cookies, rate limits, CAPTCHA on public forms, admin access restrictions, and audit logs. Further details are available on the [Security](/en/legals/security) page. No system is completely secure; in the event of a personal data breach, we will notify you and the relevant authorities in accordance with the provisions of the Personal Data Protection Act.
+
+<a id="hak"></a>
+
+## 9. Your Rights
+
+Under the PDP Act, you have the right to:
+
+- obtain information about the processing of your personal data;
+- access and obtain a copy of your personal data;
+- correcting inaccurate data, some of which can be done directly on the console profile page;
+- request the deletion of data and the closure of an account;
+- withdraw consent or object to specific processing;
+- restrict or postpone processing;
+- file a complaint with the competent authority in the field of personal data protection.
+
+Submit a request to [privacy@hostlinku.com](mailto:privacy@hostlinku.com) from your registered email address. We may ask you to verify your identity and will respond within the timeframe specified by regulations. We may retain certain data if required by law, such as transaction records. Request a refund of your remaining balance before requesting account deletion.
+
+<a id="cookie"></a>
+
+## 10. Cookies and Local Storage
+
+- `hl_session` and server session cookies: maintain login status; valid for up to 7 days;
+- SSO state cookie: short-lived to secure the sign-in flow through the identity provider;
+- display preference cookies, such as the console sidebar status;
+- Cloudflare and Turnstile cookies for protection against bots and attacks;
+- Local browser storage for Playground conversation history, which is stored on your device and is not sent to the server unless you send a request.
+
+We do not use third-party advertising or analytics cookies. Disabling cookies in your browser may prevent the login and console from working.
+
+<a id="anak"></a>
+
+## 11. Underage Users
+
+This service is intended for developers and businesses. Personal data of children under 18 may only be processed with the consent of a parent or guardian. If we become aware that a child’s data is being processed without such consent, we will delete it.
+
+<a id="komunikasi"></a>
+
+## 12. Email and Communication
+
+We send transactional emails necessary for managing your account, such as verification OTPs, password resets, low-balance alerts, and notifications of policy changes. These emails cannot be stopped while your account is active. When we send promotional emails, each email will include a way to unsubscribe.
+
+<a id="perubahan"></a>
+
+## 13. Policy Changes
+
+We may update this policy. The update date is listed at the top of the page. Significant changes—such as new processing purposes or new data recipients—will be communicated via email or the console before they take effect.
+
+<a id="kontak"></a>
+
+## 14. Privacy Contact
+
+HostLinku, Depok, Indonesia. Data Protection Officer (DPO), specializing in personal data protection: [dpo@hostlinku.com](mailto:dpo@hostlinku.com) Privacy questions, data deletion requests, and user rights: [privacy@hostlinku.com](mailto:privacy@hostlinku.com) General inquiries and customer support: [halo@hostlinku.com](mailto:halo@hostlinku.com)
