@@ -94,7 +94,7 @@ Fields not in the list are discarded. An invalid body results in a `400 invalid_
   "type": "message",
   "role": "assistant",
   "model": "claude-haiku-4-5",
-  "content": [{ "type": "text", "text": "API gateway adalah …" }],
+  "content": [{ "type": "text", "text": "An API gateway is …" }],
   "stop_reason": "end_turn",
   "stop_sequence": null,
   "usage": {
@@ -157,7 +157,7 @@ Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`
 ## Format error
 
 ```json
-{ "type": "error", "error": { "type": "authentication_error", "message": "API key tidak valid atau sudah dicabut." } }
+{ "type": "error", "error": { "type": "authentication_error", "message": "The API key is invalid or has been revoked." } }
 ```
 
 | HTTP | `error.type` | Common causes |

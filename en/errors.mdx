@@ -12,7 +12,7 @@ All errors from the Hostlinku gateway use the same _envelope_ format, regardless
   "status": "error",
   "error": {
     "code": "VALIDATION_FAILED",
-    "message": "Request body tidak valid.",
+    "message": "The request body is invalid.",
     "details": {
       "issues": [{ "path": "messages", "message": "Array must contain at least 1 element(s)" }]
     }
@@ -57,7 +57,7 @@ When validation fails, `details.issues` contains a list of issues by field:
   "status": "error",
   "error": {
     "code": "VALIDATION_FAILED",
-    "message": "Request body tidak valid.",
+    "message": "The request body is invalid.",
     "details": {
       "issues": [
         { "path": "messages", "message": "Array must contain at least 1 element(s)" },
@@ -73,7 +73,7 @@ When validation fails, `details.issues` contains a list of issues by field:
 Errors that occur **in the middle** of an SSE stream are sent as data events in the same stream (not as HTTP status codes):
 
 ```text
-data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+data: {"error":{"code":"UPSTREAM_ERROR","message":"The upstream is unavailable. Please try again.","type":"upstream_error"}}
 ```
 
 The gateway will not send `data: [DONE]` after an error event, so a disconnected stream can always be distinguished from a stream that completed normally.
