@@ -39,11 +39,24 @@ Hostlinku网关的所有错误都采用相同的_envelope_格式，无论其来�
 | 405 | `METHOD_NOT_ALLOWED` | HTTP 方法错误 | 在仅接受 `POST` 的端点上使用 `GET` |
 | 409 | `CONFLICT` | 状态冲突 | 该操作与当前状态不符 |
 | 422 | `VALIDATION_FAILED` | 正文/查询无效 | 必填字段缺失、类型错误、超出范围 |
-| 429 | `RATE_LIMITED` | 请求过多 | 超过每分钟的限制（按 API 密钥或按 IP 地址计算） |
+| 429 | `RATE_LIMITED` | 请求频率超限 | 你的配额确实已用尽：超过每分钟限制（按 API 密钥或 IP） |
+| 429 | `MODEL_AT_CAPACITY` | 模型负载已满 | 上游该模型容量不足（不是你的配额问题），请按 `Retry-After` 等待 |
+| 429 | `MODEL_COOLDOWN` | 部署正在恢复 | 该模型/标签的所有部署在失败后进入冷却，请等待数秒 |
 | 500 | `INTERNAL` | 服务器内部错误 | 网关中存在一个意外错误；提交报告时请注明 `x-request-id` |
 | 503 | `UPSTREAM_ERROR` | 上游服务不可用/暂时中断 | 在 Hostlinku 尝试多次后，上游未响应（5xx/超时）；可以安全地采用退避策略重试 |
 | 503 | `PROVIDER_UNAVAILABLE` | 无法联系上游 | 与上游的连接暂时中断，或支付服务导致结账会话失败 |
 | 503 | `MODEL_UNAVAILABLE` | 该模型暂无库存 | 该模型当前状态为非`available`或已弃用 |
+
+## Retry-After 响应头
+
+对于 `429`（以及部分 `503`），网关会转发上游给出的等待建议：
+
+| 响应头 | 内容 |
+|---|---|
+| `Retry-After` | 可重试前的秒数 |
+| `retry-after-ms` | 同一建议的毫秒值（更精确） |
+
+仅当上游给出具体数值时才会出现。若没有，请使用指数退避加抖动等待数秒，不要立即重试。
 
 <Callout type="warning" title="未知端点">
 不存在的路径也会返回与`404 NOT_FOUND`相同的响应包。在断定存在故障之前，请重新检查URL和HTTP方法。
@@ -86,7 +99,9 @@ data: {"error":{"code":"UPSTREAM_ERROR","message":"上游当前不可用。请�
 - **401**：API密钥错误或已过期。请修正配置；请勿反复重试。
 - **402**：充值余额或提高/重置 API 密钥限额。请参阅 [计费与余额](/zh/billing)。
 - **422**：修复请求正文；请参阅 `details.issues` 以了解问题所在。
-- **429**：采用指数退避，并遵守速率限制标头。请参阅[使用与限制](/zh/usage-and-limits)。
+- **429**：检查 `error.code`。`RATE_LIMITED` 表示密钥/IP 配额用尽；
+  `MODEL_AT_CAPACITY` / `MODEL_COOLDOWN` 表示模型繁忙或恢复中（按 `Retry-After` 等待）。
+  请参阅[使用与限制](/zh/usage-and-limits)。
 - **5xx**（`UPSTREAM_ERROR`、`PROVIDER_UNAVAILABLE`、`INTERNAL`）：经过多次退避重试；Hostlinku在放弃前已尝试多次。
 
 使用 OpenAI SDK 捕获错误的示例（Python）：

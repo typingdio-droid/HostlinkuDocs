@@ -23,7 +23,7 @@ validasi, autentikasi, billing, atau gangguan pada layanan upstream:
 
 - `status`: selalu `"error"` pada respons gagal.
 - `error.code`: kode mesin (stabil, aman untuk percabangan logika di kode kamu).
-- `error.message`: pesan manusia, bisa berbahasa Indonesia.
+- `error.message`: pesan manusia (bahasa Inggris).
 - `error.details`: opsional; mis. detail per-field saat validasi gagal.
 
 ## Daftar kode error
@@ -39,11 +39,26 @@ validasi, autentikasi, billing, atau gangguan pada layanan upstream:
 | 405 | `METHOD_NOT_ALLOWED` | Metode HTTP salah | Memakai `GET` di endpoint yang hanya menerima `POST` |
 | 409 | `CONFLICT` | Konflik state | Operasi bertentangan dengan state saat ini |
 | 422 | `VALIDATION_FAILED` | Body/query tidak valid | Field wajib hilang, tipe salah, di luar rentang |
-| 429 | `RATE_LIMITED` | Terlalu banyak request | Melebihi batas per menit (per API key atau per IP) |
+| 429 | `RATE_LIMITED` | Batas permintaan tercapai | Kuota kamu benar-benar habis: melebihi batas per menit (per API key atau per IP) |
+| 429 | `MODEL_AT_CAPACITY` | Model sedang penuh | Penyedia sedang kehabisan kapasitas untuk model itu; bukan kuota kamu. Tunggu sesuai `Retry-After` |
+| 429 | `MODEL_COOLDOWN` | Deployment model sedang dipulihkan | Semua deployment untuk model/tag itu sedang cooldown setelah gagal; tunggu beberapa detik |
 | 500 | `INTERNAL` | Kesalahan internal server | Bug tak terduga di gateway; sertakan `x-request-id` bila melapor |
 | 503 | `UPSTREAM_ERROR` | Upstream tidak tersedia / gangguan sementara | Upstream gagal merespons (5xx/timeout) setelah Hostlinku mencoba beberapa kali; aman untuk retry dengan backoff |
 | 503 | `PROVIDER_UNAVAILABLE` | Upstream tidak dapat dihubungi | Gangguan koneksi sementara ke upstream, atau layanan pembayaran gagal membuat sesi checkout |
 | 503 | `MODEL_UNAVAILABLE` | Model tidak tersedia | Model sedang status non-`available` atau sudah deprecated |
+
+## Header Retry-After
+
+Untuk `429` (dan sebagian `503`), gateway meneruskan saran waktu tunggu dari upstream:
+
+| Header | Isi |
+|---|---|
+| `Retry-After` | Detik sampai aman untuk mencoba lagi |
+| `retry-after-ms` | Saran yang sama dalam milidetik (lebih presisi) |
+
+Header hanya muncul bila upstream memberi angka pasti. Kalau tidak ada, tunggu beberapa detik
+dengan backoff eksponensial + jitter. Jangan retry seketika: model yang sedang penuh akan
+semakin lambat.
 
 <Callout type="warning" title="Endpoint tidak dikenal">
   Path yang tidak ada juga mengembalikan envelope yang sama dengan `404 NOT_FOUND`. Periksa
@@ -76,7 +91,7 @@ Kegagalan yang terjadi **di tengah** stream SSE dikirim sebagai event data di st
 (bukan sebagai HTTP status):
 
 ```text
-data: {"error":{"code":"UPSTREAM_ERROR","message":"Upstream tidak tersedia. Silakan coba lagi.","type":"upstream_error"}}
+data: {"error":{"code":"MODEL_AT_CAPACITY","message":"The model is at capacity right now. Please retry shortly.","type":"upstream_error","retry_after_ms":4000}}
 ```
 
 Gateway tidak akan mengirim `data: [DONE]` setelah event error, sehingga stream yang terputus
@@ -89,7 +104,8 @@ Cara menangani tiap kelompok error:
 - **401**: API key salah atau kedaluwarsa. Perbaiki konfigurasi; jangan retry berulang.
 - **402**: top-up saldo atau naikkan/atur ulang limit API key. Lihat [Billing & Saldo](/billing).
 - **422**: perbaiki body request; baca `details.issues` untuk lokasi masalah.
-- **429**: backoff eksponensial dan hormati header rate limit. Lihat
+- **429**: periksa `error.code`. `RATE_LIMITED` = kuota key/IP habis; `MODEL_AT_CAPACITY` /
+  `MODEL_COOLDOWN` = model penuh atau sedang pulih — tunggu sesuai `Retry-After`. Lihat
   [Pemakaian & Limit](/usage-and-limits).
 - **5xx** (`UPSTREAM_ERROR`, `PROVIDER_UNAVAILABLE`, `INTERNAL`): retry dengan backoff beberapa
   kali; Hostlinku sudah mencoba beberapa kali sebelum menyerah.

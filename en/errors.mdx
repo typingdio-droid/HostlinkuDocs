@@ -38,11 +38,26 @@ All errors from the Hostlinku gateway use the same _envelope_ format, regardless
 | 405 | `METHOD_NOT_ALLOWED` | Invalid HTTP method | Using `GET` on an endpoint that only accepts `POST` |
 | 409 | `CONFLICT` | State conflict | Operation conflicts with the current state |
 | 422 | `VALIDATION_FAILED` | Invalid body/query | Required field missing, incorrect type, out of range |
-| 429 | `RATE_LIMITED` | Too many requests | Exceeded the per-minute limit (per API key or per IP) |
+| 429 | `RATE_LIMITED` | Rate limit reached | Your quota is genuinely exhausted: per-minute limit exceeded (per API key or per IP) |
+| 429 | `MODEL_AT_CAPACITY` | Model is at capacity | The provider is out of capacity for this model; not your quota. Wait for `Retry-After` |
+| 429 | `MODEL_COOLDOWN` | Model deployments are recovering | All deployments for this model/tag are cooling down after failures; wait a few seconds |
 | 500 | `INTERNAL` | Internal server error | Unexpected bug in the gateway; include `x-request-id` when reporting |
 | 503 | `UPSTREAM_ERROR` | Upstream unavailable / temporary outage | Upstream failed to respond (5xx/timeout) after Hostlinku tried several times; it is safe to retry with backoff |
 | 503 | `PROVIDER_UNAVAILABLE` | Upstream cannot be reached | Temporary connection issue with the upstream, or the payment service failed to create a checkout session |
 | 503 | `MODEL_UNAVAILABLE` | Model unavailable | The model is in a non-`available` state or has been deprecated |
+
+## Retry-After headers
+
+For `429` (and some `503`) responses, the gateway forwards the upstream retry advice:
+
+| Header | Meaning |
+|---|---|
+| `Retry-After` | Seconds to wait before retrying |
+| `retry-after-ms` | The same advice in milliseconds (more precise) |
+
+The header is present only when the upstream provides a concrete number. Otherwise, wait a few
+seconds with exponential backoff and jitter. Do not retry immediately: a full model will only
+get slower.
 
 <Callout type="warning" title="Unknown endpoint">
 A nonexistent path also returns the same response as `404 NOT_FOUND`. Double-check the URL and HTTP method before concluding that there is an issue.
@@ -85,8 +100,9 @@ How to handle each error category:
 - **401**: Invalid or expired API key. Correct the configuration; do not retry repeatedly.
 - **402**: Top up your balance or increase/reset your API key limit. See [Billing & Balance](/en/billing).
 - **422**: Fix the request body; see `details.issues` for the location of the problem.
-- **429**: Exponential backoff and respect the rate limit header. See
-[Usage & Limits](/en/usage-and-limits).
+- **429**: check `error.code`. `RATE_LIMITED` means your key/IP quota is exhausted;
+`MODEL_AT_CAPACITY` / `MODEL_COOLDOWN` means the model is full or recovering — wait for
+`Retry-After`. See [Usage & Limits](/en/usage-and-limits).
 - **5xx** (`UPSTREAM_ERROR`, `PROVIDER_UNAVAILABLE`, `INTERNAL`): retry with a backoff of several
 times; Hostlinku tried several times before giving up.
 
