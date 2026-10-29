@@ -1,0 +1,86 @@
+---
+title: "Account, billing & policies"
+description: "Common questions about accounts, API keys, balance, top-ups, errors, privacy, and legal."
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+## Account & API keys
+
+### How do I get started with Hostlinku?
+
+Sign up for free at [console.hostlinku.com](https://console.hostlinku.com), confirm your email, then top up your balance in the **Top Up Balance** menu. Create an **API key** in the **API Keys** menu, then set the SDK’s `base_url` to `https://api.hostlinku.com/v1`. A complete guide is available in [Getting Started](/en/getting-started).
+
+### How do I create and manage an API key?
+
+Open the Console → **API Keys** → **Create API Key**, give it a name, and select the required scope. The secret is displayed only once when it is created; keep it in a safe place. You can create multiple keys for different applications and revoke them at any time. Revoked keys are immediately rejected (401).
+
+### What scopes are available for API keys?
+
+The scope depends on the endpoints enabled for your account. The public gateway currently prioritizes `chat` (`POST /v1/chat/completions`) and the model list (`GET /v1/models`). Specify the minimum scope required for your application. Details are available in [Authentication](/en/authentication).
+
+### Can an account be suspended?
+
+Yes. Accounts that violate the [Acceptable Use Policy](/en/legals/acceptable-use-policy) or [Terms & Conditions](/en/legals/terms-of-service) may be suspended; all API keys will stop working. Full details are available in the [Terms & Conditions](/en/legals/terms-of-service).
+
+## Balance & billing
+
+### What is a credit balance, and how does it work?
+
+Credit balance is prepaid for API usage, expressed in **USD** (1 USD = 1 credit). There are no monthly fees; charges are deducted per request based on the tokens actually used. Details are available at [Billing & Balance](/en/billing).
+
+### How do I add funds (top up) to my account?
+
+Open the Console → **Add balance** / **Top Up Balance**. The available payment methods are displayed on the top-up page (currently QRIS/virtual accounts and cryptocurrency). The minimum and maximum amounts, as well as the exchange rate, are shown on the checkout page. The balance is credited once the payment is verified.
+
+### When is the balance deducted: on demand or daily?
+
+On request. While the request is in progress, the balance is temporarily reserved; once it’s complete, the actual token cost is deducted. If the request fails (timeout, 5xx, or upstream error), the reservation is released and you are not charged.
+
+### Where can I view my usage and billing history?
+
+Console → **Usage** displays a summary of tokens and fees; **Request Logs** displays details for each request (status, latency, token); **Transactions** displays balance changes: top-ups, usage, and adjustments.
+
+### Does the balance have an expiration date or an inactivity fee?
+
+No. Balances do not expire, and there are no inactivity fees. Balances also cannot be transferred or redeemed outside of the [Refund Policy](/en/legals/refund-policy).
+
+### Are there any bonuses for large top-ups?
+
+Yes. Certain top-up preset packages come with bonus credit; a list of the packages and their bonuses is displayed on the top-up page. For large-volume needs, contact [halo@hostlinku.com](mailto:halo@hostlinku.com).
+
+### Are there any free plans or trials?
+
+Sign-up is free and there are no monthly fees, but there is no free trial credit. New accounts start with a balance of $0; you only pay for what you use after you top up. No credit card is required to sign up.
+
+## Errors & performance
+
+### My request timed out or returned a 5xx error. Will I still be charged?
+
+No. Requests that fail (timeout, 5xx, or upstream failure) are not billed; the reserved balance is automatically released. Status details for each request can be found in **Request Logs**. See also [Error](/en/errors).
+
+### The response feels slow. How do I diagnose this?
+
+Open **Request Logs** and check the response time for each request, including the time to first token (TTFT) for streaming. If only some requests are slow, it’s most likely due to the provider’s current conditions; try again or choose another model with similar characteristics.
+
+## Privacy, security & legal
+
+### How is the security of my API key ensured?
+
+The secret is displayed only once when it is generated; only the prefix is stored. The key is verified on a per-request basis and can be revoked at any time. Do not store the API key in your browser or in published code; call the API from your server.
+
+### Where is my data processed and stored?
+
+Operational metadata (model, number of tokens, status, latency, cost) is stored for billing and monitoring purposes. Neither the prompt nor the response is stored. For more details, see the [Privacy Policy](/en/legals/privacy-policy).
+
+### What if I need legal information or my personal data?
+
+Go to [Support](/en/support) or email [halo@hostlinku.com](mailto:halo@hostlinku.com) for requests regarding personal data; for legal matters, use [legal@hostlinku.com](mailto:legal@hostlinku.com).
+
+### Where can I read the API documentation?
+
+Complete documentation is available at [docs.hostlinku.com](https://docs.hostlinku.com), including [Chat Completions](/en/chat-completions), [Models](/en/models), and [Errors](/en/errors).
+
+<Callout type="note" title="Can't find the answer?">
+  Send your question to [halo@hostlinku.com](mailto:halo@hostlinku.com). This FAQ is updated based on the most frequently asked questions.
+</Callout>

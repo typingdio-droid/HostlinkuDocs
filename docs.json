@@ -174,7 +174,8 @@
               "faqs/errors",
               "faqs/rate-limits",
               "faqs/billing",
-              "faqs/model-unavailable"
+              "faqs/model-unavailable",
+              "faqs/account-billing"
             ]
           },
           {
@@ -456,7 +457,8 @@
               "en/faqs/errors",
               "en/faqs/rate-limits",
               "en/faqs/billing",
-              "en/faqs/model-unavailable"
+              "en/faqs/model-unavailable",
+              "en/faqs/account-billing"
             ]
           },
           {
@@ -736,7 +738,8 @@
               "ja/faqs/errors",
               "ja/faqs/rate-limits",
               "ja/faqs/billing",
-              "ja/faqs/model-unavailable"
+              "ja/faqs/model-unavailable",
+              "ja/faqs/account-billing"
             ]
           },
           {
@@ -1016,7 +1019,8 @@
               "zh/faqs/errors",
               "zh/faqs/rate-limits",
               "zh/faqs/billing",
-              "zh/faqs/model-unavailable"
+              "zh/faqs/model-unavailable",
+              "zh/faqs/account-billing"
             ]
           },
           {
