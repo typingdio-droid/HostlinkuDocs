@@ -1,0 +1,86 @@
+---
+title: "Akun, billing & kebijakan"
+description: "Pertanyaan umum tentang akun, API key, saldo, top-up, error, privasi, dan legal."
+---
+
+import { Callout } from "/snippets/mdx.jsx";
+
+## Akun & API key
+
+### Bagaimana cara mulai menggunakan Hostlinku?
+
+Daftar gratis di [console.hostlinku.com](https://console.hostlinku.com), konfirmasi email, lalu isi saldo di menu **Isi Saldo**. Buat **API key** di menu **API Keys**, lalu arahkan `base_url` SDK ke `https://api.hostlinku.com/v1`. Panduan lengkap ada di [Memulai](/getting-started).
+
+### Bagaimana cara membuat dan mengelola API key?
+
+Buka Console → **API Keys** → **Buat API key**, beri nama, dan pilih scope yang dibutuhkan. Secret hanya ditampilkan sekali saat dibuat; simpan di tempat aman. Kamu bisa membuat beberapa key untuk aplikasi berbeda dan mencabutnya kapan saja. Key yang dicabut langsung ditolak (401).
+
+### Scope apa saja yang tersedia untuk API key?
+
+Scope mengikuti endpoint yang diaktifkan untuk akunmu. Gateway publik saat ini mengutamakan `chat` (`POST /v1/chat/completions`) dan daftar model (`GET /v1/models`). Berikan scope seminimal mungkin sesuai kebutuhan aplikasi. Detail ada di [Autentikasi](/authentication).
+
+### Apakah akun bisa ditangguhkan?
+
+Bisa. Akun yang melanggar [Kebijakan Penggunaan](/legals/acceptable-use-policy) atau [Syarat & Ketentuan](/legals/terms-of-service) dapat ditangguhkan; seluruh API key berhenti bekerja. Detail lengkap ada di [Syarat & Ketentuan](/legals/terms-of-service).
+
+## Saldo & billing
+
+### Apa itu saldo kredit dan bagaimana cara kerjanya?
+
+Saldo kredit adalah prabayar untuk pemakaian API, dinyatakan dalam **USD** (1 USD = 1 kredit). Tidak ada biaya bulanan; biaya dipotong per request berdasarkan token yang benar-benar dipakai. Detail ada di [Billing & Saldo](/billing).
+
+### Bagaimana cara mengisi saldo (top-up)?
+
+Buka Console → **Add balance** / **Isi Saldo**. Metode yang aktif ditampilkan di halaman top-up (saat ini QRIS/virtual account dan aset kripto). Nominal minimum, maksimum, dan kurs mengikuti halaman checkout. Saldo masuk setelah pembayaran terverifikasi.
+
+### Kapan saldo dipotong: per permintaan atau harian?
+
+Per request. Saat request berjalan, saldo direservasi sementara; setelah selesai, yang dipotong adalah biaya token aktual. Jika request gagal (timeout, 5xx, atau kesalahan upstream), reservasi dilepas dan kamu tidak ditagih.
+
+### Di mana saya bisa melihat pemakaian dan riwayat tagihan?
+
+Console → **Usage** menampilkan ringkasan token dan biaya; **Request Logs** menampilkan detail per request (status, latensi, token); **Transactions** menampilkan mutasi saldo: top-up, pemakaian, dan penyesuaian.
+
+### Apakah saldo punya masa berlaku atau biaya tidak aktif?
+
+Tidak. Saldo tidak kedaluwarsa dan tidak ada biaya tidak aktif. Saldo juga tidak dapat dipindahtangankan atau diuangkan di luar [Kebijakan Pengembalian Dana](/legals/refund-policy).
+
+### Apakah ada bonus untuk top-up besar?
+
+Ya. Paket preset top-up tertentu mendapat bonus kredit; daftar paket dan bonusnya tampil di halaman top-up. Untuk kebutuhan volume besar, hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com).
+
+### Apakah ada paket gratis atau uji coba?
+
+Pendaftaran gratis dan tanpa biaya bulanan, tetapi tidak ada kredit uji coba gratis. Saldo akun baru dimulai dari $0; kamu hanya membayar sesuai pemakaian setelah top-up. Tidak perlu kartu kredit untuk mendaftar.
+
+## Error & performa
+
+### Permintaan saya timeout atau gagal 5xx. Apakah saya tetap ditagih?
+
+Tidak. Request yang gagal dilayani (timeout, 5xx, atau kegagalan upstream) tidak ditagih; reservasi saldo dilepas otomatis. Detail status setiap request ada di **Request Logs**. Lihat juga [Error](/errors).
+
+### Respons terasa lambat. Bagaimana cara mendiagnosis?
+
+Buka **Request Logs** dan lihat waktu respons per request, termasuk waktu tunggu hingga token pertama (TTFT) untuk streaming. Jika hanya sebagian request yang lambat, kemungkinan besar itu kondisi provider saat itu; coba lagi atau pilih model lain dengan karakteristik serupa.
+
+## Privasi, keamanan & legal
+
+### Bagaimana keamanan API key saya dijaga?
+
+Secret hanya ditampilkan sekali saat dibuat; yang tersimpan hanya prefix-nya. Key diverifikasi per request dan bisa dicabut kapan saja. Jangan menaruh API key di browser atau kode yang dipublikasikan; panggil API dari server kamu.
+
+### Di mana data saya diproses dan disimpan?
+
+Metadata operasional (model, jumlah token, status, latensi, biaya) disimpan untuk billing dan monitoring. Isi prompt maupun respons tidak disimpan. Detail ada di [Kebijakan Privasi](/legals/privacy-policy).
+
+### Bagaimana jika saya butuh informasi hukum atau data pribadi saya?
+
+Buka [Dukungan](/support) atau email [halo@hostlinku.com](mailto:halo@hostlinku.com) untuk permintaan data pribadi; untuk urusan hukum gunakan [legal@hostlinku.com](mailto:legal@hostlinku.com).
+
+### Di mana saya bisa membaca dokumentasi API?
+
+Dokumentasi lengkap ada di [docs.hostlinku.com](https://docs.hostlinku.com), termasuk [Chat Completions](/chat-completions), [Model](/models), dan [Error](/errors).
+
+<Callout type="note" title="Tidak menemukan jawaban?">
+  Kirim pertanyaan ke [halo@hostlinku.com](mailto:halo@hostlinku.com). FAQ ini diperbarui berdasarkan pertanyaan yang paling sering masuk.
+</Callout>
