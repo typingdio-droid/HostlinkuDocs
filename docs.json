@@ -1567,5 +1567,21 @@
     "metatags": {
       "canonical": "https://docs.hostlinku.com"
     }
+  },
+  "background": {
+    "decoration": "grid"
+  },
+  "contextual": {
+    "display": "header",
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   }
 }
