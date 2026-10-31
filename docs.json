@@ -150,6 +150,34 @@
                 ]
               },
               {
+                "group": "Model & Fitur",
+                "icon": "sparkles",
+                "pages": [
+                  "models",
+                  "dedicated",
+                  "prompt-caching"
+                ]
+              },
+              {
+                "group": "API Endpoints",
+                "icon": "square-terminal",
+                "pages": [
+                  "chat-completions",
+                  "anthropic-messages",
+                  "responses",
+                  "api-reference",
+                  "errors"
+                ]
+              },
+              {
+                "group": "SDK & Integrasi",
+                "icon": "plug",
+                "pages": [
+                  "sdk",
+                  "integrations/index"
+                ]
+              },
+              {
                 "group": "Akun",
                 "icon": "wallet",
                 "pages": [
@@ -158,10 +186,11 @@
                 ]
               },
               {
-                "group": "Bantuan",
+                "group": "Bantuan & FAQ",
                 "icon": "life-buoy",
                 "pages": [
-                  "support"
+                  "support",
+                  "faqs/index"
                 ]
               }
             ]
@@ -433,6 +462,34 @@
                 ]
               },
               {
+                "group": "Models & Features",
+                "icon": "sparkles",
+                "pages": [
+                  "en/models",
+                  "en/dedicated",
+                  "en/prompt-caching"
+                ]
+              },
+              {
+                "group": "API Endpoints",
+                "icon": "square-terminal",
+                "pages": [
+                  "en/chat-completions",
+                  "en/anthropic-messages",
+                  "en/responses",
+                  "en/api-reference",
+                  "en/errors"
+                ]
+              },
+              {
+                "group": "SDK & Integrations",
+                "icon": "plug",
+                "pages": [
+                  "en/sdk",
+                  "en/integrations/index"
+                ]
+              },
+              {
                 "group": "Account",
                 "icon": "wallet",
                 "pages": [
@@ -441,10 +498,11 @@
                 ]
               },
               {
-                "group": "Help",
+                "group": "Help & FAQs",
                 "icon": "life-buoy",
                 "pages": [
-                  "en/support"
+                  "en/support",
+                  "en/faqs/index"
                 ]
               }
             ]
@@ -714,6 +772,34 @@
                 ]
               },
               {
+                "group": "モデルと機能",
+                "icon": "sparkles",
+                "pages": [
+                  "ja/models",
+                  "ja/dedicated",
+                  "ja/prompt-caching"
+                ]
+              },
+              {
+                "group": "APIエンドポイント",
+                "icon": "square-terminal",
+                "pages": [
+                  "ja/chat-completions",
+                  "ja/anthropic-messages",
+                  "ja/responses",
+                  "ja/api-reference",
+                  "ja/errors"
+                ]
+              },
+              {
+                "group": "SDKと統合",
+                "icon": "plug",
+                "pages": [
+                  "ja/sdk",
+                  "ja/integrations/index"
+                ]
+              },
+              {
                 "group": "アカウント",
                 "icon": "wallet",
                 "pages": [
@@ -722,10 +808,11 @@
                 ]
               },
               {
-                "group": "ヘルプ",
+                "group": "ヘルプとよくある質問",
                 "icon": "life-buoy",
                 "pages": [
-                  "ja/support"
+                  "ja/support",
+                  "ja/faqs/index"
                 ]
               }
             ]
@@ -995,6 +1082,34 @@
                 ]
               },
               {
+                "group": "模型与功能",
+                "icon": "sparkles",
+                "pages": [
+                  "zh/models",
+                  "zh/dedicated",
+                  "zh/prompt-caching"
+                ]
+              },
+              {
+                "group": "API端点",
+                "icon": "square-terminal",
+                "pages": [
+                  "zh/chat-completions",
+                  "zh/anthropic-messages",
+                  "zh/responses",
+                  "zh/api-reference",
+                  "zh/errors"
+                ]
+              },
+              {
+                "group": "SDK与集成",
+                "icon": "plug",
+                "pages": [
+                  "zh/sdk",
+                  "zh/integrations/index"
+                ]
+              },
+              {
                 "group": "账户",
                 "icon": "wallet",
                 "pages": [
@@ -1003,10 +1118,11 @@
                 ]
               },
               {
-                "group": "帮助",
+                "group": "帮助与常见问题",
                 "icon": "life-buoy",
                 "pages": [
-                  "zh/support"
+                  "zh/support",
+                  "zh/faqs/index"
                 ]
               }
             ]
