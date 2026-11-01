@@ -18,7 +18,18 @@ html.dark, [data-theme="dark"] { --hl-surface: #0b0b0f; --hl-border: rgba(255,25
 #content-side-layout { width: 240px; max-width: 240px; }
 #table-of-contents-layout { width: 240px; padding-left: 20px; }
 #table-of-contents { width: 220px; }
-#content-area { padding-left: 32px; padding-right: 0; }
+@media (min-width: 1024px) {
+  #content-area {
+    margin-left: 0 !important;
+    padding-left: 44px !important;
+    padding-right: 16px !important;
+  }
+}
+
+/* Hilangkan garis trek vertikal penuh pada scrollbar sidebar */
+#sidebar [data-component-part="scrollbar"] {
+  background: transparent !important;
+}
 
 
 /* Samakan semua sudut UI dengan radius card Mintlify (6px), bukan pill. */
