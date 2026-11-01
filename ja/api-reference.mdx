@@ -342,3 +342,26 @@ curl --request GET \
 <Callout type="note">
 このエンドポイントを使用して、最新のモデル名を取得してください。`id` は、両方の API フォーマットにおいてフィールド `model` で使用されるスラッグです。完全なカタログと価格については、[モデル](/ja/models) をご覧ください。
 </Callout>
+
+## リトライの推奨事項
+
+- `400`、`401`、`402`、`403`、`404` はリクエストパラメータまたはアカウント残高・状態の変更が必要であり、自動的に再試行しないでください。
+- `429`、`500`、`502`、`503` は指数バックオフ（exponential backoff）とランダムジッターを用いて再試行できます（`429` の場合は `Retry-After` ヘッダーに従ってください）。
+- テクニカルサポートへお問い合わせの際は、リクエストログで追跡できるようレスポンス ID（`cmpl_…`、`msg_…`、または `resp_…`）を添えてください。
+
+## セキュリティの推奨事項
+
+API キーはアカウント認証情報と同等であり、直接課金対象のリクエストを実行できます。
+
+- API キーはサーバーまたは保護されたローカル環境に保管し、リポジトリにコミットせず環境変数（`HOSTLINKU_API_KEY`、`ANTHROPIC_API_KEY`、`OPENAI_API_KEY`）経由で注入してください。
+- 開発・テスト・本番環境ごとに個別の **クレジット上限** と **有効期限** を設定した異なる API キーを使用してください。
+- 漏洩した API キーは直ちに [Console → API Keys](https://console.hostlinku.com/api-keys) で失効（Revoke）させ、ログにはマスク形式（`sk-****`）のみを記録してください。
+
+## 関連リソース
+
+- Hostlinku ドキュメント: [https://docs.hostlinku.com/ja](https://docs.hostlinku.com/ja)
+- Hostlinku ウェブサイト & モデルカタログ: [https://hostlinku.com/ja](https://hostlinku.com/ja) · [モデル一覧](/ja/models)
+- AI コーディングツール & ハーネス連携ガイド: [Claude Code](/ja/integrations/claude-code) · [Codex CLI](/ja/integrations/codex-cli) · [DeepSeek Harness](/ja/integrations/deepseek-harness) · [CC Switch](/ja/integrations/cc-switch)
+- OpenAI API ドキュメント: [https://developers.openai.com/](https://developers.openai.com/)
+- OpenAI Codex ドキュメント: [https://developers.openai.com/codex/](https://developers.openai.com/codex/)
+- Anthropic API & Claude Code ドキュメント: [https://docs.anthropic.com/](https://docs.anthropic.com/)

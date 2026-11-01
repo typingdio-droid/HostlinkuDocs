@@ -342,3 +342,26 @@ curl --request GET \
 <Callout type="note">
 使用此端点获取最新模型名称；`id` 是两种 API 格式中 `model` 字段所使用的 slug。完整的目录及价格请参见 [模型](/zh/models)。
 </Callout>
+
+## 重试建议
+
+- `400`、`401`、`402`、`403` 和 `404` 需要修改请求参数或账户余额/状态，不应自动重试。
+- `429`、`500`、`502` 和 `503` 可以使用指数退避（exponential backoff）加随机抖动（jitter）进行重试（遇到 `429` 时请遵循 `Retry-After` 响应头）。
+- 联系技术支持时请附上响应中的请求 ID（`cmpl_…`、`msg_…` 或 `resp_…`），以便在请求日志中快速排查。
+
+## 安全建议
+
+API 密钥等同于账户凭证，可直接发起计费请求。
+
+- 请将 API 密钥保存在服务器端或受保护的本地环境中，通过环境变量（`HOSTLINKU_API_KEY`、`ANTHROPIC_API_KEY`、`OPENAI_API_KEY`）注入，切勿提交到代码仓库。
+- 为开发、测试和生产环境分别创建具有独立**额度限制**和**有效期**的不同 API 密钥。
+- 若密钥泄露，请立即前往 [Console → API Keys](https://console.hostlinku.com/api-keys) 吊销（Revoke），并在日志与工单中仅保留脱敏格式（如 `sk-****`）。
+
+## 相关资源
+
+- Hostlinku 文档：[https://docs.hostlinku.com/zh](https://docs.hostlinku.com/zh)
+- Hostlinku 官网与模型目录：[https://hostlinku.com/zh](https://hostlinku.com/zh) · [模型目录](/zh/models)
+- AI 编程工具与 Harness 集成指南：[Claude Code](/zh/integrations/claude-code) · [Codex CLI](/zh/integrations/codex-cli) · [DeepSeek Harness](/zh/integrations/deepseek-harness) · [CC Switch](/zh/integrations/cc-switch)
+- OpenAI API 官方文档：[https://developers.openai.com/](https://developers.openai.com/)
+- OpenAI Codex 官方文档：[https://developers.openai.com/codex/](https://developers.openai.com/codex/)
+- Anthropic API 与 Claude Code 官方文档：[https://docs.anthropic.com/](https://docs.anthropic.com/)
