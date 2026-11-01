@@ -342,3 +342,26 @@ curl --request GET \
 <Callout type="note">
 Use this endpoint to retrieve the latest model name; `id` is the slug used in the `model` field in both API formats. The complete catalog and pricing are available at [Models](/en/models).
 </Callout>
+
+## Retry Recommendations
+
+- `400`, `401`, `402`, `403`, and `404` require a request parameter or account-balance change and should not be retried automatically.
+- `429`, `500`, `502`, and `503` can be retried with exponential backoff and random jitter (respecting the `Retry-After` header on `429`).
+- Include the response ID (`cmpl_…`, `msg_…`, or `resp_…`) when contacting technical support so the request can be traced in Request Logs.
+
+## Security Recommendations
+
+An API key is equivalent to an account credential and can make billable requests directly.
+
+- Keep your API key on a server or in a protected local environment. Inject it through environment variables (`HOSTLINKU_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`) rather than committing it to code repositories.
+- Use separate API keys with independent **credit limits** and **expiration dates** for development, testing, and production.
+- Revoke a leaked API key immediately in [Console → API Keys](https://console.hostlinku.com/api-keys) and keep only masked forms (`sk-****`) in application logs.
+
+## Related Resources
+
+- Hostlinku documentation: [https://docs.hostlinku.com/en](https://docs.hostlinku.com/en)
+- Hostlinku website & model catalog: [https://hostlinku.com/en](https://hostlinku.com/en) · [Models](/en/models)
+- AI Coding Tools & Harness guides: [Claude Code](/en/integrations/claude-code) · [Codex CLI](/en/integrations/codex-cli) · [DeepSeek Harness](/en/integrations/deepseek-harness) · [CC Switch](/en/integrations/cc-switch)
+- OpenAI API documentation: [https://developers.openai.com/](https://developers.openai.com/)
+- OpenAI Codex documentation: [https://developers.openai.com/codex/](https://developers.openai.com/codex/)
+- Anthropic API & Claude Code documentation: [https://docs.anthropic.com/](https://docs.anthropic.com/)

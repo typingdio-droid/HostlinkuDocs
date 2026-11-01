@@ -356,3 +356,26 @@ curl --request GET \
   Gunakan endpoint ini untuk mengambil nama model terbaru; `id` adalah slug yang dipakai di field
   `model` pada kedua format API. Katalog lengkap beserta harga ada di [Model](/models).
 </Callout>
+
+## Rekomendasi Retry
+
+- Status `400`, `401`, `402`, `403`, dan `404` memerlukan perbaikan parameter request atau status saldo/akun dan **tidak** boleh di-retry otomatis tanpa perubahan.
+- Status `429`, `500`, `502`, dan `503` aman untuk di-retry menggunakan *exponential backoff* dengan *random jitter* (patuhi nilai header `Retry-After` saat menerima `429`).
+- Sertakan ID respons (`cmpl_…`, `msg_…`, atau `resp_…`) saat menghubungi dukungan teknis agar request dapat ditelusuri di Log Permintaan.
+
+## Rekomendasi Keamanan
+
+Satu API key setara dengan kredensial akun dan dapat melakukan request berbayar secara langsung.
+
+- Simpan API key di server atau lingkungan lokal yang terlindungi. Injeksi lewat variabel lingkungan (`HOSTLINKU_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`) dan jangan pernah menyimpannya di repositori kode.
+- Gunakan API key terpisah dengan **limit kredit** dan **masa berlaku** mandiri untuk lingkungan pengembangan, pengujian, dan produksi.
+- Segera *revoke* API key yang bocor melalui [Console → API Keys](https://console.hostlinku.com/api-keys) dan simpan hanya bentuk termasking (`sk-****`) di log aplikasi.
+
+## Sumber Daya Terkait
+
+- Dokumentasi Hostlinku: [https://docs.hostlinku.com](https://docs.hostlinku.com)
+- Website & Katalog Model Hostlinku: [https://hostlinku.com](https://hostlinku.com) · [Katalog Model](/models)
+- Panduan Integrasi AI Coding Tools & Harness: [Claude Code](/integrations/claude-code) · [Codex CLI](/integrations/codex-cli) · [DeepSeek Harness](/integrations/deepseek-harness) · [CC Switch](/integrations/cc-switch)
+- Dokumentasi OpenAI API: [https://developers.openai.com/](https://developers.openai.com/)
+- Dokumentasi OpenAI Codex: [https://developers.openai.com/codex/](https://developers.openai.com/codex/)
+- Dokumentasi Anthropic API & Claude Code: [https://docs.anthropic.com/](https://docs.anthropic.com/)
