@@ -12,9 +12,24 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### Claude Codeをインストールする
 
+お使いの OS に合わせたインストール方法を選択してください：
+
+**macOS / Linux / WSL:**
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**Windows PowerShell:**
+
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**npm（Node.js 18+ が必要）：**
+
 ```bash
 npm install -g @anthropic-ai/claude-code
-# または: curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 以前にAnthropic/Claudeというアカウントでログインしたことがある場合は、`claude`を実行してから`/logout`と入力し、保存されているOAuthの認証情報がゲートウェイの設定に優先されないようにしてください。
@@ -50,6 +65,10 @@ claude
 ```
 
 `settings.json`の値は、export shellを**上書きします**。
+
+<Callout type="tip" title="JSON を編集せずに GUI で管理したい場合">
+  デスクトップアプリ [CC Switch](/ja/integrations/cc-switch) を使用すると、`/v1/models` からモデル一覧を自動取得し、ワンクリックで Claude Code のプロファイルやモデルを切り替えられます。
+</Callout>
 
 ### 確認
 

@@ -41,6 +41,11 @@ codex
 
 Codex reads the key from the variable specified in `env_key`; the key is never written to `config.toml`.
 
+<Callout type="tip" title="Prefer a one-click GUI?">
+  Use the [CC Switch](/en/integrations/cc-switch) desktop app to add and switch Codex providers or
+  models visually without editing `config.toml` by hand.
+</Callout>
+
 ### Verification
 
 Send a simple instruction (e.g., *"explain the structure of this repo"*). The request will appear in the console → **Request Log** using the `gpt-5-3-codex` model. If you want to verify the endpoint before opening Codex:
@@ -99,3 +104,10 @@ Responses are native, so the Codex tool is removed before reaching the model. Se
 Your key.
 - **The old version of the Codex requires `wire_api = "chat""`** - Hostlinku also supports this
 [`/v1/chat/completions`](/en/chat-completions); however, the Codex reasoning feature works best with `responses`.
+
+## Related resources
+
+- [CC Switch Integration Guide](/en/integrations/cc-switch)
+- [Hostlinku Responses API](/en/responses)
+- [OpenAI API documentation](https://developers.openai.com/)
+- [Codex documentation](https://developers.openai.com/codex/)

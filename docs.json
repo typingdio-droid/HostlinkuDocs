@@ -178,6 +178,30 @@
                 ]
               },
               {
+                "group": "AI Coding Tools & Harness",
+                "icon": "terminal",
+                "pages": [
+                  "integrations/claude-code",
+                  "integrations/codex-cli",
+                  "integrations/deepseek-harness",
+                  "integrations/cc-switch",
+                  "integrations/cursor",
+                  "integrations/vscode",
+                  "integrations/copilot",
+                  "integrations/zed",
+                  "integrations/cline",
+                  "integrations/kilo-code",
+                  "integrations/continue",
+                  "integrations/jetbrains",
+                  "integrations/junie",
+                  "integrations/factory",
+                  "integrations/opencode",
+                  "integrations/xum",
+                  "integrations/aider",
+                  "integrations/agents-sdk"
+                ]
+              },
+              {
                 "group": "Akun",
                 "icon": "wallet",
                 "pages": [
@@ -291,10 +315,12 @@
                   "integrations/index",
                   {
                     "group": "Integrasi IDE & Agent",
-                    "expanded": false,
+                    "expanded": true,
                     "pages": [
                       "integrations/claude-code",
                       "integrations/codex-cli",
+                      "integrations/deepseek-harness",
+                      "integrations/cc-switch",
                       "integrations/cursor",
                       "integrations/vscode",
                       "integrations/copilot",
@@ -490,6 +516,30 @@
                 ]
               },
               {
+                "group": "AI Coding Tools & Harness",
+                "icon": "terminal",
+                "pages": [
+                  "en/integrations/claude-code",
+                  "en/integrations/codex-cli",
+                  "en/integrations/deepseek-harness",
+                  "en/integrations/cc-switch",
+                  "en/integrations/cursor",
+                  "en/integrations/vscode",
+                  "en/integrations/copilot",
+                  "en/integrations/zed",
+                  "en/integrations/cline",
+                  "en/integrations/kilo-code",
+                  "en/integrations/continue",
+                  "en/integrations/jetbrains",
+                  "en/integrations/junie",
+                  "en/integrations/factory",
+                  "en/integrations/opencode",
+                  "en/integrations/xum",
+                  "en/integrations/aider",
+                  "en/integrations/agents-sdk"
+                ]
+              },
+              {
                 "group": "Account",
                 "icon": "wallet",
                 "pages": [
@@ -601,10 +651,12 @@
                   "en/integrations/index",
                   {
                     "group": "IDE & Agent Integrations",
-                    "expanded": false,
+                    "expanded": true,
                     "pages": [
                       "en/integrations/claude-code",
                       "en/integrations/codex-cli",
+                      "en/integrations/deepseek-harness",
+                      "en/integrations/cc-switch",
                       "en/integrations/cursor",
                       "en/integrations/vscode",
                       "en/integrations/copilot",
@@ -800,6 +852,30 @@
                 ]
               },
               {
+                "group": "AIコーディングツール & ハーネス",
+                "icon": "terminal",
+                "pages": [
+                  "ja/integrations/claude-code",
+                  "ja/integrations/codex-cli",
+                  "ja/integrations/deepseek-harness",
+                  "ja/integrations/cc-switch",
+                  "ja/integrations/cursor",
+                  "ja/integrations/vscode",
+                  "ja/integrations/copilot",
+                  "ja/integrations/zed",
+                  "ja/integrations/cline",
+                  "ja/integrations/kilo-code",
+                  "ja/integrations/continue",
+                  "ja/integrations/jetbrains",
+                  "ja/integrations/junie",
+                  "ja/integrations/factory",
+                  "ja/integrations/opencode",
+                  "ja/integrations/xum",
+                  "ja/integrations/aider",
+                  "ja/integrations/agents-sdk"
+                ]
+              },
+              {
                 "group": "アカウント",
                 "icon": "wallet",
                 "pages": [
@@ -911,10 +987,12 @@
                   "ja/integrations/index",
                   {
                     "group": "IDE・エージェント連携",
-                    "expanded": false,
+                    "expanded": true,
                     "pages": [
                       "ja/integrations/claude-code",
                       "ja/integrations/codex-cli",
+                      "ja/integrations/deepseek-harness",
+                      "ja/integrations/cc-switch",
                       "ja/integrations/cursor",
                       "ja/integrations/vscode",
                       "ja/integrations/copilot",
@@ -1110,6 +1188,30 @@
                 ]
               },
               {
+                "group": "AI 编程工具与 Harness",
+                "icon": "terminal",
+                "pages": [
+                  "zh/integrations/claude-code",
+                  "zh/integrations/codex-cli",
+                  "zh/integrations/deepseek-harness",
+                  "zh/integrations/cc-switch",
+                  "zh/integrations/cursor",
+                  "zh/integrations/vscode",
+                  "zh/integrations/copilot",
+                  "zh/integrations/zed",
+                  "zh/integrations/cline",
+                  "zh/integrations/kilo-code",
+                  "zh/integrations/continue",
+                  "zh/integrations/jetbrains",
+                  "zh/integrations/junie",
+                  "zh/integrations/factory",
+                  "zh/integrations/opencode",
+                  "zh/integrations/xum",
+                  "zh/integrations/aider",
+                  "zh/integrations/agents-sdk"
+                ]
+              },
+              {
                 "group": "账户",
                 "icon": "wallet",
                 "pages": [
@@ -1221,10 +1323,12 @@
                   "zh/integrations/index",
                   {
                     "group": "IDE 与代理集成",
-                    "expanded": false,
+                    "expanded": true,
                     "pages": [
                       "zh/integrations/claude-code",
                       "zh/integrations/codex-cli",
+                      "zh/integrations/deepseek-harness",
+                      "zh/integrations/cc-switch",
                       "zh/integrations/cursor",
                       "zh/integrations/vscode",
                       "zh/integrations/copilot",

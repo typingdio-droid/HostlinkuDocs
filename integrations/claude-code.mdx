@@ -14,9 +14,24 @@ environment variable - tidak perlu proxy tambahan.
 
 ### Instal Claude Code
 
+Pilih metode instalasi sesuai sistem operasi kamu:
+
+**macOS / Linux / WSL:**
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**Windows PowerShell:**
+
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**npm (membutuhkan Node.js 18+):**
+
 ```bash
 npm install -g @anthropic-ai/claude-code
-# atau: curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 Bila sebelumnya kamu pernah login dengan akun Anthropic/Claude, jalankan `claude` lalu ketik
@@ -54,6 +69,11 @@ Cara persisten - blok `env` di `~/.claude/settings.json` (berlaku untuk semua pr
 ```
 
 Nilai di `settings.json` **mengalahkan** export shell.
+
+<Callout type="tip" title="Ingin kelola lewat GUI tanpa edit JSON?">
+  Gunakan aplikasi desktop [CC Switch](/integrations/cc-switch) untuk menarik daftar model otomatis
+  dari `/v1/models` dan berpindah profil/model Claude Code dengan satu klik.
+</Callout>
 
 ### Verifikasi
 
