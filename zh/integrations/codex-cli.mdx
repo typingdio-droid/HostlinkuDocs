@@ -42,6 +42,10 @@ codex
 
 Codex 从名为 `env_key` 的变量中读取键；该键从未写入 `config.toml`。
 
+<Callout type="tip" title="想要使用图形界面一键切换？">
+  使用桌面应用 [CC Switch](/zh/integrations/cc-switch)，无需手动编辑 `config.toml` 即可可视化添加和切换 Codex 提供商与模型。
+</Callout>
+
 ### 验证
 
 发送一条简单的指令（例如 *“说明此仓库的结构”*）。该请求将显示在控制台的 → **请求日志** 中，模型编号为 `gpt-5-3-codex`。如果想在打开 Codex 之前确认端点：
@@ -96,3 +100,10 @@ Codex CLI 在每个回合中都会发送 `input` 和 `store: false` 中的完整
 - **`400 previous_response_id 不受支持`** - 仅在存在强制启用 *stored responses* 模式的插件/脚本时才会出现。请确保 `store` 不会被 `true` 强制触发。
 - **模型未显示 / `404`** - 别名错误；`/v1/models` 显示了与您的密钥对应的有效列表。
 - **旧版Codex要求使用`wire_api = "chat"`** - Hostlinku同样支持[`/v1/chat/completions`](/zh/chat-completions)；但Codex的推理功能与`responses`配合使用时效果最佳。
+
+## 相关资源
+
+- [CC Switch 集成指南](/zh/integrations/cc-switch)
+- [Hostlinku Responses API](/zh/responses)
+- [OpenAI API 文档](https://developers.openai.com/)
+- [Codex 官方文档](https://developers.openai.com/codex/)

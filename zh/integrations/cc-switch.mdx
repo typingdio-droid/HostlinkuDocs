@@ -1,0 +1,168 @@
+---
+title: CC Switch
+description: 使用跨平台桌面应用 CC Switch（macOS、Windows、Linux），以可视化方式管理和一键切换 Claude Code、Codex CLI 与 OpenCode 的 Hostlinku 提供商、模型及 API 密钥。
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[CC Switch](https://github.com/farion1231/cc-switch) 是一款开源跨平台桌面应用（支持 macOS、Windows、
+Linux），可通过图形界面统一管理 **Claude Code**、**Codex CLI** 和 **OpenCode** 的配置。无需手动编辑
+`~/.claude/settings.json` 或 `~/.codex/config.toml`，您可以保存多个 Hostlinku 配置档案、从 `/v1/models`
+自动拉取可用模型列表，并通过单击（或系统托盘菜单）快速切换模型与 API 密钥。
+
+## 安装 CC Switch
+
+根据您的操作系统选择安装方式：
+
+**macOS (Homebrew)：**
+
+```bash
+brew tap farion1231/ccswitch
+brew install --cask cc-switch
+```
+
+或者从 [GitHub Releases](https://github.com/farion1231/cc-switch/releases) 下载 `.dmg` / `.tar.gz` 安装包。
+
+**Windows：**
+
+从 [GitHub Releases](https://github.com/farion1231/cc-switch/releases) 下载
+`CC-Switch-v*-Windows.msi` 安装程序或免安装便携版 `.zip`。
+
+**Linux：**
+
+```bash
+# Arch Linux (AUR)
+paru -S cc-switch-bin
+```
+
+对于 Ubuntu / Debian / Fedora 等发行版，请从
+[GitHub Releases](https://github.com/farion1231/cc-switch/releases) 下载 `.deb`、`.rpm` 或 `.AppImage`
+软件包。
+
+---
+
+## 一键深层链接导入 (Deep Link)
+
+CC Switch 支持 `ccswitch://v1/import` 协议。安装 CC Switch 后，在终端运行以下命令（或在浏览器中打开该链接），
+即可自动填入 Hostlinku 提供商配置 - 您只需在弹出的确认窗口中粘贴 `sk-…` API 密钥即可。
+
+**一键导入 Claude Code 的 Hostlinku 预设：**
+
+```bash
+# macOS: open "ccswitch://..." | Linux: xdg-open "ccswitch://..." | Windows: start "" "ccswitch://..."
+open "ccswitch://v1/import?resource=provider&app=claude&name=Hostlinku&homepage=https%3A%2F%2Fhostlinku.com&endpoint=https%3A%2F%2Fapi.hostlinku.com&model=claude-sonnet-4-6&haikuModel=deepseek-v4-flash&sonnetModel=claude-sonnet-4-6&opusModel=claude-opus-4-6"
+```
+
+**一键导入 Codex CLI 的 Hostlinku 预设：**
+
+```bash
+open "ccswitch://v1/import?resource=provider&app=codex&name=Hostlinku&homepage=https%3A%2F%2Fhostlinku.com&endpoint=https%3A%2F%2Fapi.hostlinku.com%2Fv1&model=gpt-5-3-codex"
+```
+
+---
+
+## 通过 CC Switch 连接 Claude Code
+
+<Steps>
+
+### 在控制台创建 API 密钥
+
+打开 [console.hostlinku.com](https://console.hostlinku.com) → **API Keys**，创建一个新密钥（例如
+`cc-switch-claude`），并复制 `sk-…` 密钥字符串。
+
+### 在 Claude 标签页添加提供商
+
+1. 打开 **CC Switch**，在顶部应用栏选择 **Claude**。
+2. 点击右上角的 **+**（*Add Provider*）按钮，选择 **Custom Configuration**（自定义配置）。
+3. 填写以下核心字段：
+
+| 字段 | 值 |
+|---|---|
+| **Provider Name** | `Hostlinku` |
+| **Website URL** | `https://hostlinku.com` |
+| **API Key** | `sk-your-api-key` |
+| **Request URL (Base URL)** | `https://api.hostlinku.com` |
+| **API Format** | `Anthropic Messages (Native)` |
+
+### 自动拉取或手动填写模型列表
+
+点击模型配置区域的 **Auto-Fetch Models**（自动获取模型）按钮。CC Switch 会使用您的 API 密钥请求
+`GET https://api.hostlinku.com/v1/models`，并列出该密钥所属服务模式（Service Mode）下的所有可用模型。
+
+您也可以手动填写推荐的模型组合：
+
+| Claude Code 模型槽位 | 推荐 Hostlinku 模型标识符 | 说明 |
+|---|---|---|
+| **Default Model** | `claude-sonnet-4-6` | 编程会话的主力模型。 |
+| **Opus Model** | `claude-opus-4-6` | 用于规划模式（plan mode）与跨文件深度重构。 |
+| **Sonnet Model** | `claude-sonnet-4-6` | 日常代码编写与执行。 |
+| **Haiku (Fast) Model** | `deepseek-v4-flash` 或 `claude-haiku-4-5` | 后台快速子代理与摘要，大幅节省余额。 |
+
+### 启用提供商
+
+点击 **Add** 保存，然后在 **Hostlinku** 卡片上点击 **Enable**（或从系统托盘菜单直接切换）。CC Switch 会以原子写入方式更新 `~/.claude/settings.json` 中的 `env` 块。打开新终端运行 `claude`，输入 `/status` 即可确认
+`ANTHROPIC_BASE_URL` 已指向 `https://api.hostlinku.com`。
+
+</Steps>
+
+---
+
+## 通过 CC Switch 连接 Codex CLI
+
+<Steps>
+
+### 选择 Codex 标签页并添加提供商
+
+1. 在 CC Switch 顶部应用栏选择 **Codex**。
+2. 点击 **+**（*Add Provider*）→ **Custom Configuration**。
+3. 填写以下配置：
+
+| 字段 | 值 |
+|---|---|
+| **Provider Name** | `Hostlinku` |
+| **API Key** | `sk-your-api-key` |
+| **Endpoint (Base URL)** | `https://api.hostlinku.com/v1` |
+| **Model** | `gpt-5-3-codex`（或 `gpt-5-5`, `gpt-6-astra`） |
+
+请确认底部 `config.toml` 预览框中的 `wire_api` 为 `"responses"`：
+
+```toml
+model = "gpt-5-3-codex"
+model_provider = "hostlinku"
+
+[model_providers.hostlinku]
+name = "Hostlinku"
+base_url = "https://api.hostlinku.com/v1"
+wire_api = "responses"
+```
+
+### 启用并运行 Codex
+
+点击 **Add**，然后在 **Hostlinku** 卡片上点击 **Enable**。CC Switch 会自动更新 `~/.codex/config.toml` 并将
+API 密钥写入 `~/.codex/auth.json`。在终端运行 `codex` 即可开始使用。
+
+</Steps>
+
+<Callout type="tip" title="按服务模式（Service Mode）创建多个档案">
+  您可以在 CC Switch 中创建三张不同的提供商卡片 - 例如 **Hostlinku (Performance)**、
+  **Hostlinku (Low-Cost)** 和 **Hostlinku (Dedicated)** - 分别绑定对应服务模式的 API 密钥。需要从经济模式切换到
+  高速模式时，只需在 CC Switch 中点击对应卡片即可，无需修改任何终端配置。
+</Callout>
+
+<Callout type="warning" title="环境变量冲突检测">
+  如果您之前在 `~/.zshrc` 或 `~/.bashrc` 中手动写入过 `export ANTHROPIC_BASE_URL` 或
+  `export OPENAI_API_KEY`，CC Switch 会显示黄色冲突警告横幅，因为终端环境变量可能会覆盖 GUI 配置。请从
+  shell 配置文件中移除旧的 export 语句并重启终端，以确保 CC Switch 的切换完全生效。
+</Callout>
+
+## 故障排除
+
+| 现象 | 原因与解决方法 |
+|---|---|
+| CC Switch 的切换在 Claude Code 中不生效 | 仍存在旧的 Anthropic OAuth 登录会话或 `~/.zshrc` 中的 `ANTHROPIC_*` 变量。请在 `claude` 中运行 `/logout` 并清理终端配置文件中的旧 export。 |
+| *Auto-Fetch Models* 按钮获取失败 | 请确认 **Request URL** 填写为 `https://api.hostlinku.com`（末尾不要有多余斜杠），且已正确填入 **API Key**。 |
+| 启用后 Codex 拒绝执行 shell 工具 | Codex 标签页所选模型必须为原生支持 Responses 的 `gpt-*` 模型（如 `gpt-5-3-codex`、`gpt-5-5`、`gpt-6-astra`）。请勿为 Codex 选择非 OpenAI 模型或 `gpt-5-6-terra`。 |
+| `400 not available in Service Mode` | 所选模型在当前 API 密钥的服务模式下不可用。请点击 **Auto-Fetch Models**，仅从与当前密钥匹配的模型列表中选择。 |
+
+相关指南：[Claude Code](/zh/integrations/claude-code) · [Codex CLI](/zh/integrations/codex-cli) ·
+[DeepSeek Harness](/zh/integrations/deepseek-harness) · [OpenCode](/zh/integrations/opencode)。

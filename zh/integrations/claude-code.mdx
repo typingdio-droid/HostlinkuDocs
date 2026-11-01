@@ -12,9 +12,24 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### 安装 Claude Code
 
+根据您的操作系统选择安装方式：
+
+**macOS / Linux / WSL：**
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**Windows PowerShell：**
+
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**npm（需要 Node.js 18+）：**
+
 ```bash
 npm install -g @anthropic-ai/claude-code
-# 或者: curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 如果你之前曾使用账号 Anthropic/Claude 登录过，请先运行 `claude`，然后输入 `/logout`，以确保已保存的 OAuth 凭据不会影响网关配置。
@@ -50,6 +65,10 @@ claude
 ```
 
 `settings.json` 中的值会**覆盖** shell 的 export。
+
+<Callout type="tip" title="想要使用图形界面管理而无需手动编辑 JSON？">
+  使用桌面应用 [CC Switch](/zh/integrations/cc-switch)，可从 `/v1/models` 自动获取模型列表，并一键切换 Claude Code 的提供商配置与模型。
+</Callout>
 
 ### 验证
 

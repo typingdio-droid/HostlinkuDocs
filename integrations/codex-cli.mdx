@@ -47,6 +47,11 @@ codex
 Codex membaca key dari variabel yang disebut di `env_key`; key tidak pernah ditulis ke
 `config.toml`.
 
+<Callout type="tip" title="Ingin kelola lewat GUI dengan satu klik?">
+  Gunakan aplikasi desktop [CC Switch](/integrations/cc-switch) untuk menambahkan dan berpindah
+  provider/model Codex tanpa mengedit `config.toml` secara manual.
+</Callout>
+
 ### Verifikasi
 
 Kirim satu instruksi sederhana (mis. *"jelaskan struktur repo ini"*). Request akan tampil di
@@ -121,3 +126,10 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
 - **Codex versi lama meminta `wire_api = "chat"`** - Hostlinku juga melayani
   [`/v1/chat/completions`](/chat-completions); namun fitur reasoning Codex bekerja paling baik
   dengan `responses`.
+
+## Sumber daya terkait
+
+- [Panduan CC Switch](/integrations/cc-switch)
+- [Responses API Hostlinku](/responses)
+- [Dokumentasi OpenAI API](https://developers.openai.com/)
+- [Dokumentasi resmi Codex](https://developers.openai.com/codex/)

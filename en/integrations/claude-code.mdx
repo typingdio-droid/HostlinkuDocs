@@ -11,9 +11,24 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### Install Claude Code
 
+Choose the installation method for your operating system:
+
+**macOS / Linux / WSL:**
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**Windows PowerShell:**
+
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**npm (requires Node.js 18+):**
+
 ```bash
 npm install -g @anthropic-ai/claude-code
-# or: curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 If you've previously logged in with an Anthropic/Claude account, run `claude` and then type `/logout` so that your saved OAuth credentials don't override the gateway configuration.
@@ -49,6 +64,11 @@ Persistent method - the `env` block in `~/.claude/settings.json` (applies to all
 ```
 
 The value in `settings.json` **overrides** the shell export.
+
+<Callout type="tip" title="Prefer a GUI instead of editing JSON?">
+  Use the [CC Switch](/en/integrations/cc-switch) desktop app to auto-fetch models from `/v1/models`
+  and switch Claude Code profiles or models with a single click.
+</Callout>
 
 ### Verification
 

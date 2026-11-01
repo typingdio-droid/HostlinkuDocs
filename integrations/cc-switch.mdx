@@ -1,0 +1,177 @@
+---
+title: CC Switch
+description: Kelola dan ganti provider, model, serta API key Hostlinku untuk Claude Code, Codex CLI, dan OpenCode secara visual lewat aplikasi desktop CC Switch (macOS, Windows, Linux).
+---
+
+import { Callout, Steps } from "/snippets/mdx.jsx";
+
+[CC Switch](https://github.com/farion1231/cc-switch) adalah aplikasi desktop open-source lintas
+platform (macOS, Windows, Linux) untuk mengelola konfigurasi **Claude Code**, **Codex CLI**, dan
+**OpenCode** dari satu antarmuka grafis. Alih-alih mengedit `~/.claude/settings.json` atau
+`~/.codex/config.toml` secara manual, kamu bisa menyimpan profil provider Hostlinku, mengambil
+daftar model otomatis dari `/v1/models`, dan berpindah model/key hanya dengan satu klik (atau dari
+ikon *system tray*).
+
+## Instal CC Switch
+
+Pilih metode instalasi sesuai sistem operasi kamu:
+
+**macOS (Homebrew):**
+
+```bash
+brew tap farion1231/ccswitch
+brew install --cask cc-switch
+```
+
+Atau unduh file `.dmg` / `.tar.gz` dari
+[GitHub Releases](https://github.com/farion1231/cc-switch/releases).
+
+**Windows:**
+
+Unduh installer `CC-Switch-v*-Windows.msi` atau versi portable `.zip` dari
+[GitHub Releases](https://github.com/farion1231/cc-switch/releases).
+
+**Linux:**
+
+```bash
+# Arch Linux (AUR)
+paru -S cc-switch-bin
+```
+
+Untuk Ubuntu/Debian/Fedora dan distro lain, unduh paket `.deb`, `.rpm`, atau `.AppImage` dari
+[GitHub Releases](https://github.com/farion1231/cc-switch/releases).
+
+---
+
+## Impor cepat satu klik (Deep Link)
+
+CC Switch mendukung protokol `ccswitch://v1/import`. Setelah CC Switch terinstal, jalankan perintah
+berikut di terminal (atau buka URL-nya di browser) untuk mengisi form provider Hostlinku secara
+otomatis - kamu tinggal menempelkan API key `sk-…` di dialog konfirmasi.
+
+**Impor preset Hostlinku untuk Claude Code:**
+
+```bash
+# macOS: open "ccswitch://..." | Linux: xdg-open "ccswitch://..." | Windows: start "" "ccswitch://..."
+open "ccswitch://v1/import?resource=provider&app=claude&name=Hostlinku&homepage=https%3A%2F%2Fhostlinku.com&endpoint=https%3A%2F%2Fapi.hostlinku.com&model=claude-sonnet-4-6&haikuModel=deepseek-v4-flash&sonnetModel=claude-sonnet-4-6&opusModel=claude-opus-4-6"
+```
+
+**Impor preset Hostlinku untuk Codex CLI:**
+
+```bash
+open "ccswitch://v1/import?resource=provider&app=codex&name=Hostlinku&homepage=https%3A%2F%2Fhostlinku.com&endpoint=https%3A%2F%2Fapi.hostlinku.com%2Fv1&model=gpt-5-3-codex"
+```
+
+---
+
+## Hubungkan Claude Code lewat CC Switch
+
+<Steps>
+
+### Buat API key di Console
+
+Buka [console.hostlinku.com](https://console.hostlinku.com) → **API Keys**, buat key baru (mis.
+`cc-switch-claude`), lalu salin nilai `sk-…`.
+
+### Tambahkan provider di tab Claude
+
+1. Buka **CC Switch**, lalu pilih aplikasi **Claude** di bilah atas.
+2. Klik tombol **+** (*Add Provider*) di kanan atas, lalu pilih **Custom Configuration**.
+3. Isi field utama berikut:
+
+| Field | Nilai |
+|---|---|
+| **Provider Name** | `Hostlinku` |
+| **Website URL** | `https://hostlinku.com` |
+| **API Key** | `sk-your-api-key` |
+| **Request URL (Base URL)** | `https://api.hostlinku.com` |
+| **API Format** | `Anthropic Messages (Native)` |
+
+### Isi atau tarik daftar model otomatis
+
+Klik tombol **Auto-Fetch Models** di bagian konfigurasi model. CC Switch akan memanggil
+`GET https://api.hostlinku.com/v1/models` menggunakan API key kamu dan menampilkan seluruh model
+yang tersedia pada Service Mode key tersebut.
+
+Atau isi manual dengan kombinasi yang direkomendasikan:
+
+| Slot Model Claude Code | Rekomendasi Slug Hostlinku | Catatan |
+|---|---|---|
+| **Default Model** | `claude-sonnet-4-6` | Model utama sesi coding. |
+| **Opus Model** | `claude-opus-4-6` | Untuk perencanaan(*plan mode*) & refactor berat. |
+| **Sonnet Model** | `claude-sonnet-4-6` | Eksekusi kode harian. |
+| **Haiku (Fast) Model** | `deepseek-v4-flash` atau `claude-haiku-4-5` | Sub-agent latar belakang & ringkasan hemat biaya. |
+
+### Aktifkan provider
+
+Klik **Add**, lalu klik **Enable** pada kartu **Hostlinku** (atau pilih dari menu *system tray*).
+CC Switch otomatis menulis blok `env` ke `~/.claude/settings.json`. Buka terminal baru dan jalankan
+`claude` - ketik `/status` untuk memastikan `ANTHROPIC_BASE_URL` sudah menunjuk ke
+`https://api.hostlinku.com`.
+
+</Steps>
+
+---
+
+## Hubungkan Codex CLI lewat CC Switch
+
+<Steps>
+
+### Pilih tab Codex dan tambah provider
+
+1. Di CC Switch, pilih aplikasi **Codex** di bilah atas.
+2. Klik **+** (*Add Provider*) → **Custom Configuration**.
+3. Isi konfigurasi berikut:
+
+| Field | Nilai |
+|---|---|
+| **Provider Name** | `Hostlinku` |
+| **API Key** | `sk-your-api-key` |
+| **Endpoint (Base URL)** | `https://api.hostlinku.com/v1` |
+| **Model** | `gpt-5-3-codex` (atau `gpt-5-5`, `gpt-6-astra`) |
+
+Pastikan di pratinjau `config.toml` bagian bawah, field `wire_api` bernilai `"responses"`:
+
+```toml
+model = "gpt-5-3-codex"
+model_provider = "hostlinku"
+
+[model_providers.hostlinku]
+name = "Hostlinku"
+base_url = "https://api.hostlinku.com/v1"
+wire_api = "responses"
+```
+
+### Aktifkan dan jalankan Codex
+
+Klik **Add** lalu **Enable** pada kartu **Hostlinku**. CC Switch otomatis memperbarui
+`~/.codex/config.toml` dan menyimpan API key di `~/.codex/auth.json`. Jalankan `codex` di terminal
+untuk mulai bekerja.
+
+</Steps>
+
+<Callout type="tip" title="Pisahkan profil per Service Mode">
+  Kamu bisa membuat tiga kartu provider berbeda di CC Switch - misalnya **Hostlinku (Performance)**,
+  **Hostlinku (Low-Cost)**, dan **Hostlinku (Dedicated)** - masing-masing dengan API key yang sesuai.
+  Saat ingin beralih dari mode hemat ke mode cepat, cukup klik kartu yang diinginkan di CC Switch
+  tanpa menyentuh terminal.
+</Callout>
+
+<Callout type="warning" title="Deteksi konflik environment variable">
+  Jika kamu sebelumnya pernah menulis `export ANTHROPIC_BASE_URL` atau `export OPENAI_API_KEY` di
+  `~/.zshrc` / `~/.bashrc`, CC Switch akan menampilkan banner peringatan kuning karena variabel
+  shell dapat menimpa atau berkonflik dengan konfigurasi GUI. Hapus export lama dari file profil
+  shell lalu buka ulang terminal agar pengaturan CC Switch berlaku penuh.
+</Callout>
+
+## Troubleshooting
+
+| Gejala | Penyebab & solusi |
+|---|---|
+| Pengaturan CC Switch tidak berefek di Claude Code | Masih ada sesi login OAuth Anthropic atau variabel `ANTHROPIC_*` di `~/.zshrc`. Jalankan `/logout` di dalam `claude` dan bersihkan export lama di shell. |
+| Tombol *Auto-Fetch Models* gagal | Pastikan **Request URL** diisi `https://api.hostlinku.com` (tanpa garis miring ganda) dan **API Key** sudah diisi dengan benar. |
+| Codex menolak tool shell setelah diaktifkan | Model yang dipilih di tab Codex harus model `gpt-*` yang *Responses-native* (seperti `gpt-5-3-codex`, `gpt-5-5`, `gpt-6-astra`). Jangan pilih model non-OpenAI atau `gpt-5-6-terra` untuk Codex. |
+| `400 not available in Service Mode` | Model yang dipilih tidak aktif pada Service Mode API key tersebut. Gunakan tombol **Auto-Fetch Models** agar hanya model yang cocok dengan key itu yang ditampilkan. |
+
+Panduan terkait: [Claude Code](/integrations/claude-code) · [Codex CLI](/integrations/codex-cli) ·
+[DeepSeek Harness](/integrations/deepseek-harness) · [OpenCode](/integrations/opencode).

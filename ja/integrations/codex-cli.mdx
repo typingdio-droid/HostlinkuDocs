@@ -42,6 +42,10 @@ codex
 
 Codexは、`env_key`で指定された変数からキーを読み取ります。このキーは、`config.toml`には決して書き込まれません。
 
+<Callout type="tip" title="GUI でワンクリック管理したい場合">
+  デスクトップアプリ [CC Switch](/ja/integrations/cc-switch) を使用すると、`config.toml` を手動で編集することなく Codex のプロバイダーやモデルを視覚的に切り替えられます。
+</Callout>
+
 ### 確認
 
 簡単な指示を1つ送信してください（例：*「このリポジトリの構造を説明してください」*）。リクエストはコンソールの → **リクエストログ** に、モデル `gpt-5-3-codex` として表示されます。Codex を開く前にエンドポイントを確認したい場合は：
@@ -96,3 +100,10 @@ Codex CLIは、各ターンで`input`および`store: false`の会話履歴全�
 - **`400 previous_response_id はサポートされていません`** - *stored responses* モードを強制するプラグインやスクリプトが存在する場合にのみ発生します。`store` が `true` を強制していないことを確認してください。
 - **モデルが表示されない / `404`** - slugが間違っています。`/v1/models` には、あなたのキーに対応する有効なリストが表示されます。
 - **旧バージョンのCodexでは`wire_api = "chat"`が必要** - Hostlinkuも[`/v1/chat/completions`](/ja/chat-completions)に対応していますが、Codexの推論機能は`responses`で最も良好に動作します。
+
+## 関連リソース
+
+- [CC Switch 連携ガイド](/ja/integrations/cc-switch)
+- [Hostlinku Responses API](/ja/responses)
+- [OpenAI API ドキュメント](https://developers.openai.com/)
+- [Codex 公式ドキュメント](https://developers.openai.com/codex/)
