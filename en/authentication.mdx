@@ -12,7 +12,7 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-For the [Anthropic Messages](/en/anthropic-messages) endpoint, the `x-api-key: sk-…` header is also accepted.
+The `x-api-key: sk-…` header is also accepted on **every** `/v1/*` endpoint (chat completions, responses, and models), not just Anthropic Messages.
 
 API keys are created and managed at [console.hostlinku.com](https://console.hostlinku.com), under the **API Keys** menu.
 
@@ -86,7 +86,7 @@ Exceeding the limit results in **429 RATE_LIMITED**. For details, see [Usage & L
 
 | Status | HTTP | `error.code` | Message |
 |---|---|---|---|
-| The `Authorization` header is missing or is not "Bearer" | 401 | `UNAUTHORIZED` | `This endpoint requires a Hostlinku API key: send the `Authorization` header as "Bearer sk-…" (or `x-api-key`). …` |
+| The `Authorization` header is missing or is not "Bearer" | 401 | `UNAUTHORIZED` | `This endpoint requires a Hostlinku API key: send the `Authorization: Bearer sk-…` header. Console session cookies do not apply to /v1/*.` |
 | Unknown, mistyped, or revoked API key | 401 | `UNAUTHORIZED` | `Invalid or revoked API key.` |
 | API key has expired | 401 | `UNAUTHORIZED` | `The API key has expired.` |
 | The API key is used with the Console endpoint `/api/*` | 403 | `API_KEY_NOT_ALLOWED` | `The API key is only valid for the gateway endpoint /v1/* …` |

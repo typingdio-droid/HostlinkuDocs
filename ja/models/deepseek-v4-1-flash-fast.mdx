@@ -1,0 +1,46 @@
+---
+title: "DeepSeek-V4.1-Flash Fast"
+description: "DeepSeek-V4.1-Flash Fast — DeepSeek · 1,000,000 トークン"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | DeepSeek |
+| スラッグ | `deepseek-v4-1-flash-fast` |
+| コンテキスト | 1,000,000 トークン |
+| 最大出力 | 384,000 トークン |
+| リリース | 2026-09-14 |
+
+## 機能
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## 料金
+
+| 項目 | 料金 |
+|---|---|
+| 入力（プロンプト） | <CreditIcon /> 0.2875 / 1M |
+| 出力（補完） | <CreditIcon /> 1.15 / 1M |
+| キャッシュ読み取り | <CreditIcon /> 0.00575 / 1M |
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | 対応 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | ネイティブ |
+| `POST /v1/responses` | OpenAI Responses | adapted（ブリッジ） |

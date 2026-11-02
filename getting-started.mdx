@@ -10,7 +10,7 @@ Hostlinku.
 
 ## Prasyarat
 
-- **Akun Hostlinku**: daftar gratis di [auth.hostlinku.com](https://auth.hostlinku.com).
+- **Akun Hostlinku**: daftar gratis di [auth2.hostlinku.com](https://auth2.hostlinku.com).
 - **Saldo kredit**: gateway memotong saldo per token. Isi saldo di console sebelum request
   produksi. Biaya request uji coba biasanya di bawah satu sen, tetapi saldo tetap tidak boleh
   kosong. Lihat [Billing & Saldo](/billing).
@@ -23,7 +23,9 @@ Hostlinku.
 
 ### Daftar atau masuk
 
-Buka [auth.hostlinku.com](https://auth.hostlinku.com): buat akun baru, atau masuk dengan akun
+Buka [auth2.hostlinku.com](https://auth2.hostlinku.com): buat akun baru, atau masuk dengan akun
+
+Di halaman login juga tersedia **Masuk dengan passkey** (WebAuthn) bila perangkat Anda mendukung.
 yang sudah ada (termasuk login SSO bila diaktifkan admin).
 
 ### Buat API key
@@ -141,3 +143,15 @@ untuk riwayat request lengkap dengan token, biaya, dan latensi. Endpoint setara 
   Butuh bantuan? Hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com), lihat juga
   [Dukungan](/support).
 </Callout>
+
+## Login passkey dan 2FA
+
+Akun Hostlinku memakai Keycloak di `auth2.hostlinku.com`. Selain email dan kata sandi, tersedia:
+
+- **Passkey (WebAuthn)** - masuk tanpa kata sandi memakai biometrik atau security key perangkat.
+- **Authenticator (TOTP)** - kode 6 digit dari aplikasi authenticator.
+- **Recovery codes** - kode cadangan sekali pakai.
+
+Semua opsi dikelola di Console pada **Settings -> Security**. Tombol *Add passkey* membuka dialog perangkat;
+setelah passkey terdaftar, tombol *Masuk dengan passkey* di halaman login langsung membuka dialog yang sama.
+Membatalkan dialog tidak mengeluarkan Anda dari halaman login - cukup ulangi atau masuk dengan kata sandi.

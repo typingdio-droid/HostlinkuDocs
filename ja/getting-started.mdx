@@ -10,7 +10,9 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ## 前提条件
 
-- **アカウント Hostlinku**：[auth.hostlinku.com](https://auth.hostlinku.com) から無料で登録してください。
+- **アカウント Hostlinku**：[auth2.hostlinku.com](https://auth2.hostlinku.com) から無料で登録してください。
+
+デバイスが対応している場合、ログインページで **パスキーでサインイン**（WebAuthn）も利用できます。
 - **クレジット残高**：ゲートウェイはトークンごとに残高を差し引きます。本番環境でのリクエストを行う前に、コンソールで残高を補充してください。テストリクエストの料金は通常1セント未満ですが、残高がゼロになってはいけません。[課金と残高](/ja/billing)をご参照ください。
 - **テストツール**：curl だけで十分です。より高度な例については、OpenAI（`pip install openai`）の公式 SDK または Node（`npm install openai`）を、コードを変更することなく使用できます。
 
@@ -20,7 +22,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### 登録またはログイン
 
-[auth.hostlinku.com](https://auth.hostlinku.com) にアクセスし、新規アカウントを作成するか、既存のアカウントでログインしてください（管理者が有効にしている場合は、SSOログインも利用可能です）。
+[auth2.hostlinku.com](https://auth2.hostlinku.com) にアクセスし、新規アカウントを作成するか、既存のアカウントでログインしてください（管理者が有効にしている場合は、SSOログインも利用可能です）。
 
 ### APIキーを作成する
 
@@ -124,3 +126,15 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
 <Callout type="note" title="注記">
 お困りですか？ [halo@hostlinku.com](mailto:halo@hostlinku.com) までお問い合わせください。また、[サポート](/ja/support) もご参照ください。
 </Callout>
+
+## パスキーログインと 2FA
+
+Hostlinku アカウントは `auth2.hostlinku.com` の Keycloak を使用します。メールアドレスとパスワードに加えて、以下が利用できます。
+
+- **パスキー（WebAuthn）** - デバイスの生体認証やセキュリティキーによるパスワードレスサインイン。
+- **Authenticator（TOTP）** - 認証アプリの 6 桁コード。
+- **リカバリーコード** - 1 回限りのバックアップコード。
+
+いずれもコンソールの **Settings -> Security** で管理します。*Add passkey* を押すとデバイスのダイアログが開き、
+登録後はログイン画面の *パスキーでサインイン* から同じダイアログが直接開きます。ダイアログを閉じてもログイン画面に
+留まるため、再試行するかパスワードでサインインできます。

@@ -1,0 +1,46 @@
+---
+title: "DeepSeek-V4.1-Flash Fast"
+description: "DeepSeek-V4.1-Flash Fast — DeepSeek · 1,000,000 tokens"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| Property | Value |
+|---|---|
+| Provider | DeepSeek |
+| Slug | `deepseek-v4-1-flash-fast` |
+| Context | 1,000,000 tokens |
+| Max output | 384,000 tokens |
+| Released | 2026-09-14 |
+
+## Capabilities
+
+- `text`
+- `tool-calling`
+- `function-calling`
+- `structured-outputs`
+- `json-mode`
+- `streaming`
+- `reasoning`
+- `code-generation`
+- `long-context`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | <CreditIcon /> 0.2875 / 1M |
+| Output (completion) | <CreditIcon /> 1.15 / 1M |
+| Cache read | <CreditIcon /> 0.00575 / 1M |
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |

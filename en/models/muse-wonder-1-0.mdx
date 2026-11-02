@@ -1,0 +1,45 @@
+---
+title: "Muse Wonder"
+description: "Muse Wonder — Meta · 1,048,576 tokens"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| Property | Value |
+|---|---|
+| Provider | Meta |
+| Slug | `muse-wonder-1-0` |
+| Context | 1,048,576 tokens |
+| Released | 2026-10-14 |
+
+## Capabilities
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+- `long-context`
+
+## Pricing
+
+| Item | Price |
+|---|---|
+| Input (prompt) | <CreditIcon /> 3.36 / 1M |
+| Output (completion) | <CreditIcon /> 16.8 / 1M |
+| Cache read | <CreditIcon /> 0.168 / 1M |
+| Cache write | <CreditIcon /> 0 / 1M |
+
+## Supported endpoints
+
+| Endpoint | Format | Support |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | available |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |

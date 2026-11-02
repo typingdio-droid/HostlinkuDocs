@@ -10,7 +10,9 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ## 先决条件
 
-- **Hostlinku 账户**：请在 [auth.hostlinku.com](https://auth.hostlinku.com) 免费注册。
+- **Hostlinku 账户**：请在 [auth2.hostlinku.com](https://auth2.hostlinku.com) 免费注册。
+
+如果设备支持，登录页面还提供 **使用通行密钥登录**（WebAuthn）。
 - **余额**：网关会按每个Token扣除余额。在提交生产请求前，请在控制台中充值。测试请求的费用通常低于一分钱，但余额仍不得为零。请参阅 [计费与余额](/zh/billing)。
 - **测试工具**：仅需 curl 即可。对于高级示例，可直接使用官方 SDK OpenAI（`pip install openai`）或 Node（`npm install openai`），无需修改代码。
 
@@ -20,7 +22,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### 注册或登录
 
-访问 [auth.hostlinku.com](https://auth.hostlinku.com)：注册新账户，或使用现有账户登录（包括单点登录（SSO），前提是管理员已启用该功能）。
+访问 [auth2.hostlinku.com](https://auth2.hostlinku.com)：注册新账户，或使用现有账户登录（包括单点登录（SSO），前提是管理员已启用该功能）。
 
 ### 创建 API 密钥
 
@@ -124,3 +126,14 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
 <Callout type="note" title="注释">
 需要帮助吗？请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)，另请参阅 [支持](/zh/support)。
 </Callout>
+
+## 通行密钥登录与 2FA
+
+Hostlinku 账户使用 `auth2.hostlinku.com` 上的 Keycloak。除邮箱和密码外，还可使用：
+
+- **通行密钥（WebAuthn）** - 使用设备生物识别或安全密钥进行无密码登录。
+- **身份验证器（TOTP）** - 来自验证器应用的 6 位验证码。
+- **恢复代码** - 一次性备用代码。
+
+均可在控制台的 **Settings -> Security** 中管理。点击 *Add passkey* 会打开设备对话框；注册后，登录页面的
+*使用通行密钥登录* 会直接打开同一对话框。关闭对话框后仍停留在登录页面，可重试或使用密码登录。
