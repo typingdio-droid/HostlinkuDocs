@@ -1,0 +1,46 @@
+---
+title: "Claude Haiku 5.5"
+description: "Claude Haiku 5.5 — Anthropic · 1,000,000 Token"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| 属性 | 值 |
+|---|---|
+| 提供商 | Anthropic |
+| Slug | `claude-haiku-5-5` |
+| 上下文 | 1,000,000 Token |
+| 最大输出 | 128,000 Token |
+| 发布日期 | 2026-10-07 |
+
+## 能力
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+- `long-context`
+
+## 价格
+
+| 项目 | 价格 |
+|---|---|
+| 输入（提示） | <CreditIcon /> 0.084 / 1M |
+| 输出（补全） | <CreditIcon /> 0.42 / 1M |
+| 缓存读取 | <CreditIcon /> 0.0084 / 1M |
+| 缓存写入 | <CreditIcon /> 0.105 / 1M |
+
+## 支持的端点
+
+| 端点 | 格式 | 支持 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
+| `POST /v1/messages` | Anthropic Messages | 原生 |
+| `POST /v1/responses` | OpenAI Responses | adapted（桥接） |

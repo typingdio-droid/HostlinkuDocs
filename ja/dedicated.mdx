@@ -16,15 +16,14 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## 利用可能なモデル
 
-9つのモデル、3つのシリーズ：
+6つのモデル、2つのシリーズ：
 
 | 家族 | モデル | コンテキスト |
 |---|---|---|
-| DeepSeek | `deepseek-v4-1-flash`, `deepseek-v4-1-flash-turbo`, `deepseek-v4-1-flash-hyper` | 1,000,000トークン |
+| DeepSeek | `deepseek-v4-1-flash`, `deepseek-v4-1-flash-fast`, `deepseek-v4-1-flash-hyper` | 1,000,000トークン |
 | GLM | `glm-5-3`, `glm-5-3-flash`, `glm-5-3-flash-hyper` | 1,000,000トークン |
-| キミ | `kimi-k3`, `kimi-k3-turbo`, `kimi-k3-hyper` | 1,000,000トークン |
 
-`-turbo` および `-hyper` バリエーションは、基本モデルよりも高速かつ大容量な構成です。このリストにないモデルは、Dedicated モードでは**利用できません**。その場合は、Performance または Low-Cost をご利用ください。
+`-fast` および `-hyper` バリエーションは、基本モデルよりも高速かつ大容量な構成です。このリストにないモデルは、Dedicated モードでは**利用できません**。その場合は、Performance または Low-Cost をご利用ください。
 
 ## エンドポイントと認証
 
@@ -48,6 +47,6 @@ Dedicatedモデルでは、**プロバイダーの自動キャッシュ**が使�
 
 ## 制限
 
-- 上の表には9つのモデルしか記載されておらず、他のモードへの自動フォールバックはありません。
+- 上の表には6つのモデルしか記載されておらず、他のモードへの自動フォールバックはありません。
 - `-chat` バリエーション（コーディング／エージェント用）は、一般向けカタログでは販売されていません。
 - ツール呼び出し、ストリーミング、および`stream_options.include_usage`がサポートされています。ベンダー固有の機能（例：Web検索）はモデルによって異なり、利用可能であるとは限りません。

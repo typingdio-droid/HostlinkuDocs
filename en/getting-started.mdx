@@ -9,7 +9,7 @@ This page walks you from zero to a successful chat completion request through Ho
 
 ## Prerequisites
 
-- **Hostlinku account**: sign up for free at [auth.hostlinku.com](https://auth.hostlinku.com).
+- **Hostlinku account**: sign up for free at [auth2.hostlinku.com](https://auth2.hostlinku.com).
 - **Credit balance**: the gateway charges per token. Top up in the console before production requests. Test requests usually cost less than a cent, but your balance must not be empty. See [Billing & Balance](/en/billing).
 - **Test tools**: curl is enough. For advanced examples, the official OpenAI SDK (`pip install openai`) or Node (`npm install openai`) works without code changes.
 
@@ -19,7 +19,9 @@ This page walks you from zero to a successful chat completion request through Ho
 
 ### Sign up or sign in
 
-Open [auth.hostlinku.com](https://auth.hostlinku.com): create a new account, or sign in with an existing one (including SSO if enabled by an admin).
+Open [auth2.hostlinku.com](https://auth2.hostlinku.com): create a new account, or sign in with an existing one (including SSO if enabled by an admin).
+
+The login page also offers **Sign in with a passkey** (WebAuthn) when your device supports it.
 
 ### Create an API key
 
@@ -118,3 +120,15 @@ In the console, open **Credits/Balance** to see your running balance and **Reque
   Need help? Contact [halo@hostlinku.com](mailto:halo@hostlinku.com), or see
   [Support](/en/support).
 </Callout>
+
+## Passkey login and 2FA
+
+Hostlinku accounts use Keycloak at `auth2.hostlinku.com`. Besides email and password, you can use:
+
+- **Passkey (WebAuthn)** - passwordless sign-in with device biometrics or a security key.
+- **Authenticator (TOTP)** - a 6-digit code from an authenticator app.
+- **Recovery codes** - single-use backup codes.
+
+Manage them in the Console under **Settings -> Security**. *Add passkey* opens the device dialog; once a passkey
+is registered, *Sign in with a passkey* on the login page opens the same dialog immediately. Cancelling the dialog
+keeps you on the login page - retry or sign in with your password.

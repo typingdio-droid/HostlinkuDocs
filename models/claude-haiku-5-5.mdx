@@ -1,0 +1,46 @@
+---
+title: "Claude Haiku 5.5"
+description: "Claude Haiku 5.5 — Anthropic · 1,000,000 token"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| Properti | Nilai |
+|---|---|
+| Provider | Anthropic |
+| Slug | `claude-haiku-5-5` |
+| Konteks | 1,000,000 token |
+| Output maks | 128,000 token |
+| Rilis | 2026-10-07 |
+
+## Kapabilitas
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+- `long-context`
+
+## Harga
+
+| Item | Harga |
+|---|---|
+| Input (prompt) | <CreditIcon /> 0.084 / 1M |
+| Output (completion) | <CreditIcon /> 0.42 / 1M |
+| Cache read | <CreditIcon /> 0.0084 / 1M |
+| Cache write | <CreditIcon /> 0.105 / 1M |
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |

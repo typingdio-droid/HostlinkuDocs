@@ -1,0 +1,46 @@
+---
+title: "Claude Haiku 5.5"
+description: "Claude Haiku 5.5 — Anthropic · 1,000,000 トークン"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+| プロパティ | 値 |
+|---|---|
+| プロバイダー | Anthropic |
+| スラッグ | `claude-haiku-5-5` |
+| コンテキスト | 1,000,000 トークン |
+| 最大出力 | 128,000 トークン |
+| リリース | 2026-10-07 |
+
+## 機能
+
+- `text`
+- `streaming`
+- `tool-calling`
+- `function-calling`
+- `json-mode`
+- `reasoning`
+- `code-generation`
+- `multilingual`
+- `vision`
+- `image-input`
+- `multimodal`
+- `long-context`
+
+## 料金
+
+| 項目 | 料金 |
+|---|---|
+| 入力（プロンプト） | <CreditIcon /> 0.084 / 1M |
+| 出力（補完） | <CreditIcon /> 0.42 / 1M |
+| キャッシュ読み取り | <CreditIcon /> 0.0084 / 1M |
+| キャッシュ書き込み | <CreditIcon /> 0.105 / 1M |
+
+## 対応エンドポイント
+
+| エンドポイント | フォーマット | 対応 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | ネイティブ |
+| `POST /v1/responses` | OpenAI Responses | adapted（ブリッジ） |
