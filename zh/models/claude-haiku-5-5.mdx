@@ -9,38 +9,41 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | 提供商 | Anthropic |
 | Slug | `claude-haiku-5-5` |
-| 上下文 | 1,000,000 Token |
-| 最大输出 | 128,000 Token |
 | 发布日期 | 2026-10-07 |
+| 目录上下文 | 1,000,000 个Token |
+| 目录最大输出 | 128,000 个Token |
+| Service Mode | Performance, Low-Cost |
 
 ## 能力
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
+
+功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
-| 项目 | 价格 |
-|---|---|
-| 输入（提示） | <CreditIcon /> 0.084 / 1M |
-| 输出（补全） | <CreditIcon /> 0.42 / 1M |
-| 缓存读取 | <CreditIcon /> 0.0084 / 1M |
-| 缓存写入 | <CreditIcon /> 0.105 / 1M |
+**2026年11月6日更新**。[当前价格](https://hostlinku.com/zh/models/claude-haiku-5-5)由API密钥的Service Mode决定。**1 <CreditIcon /> = \$1**。`—` 表示未列出费率。价格档位取决于提示词Token数。
+
+| 项目 | 单位 | 价格档位 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+|---|---|---|---|---|
+| 输入（提示词） | 每100万个Token | 基础 | 0.084 | 0.01605 |
+| 输出 | 每100万个Token | 基础 | 0.42 | 0.08025 |
+| 缓存读取 | 每100万个Token | 基础 | 0.0084 | 0.001605 |
+| 缓存写入（5分钟） | 每100万个Token | 基础 | 0.105 | 0.020063 |
+| 缓存写入（1小时） | 每100万个Token | 基础 | 0.168 | 0.0321 |
+| 网络搜索 | 每1,000次调用 | 基础 | 10.5 | 10.7 |
+| 输入（提示词） | 每100万个Token | 提示词 ≥ 100,000 个Token | 0.42 | 0.08025 |
+| 输出 | 每100万个Token | 提示词 ≥ 100,000 个Token | 2.1 | 0.40125 |
+| 缓存读取 | 每100万个Token | 提示词 ≥ 100,000 个Token | 0.042 | 0.008025 |
+| 缓存写入（5分钟） | 每100万个Token | 提示词 ≥ 100,000 个Token | 0.525 | 0.100313 |
+| 缓存写入（1小时） | 每100万个Token | 提示词 ≥ 100,000 个Token | 0.84 | 0.1605 |
 
 ## 支持的端点
 
-| 端点 | 格式 | 支持 |
+| Endpoint | Format | 支持情况 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
 | `POST /v1/messages` | Anthropic Messages | 原生 |
-| `POST /v1/responses` | OpenAI Responses | adapted（桥接） |
+| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+
+桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。

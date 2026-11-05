@@ -1,52 +1,52 @@
 ---
-title: "Service Mode 専用"
-description: "Hostlinkuのインフラ上で実行されているモデル自体-DeepSeek、GLM、およびKimi-のコンテキストは100万トークンです。"
+title: "Service Mode Dedicated"
+description: "Dedicatedモデル、APIキーの選択、モデル別の制限、料金、プロンプトキャッシュ。"
 ---
 
-
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
 import { Callout } from "/snippets/mdx.jsx";
 
-**Dedicated**は、Hostlinkuに次ぐ3番目のService Modeです。リクエストをアップストリームのパートナーに転送する**Performance**や**Low-Cost**とは異なり、Dedicatedモデルは**Hostlinku独自のインフラストラクチャ**上で動作します。
+**Dedicated** は、対象モデルを利用するためのHostlinkuのService Modeです。[コンソール](https://console.hostlinku.com)でAPIキーを作成する際に **Dedicated** を選択します。モードはキーに紐づいており、リクエストにモード変更用の追加パラメータはありません。
 
-<Callout type="note" title="1つのAPIキー = 1つのService Mode">
-このモードは、管理者がAPIキーを「Dedicated」に設定した場合に有効になります。他のモードを同時に使用するには、別のAPIキーを作成してください。Service Modeはリクエストではなく、キーに紐付けられています。
+<Callout type="note" title="APIキー1つにつきService Modeは1つ">
+PerformanceやLow-Costも利用する場合は、別のAPIキーを作成してください。利用できるモデルと価格はキーのService Modeに従います。そのキーで `GET /v1/models` を確認してください。
 </Callout>
 
 ## 利用可能なモデル
 
-6つのモデル、2つのシリーズ：
+**2026年11月6日更新**。以下のDeepSeek、GLM、Kimiモデルを[Dedicatedカタログ](https://hostlinku.com/ja/models?mode=dedicated)で利用できます。
 
-| 家族 | モデル | コンテキスト |
-|---|---|---|
-| DeepSeek | `deepseek-v4-1-flash`, `deepseek-v4-1-flash-fast`, `deepseek-v4-1-flash-hyper` | 1,000,000トークン |
-| GLM | `glm-5-3`, `glm-5-3-flash`, `glm-5-3-flash-hyper` | 1,000,000トークン |
+| モデル / API ID | 系列 | カタログのコンテキスト | カタログの最大出力 |
+|---|---|---|---|
+| [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash) · `deepseek-v4-1-flash` | DeepSeek | 1,000,000 トークン | 384,000 トークン |
+| [DeepSeek-V4.1-Flash Fast](/ja/models/deepseek-v4-1-flash-fast) · `deepseek-v4-1-flash-fast` | DeepSeek | 1,000,000 トークン | 384,000 トークン |
+| [DeepSeek-V4.1-Flash Hyper](/ja/models/deepseek-v4-1-flash-hyper) · `deepseek-v4-1-flash-hyper` | DeepSeek | 1,000,000 トークン | 384,000 トークン |
+| [GLM 5.3](/ja/models/glm-5-3) · `glm-5-3` | Zhipu | 1,000,000 トークン | 64,000 トークン |
+| [GLM-5.3 Flash](/ja/models/glm-5-3-flash) · `glm-5-3-flash` | Zhipu | 1,000,000 トークン | 64,000 トークン |
+| [GLM-5.3 Flash Hyper](/ja/models/glm-5-3-flash-hyper) · `glm-5-3-flash-hyper` | Zhipu | 1,000,000 トークン | 64,000 トークン |
+| [Kimi K3.1 Pro Hyper](/ja/models/kimi-k3-1-pro-hyper) · `kimi-k3-1-pro-hyper` | Moonshot | 1,048,576 トークン | 64,000 トークン |
 
-`-fast` および `-hyper` バリエーションは、基本モデルよりも高速かつ大容量な構成です。このリストにないモデルは、Dedicated モードでは**利用できません**。その場合は、Performance または Low-Cost をご利用ください。
+`deepseek-v4-1-flash-fast` を含め、カタログのAPI IDをそのままコピーしてください。コンテキスト、出力上限、機能はモデルによって異なります。
 
 ## エンドポイントと認証
 
-モード間でベースURLは変わりません。3つのAPI方言がサポートされています：
+ベースURLは `https://api.hostlinku.com` のままです。以下のAPI形式を利用できますが、一部のモデルではブリッジによる形式変換が行われます。ベンダー固有の機能やアプリの組み込みツールへの対応は個別に確認してください。
 
-| 方言 | エンドポイント | ヘッダー認証 |
+| 形式 | エンドポイント | 認証ヘッダー |
 |---|---|---|
-| OpenAI チャット | `POST {base}/v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
-| OpenAI Responses | `POST {base}/v1/responses` | `Authorization: Bearer <API_KEY>` |
-| Anthropic Messages | `POST {base}/v1/messages` | `x-api-key: <API_KEY>` |
-
-アプリをベースURL「Hostlinku」に設定し、DedicatedモードのAPIキーを使用するだけで十分です。モードを選択するための追加パラメータはありません。
+| OpenAI Chat | `POST /v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
+| OpenAI Responses | `POST /v1/responses` | `Authorization: Bearer <API_KEY>` |
+| Anthropic Messages | `POST /v1/messages` | `x-api-key: <API_KEY>` |
 
 ## 価格
 
-販売価格 = モデルの基本価格 × 専用モードの乗数。**1M トークン** 単位で請求されます（1 <CreditIcon /> = 1 ドル）。 モデルごとの数値は[モデルカタログ](/ja/models)に記載されています。**Dedicated**タブを選択すると、お使いのキーに適用される価格を確認できます。 例：`glm-5-3`は現在、1Mトークンあたり<CreditIcon />1.21の入力および<CreditIcon />3.80の出力となっています。
+APIキーのService Mode料金で使用量に応じて請求されます。**1 <CreditIcon /> = \$1**。[Dedicatedの料金](https://hostlinku.com/ja/models?mode=dedicated)またはDedicatedキーによる `GET /v1/models` を確認してください。
 
-## プロンプトのキャッシュ
+## プロンプトキャッシュ
 
-Dedicatedモデルでは、**プロバイダーの自動キャッシュ**が使用されます。 `cache_control`を送信する必要はありません。キャッシュの有効期間内に同じプレフィックスを送信すると、キャッシュから読み込まれたトークンは`cached_tokens`（`/v1/chat/completions`）または`cache_read_input_tokens`（`/v1/messages`）として表示されます。 コンソールで数値を確認する方法については、[プロンプトキャッシュによる効率化](/ja/prompt-caching)を参照してください。
+自動キャッシュに対応したモデルでは、同じプレフィックスを `cache_control` なしで再利用できる場合があります。ヒットと有効期間は上流サービスに従います。使用量が返される場合、Chat Completionsの `cached_tokens` またはMessagesの `cache_read_input_tokens` に表示されます。[プロンプトキャッシュ](/ja/prompt-caching)を参照してください。
 
 ## 制限
 
-- 上の表には6つのモデルしか記載されておらず、他のモードへの自動フォールバックはありません。
-- `-chat` バリエーション（コーディング／エージェント用）は、一般向けカタログでは販売されていません。
-- ツール呼び出し、ストリーミング、および`stream_options.include_usage`がサポートされています。ベンダー固有の機能（例：Web検索）はモデルによって異なり、利用可能であるとは限りません。
+- モデルはキーのService Modeで利用可能である必要があります。他のモードへの自動フォールバックはありません。
+- 機能と出力上限はモデルとプロトコルに従います。ブリッジはアプリの組み込みツールに対応していない場合があります。

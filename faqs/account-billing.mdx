@@ -1,86 +1,60 @@
 ---
 title: "Akun, billing & kebijakan"
-description: "Pertanyaan umum tentang akun, API key, saldo, top-up, error, privasi, dan legal."
+description: "Jawaban singkat tentang akun, pembayaran, biaya, dan privasi."
 ---
 
-import { Callout } from "/snippets/mdx.jsx";
+## Akun dan API key
 
-## Akun & API key
+### Bagaimana mulai?
 
-### Bagaimana cara mulai menggunakan Hostlinku?
+[Daftar](https://api.hostlinku.com/api/auth2/register) atau [masuk](https://api.hostlinku.com/api/auth2/login), lalu buka [Console](https://console.hostlinku.com). Isi saldo di **Billing** dan buat key di **API Keys**. Ikuti [Memulai Cepat](/getting-started).
 
-Daftar gratis di [console.hostlinku.com](https://console.hostlinku.com), konfirmasi email, lalu isi saldo di menu **Isi Saldo**. Buat **API key** di menu **API Keys**, lalu arahkan `base_url` SDK ke `https://api.hostlinku.com/v1`. Panduan lengkap ada di [Memulai](/getting-started).
+### Apa pengaturan key yang tersedia?
 
-### Bagaimana cara membuat dan mengelola API key?
+Pilih nama, Service Mode **Performance / Low-Cost / Dedicated**, kedaluwarsa **30/60/90 hari atau tidak pernah**, dan limit bulanan opsional. Defaultnya Performance dan 30 hari. Tidak ada scope. API pengelolaan key mendukung periode tambahan; lihat [Autentikasi](/authentication).
 
-Buka Console → **API Keys** → **Buat API key**, beri nama, dan pilih scope yang dibutuhkan. Secret hanya ditampilkan sekali saat dibuat; simpan di tempat aman. Kamu bisa membuat beberapa key untuk aplikasi berbeda dan mencabutnya kapan saja. Key yang dicabut langsung ditolak (401).
+### Bagaimana secret disimpan?
 
-### Scope apa saja yang tersedia untuk API key?
+Secret tampil sekali; server menyimpan hash SHA-256. Simpan di environment server. Key dapat diedit, dinonaktifkan/diaktifkan, dan dihapus. Ganti key jika secret hilang atau bocor.
 
-Scope mengikuti endpoint yang diaktifkan untuk akunmu. Gateway publik saat ini mengutamakan `chat` (`POST /v1/chat/completions`) dan daftar model (`GET /v1/models`). Berikan scope seminimal mungkin sesuai kebutuhan aplikasi. Detail ada di [Autentikasi](/authentication).
+### Apakah passkey dan 2FA tersedia?
 
-### Apakah akun bisa ditangguhkan?
+Ya. **Settings → Security** menyediakan passkey WebAuthn, authenticator TOTP, dan recovery codes melalui Keycloak.
 
-Bisa. Akun yang melanggar [Kebijakan Penggunaan](/legals/acceptable-use-policy) atau [Syarat & Ketentuan](/legals/terms-of-service) dapat ditangguhkan; seluruh API key berhenti bekerja. Detail lengkap ada di [Syarat & Ketentuan](/legals/terms-of-service).
+## Saldo dan pembayaran
 
-## Saldo & billing
+### Apa arti kredit?
 
-### Apa itu saldo kredit dan bagaimana cara kerjanya?
+**1 kredit = $1** sebagai satuan layanan prabayar. Saldo organisasi dipakai oleh key terkait, bukan uang fiat yang dapat digunakan bebas. Pengembalian mengikuti [Refund Policy](/legals/refund-policy).
 
-Saldo kredit adalah prabayar untuk pemakaian API, dinyatakan dalam **USD** (1 USD = 1 kredit). Tidak ada biaya bulanan; biaya dipotong per request berdasarkan token yang benar-benar dipakai. Detail ada di [Billing & Saldo](/billing).
+### Bagaimana top-up?
 
-### Bagaimana cara mengisi saldo (top-up)?
+Buka **Billing**, pilih nominal dan metode. QRIS/VA baru memakai **iPaymu Direct**, crypto memakai **Heleket hosted**. Nominal, bonus, kurs, biaya, dan deadline tampil sebelum pembayaran. Kredit masuk otomatis setelah verifikasi. Lihat [Billing & Saldo](/billing).
 
-Buka Console → **Add balance** / **Isi Saldo**. Metode yang aktif ditampilkan di halaman top-up (saat ini QRIS/virtual account dan aset kripto). Nominal minimum, maksimum, dan kurs mengikuti halaman checkout. Saldo masuk setelah pembayaran terverifikasi.
+### Di mana biaya dan invoice?
 
-### Kapan saldo dipotong: per permintaan atau harian?
+**Logs** menampilkan biaya request, **Analytics** ringkasan penggunaan, **Billing** transaksi dan invoice. Non-streaming chat memuat `hostlinku.cost`; untuk SSE periksa biaya final setelah selesai. Usage yang hilang dapat diestimasi.
 
-Per request. Saat request berjalan, saldo direservasi sementara; setelah selesai, yang dipotong adalah biaya token aktual. Jika request gagal (timeout, 5xx, atau kesalahan upstream), reservasi dilepas dan kamu tidak ditagih.
+Invoice dapat dicetak/PDF melalui browser. Billing Profile disimpan lokal di browser Console, sehingga cetakan Console dapat berbeda dari invoice Pay atau perangkat lain.
 
-### Di mana saya bisa melihat pemakaian dan riwayat tagihan?
+### Apakah ada auto-recharge atau email saldo rendah?
 
-Console → **Usage** menampilkan ringkasan token dan biaya; **Request Logs** menampilkan detail per request (status, latensi, token); **Transactions** menampilkan mutasi saldo: top-up, pemakaian, dan penyesuaian.
+Belum tersedia pada Billing aktif. Pantau saldo dan top-up sebelum pemakaian produksi. Menambah saldo tidak menaikkan limit key.
 
-### Apakah saldo punya masa berlaku atau biaya tidak aktif?
+## Error dan privasi
 
-Tidak. Saldo tidak kedaluwarsa dan tidak ada biaya tidak aktif. Saldo juga tidak dapat dipindahtangankan atau diuangkan di luar [Kebijakan Pengembalian Dana](/legals/refund-policy).
+### Apa tindakan untuk 429 atau 402?
 
-### Apakah ada bonus untuk top-up besar?
+Kuota layanan adalah **600 request, 6.500.000 token input, dan 200.000 token output per menit**, dipakai bersama dalam organisasi yang sama. Semua API key dan anggota organisasi terdampak saat kuota tercapai. Detail kuota dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
 
-Ya. Paket preset top-up tertentu mendapat bonus kredit; daftar paket dan bonusnya tampil di halaman top-up. Untuk kebutuhan volume besar, hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com).
+### Apakah semua request gagal bebas biaya?
 
-### Apakah ada paket gratis atau uji coba?
+Kegagalan tanpa pemakaian yang dapat ditagih melepaskan reservasi. Untuk stream terputus atau penggunaan parsial, periksa biaya final di Logs.
 
-Pendaftaran gratis dan tanpa biaya bulanan, tetapi tidak ada kredit uji coba gratis. Saldo akun baru dimulai dari $0; kamu hanya membayar sesuai pemakaian setelah top-up. Tidak perlu kartu kredit untuk mendaftar.
+### Apakah prompt dan respons disimpan?
 
-## Error & performa
+Body logging **nonaktif secara default**; metadata biaya, token, status, dan latensi tetap tercatat. Bila diaktifkan admin, body dibatasi ukuran, field kredensial disaring, dan retensi default 14 hari. Rahasia dalam teks prompt tidak otomatis disaring. Lihat [Kebijakan Privasi](/legals/privacy-policy).
 
-### Permintaan saya timeout atau gagal 5xx. Apakah saya tetap ditagih?
+### Bagaimana menghubungi dukungan?
 
-Tidak. Request yang gagal dilayani (timeout, 5xx, atau kegagalan upstream) tidak ditagih; reservasi saldo dilepas otomatis. Detail status setiap request ada di **Request Logs**. Lihat juga [Error](/errors).
-
-### Respons terasa lambat. Bagaimana cara mendiagnosis?
-
-Buka **Request Logs** dan lihat waktu respons per request, termasuk waktu tunggu hingga token pertama (TTFT) untuk streaming. Jika hanya sebagian request yang lambat, kemungkinan besar itu kondisi provider saat itu; coba lagi atau pilih model lain dengan karakteristik serupa.
-
-## Privasi, keamanan & legal
-
-### Bagaimana keamanan API key saya dijaga?
-
-Secret hanya ditampilkan sekali saat dibuat; yang tersimpan hanya prefix-nya. Key diverifikasi per request dan bisa dicabut kapan saja. Jangan menaruh API key di browser atau kode yang dipublikasikan; panggil API dari server kamu.
-
-### Di mana data saya diproses dan disimpan?
-
-Metadata operasional (model, jumlah token, status, latensi, biaya) disimpan untuk billing dan monitoring. Isi prompt maupun respons tidak disimpan. Detail ada di [Kebijakan Privasi](/legals/privacy-policy).
-
-### Bagaimana jika saya butuh informasi hukum atau data pribadi saya?
-
-Buka [Dukungan](/support) atau email [halo@hostlinku.com](mailto:halo@hostlinku.com) untuk permintaan data pribadi; untuk urusan hukum gunakan [legal@hostlinku.com](mailto:legal@hostlinku.com).
-
-### Di mana saya bisa membaca dokumentasi API?
-
-Dokumentasi lengkap ada di [docs.hostlinku.com](https://docs.hostlinku.com), termasuk [Chat Completions](/chat-completions), [Model](/models), dan [Error](/errors).
-
-<Callout type="note" title="Tidak menemukan jawaban?">
-  Kirim pertanyaan ke [halo@hostlinku.com](mailto:halo@hostlinku.com). FAQ ini diperbarui berdasarkan pertanyaan yang paling sering masuk.
-</Callout>
+Layanan: [halo@hostlinku.com](mailto:halo@hostlinku.com). Permintaan data pribadi: [privacy@hostlinku.com](mailto:privacy@hostlinku.com). Baca [Keamanan](/legals/security) dan [Dukungan](/support).

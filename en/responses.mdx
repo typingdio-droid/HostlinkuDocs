@@ -15,11 +15,13 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-Each response includes an `x-request-id` header (Hostlinku request ID, in the format `resp_…`) and, for successful non-streaming responses, an `x-model` header.
+Successful responses include `x-request-id`; successful non-streaming responses also include `x-model` (the public model slug).
 
-<Callout type="note" title="All models, one format">
-`model` uses the same Hostlinku public slug as the [model catalog](/en/models) - e.g., `gpt-5-5`, `claude-sonnet-4-6`, `deepseek-v4-flash`. Models that do not natively provide a Responses API (including Claude) can still be called-the gateway handles the translation.
+<Callout type="note" title="Model and tool compatibility">
+  `model` uses a public slug from the [model catalog](/en/models). The gateway offers native Responses and a Chat Completions bridge according to the model deployment. Response-format compatibility does not mean every model supports all Responses features or Codex tools.
 </Callout>
+
+Choose a model available in the API key Service Mode. Vision, reasoning, caching, JSON schema, and tool calling depend on the model. Native Responses passes upstream features through; the Chat Completions bridge supports messages, model-supported images, and `type: "function"` tools. Hosted/custom tools and encrypted reasoning require native support.
 
 ## Quick Setup
 
@@ -99,15 +101,15 @@ print(result.final_output)
 | `stream` | `boolean` | `true` for SSE (see below). |
 | `tools`, `tool_choice`, `parallel_tool_calls` | - | Function calling format Responses (`{ "type": "function", "name", "parameters" }`). |
 | `reasoning` | `object` | E.g., `{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`. |
-| `include` | `string[]` | E.g., `["reasoning.encrypted_content"]` - encrypted reasoning items are returned as-is so they can be resent on the next turn (used by the Codex CLI). |
+| `include` | `string[]` | E.g., `["reasoning.encrypted_content"]`; encrypted items depend on upstream native Responses support. The chat bridge does not preserve encrypted reasoning items. |
 | `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | As specified by OpenAI; passed to the model. |
 | `store` | `boolean` | Always treated as `false` (see *Stateless*). |
-| `previous_response_id`, `conversation`, `background` | - | **Not supported** → `400 invalid_request_error`. |
+| `previous_response_id`, `conversation`, `background` | - | Non-null `previous_response_id` and `conversation` return `400 invalid_request_error`; `background: true` is rejected. Omit these fields; `background: false` is accepted. |
 
-Any other unknown fields are passed to the gateway (parameters not supported by the model will be ignored). An invalid body results in a `400 invalid_request_error` response, with details for each field provided in `error.details.issues`.
+Other Responses body fields are passed through. Parameters may be forwarded, ignored, or rejected depending on the protocol path and upstream support; schema acceptance does not guarantee model support. Invalid bodies return `400 invalid_request_error` with details in `error.details.issues`.
 
 <Callout type="important" title="Stateless - send the full history in `input`">
-Hostlinku **does not store** the response (`store: false`). For multi-turn conversations, send the entire history (including the `function_call`, `function_call_output`, and `reasoning` items from the previous response) in the `input` array-exactly as the Codex CLI does. `previous_response_id` is rejected with a clear message; `GET`/`DELETE /v1/responses/{id}` returns a `404`.
+  Send the full history in `input` with `store: false`. Non-null `previous_response_id` and `conversation`, and `background: true`, are rejected. `GET`/`DELETE /v1/responses/{id}` is unavailable. Reasoning items can be reused on native paths; the chat bridge skips them.
 </Callout>
 
 ## Non-streaming response
@@ -234,7 +236,7 @@ print(r2.output_text)
 
 | HTTP | `error.type` | `error.code` | Common causes |
 |---|---|---|---|
-| 400 | `invalid_request_error` | `invalid_request` | Invalid body, `max_output_tokens` exceeds the model limit, `previous_response_id` was sent, model not available in Service Mode key. |
+| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | Invalid body, `max_output_tokens` exceeds the model limit, `previous_response_id` was sent, model not available in Service Mode key. |
 | 401 | `authentication_error` | `invalid_api_key` | Invalid, revoked, or expired API key, or request made without an API key. |
 | 402 | `insufficient_quota` | `insufficient_quota` | Insufficient balance or API key credit limit reached. |
 | 403 | `permission_error` | - | Account suspended / access denied. |
@@ -242,4 +244,4 @@ print(r2.output_text)
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | The request limit has been reached (see the `Retry-After` header). |
 | 503 | `server_error` | `model_unavailable` / `server_error` | The model or upstream is currently unavailable - it is safe to retry. |
 
-Error messages never include the upstream provider's identity. A complete list of codes for the Chat Completions format is available at [Error](/en/errors).
+Errors are sanitized to mask internal identities; some upstream rejection reasons can still appear. [Error](/en/errors).

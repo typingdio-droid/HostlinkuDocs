@@ -1,0 +1,52 @@
+---
+title: "Kimi K3.1 Pro Hyper"
+description: "Kimi K3.1 Pro Hyper · Dedicated · 1,048,576 token"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## Ringkasan
+
+Model keluarga Kimi/Moonshot untuk Service Mode **Dedicated**.
+
+| Properti | Nilai |
+|---|---|
+| Provider | Moonshot |
+| Slug | `kimi-k3-1-pro-hyper` |
+| Konteks katalog | 1,048,576 token |
+| Output maks katalog | 64,000 token |
+| Service Mode | Dedicated |
+
+## Kapabilitas
+
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+Fitur dan batas request mengikuti model, Service Mode, serta protokol yang digunakan.
+
+## Harga
+
+Diperbarui **6 November 2026**. [Harga terkini](https://hostlinku.com/models/kimi-k3-1-pro-hyper) mengikuti Service Mode API key. **1 <CreditIcon /> = \$1**. `—` berarti tarif belum dicantumkan. Tier mengikuti jumlah token prompt.
+
+| Item | Unit | Tier | Dedicated (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M token | Dasar | 6.9 |
+| Output (completion) | per 1M token | Dasar | 34.5 |
+| Cache read | per 1M token | Dasar | 0.345 |
+
+## Endpoint yang didukung
+
+| Endpoint | Format | Dukungan |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Bridge menyesuaikan format API; fitur vendor dan tool bawaan aplikasi dapat berbeda. Gunakan API key dengan Service Mode yang tercantum di atas.
+
+## Model terkait
+
+- [Kimi K3](/models/kimi-k3)
+- [Kimi K2.6](/models/kimi-k2-6)
+- [Kimi K2.7 Code](/models/kimi-k2-7-code)
+
+[← Kembali ke katalog model](/models)

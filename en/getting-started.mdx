@@ -9,7 +9,7 @@ This page walks you from zero to a successful chat completion request through Ho
 
 ## Prerequisites
 
-- **Hostlinku account**: sign up for free at [auth2.hostlinku.com](https://auth2.hostlinku.com).
+- **Hostlinku account**: [sign up through the backend](https://api.hostlinku.com/api/auth2/register), which redirects to Keycloak.
 - **Credit balance**: the gateway charges per token. Top up in the console before production requests. Test requests usually cost less than a cent, but your balance must not be empty. See [Billing & Balance](/en/billing).
 - **Test tools**: curl is enough. For advanced examples, the official OpenAI SDK (`pip install openai`) or Node (`npm install openai`) works without code changes.
 
@@ -19,17 +19,16 @@ This page walks you from zero to a successful chat completion request through Ho
 
 ### Sign up or sign in
 
-Open [auth2.hostlinku.com](https://auth2.hostlinku.com): create a new account, or sign in with an existing one (including SSO if enabled by an admin).
-
-The login page also offers **Sign in with a passkey** (WebAuthn) when your device supports it.
+Open [Sign up](https://api.hostlinku.com/api/auth2/register) or [Sign in](https://api.hostlinku.com/api/auth2/login). The backend starts the Keycloak flow at `auth2.hostlinku.com`, handles the callback, and opens the Console. Passkey and SSO options depend on your account, device, and available providers.
 
 ### Create an API key
 
 Go to [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** → **Create API key**. In the creation dialog you can set:
 
 - **Name**: for identification, e.g. `production-your-app`.
-- **Expiry**: optional - never, 30/90/365 days, or a custom date.
-- **Credit limit**: optional - a usage limit for the key (e.g. $10) per **Daily / Weekly / Monthly** window, or no reset (total limit).
+- **Service Mode**: choose **Performance** (default), **Low-Cost**, or **Dedicated**. The key mode determines models and prices.
+- **Expiry**: 30 days (default), 60 days, 90 days, or never.
+- **Monthly Spending Limit**: optional monthly key cap. The Console form has no scope selector or daily/weekly reset choice; see [Authentication](/en/authentication) for the API contract.
 
 <Callout type="warning" title="The secret is shown only once">
   After the API key is created, the `sk-…` secret is **shown only once** in the console. Copy and store it safely: the server stores only a SHA-256 hash and cannot display it again. If you lose the secret, revoke the key and create a new one.
@@ -74,7 +73,7 @@ The model slug above is just an example. See the valid slugs for your account in
 
 ### Recommendation: use streaming
 
-For chat applications, send `"stream": true`. The first token appears as soon as the model starts answering (usually under 1–2 seconds) without waiting for the full answer. Total time is the same, but your app feels much faster to users.
+For chat applications, send `"stream": true` to show output as it is generated without waiting for the full answer. Time to first token depends on the model and provider conditions; streaming does not guarantee a particular latency.
 
 ```python
 import os
@@ -103,7 +102,7 @@ curl -N https://api.hostlinku.com/v1/chat/completions   -H "Content-Type: applic
 
 ### Check balance and history
 
-In the console, open **Credits/Balance** to see your running balance and **Request Log** for request history with tokens, cost, and latency. An equivalent endpoint is available at [`GET /api/wallet/account`](/en/billing) for console sessions, while the public API (`sk-…` keys) uses `/v1/*`.
+In the console, open **Billing** to see your organization balance and **Request Log** for request history with tokens, cost, and latency. An equivalent endpoint is available at [`GET /api/wallet/account`](/en/billing) for console sessions, while the public API (`sk-…` keys) uses `/v1/*`.
 
 </Steps>
 
@@ -123,12 +122,6 @@ In the console, open **Credits/Balance** to see your running balance and **Reque
 
 ## Passkey login and 2FA
 
-Hostlinku accounts use Keycloak at `auth2.hostlinku.com`. Besides email and password, you can use:
+Hostlinku accounts use Keycloak. Passkeys (WebAuthn), TOTP authenticators, and recovery codes are available through **Settings → Security**. Register the appropriate option before using it at login. Keycloak handles registration and authentication challenges; SSO availability follows enabled providers.
 
-- **Passkey (WebAuthn)** - passwordless sign-in with device biometrics or a security key.
-- **Authenticator (TOTP)** - a 6-digit code from an authenticator app.
-- **Recovery codes** - single-use backup codes.
-
-Manage them in the Console under **Settings -> Security**. *Add passkey* opens the device dialog; once a passkey
-is registered, *Sign in with a passkey* on the login page opens the same dialog immediately. Cancelling the dialog
-keeps you on the login page - retry or sign in with your password.
+For streaming costs, check **Logs / Analytics / Billing** after the stream completes. Do not expect `hostlinku.cost` in every SSE chunk; billing may estimate costs when upstream omits usage.

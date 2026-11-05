@@ -13,35 +13,31 @@ GLM-5.1 is Zhipu's flagship text model, with 200K context and 128K max output, s
 |---|---|
 | Provider | Zhipu |
 | Slug | `glm-5-1` |
-| Context | 200,000 tokens |
-| Max output | 128,000 tokens |
 | Input | text |
 | Output | text |
 | Release | 2026-06-14 |
+| Catalog context | 200,000 tokens |
+| Catalog max output | 128,000 tokens |
+| Service Mode | Performance |
 
 ## Capabilities
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | $0.882 |
-| Output (completion) | $3.529 |
-| Cache read | $0.191 |
-| Cache write | - |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/glm-5-1) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Performance (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 0.74088 |
+| Output (completion) | per 1M tokens | Base | 2.96436 |
+| Cache read | per 1M tokens | Base | 0.16044 |
+| Input (prompt) | per 1M tokens | Prompt ≥ 32,000 tokens | 0.98868 |
+| Output (completion) | per 1M tokens | Prompt ≥ 32,000 tokens | 3.45912 |
+| Cache read | per 1M tokens | Prompt ≥ 32,000 tokens | 0.24696 |
 
 ## Supported endpoints
 
@@ -51,7 +47,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 
@@ -67,10 +63,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 ## Related models
 
-- [GLM 5](/en/models/glm-5)
 - [GLM 5.2](/en/models/glm-5-2)
 - [GLM 5.3](/en/models/glm-5-3)
-- [GLM 5.3 Hyper Chat](/en/models/glm-5-3-hyper-chat)
 - [GLM-5.3 Flash](/en/models/glm-5-3-flash)
 - [GLM-5.3 Flash Hyper](/en/models/glm-5-3-flash-hyper)
 

@@ -1,13 +1,19 @@
 ---
 title: "OpenAI Agents SDK"
-description: "Use the OpenAI Agents SDK (Python & TypeScript) with Hostlinku via the Responses API - set_default_openai_client, tracing disabled, tools & handoff still running"
+description: "OpenAI Agents SDK examples with Hostlinku: client, tracing, function tools, and local history."
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
 The [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) uses the **Responses API** by default, which is provided by Hostlinku at [`POST /v1/responses`](/en/responses). Simply provide the OpenAI client with Hostlinku’s `base_url`, and disable tracing (tracing is exported to the OpenAI platform, not through the gateway).
 
+<Callout type="note" title="Model and tool compatibility">
+  Choose a model available in the API key Service Mode. Vision, JSON schema, reasoning, and tool calling depend on the model and protocol path. See [compatibility limits](/en/responses).
+</Callout>
+
 <Steps>
+
+
 
 ### Install
 
@@ -80,13 +86,13 @@ console.log(result.finalOutput);
 
 ### Verification
 
-Run the script; two requests (the tool call and the response) appear in the console → **Request Log** with the ID `resp_…`.
+If the model calls a tool, this example usually creates two requests in **Request Logs**: the tool-call turn and the answer turn.
 
 </Steps>
 
 ## How the agent loop works
 
-Each iteration of the *agent loop* is a single request to the Hostlinku Gateway: the agent sends a prompt, the model responds with a *tool call*, the agent runs the tool locally (reads/writes files, executes commands), and then sends the results back-and so on until the model provides the final answer. The gateway routes each iteration to the upstream model, and everything is logged separately in the console → **Request Log**, complete with the token and associated cost.
+The agent sends a prompt to the gateway. When the model requests a tool, the SDK runs it and sends the result back until the answer is complete. Each model call has its own request in **Request Logs**.
 
 ![Hostlinku agent loop diagram: IDE/coding agent, Hostlinku Gateway, upstream model, Hostlinku Console, and local workspace](/images/integrations/agent-loop-detailed.webp "Agent loop via Hostlinku: the agent sends a prompt to the gateway, the gateway routes it to the upstream model, the tool runs locally, and every request is logged in the console.")
 
@@ -103,7 +109,7 @@ python agent.py
 
 ## Responses API or Chat Completions?
 
-The default SDK is the Responses API (`/v1/responses`) - recommended, as it supports `reasoning` items and offers the most comprehensive set of tool workflows. If you want Chat Completions (`/v1/chat/completions`):
+The SDK defaults to Responses API (`/v1/responses`). Reasoning and tool support depend on the model and native/bridge path. To use Chat Completions (`/v1/chat/completions`):
 
 ```python
 from agents import set_default_openai_api
@@ -125,12 +131,12 @@ Hostlinku does not store responses. Let `Runner`/`run` manage the history (by de
 
 | Agents SDK Features | Status |
 |---|---|
-| `function_tool` / `tool()`, parallel tool calls | Yes |
+| `function_tool` / `tool()`, parallel tool calls | Available on models supporting function calling; parallel calls depend on the model. |
 | Handoffs between agents (including different models per agent) | Yes - mix `claude-sonnet-4-6` and `gpt-5-5` in a single workflow |
 | Structured output (`output_type` / Zod) | Yes, for models that support JSON schema |
 | Streaming (`Runner.run_streamed`, `run(..., { stream: true })`) | Yes |
-| `reasoning={"effort": …}` via `ModelSettings` | Yes, passed to the model |
-| OpenAI hosted tools (`WebSearchTool`, `FileSearchTool`, `CodeInterpreterTool`) | Depends on the target model; run the tool as its own `function_tool` if it is not available |
+| `reasoning={"effort": …}` via `ModelSettings` | Accepted; supported values and results depend on the model and protocol path. |
+| OpenAI hosted tools (`WebSearchTool`, `FileSearchTool`, `CodeInterpreterTool`) | Depends on upstream native Responses support; the chat bridge only translates `type: "function"` tools. Implement a function tool when a hosted tool is unavailable. |
 | Tracing to the OpenAI platform | Not via the gateway - disable it, or use a third-party trace processor |
 
 ## Troubleshooting

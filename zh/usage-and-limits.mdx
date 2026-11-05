@@ -1,77 +1,69 @@
 ---
-title: "使用与限制"
-description: "速率限制网关、每个 API 密钥的配额限制，以及如何在控制台中监控使用情况"
+title: "用量与限额"
+description: "速率限制、密钥支出限额、余额与用量监控。"
 ---
-
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku 通过三个相互补充的层级对使用进行限制：**速率限制**（单位时间内的请求数量）、**每个 API 密钥的额度**（每个重置窗口内的费用）以及 **账户余额**（资金来源）。 在请求转发至提供商之前，这三项会在服务器端进行验证。
+用量受速率限制、密钥额度上限和组织余额约束。
 
-## 速率限制
+## 组织共享配额
 
-| 覆盖范围 | 边界 | 边界确定者 |
+同一组织的所有 API 密钥及成员共享此配额。增加密钥或使用其他成员账户不会增加配额。
+
+| Service Mode | 请求/分钟 | 输入 token/分钟 | 输出 token/分钟 |
+|---|---|---|---|
+| Performance | 600 | 6,500,000 | 200,000 |
+| Low-Cost | 600 | 6,500,000 | 200,000 |
+| Dedicated | 600 | 6,500,000 | 200,000 |
+
+## 其他端点限制
+
+Console、登录和 checkout 端点按 IP 限制，与模型使用配额分别计算。
+
+| 范围 | 限额 | 计数单位 |
 |---|---|---|
-| `POST /v1/chat/completions` | **600 次请求/分钟** | 每个API密钥（`sk-…`） |
-| 控制台和公共端点 (`/api/*`) | **每分钟120次请求** | 按IP地址 |
-| 身份验证端点（登录、注册、一次性密码、重置） | **30次试验 / 15分钟** | 按IP地址 |
+| 使用通用限流器的Console/公开端点 | **每60秒120次请求** | 每个IP |
+| 使用认证限流器的端点 | **每15分钟30次尝试** | 每个IP |
+| 令牌checkout的GET | **每60秒90次请求** | 每个IP |
+| 令牌checkout的修改操作 | **每60秒15次请求** | 每个IP |
 
-每个经过限幅器的响应都包含标准标头（IETF `RateLimit-*` 格式）：`RateLimit-Limit`、`RateLimit-Remaining` 和 `RateLimit-Reset`。 请读取 `Reset` 的值，以了解下一个窗口何时开始。
+<Callout type="tip" title="等待后重试429">
 
-当超过限制时，其响应为：
+读取重置标头或可用的 `Retry-After`。降低并发并使用带随机抖动的指数退避。不断立即重试无法解除限流。
 
-```http
-HTTP/1.1 429 Too Many Requests
-```
-
-```json
-{
-  "status": "error",
-  "error": {
-    "code": "RATE_LIMITED",
-    "message": "Rate limit exceeded. Upgrade your plan for a higher limit."
-  }
-}
-```
-
-<Callout type="tip" title="正确的后退策略">
-对于 429，请按照 `RateLimit-Reset` 的要求等待（或采用 1s → 2s → 4s… 的指数退避，并带抖动），然后重试。请勿不间断地重复发送；这只会延长在运行窗口中的阻塞时间。
 </Callout>
 
-## 每个 API 密钥的额度
+## API 密钥额度上限
 
-除了速率限制外，每个 API 密钥均可设置**费用限额**（美元），重置周期可选每日、每周、每月（UTC 日历）或无重置的总限额。使用量根据每个 API 密钥的实际请求费用计算。 达到限额的 API 密钥将被拒绝，返回 **402 PAYMENT_REQUIRED** 状态码，直至下一个计费周期开始。设置详情请参见 [身份验证](/zh/authentication)。
+Console 表单提供 **Monthly Spending Limit**。密钥管理API还支持 `daily`、`weekly`、`monthly` 和总计 `lifetime`/不重置。日窗口从00:00 UTC开始，周窗口从周一00:00 UTC开始，月窗口从每月1日00:00 UTC开始。参阅 [身份验证](/zh/authentication)。
 
-## 请求时的余额预留
+限额按密钥记录费用计算，不按Token数计算。达到上限后返回 `402 PAYMENT_REQUIRED`。增加余额不会改变密钥限额。
 
-对于每个请求，网关：
+## 余额预留
 
-1. **预留**预估费用（根据提示词长度及`max_tokens`）从账户余额中扣除。
-2. 将请求转发给服务提供商。
-3. **Commit** 根据已使用的Token计算实际费用，并释放剩余的预留额度。
+网关从组织余额预留估算费用，转发请求后按上游usage结算并释放剩余预留。缺少usage时可能使用估算值。没有可计费用量的失败会释放预留。
 
-这意味着：控制台中的余额分为 `balance`（总余额）和 `reserved`（正在处理的待处理请求）。可用于新请求的是 `balance − reserved`（`available`）。 失败的请求**不收取费用**；其预留资源将自动释放。
+新请求可用金额为 `available = balance − reserved`，余额和密钥限额都需要允许该请求。参阅 [计费与余额](/zh/billing)。
 
-## 在控制台中监控使用情况
+## Console 监控
 
-访问 [console.hostlinku.com](https://console.hostlinku.com)：
-
-| 菜单 | 内容 |
+| 菜单 | 数据 |
 |---|---|
-| **仪表盘 / 使用** | 请求摘要、Token进出情况、缓存以及各时间段（24小时、7天/30天/90天）的费用。 |
-| **请求日志** | 完整的请求列表：模型、状态、Token、费用、延迟（包括流式传输的TTFT）以及每个请求的详细信息。 |
-| **审计日志** | 账户操作记录：API密钥的创建/撤销、充值、设置更改等。 |
-| **API密钥** | 每个API密钥的使用情况：请求、Token、费用、`lastUsed`、过期时间和限制。 |
+| **Overview / Analytics** | 按时间范围汇总请求、Token、缓存和费用 |
+| **Logs** | 模型、状态、Token、费用、延迟、TTFT和详情 |
+| **API Keys** | 状态、Service Mode、有效期、限额和密钥用量 |
+| **Billing** | 组织余额、充值、交易和发票 |
 
-所有数据均来自与计费所用相同的后端遥测表，界面端未进行任何估算。
+非流式chat completion包含 `hostlinku.cost`。SSE分块不保证费用块；最终费用请查看Logs/Analytics/Billing。`x-request-id` 可关联请求与日志。
 
-<Callout type="note" title="每次API调用的费用">
-对于您自己的应用程序，每个聊天补全响应中的 `hostlinku.cost` 块包含该请求的费用，而 `x-request-id` 标头将其与控制台中的日志行关联起来。
-</Callout>
+## 日志内容与保留期限
 
-## 行为摘要 429 和 402
+Body logging **默认关闭**。管理员开启后限制大小并遮蔽凭据字段，默认14天清理正文。用量/交易元数据仍保留。参阅 [隐私](/zh/legals/privacy-policy)。
 
-| 代码 | 含义 | 需要做的事情 |
+## 429和402含义
+
+| 代码 | 含义 | 操作 |
 |---|---|---|
-| `429 RATE_LIMITED` | 该时间段内的请求过多 | 等待 `RateLimit-Reset`，进行退避，或降低并发度 |
-| `402 PAYMENT_REQUIRED` | 信用问题：余额不足 **或** API 密钥额度已用尽 | 请查看错误信息。如果提示“API密钥额度已达上限”，请等待重置或提高额度；如果提示“额度不足”，请进行充值（[计费与余额](/zh/billing)） |
+| `429 RATE_LIMITED` | 超出请求数限额 | 等待重置、退避、降低并发 |
+| `402 PAYMENT_REQUIRED` | 可用余额不足或达到密钥额度上限 | 阅读消息后充值、等待重置或修改适当限额 |

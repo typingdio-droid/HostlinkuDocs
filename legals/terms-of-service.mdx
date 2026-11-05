@@ -34,7 +34,7 @@ Jika kamu menggunakan Layanan atas nama perusahaan atau organisasi, kamu menyata
 API key adalah kredensial yang mengautentikasi request ke API dan menjadi dasar penagihan. Setiap request yang membawa API key milik akun kamu dianggap sebagai request kamu; biaya dikenakan hanya untuk request yang diproses, sesuai bagian 7.
 
 - API key ditampilkan utuh **satu kali** saat dibuat. Kami hanya menyimpan nilai hash-nya sehingga key yang hilang tidak dapat dipulihkan; buat key baru dan cabut key lama.
-- Kamu dapat membatasi key dengan scope (misalnya `chat`, `embeddings`, `completions`), masa berlaku, dan batas kredit per key melalui [halaman API key](https://console.hostlinku.com/api-keys). Batas tersebut adalah alat bantu kontrol biaya, bukan jaminan bahwa pemakaian tidak akan melampaui angka tertentu dalam kondisi streaming atau request paralel.
+- Atur **Service Mode**, masa berlaku, dan limit kredit melalui [API Keys](https://console.hostlinku.com/api-keys). Limit kredit membantu mengendalikan biaya; lihat [Autentikasi](/authentication).
 - Simpan API key di sisi server. Jangan menaruhnya di kode frontend, aplikasi mobile, repositori publik, atau log yang dapat diakses pihak lain.
 - Jika kamu menduga API key bocor atau akun diakses tanpa izin, segera cabut key tersebut dan hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com). Biaya yang timbul sebelum key dicabut tetap menjadi tanggung jawab kamu, kecuali kebocoran terbukti disebabkan oleh kelalaian kami.
 - Kami dapat menonaktifkan key yang terindikasi bocor (misalnya ditemukan di repositori publik) untuk melindungi saldo kamu.
@@ -90,7 +90,7 @@ Perubahan harga berlaku untuk request yang diproses setelah perubahan dipublikas
 
 ## 8. Rate limit dan pembatasan layanan
 
-Untuk menjaga stabilitas, kami menerapkan rate limit per API key dan per alamat IP. Batas yang berlaku dikirim melalui header `RateLimit-*` pada setiap respons, dan request yang melampaui batas ditolak dengan status `429` tanpa biaya. Batas default dapat berubah sewaktu-waktu sesuai kapasitas, dan dapat dinaikkan untuk akun tertentu berdasarkan permintaan.
+Kuota penggunaan dibagi bersama dalam organisasi yang sama. Batas endpoint per IP berlaku terpisah. Request yang ditolak limiter mengembalikan `429` tanpa reservasi kredit. Lihat [Pemakaian & Limit](/usage-and-limits).
 
 Kami juga dapat membatasi ukuran request, panjang keluaran, jumlah request paralel, atau akses ke model tertentu, serta menyaring atau menahan request yang terindikasi melanggar Kebijakan Penggunaan atau kebijakan upstream.
 
@@ -127,7 +127,7 @@ Saran, laporan bug, atau masukan yang kamu kirimkan boleh kami gunakan untuk mem
 
 ## 12. Layanan pihak ketiga
 
-Layanan bergantung pada pihak ketiga, antara lain upstream provider model, penyedia pembayaran (iPaymu, BlockBee), penyedia identitas SSO, penyedia email, dan Cloudflare. Penggunaan layanan pihak ketiga tunduk pada ketentuan masing-masing. Kami tidak bertanggung jawab atas konten, kebijakan, atau kegagalan layanan pihak ketiga di luar kendali wajar kami, termasuk situs yang ditautkan dari Layanan.
+Layanan bergantung pada pihak ketiga, antara lain upstream provider model, penyedia pembayaran (iPaymu, Heleket), penyedia identitas SSO, penyedia email, dan Cloudflare. Penggunaan layanan pihak ketiga tunduk pada ketentuan masing-masing. Kami tidak bertanggung jawab atas konten, kebijakan, atau kegagalan layanan pihak ketiga di luar kendali wajar kami, termasuk situs yang ditautkan dari Layanan.
 
 <a id="penangguhan"></a>
 

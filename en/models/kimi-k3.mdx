@@ -13,39 +13,30 @@ Kimi K3 is Kimi's flagship model, designed for long-range programming and end-to
 |---|---|
 | Provider | Moonshot |
 | Slug | `kimi-k3` |
-| Context | 1,000,000 tokens |
-| Max output | 64,000 tokens |
 | Input | text, image |
 | Output | text |
 | Release | 2026-07-16 |
 | Tags | flagship |
+| Catalog context | 1,000,000 tokens |
+| Catalog max output | 64,000 tokens |
+| Service Mode | Performance |
 
 ## Capabilities
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | $2.941 |
-| Output (completion) | $14.706 |
-| Cache read | $0.2941 |
-| Cache write | - |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/kimi-k3) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Performance (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 2.47044 |
+| Output (completion) | per 1M tokens | Base | 12.35304 |
+| Cache read | per 1M tokens | Base | 0.247044 |
+| Web search | per 1K calls | Base | 4.6326 |
 
 ## Supported endpoints
 
@@ -55,7 +46,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 
@@ -73,8 +64,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 - [Kimi K2.6](/en/models/kimi-k2-6)
 - [Kimi K2.7 Code](/en/models/kimi-k2-7-code)
-- [Kimi K3 Hyper](/en/models/kimi-k3-hyper)
-- [Kimi K3 Hyper Chat](/en/models/kimi-k3-hyper-chat)
-- [Kimi K3 Turbo](/en/models/kimi-k3-turbo)
+
+- [Kimi K3.1 Pro Hyper](/en/models/kimi-k3-1-pro-hyper)
 
 [← Back to the model catalog](/en/models)

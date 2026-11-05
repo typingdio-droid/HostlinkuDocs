@@ -3,60 +3,49 @@ title: "GLM-5.3 Flash Hyper"
 description: "GLM-5.3-Flashは、Zhipu AIが提供する、日常的な分析や能動的な作業向けの、GLM-5.3よりも軽量なマルチモーダル版です。Hostlinku専用チャネルで利用可能で、..."
 ---
 
-
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 ## 概要
 
-GLM-5.3-Flashは、日常的な分析やエージェント業務向けのGLM-5.3の軽量版マルチモーダルモデル（Zhipu AI）です。スループットの高いHostlinku専用チャネルで利用可能です。
+GLM-5.3-Flashは、日常的な分析やエージェント業務向けのGLM-5.3の軽量版マルチモーダルモデル（Zhipu AI）です。HostlinkuのDedicatedカタログで利用できます。性能はモデルとリクエストによって異なります。
 
 | プロパティ | 値 |
 |---|---|
 | プロバイダー | Zhipu |
 | slug | `glm-5-3-flash-hyper` |
-| コンテキスト | 1,000,000トークン |
-| 最大出力 | 64,000トークン |
 | 入力 | テキスト、画像 |
 | 出力 | text |
 | リリース | 2026-08-17 |
 | タグ | フラッグシップ、推論、専用、フラッシュ |
+| カタログのコンテキスト | 1,000,000 トークン |
+| カタログの最大出力 | 64,000 トークン |
+| Service Mode | Dedicated |
 
 ## 機能
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
-| 項目 | 価格 |
-|---|---|
-| 入力（プロンプト） | - |
-| 出力（補完） | - |
-| キャッシュ読み取り | - |
-| キャッシュ書き込み | - |
+**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/glm-5-3-flash-hyper)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
 
-価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+| 項目 | 単位 | 料金区分 | Dedicated (<CreditIcon />) |
+|---|---|---|---|
+| 入力（プロンプト） | 100万トークンあたり | 基本 | 0.345 |
+| 出力 | 100万トークンあたり | 基本 | 1.15 |
+| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.069 |
 
 ## 対応エンドポイント
 
-| エンドポイント | フォーマット | サポート |
+| Endpoint | Format | 対応 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
-| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
 
 ## リクエストの例
 
@@ -72,11 +61,9 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 ## 関連モデル
 
-- [GLM 5](/ja/models/glm-5)
 - [GLM 5.1](/ja/models/glm-5-1)
 - [GLM 5.2](/ja/models/glm-5-2)
 - [GLM 5.3](/ja/models/glm-5-3)
-- [GLM 5.3 Hyper Chat](/ja/models/glm-5-3-hyper-chat)
 - [GLM-5.3 Flash](/ja/models/glm-5-3-flash)
 
 [← モデル一覧に戻る](/ja/models)

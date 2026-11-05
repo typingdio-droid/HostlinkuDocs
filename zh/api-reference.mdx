@@ -10,27 +10,23 @@ import { Callout } from "/snippets/mdx.jsx";
 
 基础 URL：`https://api.hostlinku.com`。所有网关端点均位于 `/v1` 之下，并通过 `Authorization: Bearer` **或** `x-api-key` 请求头接收 API 密钥 Hostlinku（`sk-…`）。
 
-## 速率限制
+## 模型与工具兼容性
 
-为了保障所有用户的服务质量，网关对每个API密钥设定了以下限制：
+请选择 API 密钥 Service Mode 中可用的模型。vision、reasoning、缓存、JSON schema 和 tool calling 取决于模型。原生 Responses 转发 upstream 功能；Chat Completions 桥接支持消息、模型支持的图片和 `type: "function"` 工具。hosted/custom tools 和加密 reasoning 需要原生支持。
 
-| 限额类型 | 配额 | 描述 |
-|---|---|---|
-| RPM（每分钟请求数） | **600 次请求/分钟** | 按API密钥划分，适用于所有模型 |
-| RPD（每日请求数） | 无限制 | 受账户余额及[每个API密钥的额度](/zh/authentication)限制 |
-| TPM（每分钟Token数） | 无限制 | `max_tokens` 必须 ≤ 模型输出上限（若超过，则 `400` 将被拒绝） |
+## 组织共享配额
 
-**速率限制详情：**
+同一组织的所有 API 密钥及成员共享此配额。增加密钥或使用其他成员账户不会增加配额。
 
-- 每个API密钥的60秒时间窗口；所有模型的请求将合并计算。
-- 被限额器拒绝的请求**不会**影响余额（不会预留额度）。
-- 控制台和公共端点（`/api/*`）的限制为**每个 IP 地址每分钟 120 次请求**；身份验证端点的限制为**每个 IP 地址每 15 分钟 30 次尝试**。
+| Service Mode | 请求/分钟 | 输入 token/分钟 | 输出 token/分钟 |
+|---|---|---|---|
+| Performance | 600 | 6,500,000 | 200,000 |
+| Low-Cost | 600 | 6,500,000 | 200,000 |
+| Dedicated | 600 | 6,500,000 | 200,000 |
 
-**当达到限额时：**
+配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
 
-- 返回 HTTP 错误代码 `429 Too Many Requests`。
-- `Retry-After` 标头中包含建议在重试前等待的秒数。
-- 标头 `RateLimit-Limit` / `RateLimit-Remaining` / `RateLimit-Reset`（IETF 格式）显示当前的 RPM 配额。
+Console、登录和 checkout 端点按 IP 限制，与模型使用配额分别计算。
 
 <Callout type="note" title="需要更高的限额吗？">
 请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)，并注明账户邮箱和预计费用。
@@ -283,7 +279,7 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 | 429 | 超出速率限制。 | `Rate limit exceeded. Upgrade your plan for a higher limit.` |
 | 503 | 模型/上游当前不可用-可以安全地采用退避策略重试。 | `The model is currently unavailable. Please try again later.` |
 
-错误消息中**绝不会**包含上游提供商的标识或原始文本。OpenAI格式的完整代码列表请参见[错误](/zh/errors)。
+错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。 [Error](/zh/errors).
 
 ### 429 响应头
 
@@ -340,7 +336,7 @@ curl --request GET \
 ```
 
 <Callout type="note">
-使用此端点获取最新模型名称；`id` 是两种 API 格式中 `model` 字段所使用的 slug。完整的目录及价格请参见 [模型](/zh/models)。
+使用此端点获取最新模型名称；`id` 是三种 API 格式中 `model` 字段所使用的 slug。完整的目录及价格请参见 [模型](/zh/models)。
 </Callout>
 
 ## 重试建议
@@ -351,7 +347,7 @@ curl --request GET \
 
 ## 安全建议
 
-API 密钥等同于账户凭证，可直接发起计费请求。
+API 密钥按 Service Mode 和额度授权付费网关访问；账户管理使用 Console 会话。
 
 - 请将 API 密钥保存在服务器端或受保护的本地环境中，通过环境变量（`HOSTLINKU_API_KEY`、`ANTHROPIC_API_KEY`、`OPENAI_API_KEY`）注入，切勿提交到代码仓库。
 - 为开发、测试和生产环境分别创建具有独立**额度限制**和**有效期**的不同 API 密钥。
@@ -365,3 +361,13 @@ API 密钥等同于账户凭证，可直接发起计费请求。
 - OpenAI API 官方文档：[https://developers.openai.com/](https://developers.openai.com/)
 - OpenAI Codex 官方文档：[https://developers.openai.com/codex/](https://developers.openai.com/codex/)
 - Anthropic API 与 Claude Code 官方文档：[https://docs.anthropic.com/](https://docs.anthropic.com/)
+
+## 指标与示例数值
+
+| 指标 | 含义 |
+|---|---|
+| `hostlinku.latencyMs` | 网关收到请求到响应完成的时间。 |
+| TTFT | 观察到第一个流式 token 的时间；非流式请求可能为空。 |
+| TPS | 符合条件的流式样本中，第一个 token 之后每秒输出 token 数。 |
+
+请查看统计的时间范围及样本。landing 速度动画为示例；监控结果见 [Status](https://status.hostlinku.com)。

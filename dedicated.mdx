@@ -1,65 +1,52 @@
 ---
-title: Service Mode Dedicated
-description: Model yang berjalan di infrastruktur Hostlinku sendiri - DeepSeek, GLM, dan Kimi dengan konteks 1 juta token.
+title: "Service Mode Dedicated"
+description: "Model Dedicated, pemilihan API key, batas per model, harga, dan prompt caching."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
 import { Callout } from "/snippets/mdx.jsx";
 
-**Dedicated** adalah Service Mode ketiga Hostlinku. Berbeda dari **Performance** dan
-**Low-Cost** yang meneruskan request ke mitra upstream, model Dedicated berjalan di
-**infrastruktur Hostlinku sendiri**.
+**Dedicated** adalah salah satu Service Mode Hostlinku untuk kumpulan model yang tersedia pada mode tersebut. Pilih **Dedicated** saat membuat API key di [Console](https://console.hostlinku.com). Mode melekat pada key; request tidak memakai parameter tambahan untuk mengganti mode.
 
 <Callout type="note" title="Satu API key = satu Service Mode">
-  Mode ini aktif bila API key kamu di-set ke Dedicated oleh admin. Untuk memakai mode lain
-  bersamaan, buat API key terpisah - Service Mode melekat pada key, bukan pada request.
+Untuk memakai Performance atau Low-Cost secara bersamaan, buat API key terpisah. Model yang dapat dipanggil dan harga mengikuti Service Mode key; periksa `GET /v1/models` memakai key tersebut.
 </Callout>
 
 ## Model yang tersedia
 
-Enam model, dua keluarga:
+Diperbarui **6 November 2026**. Model DeepSeek, GLM, dan Kimi berikut tersedia di [katalog Dedicated](https://hostlinku.com/models?mode=dedicated).
 
-| Keluarga | Model | Konteks |
-|---|---|---|
-| DeepSeek | `deepseek-v4-1-flash`, `deepseek-v4-1-flash-fast`, `deepseek-v4-1-flash-hyper` | 1.000.000 token |
-| GLM | `glm-5-3`, `glm-5-3-flash`, `glm-5-3-flash-hyper` | 1.000.000 token |
+| Model / ID API | Keluarga | Konteks katalog | Output maks katalog |
+|---|---|---|---|
+| [DeepSeek-V4.1-Flash](/models/deepseek-v4-1-flash) · `deepseek-v4-1-flash` | DeepSeek | 1,000,000 token | 384,000 token |
+| [DeepSeek-V4.1-Flash Fast](/models/deepseek-v4-1-flash-fast) · `deepseek-v4-1-flash-fast` | DeepSeek | 1,000,000 token | 384,000 token |
+| [DeepSeek-V4.1-Flash Hyper](/models/deepseek-v4-1-flash-hyper) · `deepseek-v4-1-flash-hyper` | DeepSeek | 1,000,000 token | 384,000 token |
+| [GLM 5.3](/models/glm-5-3) · `glm-5-3` | Zhipu | 1,000,000 token | 64,000 token |
+| [GLM-5.3 Flash](/models/glm-5-3-flash) · `glm-5-3-flash` | Zhipu | 1,000,000 token | 64,000 token |
+| [GLM-5.3 Flash Hyper](/models/glm-5-3-flash-hyper) · `glm-5-3-flash-hyper` | Zhipu | 1,000,000 token | 64,000 token |
+| [Kimi K3.1 Pro Hyper](/models/kimi-k3-1-pro-hyper) · `kimi-k3-1-pro-hyper` | Moonshot | 1,048,576 token | 64,000 token |
 
-Varian `-fast` dan `-hyper` adalah konfigurasi yang lebih cepat/lebih besar dari model
-dasarnya. Model di luar daftar ini **tidak** tersedia di mode Dedicated - gunakan Performance
-atau Low-Cost.
+Salin ID API persis dari katalog, termasuk `deepseek-v4-1-flash-fast`. Batas konteks, output, dan fitur berbeda per model.
 
 ## Endpoint dan autentikasi
 
-Base URL tidak berubah antar mode. Ketiga dialek API didukung:
+Base URL tetap `https://api.hostlinku.com`. Format API berikut tersedia; beberapa model memakai bridge untuk menyesuaikan format. Dukungan semua fitur vendor atau tool bawaan aplikasi perlu diperiksa tersendiri.
 
-| Dialek | Endpoint | Header auth |
+| Format | Endpoint | Header autentikasi |
 |---|---|---|
-| OpenAI Chat | `POST {base}/v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
-| OpenAI Responses | `POST {base}/v1/responses` | `Authorization: Bearer <API_KEY>` |
-| Anthropic Messages | `POST {base}/v1/messages` | `x-api-key: <API_KEY>` |
-
-Cukup arahkan aplikasi ke base URL Hostlinku dan pakai API key bermode Dedicated - tidak ada
-parameter tambahan untuk memilih mode.
+| OpenAI Chat | `POST /v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
+| OpenAI Responses | `POST /v1/responses` | `Authorization: Bearer <API_KEY>` |
+| Anthropic Messages | `POST /v1/messages` | `x-api-key: <API_KEY>` |
 
 ## Harga
 
-Harga jual = harga dasar model × multiplier mode Dedicated, ditagih per **1M token**
-(1 <CreditIcon /> = $1). Angka per model ada di [Katalog Model](/models) - pilih tab **Dedicated**
-untuk melihat harga yang berlaku pada key kamu. Contoh: `glm-5-3` saat ini <CreditIcon />1,21 input dan
-<CreditIcon />3,80 output per 1M token.
+Ditagih berdasarkan penggunaan pada Service Mode API key. **1 <CreditIcon /> = \$1**. Cek [tarif Dedicated](https://hostlinku.com/models?mode=dedicated) atau `GET /v1/models` dengan key Dedicated.
 
 ## Prompt caching
 
-Model Dedicated memakai **auto-cache dari provider**. Kamu tidak perlu mengirim
-`cache_control`: kirim prefix yang sama dalam masa hidup cache, lalu token yang dibaca dari
-cache muncul sebagai `cached_tokens` (`/v1/chat/completions`) atau `cache_read_input_tokens`
-(`/v1/messages`). Lihat [Hemat dengan Prompt Caching](/prompt-caching) untuk cara membaca
-angkanya di console.
+Pada model yang mendukung auto-cache, prefix berulang dapat menghasilkan cache hit tanpa `cache_control`. Hit dan masa cache mengikuti upstream. Penggunaan cache dilaporkan melalui `cached_tokens` pada Chat Completions atau `cache_read_input_tokens` pada Messages bila tersedia. Lihat [Prompt Caching](/prompt-caching).
 
 ## Batasan
 
-- Hanya sembilan model pada tabel di atas; tidak ada fallback otomatis ke mode lain.
-- Varian `-chat` (khusus coding/agentic) tidak dijual di katalog publik.
-- Tool calling, streaming, dan `stream_options.include_usage` didukung. Fitur vendor-spesifik
-  (mis. web search) bergantung pada modelnya dan tidak dijamin tersedia.
+- Model harus tersedia untuk Service Mode key; tidak ada fallback otomatis ke mode lain.
+- Fitur dan batas output mengikuti model serta protokol. Tool bawaan aplikasi belum tentu didukung oleh bridge.

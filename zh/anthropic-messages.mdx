@@ -169,4 +169,4 @@ POST https://api.hostlinku.com/v1/messages/count_tokens
 | 429 | `rate_limit_error` | 已达到请求上限。 |
 | 503 | `overloaded_error` | 模型/上游当前不可用-可以安全地重试。 |
 
-错误消息中从未包含上游提供商的标识信息。OpenAI 格式的完整代码列表请参见 [错误](/zh/errors)。
+错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。 [Error](/zh/errors).

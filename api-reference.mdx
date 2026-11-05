@@ -10,28 +10,23 @@ import { Callout } from "/snippets/mdx.jsx";
 Base URL: `https://api.hostlinku.com`. Semua endpoint gateway berada di bawah `/v1` dan menerima
 API key Hostlinku (`sk-…`) lewat header `Authorization: Bearer` **atau** `x-api-key`.
 
-## Rate Limiting
+## Kompatibilitas model dan tool
 
-Untuk menjaga kualitas layanan bagi semua pengguna, gateway memberlakukan batas berikut per API key:
+Pilih model yang tersedia untuk Service Mode API key. Vision, reasoning, caching, JSON schema, dan tool calling mengikuti kemampuan model. Responses native meneruskan fitur upstream; bridge Chat Completions mendukung pesan, gambar yang didukung model, dan tool `type: "function"`. Hosted/custom tools dan reasoning terenkripsi memerlukan dukungan native.
 
-| Limit Type | Quota | Description |
-|---|---|---|
-| RPM (Requests/Minute) | **600 req/min** | Per API key, dibagi untuk semua model |
-| RPD (Requests/Day) | Tidak dibatasi | Dibatasi saldo akun & [limit kredit per API key](/authentication) |
-| TPM (Tokens/Minute) | Tidak dibatasi | `max_tokens` wajib ≤ batas output model (ditolak `400` bila melebihi) |
+## Kuota bersama organisasi
 
-**Detail rate limit:**
+Kuota berikut dipakai bersama oleh semua API key dan anggota dalam organisasi yang sama. Menambah key atau memakai akun anggota lain tidak menambah kuota.
 
-- Jendela 60 detik per API key; request dari semua model dihitung bersama.
-- Request yang ditolak limiter **tidak** menyentuh saldo (tidak ada reservasi kredit).
-- Endpoint konsol & publik (`/api/*`) dibatasi **120 req/min per IP**; endpoint autentikasi
-  **30 percobaan / 15 menit per IP**.
+| Service Mode | Request/menit | Token input/menit | Token output/menit |
+|---|---|---|---|
+| Performance | 600 | 6,500,000 | 200,000 |
+| Low-Cost | 600 | 6,500,000 | 200,000 |
+| Dedicated | 600 | 6,500,000 | 200,000 |
 
-**Saat terkena limit:**
+Detail kuota dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
 
-- Mengembalikan HTTP `429 Too Many Requests`.
-- Header `Retry-After` berisi jumlah detik yang disarankan sebelum mencoba lagi.
-- Header `RateLimit-Limit` / `RateLimit-Remaining` / `RateLimit-Reset` (format IETF) menunjukkan kuota RPM saat ini.
+Batas endpoint Console, login, dan checkout dihitung per IP dan terpisah dari kuota penggunaan model.
 
 <Callout type="note" title="Butuh limit lebih tinggi?">
   Hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com) dengan menyebutkan email akun dan perkiraan beban.
@@ -135,7 +130,7 @@ data: {"type":"message_stop"}
 `POST /v1/chat/completions`
 
 Panggil model apa pun dengan format OpenAI Chat Completions. Header request harus memuat
-`Authorization: Bearer YOUR_API_KEY`. SDK OpenAI cukup diarahkan ke `base_url="https://api.hostlinku.com/v1"`.
+`Authorization: Bearer YOUR_API_KEY` atau `x-api-key`. SDK OpenAI cukup diarahkan ke `base_url="https://api.hostlinku.com/v1"`.
 Dokumentasi lengkap: [Chat Completions](/chat-completions).
 
 ### Request Body Parameters
@@ -294,8 +289,7 @@ Envelope error mengikuti protokol endpoint yang dipanggil:
 | 429 | Rate limit exceeded. | `Rate limit exceeded. Upgrade your plan for a higher limit.` |
 | 503 | Model/upstream sedang tidak tersedia - aman untuk di-retry dengan backoff. | `The model is currently unavailable. Please try again later.` |
 
-Pesan error **tidak pernah** memuat identitas atau teks mentah provider upstream. Daftar kode
-lengkap format OpenAI ada di [Error](/errors).
+Pesan error disanitasi untuk menyamarkan identitas internal; sebagian alasan penolakan upstream tetap dapat muncul. [Error](/errors).
 
 ### 429 Response Headers
 
@@ -354,7 +348,7 @@ curl --request GET \
 
 <Callout type="note">
   Gunakan endpoint ini untuk mengambil nama model terbaru; `id` adalah slug yang dipakai di field
-  `model` pada kedua format API. Katalog lengkap beserta harga ada di [Model](/models).
+  `model` pada ketiga format API. Katalog lengkap beserta harga ada di [Model](/models).
 </Callout>
 
 ## Rekomendasi Retry
@@ -365,7 +359,7 @@ curl --request GET \
 
 ## Rekomendasi Keamanan
 
-Satu API key setara dengan kredensial akun dan dapat melakukan request berbayar secara langsung.
+API key memberi akses ke gateway berbayar sesuai Service Mode dan limit; pengelolaan akun memakai sesi Console.
 
 - Simpan API key di server atau lingkungan lokal yang terlindungi. Injeksi lewat variabel lingkungan (`HOSTLINKU_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`) dan jangan pernah menyimpannya di repositori kode.
 - Gunakan API key terpisah dengan **limit kredit** dan **masa berlaku** mandiri untuk lingkungan pengembangan, pengujian, dan produksi.
@@ -379,3 +373,13 @@ Satu API key setara dengan kredensial akun dan dapat melakukan request berbayar 
 - Dokumentasi OpenAI API: [https://developers.openai.com/](https://developers.openai.com/)
 - Dokumentasi OpenAI Codex: [https://developers.openai.com/codex/](https://developers.openai.com/codex/)
 - Dokumentasi Anthropic API & Claude Code: [https://docs.anthropic.com/](https://docs.anthropic.com/)
+
+## Arti metrik dan contoh angka
+
+| Metrik | Arti |
+|---|---|
+| `hostlinku.latencyMs` | Waktu dari request diterima gateway sampai respons selesai. |
+| TTFT | Waktu sampai token pertama teramati pada stream; dapat kosong pada non-streaming. |
+| TPS | Token output per detik setelah token pertama, dari sampel stream yang memenuhi syarat. |
+
+Baca periode dan sampel pada statistik. Animasi kecepatan di landing adalah ilustrasi; hasil pemantauan tersedia di [Status](https://status.hostlinku.com).

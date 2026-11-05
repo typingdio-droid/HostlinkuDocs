@@ -10,9 +10,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ## 先决条件
 
-- **Hostlinku 账户**：请在 [auth2.hostlinku.com](https://auth2.hostlinku.com) 免费注册。
-
-如果设备支持，登录页面还提供 **使用通行密钥登录**（WebAuthn）。
+- **Hostlinku 账户**：从 [后端注册](https://api.hostlinku.com/api/auth2/register) 开始，浏览器会跳转至Keycloak。
 - **余额**：网关会按每个Token扣除余额。在提交生产请求前，请在控制台中充值。测试请求的费用通常低于一分钱，但余额仍不得为零。请参阅 [计费与余额](/zh/billing)。
 - **测试工具**：仅需 curl 即可。对于高级示例，可直接使用官方 SDK OpenAI（`pip install openai`）或 Node（`npm install openai`），无需修改代码。
 
@@ -22,15 +20,16 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### 注册或登录
 
-访问 [auth2.hostlinku.com](https://auth2.hostlinku.com)：注册新账户，或使用现有账户登录（包括单点登录（SSO），前提是管理员已启用该功能）。
+打开 [注册](https://api.hostlinku.com/api/auth2/register) 或 [登录](https://api.hostlinku.com/api/auth2/login)。后端启动 `auth2.hostlinku.com` 的Keycloak流程，处理回调后打开Console。通行密钥和SSO选项取决于账户、设备及可用提供商。
 
 ### 创建 API 密钥
 
 进入 [console.hostlinku.com](https://console.hostlinku.com) → **API 密钥** 菜单 → **创建 API 密钥**。在创建 API 密钥的对话框中，您可以设置：
 
 - **名称**：用于识别，例如 `your-production-app`。
-- **过期**：可选，可选择“永不过期”、“30/90/365天”或自定义日期。
-- **额度**：可选，按**每日/每周/每月**为周期设置的密钥使用上限（例如 10 美元），或不重置（总额度）。
+- **Service Mode**：选择 **Performance**（默认）、**Low-Cost** 或 **Dedicated**。模式决定模型和价格。
+- **有效期**：30天（默认）、60天、90天或永不过期。
+- **Monthly Spending Limit**：可选的每月支出限额。Console表单没有作用域或每日/每周重置选项；API合约请参阅 [身份验证](/zh/authentication)。
 
 <Callout type="warning" title="密钥只显示过一次">
 API密钥创建后，格式为`sk-…`的密钥密文**仅在控制台中显示一次**。请将其复制并保存在安全的地方：服务器会将其以SHA-256哈希值的形式存储，且无法再次显示。如果密钥密文丢失，请撤销该API密钥，然后创建一个新的。
@@ -78,7 +77,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 ### 建议：使用流式传输
 
-对于聊天应用，请发送 `"stream": true`。当模型开始响应时（通常在1–2秒内），第一个词就会显示出来，无需等待整个回答完成。虽然总耗时相同，但对你的用户而言，应用的响应速度会感觉快得多。
+聊天应用可发送 `"stream": true`，在生成过程中显示回答。首个Token时间取决于模型和提供商状态，不保证特定延迟。
 
 ```python
 import os
@@ -110,7 +109,7 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
 
 ### 查询余额和交易记录
 
-在控制台中，打开**“Credits/余额”**菜单可查看当前余额，打开**“请求日志”**菜单可查看包含Token、费用和延迟的完整请求历史记录。 控制台会话的等效端点可在 [`GET /api/wallet/account`](/zh/billing) 中找到，而公共 API（API 密钥 `sk-…`）则使用 `/v1/*`。
+在Console的 **Billing** 查看组织余额，在 **Logs** 查看Token、费用和延迟。Console会话对应端点为 [`GET /api/wallet/account`](/zh/billing)，公开API（`sk-…`）使用 `/v1/*`。
 
 </Steps>
 
@@ -127,13 +126,8 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
 需要帮助吗？请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)，另请参阅 [支持](/zh/support)。
 </Callout>
 
-## 通行密钥登录与 2FA
+## 通行密钥登录与2FA
 
-Hostlinku 账户使用 `auth2.hostlinku.com` 上的 Keycloak。除邮箱和密码外，还可使用：
+Hostlinku账户使用Keycloak。通行密钥（WebAuthn）、TOTP验证器和恢复码可通过 **Settings → Security** 使用。登录前请注册适合的选项。Keycloak处理注册和认证挑战，SSO取决于启用的提供商。
 
-- **通行密钥（WebAuthn）** - 使用设备生物识别或安全密钥进行无密码登录。
-- **身份验证器（TOTP）** - 来自验证器应用的 6 位验证码。
-- **恢复代码** - 一次性备用代码。
-
-均可在控制台的 **Settings -> Security** 中管理。点击 *Add passkey* 会打开设备对话框；注册后，登录页面的
-*使用通行密钥登录* 会直接打开同一对话框。关闭对话框后仍停留在登录页面，可重试或使用密码登录。
+流式费用请在结束后查看 **Logs / Analytics / Billing**。每个SSE分块不保证包含 `hostlinku.cost`；上游未返回usage时，计费可能使用估算值。

@@ -170,4 +170,4 @@ Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`
 | 429 | `rate_limit_error` | Request limit reached. |
 | 503 | `overloaded_error` | The model/upstream is currently unavailable - it is safe to retry. |
 
-Error messages never include the upstream provider's identifier. A complete list of codes for the OpenAI format is available at [Error](/en/errors).
+Errors are sanitized to mask internal identities; some upstream rejection reasons can still appear. [Error](/en/errors).

@@ -1,104 +1,69 @@
 ---
 title: "身份验证"
-description: "如何使用 API 密钥 Hostlinku、其有效期、每个 API 密钥的额度以及相关安全措施"
+description: "网关 API 密钥、Console 登录、Service Mode、有效期及用量限额。"
 ---
-
 
 import { Callout } from "/snippets/mdx.jsx";
 
-网关 Hostlinku 使用 **Bearer token** 身份验证，API 密钥格式为 `sk-…`。向 `/v1/*` 端点发送的每个请求中都应包含该 API 密钥：
+Hostlinku 网关的 `/v1/*` 端点使用 `sk-…` 格式的 API 密钥：
 
 ```http
 Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-所有 `/v1/*` 端点（chat completions、responses、models）均接受 `x-api-key: sk-…` 标头，不仅限于 Anthropic Messages。
+也接受 `x-api-key: sk-…` 标头。在 [Console](https://console.hostlinku.com) → **API Keys** 中创建和管理密钥。
 
-API密钥可在[console.hostlinku.com](https://console.hostlinku.com)的**API密钥**菜单中创建和管理。
+<Callout type="important" title="API 密钥与 Console 会话">
 
-<Callout type="important" title="API密钥仅适用于 /v1/*">
-API密钥**仅**在以下网关端点上有效：`/v1/chat/completions`、`/v1/messages`、`/v1/responses` 和 `/v1/models`。 控制台账户端点（`/api/*` - 个人资料、API密钥列表、日志、余额、管理员）**不接受** `403 API_KEY_NOT_ALLOWED` 的 API 密钥，且只能通过控制台登录会话访问。 相反，登录会话（cookie）在 `/v1/*` 上**无效**-网关始终会要求提供 API 密钥（`401`）。 因此，泄露的 API 密钥仅可用于调用模型（受余额、额度和速率限制的约束），无法读取账户数据、创建新 API 密钥或更改设置。
+`/v1/chat/completions`、`/v1/messages`、`/v1/responses` 和 `/v1/models` 使用 API 密钥。`/api/*` 下受保护的账户端点使用 Console 登录会话，拒绝 API 密钥认证并返回 `403 API_KEY_NOT_ALLOWED`。登录 Cookie 不能替代 `/v1/*` 的 API 密钥。
+
 </Callout>
 
-## 创建 API 密钥
+## Console 登录
 
-1. 打开控制台 → **API密钥** → **创建API密钥**。
-2. 请填写**名称**、可选的**有效期**以及可选的**额度**。
-3. 复制显示的密钥。该密钥仅显示一次。
+从 [登录](https://api.hostlinku.com/api/auth2/login) 或 [注册](https://api.hostlinku.com/api/auth2/register) 进入Keycloak并返回Console。
 
-API密钥以SHA-256哈希值的形式存储在服务器上：其原始值从未被存储，也无法还原。旧版API密钥（如`hl_live_…`）仍然有效，因为身份验证是基于哈希值而非前缀进行的。
+Console使用 `hl_sid` 服务器会话，`hl_session` 是部分流程的JWT Cookie。浏览器自动管理。在 **Settings → Security** 使用通行密钥、TOTP和恢复码。
 
-## API密钥的有效期
+## 创建和管理 API 密钥
 
-创建 API 密钥时的可选过期时间：
+1. 打开 **API Keys → Create API key**。
+2. 输入名称（最多64个字符），选择 **Service Mode**：**Performance**、**Low-Cost** 或 **Dedicated**。表单默认选择 Performance。模式决定该密钥的模型列表、路由和价格。
+3. 选择 **30天**（默认）、**60天**、**90天** 或 **永不过期（Never）**。
+4. 如需限制支出，启用 **Monthly Spending Limit** 并输入每月额度。
+5. 复制仅显示一次的密钥，将其存入服务器环境变量。
 
-| 选项 | 行为 |
+当前 API 密钥表单没有端点作用域选择器。Service Mode、余额、有效期、用量限额和速率限制仍会约束密钥。通过 [`GET /v1/models`](/zh/models) 获取该密钥可用的模型列表。
+
+服务器仅保存密钥的 SHA-256 哈希，无法再次显示原始密钥。Console 支持编辑、停用/启用和删除密钥。密钥丢失或泄露时，创建替代密钥并验证请求，然后停用旧密钥。
+
+## 每个 API 密钥的用量限额
+
+Console提供 **Monthly Spending Limit**，密钥管理API支持以下UTC日历周期：
+
+| 周期 | 按 UTC 日历计算的费用窗口 |
 |---|---|
-| 从来没有 | API密钥在被撤销前一直有效 |
-| 30 / 90 / 365天 | 该API密钥将在该期限届满后自动失效 |
-| 自定义日期 | 在所选日期到期 |
+| `daily` | 从当日00:00 UTC开始 |
+| `weekly` | 从本周一00:00 UTC开始 |
+| `monthly` | 从本月1日00:00 UTC开始 |
+| `lifetime` / 不重置 | 密钥有效期间的累计费用 |
 
-过期的API密钥将被拒绝，提示如下：
+按该密钥记录的请求费用累计用量。达到限额后，后续请求返回 `402 PAYMENT_REQUIRED`。密钥限额与组织信用余额不同：充值增加余额，但不会提高密钥限额。参阅 [计费与余额](/zh/billing)。
 
-```json
-{
-  "status": "error",
-  "error": { "code": "UNAUTHORIZED", "message": "The API key has expired." }
-}
-```
+## 速率限制和错误
 
-## 每个 API 密钥的额度
+服务配额为 **每分钟 600 次请求、6,500,000 输入 token 和 200,000 输出 token**，由同一组织共享。达到配额时，该组织所有 API 密钥和成员都会受到影响。 配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
 
-每个 API 密钥均可设置 **以美元为单位的使用限额**（`creditLimit`），其重置周期为：
+| 情况 | HTTP | 代码 |
+|---|---|---|
+| 密钥未提供、无效、已停用或过期 | 401 | `UNAUTHORIZED` |
+| 使用 API 密钥认证 Console 账户端点 | 403 | `API_KEY_NOT_ALLOWED` |
+| 可用余额不足或密钥达到额度上限 | 402 | `PAYMENT_REQUIRED` |
+| 超出速率限制 | 429 | `RATE_LIMITED` |
 
-| 重置 | 计算窗口（UTC日历） |
-|---|---|
-| 日报 (`daily`) | 自当天00:00 UTC起 |
-| 周刊 (`weekly`) | 自本周一协调世界时（UTC）00:00起 |
-| 月刊 (`monthly`) | 自本月1日00:00（UTC）起 |
-| 无需重置 | API密钥有效期内的总计 |
+<Callout type="tip" title="在服务器保存密钥">
 
-使用量根据该 API 密钥记录的实际请求费用（`requests.customer_cost`）进行计算。当累计费用达到限额时，后续请求将被拒绝并返回 **402 PAYMENT_REQUIRED** 状态码：
+使用服务器环境变量 `HOSTLINKU_API_KEY`。为每个应用或环境创建独立密钥，设置适当的有效期和限额，不要把密钥放在浏览器或公共代码库中。
 
-```json
-{
-  "status": "error",
-  "error": {
-    "code": "PAYMENT_REQUIRED",
-    "message": "Limit kredit API key tercapai (🪙10.0000 dari 🪙10 total)."
-  }
-}
-```
-
-额度与**账户余额**不同：额度仅针对单个 API 密钥，而账户余额则是所有 API 密钥的资金来源。两者都必须充足，请求才能执行。请参阅 [计费与余额](/zh/billing)。
-
-## 速率限制
-
-除了额度限制外，支付网关还会针对每个API密钥实施请求频率限制：
-
-- **[`POST /v1/chat/completions`](/zh/chat-completions)**：每个API密钥每分钟600次请求。
-- 控制台/公共端点（Cookie会话）：每个IP地址每分钟120次请求。
-- 身份验证端点（登录、注册、重置）：每个IP地址每15分钟限30次尝试。
-
-超过限额将导致出现 **429 RATE_LIMITED** 错误。详情请参阅 [使用情况与限额](/zh/usage-and-limits)。
-
-## 常见的身份验证错误
-
-| 情况 | HTTP | `error.code` | 消息 |
-|---|---|---|---|
-| `Authorization` 标头不存在或不是 Bearer 标头 | 401 | `UNAUTHORIZED` | `This endpoint requires a Hostlinku API key: send the Authorization: Bearer sk-… header (or x-api-key). …` |
-| API密钥未知、输入有误或已被撤销 | 401 | `UNAUTHORIZED` | `The API key is invalid or has been revoked.` |
-| API密钥已过期 | 401 | `UNAUTHORIZED` | `The API key has expired.` |
-| API密钥用于`/api/*`控制台的端点 | 403 | `API_KEY_NOT_ALLOWED` | `API keys are only valid for the /v1/* gateway endpoints …` |
-| API密钥已达到额度上限 | 402 | `PAYMENT_REQUIRED` | `Limit kredit API key tercapai (…)` |
-| 账户余额不足以完成预订请求 | 402 | `PAYMENT_REQUIRED` | `Insufficient credit balance for this request.` |
-| 超出速率限制 | 429 | `RATE_LIMITED` | `Rate limit exceeded. …` |
-
-<Callout type="important" title="API密钥的安全性">
-  - 请勿将 API 密钥放在浏览器中运行的客户端代码或公共代码库中。- 在服务器上使用环境变量（例如 `HOSTLINKU_API_KEY`），并从中读取。 - 为每个应用程序/环境创建独立的 API 密钥，以便能够逐个撤销，而不会影响其他密钥。- 利用 **过期** 和 **额度限制** 作为防御层，以防 API 密钥泄露。 - 不再使用的 API 密钥可通过控制台进行 **撤销**（停用，历史记录仍保留）或 **清除**（永久删除）。
-</Callout>
-
-<Callout type="note" title="API密钥轮换">
-建议的操作流程：创建新的API密钥 → 在应用中配置 → 验证请求成功 → 撤销旧的API密钥。由于两者同时处于活跃状态，因此不会造成服务中断。
 </Callout>

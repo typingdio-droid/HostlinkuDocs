@@ -9,37 +9,34 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | プロバイダー | Meta |
 | スラッグ | `muse-wonder-1-0` |
-| コンテキスト | 1,048,576 トークン |
 | リリース | 2026-10-14 |
+| カタログのコンテキスト | 1,048,576 トークン |
+| カタログの最大出力 | 記載なし |
+| Service Mode | Performance |
 
 ## 機能
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
+
+機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 料金
 
-| 項目 | 料金 |
-|---|---|
-| 入力（プロンプト） | <CreditIcon /> 3.36 / 1M |
-| 出力（補完） | <CreditIcon /> 16.8 / 1M |
-| キャッシュ読み取り | <CreditIcon /> 0.168 / 1M |
-| キャッシュ書き込み | <CreditIcon /> 0 / 1M |
+**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/muse-wonder-1-0)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+
+| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) |
+|---|---|---|---|
+| 入力（プロンプト） | 100万トークンあたり | 基本 | 3.36 |
+| 出力 | 100万トークンあたり | 基本 | 16.8 |
+| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.168 |
+| Web検索 | 1,000回あたり | 基本 | 2.625 |
 
 ## 対応エンドポイント
 
-| エンドポイント | フォーマット | 対応 |
+| Endpoint | Format | 対応 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | ネイティブ |
-| `POST /v1/responses` | OpenAI Responses | adapted（ブリッジ） |
+| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
+
+ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。

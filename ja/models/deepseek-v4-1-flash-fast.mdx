@@ -9,38 +9,33 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | プロバイダー | DeepSeek |
 | スラッグ | `deepseek-v4-1-flash-fast` |
-| コンテキスト | 1,000,000 トークン |
-| 最大出力 | 384,000 トークン |
 | リリース | 2026-09-14 |
+| カタログのコンテキスト | 1,000,000 トークン |
+| カタログの最大出力 | 384,000 トークン |
+| Service Mode | Dedicated |
 
 ## 機能
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 料金
 
-| 項目 | 料金 |
-|---|---|
-| 入力（プロンプト） | <CreditIcon /> 0.2875 / 1M |
-| 出力（補完） | <CreditIcon /> 1.15 / 1M |
-| キャッシュ読み取り | <CreditIcon /> 0.00575 / 1M |
+**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/deepseek-v4-1-flash-fast)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+
+| 項目 | 単位 | 料金区分 | Dedicated (<CreditIcon />) |
+|---|---|---|---|
+| 入力（プロンプト） | 100万トークンあたり | 基本 | 0.2875 |
+| 出力 | 100万トークンあたり | 基本 | 1.15 |
+| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.00575 |
 
 ## 対応エンドポイント
 
-| エンドポイント | フォーマット | 対応 |
+| Endpoint | Format | 対応 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | ネイティブ |
-| `POST /v1/responses` | OpenAI Responses | adapted（ブリッジ） |
+| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
+
+ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。

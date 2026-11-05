@@ -185,5 +185,4 @@ Body: `model`, `messages`, opsional `system`, `tools`, `tool_choice`, `thinking`
 | 429 | `rate_limit_error` | Batas permintaan tercapai. |
 | 503 | `overloaded_error` | Model/upstream sedang tidak tersedia - aman untuk di-retry. |
 
-Pesan error tidak pernah memuat identitas provider upstream. Daftar lengkap kode untuk format
-OpenAI ada di [Error](/errors).
+Pesan error disanitasi untuk menyamarkan identitas internal; sebagian alasan penolakan upstream tetap dapat muncul. [Error](/errors).

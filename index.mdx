@@ -5,21 +5,23 @@ description: Apa itu Hostlinku, cara kerja arsitekturnya, dan urutan membaca dok
 
 import { Callout } from "/snippets/mdx.jsx";
 
-**Hostlinku** adalah gateway AI terpadu (_unified AI gateway_): satu API dengan format yang
-kompatibel penuh dengan OpenAI. Request kamu diteruskan ke ratusan model dari berbagai provider
-(OpenAI, Anthropic, Google, DeepSeek, Qwen, dan lainnya) lewat satu API key.
+**Hostlinku** adalah gateway AI dengan format OpenAI Chat Completions, Anthropic Messages,
+dan Responses API. Dukungan parameter serta kapabilitas mengikuti model dan endpoint.
+Satu API key mengakses katalog pada **Service Mode** yang dipilih saat membuat key:
+**Performance**, **Low-Cost**, atau **Dedicated**. Model dan harga dapat berubah; gunakan
+[katalog model](/models) dan `GET /v1/models` dengan key kamu sebagai rujukan.
 
 Dengan Hostlinku kamu tidak perlu mengelola akun, API key, dan format request yang berbeda-beda
 untuk setiap provider:
 
-- **Satu API key** untuk semua model (`sk-…`).
+- **Satu API key** untuk model pada Service Mode yang dipilih (`sk-…`).
 - **Kompatibel OpenAI**: pakai SDK resmi OpenAI (`openai-python`, `openai-node`) cukup dengan
   mengganti `base_url`.
 - **Streaming SSE**: respons token-per-token dengan format `text/event-stream` seperti OpenAI.
 - **Katalog model terpusat**: slug, harga per token, konteks, dan kapabilitas di satu tempat.
 - **Kontrol pemakaian**: batas kredit per API key, riwayat request, dan log lengkap di console.
-- **Billing fleksibel**: saldo yang bisa diisi via QRIS / Virtual Account (iPaymu) atau crypto
-  (BlockBee).
+- **Billing prabayar**: kredit organisasi diisi via QRIS / Virtual Account (iPaymu Direct) atau
+  crypto (Heleket hosted). **1 kredit = $1** sebagai satuan kredit layanan.
 
 ## Arsitektur singkat
 
@@ -37,7 +39,8 @@ api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
 
 Setiap request melewati alur yang sama: autentikasi API key, pemeriksaan limit kredit, reservasi
 saldo (estimasi), penerusan ke layanan model (dengan percobaan ulang otomatis bila ada
-gangguan), lalu commit biaya berdasarkan token yang benar-benar terpakai dan pencatatan telemetri.
+gangguan), lalu penyelesaian biaya berdasarkan pemakaian upstream atau estimasi bila usage
+tidak tersedia, serta pencatatan telemetri.
 
 Console Hostlinku (`console.hostlinku.com`) memakai backend yang sama: API key, saldo, riwayat
 request, dan log audit semuanya berasal dari data gateway yang nyata.
@@ -59,7 +62,8 @@ request, dan log audit semuanya berasal dari data gateway yang nyata.
 | Kode error dan format respons error | [Error](/errors) |
 
 <Callout type="tip" title="Butuh akun dulu?">
-  Buat akun di [auth2.hostlinku.com](https://auth2.hostlinku.com) dan buat API key pertamamu di
+  [Daftar melalui backend](https://api.hostlinku.com/api/auth2/register), yang mengarahkan browser
+  ke Keycloak di `auth2.hostlinku.com`, lalu buat API key pertamamu di
   [console.hostlinku.com](https://console.hostlinku.com). Selengkapnya di
   [Memulai Cepat](/getting-started).
 </Callout>

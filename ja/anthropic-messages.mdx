@@ -169,4 +169,4 @@ POST https://api.hostlinku.com/v1/messages/count_tokens
 | 429 | `rate_limit_error` | リクエストの上限に達しました。 |
 | 503 | `overloaded_error` | モデル/アップストリームが利用できません - 再試行しても問題ありません。 |
 
-エラーメッセージには、アップストリームプロバイダーの識別子が含まれていません。OpenAI 形式のエラーコードの完全な一覧は、[エラー](/ja/errors) に記載されています。
+エラーは内部識別情報を隠すために処理されます。upstream の拒否理由の一部は表示される場合があります。 [Error](/ja/errors).

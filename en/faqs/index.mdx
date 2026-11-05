@@ -45,7 +45,7 @@ Cost = input tokens × input price + output tokens × output price (per token, d
 
 ## Is there a rate limit?
 
-Yes: 600 requests per minute per API key for chat completions, plus a per-IP limit for the console endpoint. Full details and backoff strategies are available at [Usage & Limits](/en/usage-and-limits).
+The service quota is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached. See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
 
 ## How do I send an image or multimodal message?
 

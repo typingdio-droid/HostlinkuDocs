@@ -3,7 +3,6 @@ title: "GPT-6.1 Sol"
 description: "OpenAI在GPT-6 Sol系列中用于复杂编码、计算机应用和专业工作的有效前沿推理模型。支持文本和图像输入，文本输出……"
 ---
 
-
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 ## 摘要
@@ -14,54 +13,47 @@ OpenAI 属于 GPT-6 Sol 系列，其高效前沿推理模型适用于复杂编�
 |---|---|
 | 提供商 | OpenAI |
 | Slug | `gpt-6-1-sol` |
-| 上下文 | 1,050,000 个Token |
-| 最大输出 | 128,000 个Token |
 | 输入 | 文本、图片 |
 | 输出 | 文本 |
 | 发布日期 | 2026-09-28 |
 | 标签 | 旗舰 |
+| 目录上下文 | 1,050,000 个Token |
+| 目录最大输出 | 128,000 个Token |
+| Service Mode | Performance, Low-Cost |
 
 ## 能力
 
-- `text`
-- `vision`
-- `image-input`
-- `file-input`
-- `pdf-input`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `extended-thinking`
-- `code-execution`
-- `web-search`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `multimodal`
+`text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
+
+功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
-| 项目 | 价格 |
-|---|---|
-| 输入（提示词） | $2 |
-| 输出（补全） | $10 |
-| 缓存读取 | $0.1 |
-| 缓存写入 | $2.5 |
+**2026年11月6日更新**。[当前价格](https://hostlinku.com/zh/models/gpt-6-1-sol)由API密钥的Service Mode决定。**1 <CreditIcon /> = \$1**。`—` 表示未列出费率。价格档位取决于提示词Token数。
 
-价格是指API密钥Hostlinku的每**100万个Token**的客户价格，其中1 <CreditIcon /> = 1美元。 每次请求的实际价格仍以 Service Mode API key 为准，且可能会发生变化；请查看 [控制台](https://console.hostlinku.com/models) 或 `GET /v1/models` 以获取当前适用价格。
+| 项目 | 单位 | 价格档位 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+|---|---|---|---|---|
+| 输入（提示词） | 每100万个Token | 基础 | 1.68 | 0.107 |
+| 输出 | 每100万个Token | 基础 | 8.4 | 0.535 |
+| 缓存读取 | 每100万个Token | 基础 | 0.084 | 0.00535 |
+| 缓存写入（5分钟） | 每100万个Token | 基础 | 2.1 | 0.13375 |
+| 缓存写入（1小时） | 每100万个Token | 基础 | 2.1 | 0.13375 |
+| 网络搜索 | 每1,000次调用 | 基础 | 10.5 | 10.7 |
+| 输入（提示词） | 每100万个Token | 提示词 ≥ 272,000 个Token | 3.36 | 0.214 |
+| 输出 | 每100万个Token | 提示词 ≥ 272,000 个Token | 12.6 | 0.8025 |
+| 缓存读取 | 每100万个Token | 提示词 ≥ 272,000 个Token | 0.168 | 0.0107 |
+| 缓存写入（5分钟） | 每100万个Token | 提示词 ≥ 272,000 个Token | 4.2 | 0.2675 |
+| 缓存写入（1小时） | 每100万个Token | 提示词 ≥ 272,000 个Token | 4.2 | 0.2675 |
 
 ## 支持的端点
 
-| 端点 | 格式 | 支持 |
+| Endpoint | Format | 支持情况 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 原生 |
 
-端点和模型的可用性取决于所使用的目录及Service Mode API key。如果该模式下没有可用模型，则可能以`400 MODEL_NOT_IN_SERVICE_MODE`为由拒绝该请求。
+桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
 
 ## 请求示例
 

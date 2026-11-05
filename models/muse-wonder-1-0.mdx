@@ -9,37 +9,34 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | Provider | Meta |
 | Slug | `muse-wonder-1-0` |
-| Konteks | 1,048,576 token |
 | Rilis | 2026-10-14 |
+| Konteks katalog | 1,048,576 token |
+| Output maks katalog | Belum dicantumkan |
+| Service Mode | Performance |
 
 ## Kapabilitas
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
+
+Fitur dan batas request mengikuti model, Service Mode, serta protokol yang digunakan.
 
 ## Harga
 
-| Item | Harga |
-|---|---|
-| Input (prompt) | <CreditIcon /> 3.36 / 1M |
-| Output (completion) | <CreditIcon /> 16.8 / 1M |
-| Cache read | <CreditIcon /> 0.168 / 1M |
-| Cache write | <CreditIcon /> 0 / 1M |
+Diperbarui **6 November 2026**. [Harga terkini](https://hostlinku.com/models/muse-wonder-1-0) mengikuti Service Mode API key. **1 <CreditIcon /> = \$1**. `—` berarti tarif belum dicantumkan. Tier mengikuti jumlah token prompt.
+
+| Item | Unit | Tier | Performance (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M token | Dasar | 3.36 |
+| Output (completion) | per 1M token | Dasar | 16.8 |
+| Cache read | per 1M token | Dasar | 0.168 |
+| Web search | per 1K panggilan | Dasar | 2.625 |
 
 ## Endpoint yang didukung
 
 | Endpoint | Format | Dukungan |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
-| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Bridge menyesuaikan format API; fitur vendor dan tool bawaan aplikasi dapat berbeda. Gunakan API key dengan Service Mode yang tercantum di atas.

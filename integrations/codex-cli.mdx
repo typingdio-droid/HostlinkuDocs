@@ -5,10 +5,7 @@ description: Jalankan OpenAI Codex CLI lewat Hostlinku dengan provider kustom di
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Codex CLI](https://developers.openai.com/codex/cli) hanya berbicara protokol **OpenAI
-Responses**. Hostlinku menyediakannya di [`POST /v1/responses`](/responses) - stateless, dengan
-dukungan `reasoning.encrypted_content`, function calling, dan streaming persis seperti yang
-diharapkan Codex. Konfigurasinya cukup satu provider kustom.
+[Codex CLI](https://developers.openai.com/codex/cli) memakai protokol OpenAI Responses. Arahkan provider kustom ke [`POST /v1/responses`](/responses); kecocokan tool dan reasoning bergantung pada model dan jalur Responses yang digunakan.
 
 <Steps>
 
@@ -87,24 +84,12 @@ codex --profile kuat
 codex --profile cepat "tulis unit test untuk utils/date.ts"
 ```
 
-<Callout type="warning" title="Codex hanya untuk model OpenAI">
-  Codex mengirim tool bawaannya sendiri (shell, patch file, dsb.). Model non-OpenAI menolak tipe
-  tool tersebut dan mengembalikan `The requested tool type is not supported by this model`.
-  Artinya `claude-*`, `deepseek-*`, `glm-*`, `qwen*`, `kimi-*`, dan `minimax-*` **tidak bisa** dipakai
-  lewat Codex - gunakan model `gpt-*`. Untuk model lain, pakai klien yang berbicara dialek
-  Anthropic atau Chat Completions (Claude Code, Cline, OpenCode, Aider).
-
-  Model `gpt-*` yang **Responses-native** (tool Codex diteruskan apa adanya): `gpt-5-3-codex`,
-  `gpt-5-6-sol`, `gpt-5-6-luna`, `gpt-5-5`, `gpt-6-1-sol`, `gpt-6-sol`, `gpt-6-luna`, dan
-  `gpt-6-astra`. `gpt-5-6-terra` hanya mendukung Chat Completions sehingga **tidak bisa**
-  menjalankan tool shell Codex.
+<Callout type="warning" title="Kompatibilitas model dan tool">
+  Gunakan model Responses native yang mendukung tool versi Codex kamu. Bridge Chat Completions mendukung teks dan function calling; custom tools shell/patch serta reasoning terenkripsi memerlukan dukungan native. Jika muncul `The requested tool type is not supported by this model`, ganti model atau gunakan klien Chat/Anthropic yang sesuai. Lihat [Responses API](/responses).
 </Callout>
 
-<Callout type="note" title="Stateless, persis default Codex">
-  Codex CLI mengirim riwayat percakapan penuh di `input` dan `store: false` pada setiap giliran,
-  serta meminta `include: ["reasoning.encrypted_content"]` agar item reasoning bisa dikirim ulang.
-  Hostlinku mendukung alur ini apa adanya; `previous_response_id` tidak dipakai Codex sehingga
-  sifat stateless gateway tidak berpengaruh. Lihat [Responses API](/responses).
+<Callout type="note" title="Stateless">
+  Kirim riwayat penuh dalam `input` dan gunakan `store: false`. Hostlinku menolak `previous_response_id` atau `conversation` non-null dan `background: true`. Item reasoning terenkripsi hanya dapat dipakai bila jalur upstream mendukungnya; lihat [Responses API](/responses).
 </Callout>
 
 <Callout type="tip" title="Hanya ingin mengganti endpoint OpenAI bawaan?">
@@ -116,16 +101,11 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
 ## Troubleshooting
 
 - **`401`** - variabel di `env_key` belum ter-export di shell tempat `codex` dijalankan.
-- **Model menjawab "tidak bisa menjalankan shell" lalu mengarang output** - model tersebut bukan
-  Responses-native, sehingga tool Codex dibuang sebelum sampai ke model. Pilih model dari daftar
-  Codex-ready di atas; jangan pakai `gpt-5-6-terra` untuk Codex.
-- **`400 previous_response_id tidak didukung`** - muncul hanya bila ada plugin/skrip yang memaksa
-  mode *stored responses*. Pastikan `store` tidak dipaksa `true`.
+- **Tool shell/patch tidak berjalan** — periksa dukungan tool pada model dan jalur Responses; jawaban teks saja tidak membuktikan tool telah dijalankan.
+- **`400 previous_response_id`** — hilangkan `previous_response_id`/`conversation`, kirim ulang riwayat penuh dalam `input`, dan gunakan `store: false`.
 - **Model tidak muncul / `404`** - slug salah; `/v1/models` menampilkan daftar yang valid untuk
   key kamu.
-- **Codex versi lama meminta `wire_api = "chat"`** - Hostlinku juga melayani
-  [`/v1/chat/completions`](/chat-completions); namun fitur reasoning Codex bekerja paling baik
-  dengan `responses`.
+- **Versi klien lama** — perbarui Codex dan gunakan `wire_api = "responses"` sesuai [referensi konfigurasi resmi](https://developers.openai.com/codex/config-reference/).
 
 ## Sumber daya terkait
 

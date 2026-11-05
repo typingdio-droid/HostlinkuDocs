@@ -3,7 +3,6 @@ title: "モデル"
 description: "エンドポイント GET /v1/models、カタログのデータ形式、および適切なモデルの選択方法"
 ---
 
-
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -12,7 +11,7 @@ Hostlinku は、一元化されたモデルカタログを提供します。 各
 
 ## `GET /v1/models`
 
-ステータスが `available` で、まだ非推奨になっておらず、使用中の **Service Mode API key**（Performance または Low-Cost）で利用可能なすべてのモデル、およびそのモードにおける 1M トークンあたりの <CreditIcon /> の価格を一覧表示します。
+ステータスが `available` で、まだ非推奨になっておらず、使用中の **Service Mode API key**（Performance、Low-Cost、Dedicated）で利用可能なすべてのモデル、およびそのモードにおける 1M トークンあたりの <CreditIcon /> の価格を一覧表示します。
 
 ```http
 GET https://api.hostlinku.com/v1/models
@@ -39,16 +38,27 @@ curl https://api.hostlinku.com/v1/models \
       "created": 1791380432,
       "owned_by": "hostlinku",
       "context_window": 200000,
-      "capabilities": ["text", "tool-calling", "function-calling", "structured-outputs", "json-mode", "streaming", "code-generation", "long-context", "multilingual"],
+      "capabilities": [
+        "text",
+        "tool-calling",
+        "function-calling",
+        "structured-outputs",
+        "json-mode",
+        "streaming",
+        "code-generation",
+        "long-context",
+        "multilingual"
+      ],
       "service_mode": "performance",
       "pricing": {
-        "input": 0.8,
-        "output": 4,
-        "cache_read": 0.08,
-        "cache_write": 1,
+        "input": 0.84,
+        "output": 4.2,
+        "cache_read": 0.084,
+        "cache_write": 1.05,
         "unit": "1M_tokens",
         "currency": "🪙"
-      }
+      },
+      "health": "operational"
     }
   ]
 }
@@ -56,81 +66,78 @@ curl https://api.hostlinku.com/v1/models \
 
 | フィールド | 意味 |
 |---|---|
-| `service_mode`（レベル一覧および項目） | Service Mode API keyで使用されるモデル：`performance`または`low_cost`。モデル一覧はモードごとに異なります。 |
+| `service_mode`（レベル一覧および項目） | Service Mode API keyで使用されるモデル：`performance`、`low_cost`、`dedicated`。モデル一覧はモードごとに異なります。 |
 | `id` | slugモデル。`/v1/chat/completions`、`/v1/messages`、および`/v1/responses`の`model`フィールドで使用される値。 |
 | `created` | モデルがカタログに追加された時刻（Unixエポック、秒）。 |
 | `owned_by` | 常に `"hostlinku"` - このモデルがカタログ Hostlinku によって管理されていることを示すマーカー。 |
 | `context_window` | トークン内の最大コンテキストサイズ（入力＋出力）。 |
 | `capabilities` | 機能一覧（例：`vision`、`tool-calling`、`json-mode`、`reasoning`、`long-context`）。 |
-| `pricing` | Service Modeにおける価格の対象は、`null`（そのモードでモデルにまだ価格がない場合）。 `pricing.unit`は常に`"1M_tokens"`であり、`pricing.currency`にはクレジット記号が含まれます（1 <CreditIcon /> = $1）。 |
+| `pricing` | Service Modeにおける価格の対象は、`null`（そのモードでモデルにまだ価格がない場合）。 `pricing.unit`は常に`"1M_tokens"`であり、`pricing.currency`にはクレジット記号が含まれます（1 <CreditIcon /> = \$1）。 |
 | `pricing.input` / `pricing.output` | プロンプトトークン／回答トークンの価格は、**1Mトークン**あたり（1トークンあたりや1Kあたりではありません）です。 |
-| `pricing.cache_read` / `pricing.cache_write` | 5分間のキャッシュ読み取り／書き込みあたりの1Mトークンあたりの価格（[Prompt Caching](/ja/prompt-caching)を参照）。モデルが対応していない場合は`null`。 |
+| `pricing.cache_read` / `pricing.cache_write` | キャッシュ読み取り／5分間のキャッシュ書き込みの100万トークンあたりの価格。設定のない料金は省略される場合があります。[プロンプトキャッシュ](/ja/prompt-caching)を参照してください。 |
 
-<Callout type="note" title="レスポンスの「Pricing」は顧客価格です">
-`pricing`という数値は、Service Mode API keyに対して支払った金額であり、プラットフォームの手数料が含まれています。各リクエストの実際の費用は、レスポンスの`hostlinku.cost`ブロックおよびコンソールログに常に表示されます。
+<Callout type="note" title="Pricingは利用者向け価格です">
+`pricing` はマージンを含む、キーのService Modeにおける利用者向け価格です。非ストリーミングレスポンスには `hostlinku.cost` が含まれます。使用量と費用はコンソールのログでも確認できます。
 </Callout>
 
 ## 公開カタログ（認証不要）
 
-APIキーを使用しないマーケティングや探索用のサイトについては、公開カタログが利用可能です：
+APIキーなしでモデルとService Modeを比較するには、次のエンドポイントを使用します。
 
 ```http
-GET https://api.hostlinku.com/api/public/models
+GET https://api.hostlinku.com/api/public/models-v2
+GET https://api.hostlinku.com/api/public/service-modes
 ```
 
-公開カタログには、モデル「Hostlinku」と、そのslug、名称、コンテキスト、機能、および公開価格のみが表示されます。 サポートされているクエリ：`q`（名前/説明の検索）、`capability`、`family`、`sort`（`popular`、 `newest`、`price-asc`、`price-desc`、`context-desc`、`name-asc`）、`page`、および`pageSize`（最大100件）。 `data`の応答には、`items`、`total`、`page`、`pageSize`、および`totalPages`が含まれています。
+`models-v2` は `{status, currency, models}` を返します。各モデルには `slug`、`displayName`、`contextTokens`、記載がある場合の `maxOutputTokens`、`capabilities`、`serviceModes`、および `modes` 内のモード別価格が含まれます。`service-modes` はモードの概要とモデル一覧を含む `{status, data}` を返します。
+
+特定のAPIキーで利用できるモデルと価格は、`GET /v1/models` で確認してください。
 
 ## モデル一覧
 
-現在、45種類のモデルが利用可能です。モデル名をクリックすると、概要、機能、価格、およびサポートされているエンドポイントを確認できます。
+**2026年11月6日更新**。[最新カタログ](https://hostlinku.com/ja/models)またはAPIキーによる `GET /v1/models` で確認してください。
 
-| モデル | プロバイダー | コンテキスト | 最大出力 | 入力 /1M | 出力 /1M |
-|---|---|---|---|---|---|
-| [Qwen 3.6 Plus](/ja/models/qwen3-6-plus) | Alibaba | 1,000,000 | - | $0.294 | $1.765 |
-| [Qwen 3.7 Max](/ja/models/qwen3-7-max) | Alibaba | 1,000,000 | - | $1.765 | $5.294 |
-| [Model Baize](/ja/models/model-baize) | Anonymous | 1,000,000 | - | $1.177 | $4.118 |
-| [Claude Fable 5](/ja/models/claude-fable-5) | Anthropic | 1,000,000 | 128,000 | $10 | $50 |
-| [Claude Fable 5.1](/ja/models/claude-fable-5-1) | Anthropic | 1,000,000 | 128,000 | - | - |
-| [Claude Haiku 4.5](/ja/models/claude-haiku-4-5) | Anthropic | 200,000 | 64,000 | $1 | $5 |
-| [Claude Opus 4.6](/ja/models/claude-opus-4-6) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
-| [Claude Opus 4.7](/ja/models/claude-opus-4-7) | Anthropic | 1,000,000 | 32,000 | $5 | $25 |
-| [Claude Opus 4.8](/ja/models/claude-opus-4-8) | Anthropic | 1,000,000 | 128,000 | $5 | $25 |
-| [Claude Opus 5](/ja/models/claude-opus-5) | Anthropic | 1,000,000 | 64,000 | $5 | $25 |
-| [Claude Opus 5.5](/ja/models/claude-opus-5-5) | Anthropic | 1,000,000 | 128,000 | $4 | $20 |
-| [Claude Sonnet 4.6](/ja/models/claude-sonnet-4-6) | Anthropic | 1,000,000 | 64,000 | $3 | $15 |
-| [Claude Sonnet 5](/ja/models/claude-sonnet-5) | Anthropic | 1,000,000 | 64,000 | $2 | $10 |
-| [Claude Sonnet 5.5](/ja/models/claude-sonnet-5-5) | Anthropic | 1,000,000 | 128,000 | - | - |
-| [DeepSeek V4 Flash](/ja/models/deepseek-v4-flash) | DeepSeek | 1,000,000 | - | $0.15 | $0.6 |
-| [DeepSeek V4 Pro](/ja/models/deepseek-v4-pro) | DeepSeek | 1,000,000 | 64,000 | $0.662 | $1.985 |
-| [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 | 384,000 | $0.15 | $0.6 |
-| [DeepSeek-V4.1-Flash Hyper](/ja/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 | 384,000 | - | - |
-| [DeepSeek-V4.1-Flash Hyper Chat](/ja/models/deepseek-v4-1-flash-hyper-chat) | DeepSeek | 1,000,000 | 384,000 | - | - |
-| [DeepSeek-V4.1-Flash Turbo](/ja/models/deepseek-v4-1-flash-turbo) | DeepSeek | 1,000,000 | 384,000 | - | - |
-| [MiniMax M3](/ja/models/minimax-m3) | MiniMax | 1,000,000 | 64,000 | $0.309 | $1.235 |
-| [Kimi K2.6](/ja/models/kimi-k2-6) | Moonshot | 256,000 | 32,000 | $0.956 | $3.971 |
-| [Kimi K2.7 Code](/ja/models/kimi-k2-7-code) | Moonshot | 256,000 | - | $0.956 | $3.971 |
-| [Kimi K3](/ja/models/kimi-k3) | Moonshot | 1,000,000 | 64,000 | $2.941 | $14.706 |
-| [Kimi K3 Hyper](/ja/models/kimi-k3-hyper) | Moonshot | 1,000,000 | 64,000 | - | - |
-| [Kimi K3 Hyper Chat](/ja/models/kimi-k3-hyper-chat) | Moonshot | 1,000,000 | 64,000 | - | - |
-| [Kimi K3 Turbo](/ja/models/kimi-k3-turbo) | Moonshot | 1,000,000 | 64,000 | - | - |
-| [GPT 5.3 Codex](/ja/models/gpt-5-3-codex) | OpenAI | 400,000 | 128,000 | $1.75 | $14 |
-| [GPT-5.5](/ja/models/gpt-5-5) | OpenAI | 1,000,000 | 128,000 | $5 | $30 |
-| [GPT-5.6 Luna](/ja/models/gpt-5-6-luna) | OpenAI | 1,050,000 | 64,000 | $0.2 | $1.2 |
-| [GPT-5.6 Sol](/ja/models/gpt-5-6-sol) | OpenAI | 1,050,000 | 64,000 | $4 | $20 |
-| [GPT-5.6 Terra](/ja/models/gpt-5-6-terra) | OpenAI | 1,050,000 | 64,000 | $2 | $12 |
-| [GPT-6 Astra](/ja/models/gpt-6-astra) | OpenAI | 1,050,000 | 128,000 | $10 | $50 |
-| [GPT-6 Luna](/ja/models/gpt-6-luna) | OpenAI | 1,050,000 | 128,000 | $0.1 | $0.5 |
-| [GPT-6 Sol](/ja/models/gpt-6-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
-| [GPT-6.1 Sol](/ja/models/gpt-6-1-sol) | OpenAI | 1,050,000 | 128,000 | $2 | $10 |
-| [MiMo V2.5 Pro](/ja/models/mimo-v2-5-pro) | Xiaomi | 1,000,000 | 32,000 | $0.441 | $0.882 |
-| [GLM 5](/ja/models/glm-5) | Zhipu | 200,000 | - | $0.588 | $2.647 |
-| [GLM 5.1](/ja/models/glm-5-1) | Zhipu | 200,000 | 128,000 | $0.882 | $3.529 |
-| [GLM 5.2](/ja/models/glm-5-2) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
-| [GLM 5.3](/ja/models/glm-5-3) | Zhipu | 1,000,000 | 64,000 | $1.177 | $4.118 |
-| [GLM 5.3 Hyper Chat](/ja/models/glm-5-3-hyper-chat) | Zhipu | 1,000,000 | 64,000 | - | - |
-| [GLM-5.3 Flash](/ja/models/glm-5-3-flash) | Zhipu | 1,000,000 | 64,000 | - | - |
-| [GLM-5.3 Flash Hyper](/ja/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 | 64,000 | - | - |
-| [GLM-5.3 Flash Hyper Chat](/ja/models/glm-5-3-flash-hyper-chat) | Zhipu | 1,000,000 | 64,000 | - | - |
+| モデル | プロバイダー | カタログのコンテキスト | カタログの最大出力 | Service Mode |
+|---|---|---|---|---|
+| [Claude Haiku 5.5](/ja/models/claude-haiku-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [Claude Opus 5.5](/ja/models/claude-opus-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [Claude Opus 5](/ja/models/claude-opus-5) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [Claude Sonnet 5](/ja/models/claude-sonnet-5) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [Claude Fable 5](/ja/models/claude-fable-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [Claude Opus 4.8](/ja/models/claude-opus-4-8) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [Claude Opus 4.7](/ja/models/claude-opus-4-7) | Anthropic | 1,000,000 トークン | 32,000 トークン | Performance, Low-Cost |
+| [Claude Haiku 4.5](/ja/models/claude-haiku-4-5) | Anthropic | 200,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [Claude Opus 4.6](/ja/models/claude-opus-4-6) | Anthropic | 1,000,000 トークン | 32,000 トークン | Performance, Low-Cost |
+| [Claude Sonnet 4.6](/ja/models/claude-sonnet-4-6) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [Claude Sonnet 5.5](/ja/models/claude-sonnet-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [GPT-6.1 Sol](/ja/models/gpt-6-1-sol) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [GPT-6 Luna](/ja/models/gpt-6-luna) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [GPT-6 Sol](/ja/models/gpt-6-sol) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [GPT-6 Astra](/ja/models/gpt-6-astra) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [GPT-5.6 Luna](/ja/models/gpt-5-6-luna) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [GPT-5.6 Sol](/ja/models/gpt-5-6-sol) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [GPT-5.6 Terra](/ja/models/gpt-5-6-terra) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [GPT 5.3 Codex](/ja/models/gpt-5-3-codex) | OpenAI | 400,000 トークン | 128,000 トークン | Performance |
+| [GPT-5.5](/ja/models/gpt-5-5) | OpenAI | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
+| [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 トークン | 384,000 トークン | Performance, Dedicated |
+| [DeepSeek-V4.1-Flash Fast](/ja/models/deepseek-v4-1-flash-fast) | DeepSeek | 1,000,000 トークン | 384,000 トークン | Dedicated |
+| [DeepSeek-V4.1-Flash Hyper](/ja/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 トークン | 384,000 トークン | Dedicated |
+| [DeepSeek V4 Pro](/ja/models/deepseek-v4-pro) | DeepSeek | 1,000,000 トークン | 64,000 トークン | Performance |
+| [DeepSeek V4 Flash](/ja/models/deepseek-v4-flash) | DeepSeek | 1,000,000 トークン | 記載なし | Performance |
+| [GLM 5.3](/ja/models/glm-5-3) | Zhipu | 1,000,000 トークン | 64,000 トークン | Performance, Dedicated |
+| [GLM-5.3 Flash](/ja/models/glm-5-3-flash) | Zhipu | 1,000,000 トークン | 64,000 トークン | Dedicated |
+| [GLM-5.3 Flash Hyper](/ja/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 トークン | 64,000 トークン | Dedicated |
+| [GLM 5.2](/ja/models/glm-5-2) | Zhipu | 1,000,000 トークン | 64,000 トークン | Performance |
+| [GLM 5.1](/ja/models/glm-5-1) | Zhipu | 200,000 トークン | 128,000 トークン | Performance |
+| [Qwen 3.6 Plus](/ja/models/qwen3-6-plus) | Alibaba | 1,000,000 トークン | 記載なし | Performance |
+| [Qwen 3.7 Max](/ja/models/qwen3-7-max) | Alibaba | 1,000,000 トークン | 記載なし | Performance |
+| [Kimi K3.1 Pro Hyper](/ja/models/kimi-k3-1-pro-hyper) | Moonshot | 1,048,576 トークン | 64,000 トークン | Dedicated |
+| [Kimi K3](/ja/models/kimi-k3) | Moonshot | 1,000,000 トークン | 64,000 トークン | Performance |
+| [Kimi K2.6](/ja/models/kimi-k2-6) | Moonshot | 256,000 トークン | 32,000 トークン | Performance |
+| [Kimi K2.7 Code](/ja/models/kimi-k2-7-code) | Moonshot | 256,000 トークン | 記載なし | Performance |
+| [MiniMax M3](/ja/models/minimax-m3) | MiniMax | 1,000,000 トークン | 64,000 トークン | Performance |
+| [Muse Wonder](/ja/models/muse-wonder-1-0) | Meta | 1,048,576 トークン | 記載なし | Performance |
+| [Model Baize](/ja/models/model-baize) | Anonymous | 1,000,000 トークン | 記載なし | Low-Cost |
 
 ## モデルの選び方
 
@@ -140,10 +147,10 @@ GET https://api.hostlinku.com/api/public/models
 4. **小型モデルから始める**：開発段階では、軽量クラスのモデル（例：`gpt-6-luna`、`deepseek-v4-1-flash`、`qwen3-6-plus`）の方がはるかに安価です。品質に問題がある場合にのみ、上位モデルに切り替えてください。
 5. **コンソールを参照**：[console.hostlinku.com](https://console.hostlinku.com) の **モデル** メニューには、価格や仕様が同じカタログに加え、各モデルの詳細ページが表示されます。
 
-<Callout type="tip" title="別名（スラッグ）">
-`GET /v1/models`が返すslugをそのまま使用してください。表示側ではslugの大文字小文字は区別されませんが、入力ミスを防ぐため、カタログからそのままコピーしてください。 カタログに存在しないslugの場合は`404 MODEL_NOT_FOUND`が返され、非推奨または現在利用できないモデルの場合は`503 MODEL_UNAVAILABLE`が返され、利用可能な場合は代替slugの提案も併せて表示されます。
+<Callout type="tip" title="モデルID">
+`GET /v1/models` のslugをそのまま `model` フィールドにコピーしてください。不明なslugは `MODEL_NOT_FOUND`、キーで利用できないモデルは `MODEL_NOT_IN_SERVICE_MODE` または `MODEL_UNAVAILABLE` を返す場合があります。
 </Callout>
 
 ## ルーティングとフェイルオーバー
 
-Hostlinkuは、各モデルに対応する内部経路を自動的に管理します。使用中の経路で障害が発生した場合（5xxエラーやタイムアウト）、リクエストはあきらめる前に自動的に別の経路を通じて再試行されます。モデルのslugはそのまま使用でき、何も変更する必要はありません。この内部的な詳細はレスポンスには表示されません。
+ゲートウェイはモデルとキーのService Modeに応じたサービス経路を選択します。再試行やフェイルオーバーは利用可能な経路と障害の種類に依存し、すべてのモデルに予備経路があるわけではありません。リクエストのモデルIDは変更しません。

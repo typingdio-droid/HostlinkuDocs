@@ -13,38 +13,36 @@ Qwen3.6-Plus is a hosted Alibaba Cloud Model Studio model for agentic coding, mu
 |---|---|
 | Provider | Alibaba |
 | Slug | `qwen3-6-plus` |
-| Context | 1,000,000 tokens |
-| Max output | Not published |
 | Input | text, image |
 | Output | text |
 | Release | 2026-06-14 |
+| Catalog context | 1,000,000 tokens |
+| Catalog max output | Not listed |
+| Service Mode | Performance |
 
 ## Capabilities
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
-- `agentic`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `agentic`, `long-context`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | $0.294 |
-| Output (completion) | $1.765 |
-| Cache read | $0.029 |
-| Cache write | $0.367 |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/qwen3-6-plus) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Performance (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 0.24696 |
+| Output (completion) | per 1M tokens | Base | 1.4826 |
+| Cache read | per 1M tokens | Base | 0.02436 |
+| Cache write (5 minutes) | per 1M tokens | Base | 0.30828 |
+| Cache write (1 hour) | per 1M tokens | Base | 0.30828 |
+| Web search | per 1K calls | Base | 0.6174 |
+| Input (prompt) | per 1M tokens | Prompt ≥ 256,000 tokens | 0.98784 |
+| Output (completion) | per 1M tokens | Prompt ≥ 256,000 tokens | 5.92956 |
+| Cache read | per 1M tokens | Prompt ≥ 256,000 tokens | 0.09912 |
+| Cache write (5 minutes) | per 1M tokens | Prompt ≥ 256,000 tokens | 1.2348 |
+| Cache write (1 hour) | per 1M tokens | Prompt ≥ 256,000 tokens | 1.2348 |
 
 ## Supported endpoints
 
@@ -54,7 +52,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 

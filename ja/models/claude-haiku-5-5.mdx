@@ -9,38 +9,41 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | プロバイダー | Anthropic |
 | スラッグ | `claude-haiku-5-5` |
-| コンテキスト | 1,000,000 トークン |
-| 最大出力 | 128,000 トークン |
 | リリース | 2026-10-07 |
+| カタログのコンテキスト | 1,000,000 トークン |
+| カタログの最大出力 | 128,000 トークン |
+| Service Mode | Performance, Low-Cost |
 
 ## 機能
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
+
+機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 料金
 
-| 項目 | 料金 |
-|---|---|
-| 入力（プロンプト） | <CreditIcon /> 0.084 / 1M |
-| 出力（補完） | <CreditIcon /> 0.42 / 1M |
-| キャッシュ読み取り | <CreditIcon /> 0.0084 / 1M |
-| キャッシュ書き込み | <CreditIcon /> 0.105 / 1M |
+**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/claude-haiku-5-5)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+
+| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+|---|---|---|---|---|
+| 入力（プロンプト） | 100万トークンあたり | 基本 | 0.084 | 0.01605 |
+| 出力 | 100万トークンあたり | 基本 | 0.42 | 0.08025 |
+| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.0084 | 0.001605 |
+| キャッシュ書き込み（5分） | 100万トークンあたり | 基本 | 0.105 | 0.020063 |
+| キャッシュ書き込み（1時間） | 100万トークンあたり | 基本 | 0.168 | 0.0321 |
+| Web検索 | 1,000回あたり | 基本 | 10.5 | 10.7 |
+| 入力（プロンプト） | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.42 | 0.08025 |
+| 出力 | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 2.1 | 0.40125 |
+| キャッシュ読み取り | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.042 | 0.008025 |
+| キャッシュ書き込み（5分） | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.525 | 0.100313 |
+| キャッシュ書き込み（1時間） | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.84 | 0.1605 |
 
 ## 対応エンドポイント
 
-| エンドポイント | フォーマット | 対応 |
+| Endpoint | Format | 対応 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
 | `POST /v1/messages` | Anthropic Messages | ネイティブ |
-| `POST /v1/responses` | OpenAI Responses | adapted（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
+
+ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。

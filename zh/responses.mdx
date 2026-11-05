@@ -16,11 +16,13 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-每个响应都包含 `x-request-id` 标头（请求 ID 为 Hostlinku，格式为 `resp_…`），而在非流式传输的成功响应中，还包含 `x-model` 标头。
+成功响应包含 `x-request-id`；成功的非流式响应还包含 `x-model`（公开模型 slug）。
 
-<Callout type="note" title="所有模型，一种规格">
-`model` 使用与 [模型目录](/zh/models) 相同的公共 slug Hostlinku - 例如 `gpt-5-5`、`claude-sonnet-4-6`、`deepseek-v4-flash`。 未原生提供 Responses API 的模型（包括 Claude）仍可被调用-由网关进行转换。
+<Callout type="note" title="模型与工具兼容性">
+  `model` 使用[模型目录](/zh/models)中的公开 slug。网关根据模型 deployment 使用原生 Responses 或 Chat Completions 桥接。响应格式兼容不代表每个模型都支持所有 Responses 功能或 Codex 工具。
 </Callout>
+
+请选择 API 密钥 Service Mode 中可用的模型。vision、reasoning、缓存、JSON schema 和 tool calling 取决于模型。原生 Responses 转发 upstream 功能；Chat Completions 桥接支持消息、模型支持的图片和 `type: "function"` 工具。hosted/custom tools 和加密 reasoning 需要原生支持。
 
 ## 快速配置
 
@@ -100,15 +102,15 @@ print(result.final_output)
 | `stream` | `boolean` | `true` 适用于 SSE（见下文）。 |
 | `tools`, `tool_choice`, `parallel_tool_calls` | - | 函数调用格式 Responses (`{ "type": "function", "name", "parameters" }`)。 |
 | `reasoning` | `object` | 例如：`{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`。 |
-| `include` | `string[]` | 例如 `["reasoning.encrypted_content"]` - 加密的项推理结果将原样返回，以便在下一轮中重新发送（由 Codex CLI 使用）。 |
+| `include` | `string[]` | 例如 `["reasoning.encrypted_content"]`；加密项目取决于 upstream 原生 Responses 支持。chat 桥接不保留加密 reasoning 项目。 |
 | `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | 符合OpenAI规格；已转至该模型。 |
 | `store` | `boolean` | 始终被视为 `false`（参见 *无状态*）。 |
-| `previous_response_id`, `conversation`, `background` | - | **不支持** → `400 invalid_request_error`。 |
+| `previous_response_id`, `conversation`, `background` | - | 非 null 的 `previous_response_id` 和 `conversation` 返回 `400 invalid_request_error`；拒绝 `background: true`。可省略这些字段；接受 `background: false`。 |
 
-其他未识别的字段将转发至网关（模型不支持的参数将被忽略）。无效的请求体将被拒绝（错误代码 `400 invalid_request_error`），各字段的详细信息请参见 `error.details.issues`。
+Responses 请求体的其他字段会转发。参数可能因协议路径和 upstream 支持情况被转发、忽略或拒绝；通过 schema 验证不保证模型功能。无效请求体返回 `400 invalid_request_error`，详细信息见 `error.details.issues`。
 
 <Callout type="important" title="Stateless - 在 `input` 中发送完整历史记录">
-Hostlinku **未保存** 响应（`store: false`）。 对于多轮对话，请将整个历史记录（包括先前响应中的 `function_call`、`function_call_output` 和 `reasoning` 项）发送到 `input` 数组中-这与 Codex CLI 的工作方式完全一致。 `previous_response_id` 被明确拒绝；`GET`/`DELETE /v1/responses/{id}` 响应了 `404`。
+  在 `input` 中发送完整历史并使用 `store: false`。拒绝非 null 的 `previous_response_id` / `conversation` 及 `background: true`。不提供 `GET`/`DELETE /v1/responses/{id}`。reasoning 项目可在原生路径复用；chat 桥接会跳过这些项目。
 </Callout>
 
 ## 非流式响应
@@ -191,7 +193,7 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 
 注：
 
-- 最终使用情况记录在对象 `response` 中的 `response.completed`（或 `response.incomplete`）中；费用根据该事件发生后的实际使用情况计算。
+- upstream 提供最终 usage 时，它位于 `response.completed` 或 `response.incomplete`。费用依据该 usage；usage 缺失或为零时，网关可能使用预留估算值。`hostlinku.cost` 扩展用于成功的非流式响应，不保证出现在每个 SSE 事件中。
 - 工具调用通过 `response.output_item.added`（`type: "function_call"`）、`response.function_call_arguments.delta` 和 `response.function_call_arguments.done` 进行。
 - 如果流在传输过程中失败，网关将发送 `event: error` 和 `{"type":"error","code":…,"message":…}`，但**不会**发送虚假的 `response.completed`。
 - 在返回第一个字节之前出现的错误（余额不足、模型不存在、速率限制）将作为带有正确 HTTP 状态码的常规 JSON 响应返回-OpenAI SDK 将其映射为异常（`AuthenticationError`、`NotFoundError`、 `RateLimitError`，……）。
@@ -231,7 +233,7 @@ print(r2.output_text)
 
 | HTTP | `error.type` | `error.code` | 常见原因 |
 |---|---|---|---|
-| 400 | `invalid_request_error` | `invalid_request` | 正文无效，`max_output_tokens`超出模型限制，已发送`previous_response_id`，Service Mode密钥中不存在该模型。 |
+| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | 正文无效，`max_output_tokens`超出模型限制，已发送`previous_response_id`，Service Mode密钥中不存在该模型。 |
 | 401 | `authentication_error` | `invalid_api_key` | API密钥错误/已被撤销/已过期，或者请求中未提供API密钥。 |
 | 402 | `insufficient_quota` | `insufficient_quota` | 余额不足或API密钥的额度已用尽。 |
 | 403 | `permission_error` | - | 账户已被暂停/访问被拒绝。 |
@@ -239,4 +241,4 @@ print(r2.output_text)
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | 已达到需求上限（参见标题 `Retry-After`）。 |
 | 503 | `server_error` | `model_unavailable` / `server_error` | 模型/上游当前不可用-可以安全地重试。 |
 
-错误消息中从未包含上游提供商的身份信息。有关 Chat Completions 格式的完整代码列表，请参见 [错误](/zh/errors)。
+错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。 [Error](/zh/errors).
