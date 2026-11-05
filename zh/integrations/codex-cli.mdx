@@ -6,7 +6,7 @@ description: "通过 Hostlinku 运行 OpenAI Codex CLI，并在 ~/.codex/config.
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Codex CLI](https://developers.openai.com/codex/cli) 仅支持 **OpenAI Responses** 协议。 Hostlinku 在 [`POST /v1/responses`](/zh/responses) 中提供了该功能-无状态，支持 `reasoning.encrypted_content`、函数调用和流式传输，完全符合 Codex 的预期。配置上只需一个自定义提供商即可。
+[Codex CLI](https://developers.openai.com/codex/cli) 使用 OpenAI Responses。将自定义 provider 指向 [`POST /v1/responses`](/zh/responses)；工具与 reasoning 兼容性取决于模型及 Responses 路径。
 
 <Steps>
 
@@ -79,14 +79,12 @@ codex --profile kuat
 codex --profile cepat "为 utils/date.ts 编写单元测试"
 ```
 
-<Callout type="warning" title="该代码仅适用于模型 OpenAI">
-Codex会发送其自带的工具（shell、补丁文件等）。非OpenAI模型会拒绝此类工具，并返回`The requested tool type is not supported by this model`。这意味着`claude-*`、`deepseek-*`、 `glm-*`、`qwen*`、`kimi-*` 和 `minimax-*` **无法**通过 Codex 使用-请使用 `gpt-*` 模型。 对于其他模型，请使用支持 Anthropic 或 Chat Completions 方言的客户端（如 Claude Code、Cline、OpenCode、Aider）。
-
-模型为 `gpt-*` 的 **Responses-native**（Codex 工具原样传递）： `gpt-5-3-codex`、`gpt-5-6-sol`、`gpt-5-6-luna`、`gpt-5-5`、`gpt-6-1-sol`、`gpt-6-sol`、`gpt-6-luna` 和 `gpt-6-astra`。 `gpt-5-6-terra`仅支持Chat Completions，因此**无法**运行Codex shell工具。
+<Callout type="warning" title="模型与工具兼容性">
+  使用支持当前 Codex 工具的原生 Responses 模型。Chat Completions 桥接支持文本及 function calling；custom shell/patch tools 和加密 reasoning 需要原生支持。出现 `The requested tool type is not supported by this model` 时，请更换模型或使用合适的 Chat/Anthropic 客户端。见 [Responses API](/zh/responses)。
 </Callout>
 
-<Callout type="note" title="无状态，完全符合Codex的默认设置">
-Codex CLI 在每个回合中都会发送 `input` 和 `store: false` 中的完整对话记录，并请求 `include: ["reasoning.encrypted_content"]` 重新发送推理项。 Hostlinku 原样支持此流程；`previous_response_id` 未被 Codex 使用，因此无状态网关的特性不会产生影响。参见 [Responses API](/zh/responses)。
+<Callout type="note" title="Stateless">
+  在 `input` 中发送完整历史并使用 `store: false`。Hostlinku 拒绝非 null 的 `previous_response_id` / `conversation` 和 `background: true`。加密 reasoning 项目需要 upstream 支持；见 [Responses API](/zh/responses)。
 </Callout>
 
 <Callout type="tip" title="只是想替换默认的 OpenAI 端点吗？">
@@ -96,10 +94,10 @@ Codex CLI 在每个回合中都会发送 `input` 和 `store: false` 中的完整
 ## 故障排除
 
 - **`401`** - `env_key` 中的变量尚未导出到运行 `codex` 的 shell 中。
-- **模型回答“无法运行shell”，随后编造了输出结果** -该模型并非Responses原生模型，因此Codex工具在数据到达模型之前就被移除了。请从上方的Codex就绪模型列表中选择模型；请勿将`gpt-5-6-terra`用于Codex。
-- **`400 previous_response_id 不受支持`** - 仅在存在强制启用 *stored responses* 模式的插件/脚本时才会出现。请确保 `store` 不会被 `true` 强制触发。
+- **shell/patch 工具未执行** — 检查模型及 Responses 路径的工具支持；文本回答不能证明工具已执行。
+- **`400 previous_response_id`** — 移除 `previous_response_id` / `conversation`，在 `input` 中重发完整历史并使用 `store: false`。
 - **模型未显示 / `404`** - 别名错误；`/v1/models` 显示了与您的密钥对应的有效列表。
-- **旧版Codex要求使用`wire_api = "chat"`** - Hostlinku同样支持[`/v1/chat/completions`](/zh/chat-completions)；但Codex的推理功能与`responses`配合使用时效果最佳。
+- **旧版客户端** — 更新 Codex，并按[官方配置参考](https://developers.openai.com/codex/config-reference/)使用 `wire_api = "responses"`。
 
 ## 相关资源
 

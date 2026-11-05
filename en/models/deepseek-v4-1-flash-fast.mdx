@@ -9,38 +9,33 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | Provider | DeepSeek |
 | Slug | `deepseek-v4-1-flash-fast` |
-| Context | 1,000,000 tokens |
-| Max output | 384,000 tokens |
 | Released | 2026-09-14 |
+| Catalog context | 1,000,000 tokens |
+| Catalog max output | 384,000 tokens |
+| Service Mode | Dedicated |
 
 ## Capabilities
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | <CreditIcon /> 0.2875 / 1M |
-| Output (completion) | <CreditIcon /> 1.15 / 1M |
-| Cache read | <CreditIcon /> 0.00575 / 1M |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/deepseek-v4-1-flash-fast) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+
+| Item | Unit | Tier | Dedicated (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 0.2875 |
+| Output (completion) | per 1M tokens | Base | 1.15 |
+| Cache read | per 1M tokens | Base | 0.00575 |
 
 ## Supported endpoints
 
 | Endpoint | Format | Support |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | available |
-| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.

@@ -13,35 +13,31 @@ Qwen3.7-Max is the flagship model in the Qwen3.7 series, built for agent workloa
 |---|---|
 | Provider | Alibaba |
 | Slug | `qwen3-7-max` |
-| Konteks | 1,000,000 token |
-| Output maks | Tidak dipublikasikan |
 | Input | text |
 | Output | text |
 | Rilis | 2026-06-14 |
+| Konteks katalog | 1,000,000 token |
+| Output maks katalog | Belum dicantumkan |
+| Service Mode | Performance |
 
 ## Kapabilitas
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `agentic`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `agentic`, `long-context`.
+
+Fitur dan batas request mengikuti model, Service Mode, serta protokol yang digunakan.
 
 ## Harga
 
-| Item | Harga |
-|---|---|
-| Input (prompt) | $1.765 |
-| Output (completion) | $5.294 |
-| Cache read | $0.176 |
-| Cache write | $2.206 |
+Diperbarui **6 November 2026**. [Harga terkini](https://hostlinku.com/models/qwen3-7-max) mengikuti Service Mode API key. **1 <CreditIcon /> = \$1**. `—` berarti tarif belum dicantumkan. Tier mengikuti jumlah token prompt.
 
-Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 <CreditIcon /> = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+| Item | Unit | Tier | Performance (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M token | Dasar | 1.4826 |
+| Output (completion) | per 1M token | Dasar | 4.44696 |
+| Cache read | per 1M token | Dasar | 0.14784 |
+| Cache write (5 menit) | per 1M token | Dasar | 1.85304 |
+| Cache write (1 jam) | per 1M token | Dasar | 1.85304 |
+| Web search | per 1K panggilan | Dasar | 0.6174 |
 
 ## Endpoint yang didukung
 
@@ -51,7 +47,7 @@ Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 <
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridge menyesuaikan format API; fitur vendor dan tool bawaan aplikasi dapat berbeda. Gunakan API key dengan Service Mode yang tercantum di atas.
 
 ## Contoh request
 

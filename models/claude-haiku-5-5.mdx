@@ -9,33 +9,34 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | Provider | Anthropic |
 | Slug | `claude-haiku-5-5` |
-| Konteks | 1,000,000 token |
-| Output maks | 128,000 token |
 | Rilis | 2026-10-07 |
+| Konteks katalog | 1,000,000 token |
+| Output maks katalog | 128,000 token |
+| Service Mode | Performance, Low-Cost |
 
 ## Kapabilitas
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
+
+Fitur dan batas request mengikuti model, Service Mode, serta protokol yang digunakan.
 
 ## Harga
 
-| Item | Harga |
-|---|---|
-| Input (prompt) | <CreditIcon /> 0.084 / 1M |
-| Output (completion) | <CreditIcon /> 0.42 / 1M |
-| Cache read | <CreditIcon /> 0.0084 / 1M |
-| Cache write | <CreditIcon /> 0.105 / 1M |
+Diperbarui **6 November 2026**. [Harga terkini](https://hostlinku.com/models/claude-haiku-5-5) mengikuti Service Mode API key. **1 <CreditIcon /> = \$1**. `—` berarti tarif belum dicantumkan. Tier mengikuti jumlah token prompt.
+
+| Item | Unit | Tier | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+|---|---|---|---|---|
+| Input (prompt) | per 1M token | Dasar | 0.084 | 0.01605 |
+| Output (completion) | per 1M token | Dasar | 0.42 | 0.08025 |
+| Cache read | per 1M token | Dasar | 0.0084 | 0.001605 |
+| Cache write (5 menit) | per 1M token | Dasar | 0.105 | 0.020063 |
+| Cache write (1 jam) | per 1M token | Dasar | 0.168 | 0.0321 |
+| Web search | per 1K panggilan | Dasar | 10.5 | 10.7 |
+| Input (prompt) | per 1M token | Prompt ≥ 100,000 token | 0.42 | 0.08025 |
+| Output (completion) | per 1M token | Prompt ≥ 100,000 token | 2.1 | 0.40125 |
+| Cache read | per 1M token | Prompt ≥ 100,000 token | 0.042 | 0.008025 |
+| Cache write (5 menit) | per 1M token | Prompt ≥ 100,000 token | 0.525 | 0.100313 |
+| Cache write (1 jam) | per 1M token | Prompt ≥ 100,000 token | 0.84 | 0.1605 |
 
 ## Endpoint yang didukung
 
@@ -44,3 +45,5 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | `POST /v1/chat/completions` | OpenAI Chat Completions | tersedia |
 | `POST /v1/messages` | Anthropic Messages | native |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
+
+Bridge menyesuaikan format API; fitur vendor dan tool bawaan aplikasi dapat berbeda. Gunakan API key dengan Service Mode yang tercantum di atas.

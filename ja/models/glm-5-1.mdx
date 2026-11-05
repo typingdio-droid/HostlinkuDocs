@@ -3,7 +3,6 @@ title: "GLM 5.1"
 description: "GLM-5.1は、Zhipuの主力テキストモデルであり、20万のコンテキストと12万8千の最大出力を持つほか、長期的な計画立案、エージェント的コーディング、ツールの使用、構造化された..."
 ---
 
-
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 ## 概要
@@ -14,45 +13,41 @@ GLM-5.1は、Zhipuの主力テキストモデルであり、20万のコンテキ
 |---|---|
 | プロバイダー | Zhipu |
 | slug | `glm-5-1` |
-| コンテキスト | 200,000トークン |
-| 最大出力 | 128,000トークン |
 | 入力 | text |
 | 出力 | text |
 | リリース | 2026-06-14 |
+| カタログのコンテキスト | 200,000 トークン |
+| カタログの最大出力 | 128,000 トークン |
+| Service Mode | Performance |
 
 ## 機能
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
+
+機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
-| 項目 | 価格 |
-|---|---|
-| 入力（プロンプト） | $0.882 |
-| 出力（補完） | $3.529 |
-| キャッシュ読み取り | $0.191 |
-| キャッシュ書き込み | - |
+**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/glm-5-1)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
 
-価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の料金は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される料金については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) |
+|---|---|---|---|
+| 入力（プロンプト） | 100万トークンあたり | 基本 | 0.74088 |
+| 出力 | 100万トークンあたり | 基本 | 2.96436 |
+| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.16044 |
+| 入力（プロンプト） | 100万トークンあたり | プロンプト ≥ 32,000 トークン | 0.98868 |
+| 出力 | 100万トークンあたり | プロンプト ≥ 32,000 トークン | 3.45912 |
+| キャッシュ読み取り | 100万トークンあたり | プロンプト ≥ 32,000 トークン | 0.24696 |
 
 ## 対応エンドポイント
 
-| エンドポイント | フォーマット | サポート |
+| Endpoint | Format | 対応 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | アダプト（ブリッジ） |
-| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`で拒否されることがあります。
+ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
 
 ## リクエストの例
 
@@ -68,10 +63,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 ## 関連モデル
 
-- [GLM 5](/ja/models/glm-5)
 - [GLM 5.2](/ja/models/glm-5-2)
 - [GLM 5.3](/ja/models/glm-5-3)
-- [GLM 5.3 Hyper Chat](/ja/models/glm-5-3-hyper-chat)
 - [GLM-5.3 Flash](/ja/models/glm-5-3-flash)
 - [GLM-5.3 Flash Hyper](/ja/models/glm-5-3-flash-hyper)
 

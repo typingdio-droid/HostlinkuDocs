@@ -9,39 +9,29 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | Provider | Zhipu |
 | Slug | `glm-5-3-flash` |
-| Context | 1,000,000 tokens |
-| Max output | 64,000 tokens |
 | Input | text, image |
 | Output | text |
 | Release | 2026-08-17 |
 | Tags | flagship, reasoning, dedicated, flash |
+| Catalog context | 1,000,000 tokens |
+| Catalog max output | 64,000 tokens |
+| Service Mode | Dedicated |
 
 ## Capabilities
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | - |
-| Output (completion) | - |
-| Cache read | - |
-| Cache write | - |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/glm-5-3-flash) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Dedicated (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 0.1725 |
+| Output (completion) | per 1M tokens | Base | 0.575 |
+| Cache read | per 1M tokens | Base | 0.0345 |
 
 ## Supported endpoints
 
@@ -51,7 +41,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 
@@ -67,11 +57,9 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 ## Related models
 
-- [GLM 5](/en/models/glm-5)
 - [GLM 5.1](/en/models/glm-5-1)
 - [GLM 5.2](/en/models/glm-5-2)
 - [GLM 5.3](/en/models/glm-5-3)
-- [GLM 5.3 Hyper Chat](/en/models/glm-5-3-hyper-chat)
 - [GLM-5.3 Flash Hyper](/en/models/glm-5-3-flash-hyper)
 
 [← Back to the model catalog](/en/models)

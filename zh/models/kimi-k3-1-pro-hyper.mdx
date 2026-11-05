@@ -1,0 +1,52 @@
+---
+title: "Kimi K3.1 Pro Hyper"
+description: "Kimi K3.1 Pro Hyper · Dedicated · 1,048,576 个Token"
+---
+
+import { CreditIcon } from "/snippets/credit-icon.jsx";
+
+## 摘要
+
+用于 **Dedicated** Service Mode的Kimi/Moonshot系列模型。
+
+| 属性 | 值 |
+|---|---|
+| 提供商 | Moonshot |
+| Slug | `kimi-k3-1-pro-hyper` |
+| 目录上下文 | 1,048,576 个Token |
+| 目录最大输出 | 64,000 个Token |
+| Service Mode | Dedicated |
+
+## 能力
+
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+功能和请求限制取决于模型、Service Mode及API协议。
+
+## 价格
+
+**2026年11月6日更新**。[当前价格](https://hostlinku.com/zh/models/kimi-k3-1-pro-hyper)由API密钥的Service Mode决定。**1 <CreditIcon /> = \$1**。`—` 表示未列出费率。价格档位取决于提示词Token数。
+
+| 项目 | 单位 | 价格档位 | Dedicated (<CreditIcon />) |
+|---|---|---|---|
+| 输入（提示词） | 每100万个Token | 基础 | 6.9 |
+| 输出 | 每100万个Token | 基础 | 34.5 |
+| 缓存读取 | 每100万个Token | 基础 | 0.345 |
+
+## 支持的端点
+
+| Endpoint | Format | 支持情况 |
+|---|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
+| `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
+| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+
+桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+
+## 相关模型
+
+- [Kimi K3](/zh/models/kimi-k3)
+- [Kimi K2.6](/zh/models/kimi-k2-6)
+- [Kimi K2.7 Code](/zh/models/kimi-k2-7-code)
+
+[← 返回模型目录](/zh/models)

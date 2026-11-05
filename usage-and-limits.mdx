@@ -1,89 +1,69 @@
 ---
-title: Pemakaian & Limit
-description: Rate limit gateway, limit kredit per API key, dan cara memantau pemakaian di console
+title: "Pemakaian & Limit"
+description: "Rate limit, limit pengeluaran key, saldo, dan observasi pemakaian."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku membatasi pemakaian di tiga lapisan yang saling melengkapi: **rate limit** (jumlah
-request per waktu), **limit kredit per API key** (biaya per jendela reset), dan **saldo akun**
-(sumber dana). Ketiganya dicek di sisi server sebelum request diteruskan ke provider.
+Penggunaan dibatasi rate limit, limit kredit key, dan saldo organisasi.
 
-## Rate limit
+## Kuota bersama organisasi
 
-| Cakupan | Batas | Penentu batas |
+Kuota berikut dipakai bersama oleh semua API key dan anggota dalam organisasi yang sama. Menambah key atau memakai akun anggota lain tidak menambah kuota.
+
+| Service Mode | Request/menit | Token input/menit | Token output/menit |
+|---|---|---|---|
+| Performance | 600 | 6,500,000 | 200,000 |
+| Low-Cost | 600 | 6,500,000 | 200,000 |
+| Dedicated | 600 | 6,500,000 | 200,000 |
+
+## Batas endpoint lain
+
+Batas endpoint Console, login, dan checkout dihitung per IP dan terpisah dari kuota penggunaan model.
+
+| Cakupan | Batas | Pengelompokan |
 |---|---|---|
-| `POST /v1/chat/completions` | **600 request / menit** | Per API key (`sk-…`) |
-| Endpoint konsol & publik (`/api/*`) | **120 request / menit** | Per alamat IP |
-| Endpoint autentikasi (login, daftar, OTP, reset) | **30 percobaan / 15 menit** | Per alamat IP |
+| Endpoint Console/publik dengan limiter umum | **120 request / 60 detik** | Per IP |
+| Endpoint dengan limiter autentikasi | **30 percobaan / 15 menit** | Per IP |
+| GET checkout bertoken | **90 request / 60 detik** | Per IP |
+| Mutasi checkout bertoken | **15 request / 60 detik** | Per IP |
 
-Setiap respons yang melewati limiter menyertakan header standar (format IETF `RateLimit-*`):
-`RateLimit-Limit`, `RateLimit-Remaining`, dan `RateLimit-Reset`. Baca nilai `Reset` untuk tahu
-kapan jendela berikutnya dimulai.
+<Callout type="tip" title="Tangani 429 dengan jeda">
 
-Saat batas terlampaui, responsnya:
+Baca header reset atau `Retry-After` bila tersedia. Kurangi konkurensi dan gunakan backoff eksponensial dengan jitter. Mengulang request terus-menerus tanpa jeda tidak menyelesaikan pembatasan.
 
-```http
-HTTP/1.1 429 Too Many Requests
-```
-
-```json
-{
-  "status": "error",
-  "error": {
-    "code": "RATE_LIMITED",
-    "message": "Rate limit exceeded. Upgrade your plan for a higher limit."
-  }
-}
-```
-
-<Callout type="tip" title="Strategi backoff yang benar">
-  Untuk 429, tunggu sesuai `RateLimit-Reset` (atau backoff eksponensial 1s → 2s → 4s… dengan
-  jitter) lalu coba lagi. Jangan menembak ulang tanpa jeda; itu hanya memperpanjang blokir di
-  jendela berjalan.
 </Callout>
 
-## Limit kredit per API key
+## Limit kredit API key
 
-Di luar rate limit, setiap API key bisa diberi **limit biaya** (USD) dengan jendela reset harian,
-mingguan, bulanan (kalender UTC), atau total tanpa reset. Pemakaian dihitung dari biaya request
-nyata per API key. API key yang menyentuh limit ditolak **402 PAYMENT_REQUIRED** sampai jendela
-berikutnya dimulai. Detail pengaturan ada di [Autentikasi](/authentication).
+Form Console menawarkan **Monthly Spending Limit**. API pengelolaan key juga mendukung `daily`, `weekly`, `monthly`, dan total `lifetime`/tanpa reset. Jendela harian dimulai 00:00 UTC, mingguan Senin 00:00 UTC, bulanan tanggal 1 pada 00:00 UTC. Lihat [Autentikasi](/authentication).
 
-## Reservasi saldo saat request
+Limit memakai biaya yang tercatat untuk key, bukan jumlah token. Setelah tercapai, request berikutnya ditolak `402 PAYMENT_REQUIRED`. Saldo tambahan tidak mengubah limit key.
 
-Untuk tiap request, gateway:
+## Reservasi saldo
 
-1. **Mereservasi** estimasi biaya (berdasarkan panjang prompt dan `max_tokens`) dari saldo akun.
-2. Meneruskan request ke provider.
-3. **Commit** biaya nyata berdasarkan token yang terpakai, dan melepas sisa reservasi.
+Gateway mereservasi estimasi biaya dari saldo organisasi, meneruskan request, lalu menyelesaikan biaya berdasarkan usage upstream. Sisa reservasi dilepas. Bila usage tidak tersedia, billing dapat memakai estimasi. Kegagalan tanpa pemakaian yang dapat ditagih melepaskan reservasi.
 
-Artinya: saldo di console terbagi menjadi `balance` (total) dan `reserved` (tertahan request
-berjalan). Yang bisa dipakai request baru adalah `balance − reserved` (`available`). Request
-yang gagal **tidak dikenakan biaya**; reservasinya dilepas otomatis.
+Saldo request baru adalah `available = balance − reserved`. Saldo dan limit key perlu mencukupi; lihat [Billing & Saldo](/billing).
 
-## Memantau pemakaian di console
+## Memantau di Console
 
-Masuk ke [console.hostlinku.com](https://console.hostlinku.com):
-
-| Menu | Isi |
+| Menu | Data |
 |---|---|
-| **Dasbor / Penggunaan** | Ringkasan request, token in/out, cache, dan biaya per rentang waktu (24 jam, 7/30/90 hari). |
-| **Log Permintaan** | Daftar request lengkap: model, status, token, biaya, latensi (termasuk TTFT untuk streaming), dan detail per request. |
-| **Log Audit** | Jejak aksi akun: pembuatan/revoke API key, top-up, perubahan pengaturan, dsb. |
-| **API Keys** | Pemakaian per API key: request, token, biaya, `lastUsed`, kedaluwarsa, dan limit. |
+| **Overview / Analytics** | Ringkasan request, token, cache, dan biaya menurut rentang waktu |
+| **Logs** | Model, status, token, biaya, latensi, TTFT, dan detail request |
+| **API Keys** | Status, Service Mode, kedaluwarsa, limit, serta pemakaian key |
+| **Billing** | Saldo organisasi, top-up, transaksi, invoice |
 
-Semua angka berasal dari tabel telemetri backend yang sama dengan yang dipakai penagihan, tanpa
-estimasi di sisi tampilan.
+Chat completion non-streaming memuat `hostlinku.cost`. Streaming SSE tidak menjamin blok biaya pada chunk; periksa biaya final lewat Logs/Analytics/Billing. `x-request-id` membantu menghubungkan request dengan log.
 
-<Callout type="note" title="Biaya request per API">
-  Untuk aplikasi kamu sendiri, blok `hostlinku.cost` pada setiap respons chat completion memuat
-  biaya request tersebut, dan header `x-request-id` menghubungkannya ke baris log di console.
-</Callout>
+## Isi log dan retensi
 
-## Ringkasan perilaku 429 dan 402
+Body logging **nonaktif secara default**. Jika diaktifkan admin, isi dibatasi ukuran dan field kredensial disaring; retensi body default 14 hari. Metadata penggunaan/transaksi tetap disimpan. Lihat [Privasi](/legals/privacy-policy).
 
-| Kode | Arti | Yang harus dilakukan |
+## Arti 429 dan 402
+
+| Kode | Arti | Tindakan |
 |---|---|---|
-| `429 RATE_LIMITED` | Terlalu banyak request dalam jendela waktu | Tunggu `RateLimit-Reset`, backoff, atau kurangi konkurensi |
-| `402 PAYMENT_REQUIRED` | Masalah kredit: saldo kurang **atau** limit API key tercapai | Cek pesan errornya. Kalau menyebut "Limit kredit API key", tunggu reset atau naikkan limit; kalau "Insufficient credit balance", lakukan top-up ([Billing & Saldo](/billing)) |
+| `429 RATE_LIMITED` | Batas jumlah request terlampaui | Tunggu reset, backoff, kurangi konkurensi |
+| `402 PAYMENT_REQUIRED` | Saldo tersedia kurang atau limit key tercapai | Baca pesan: top-up saldo, tunggu reset, atau ubah limit yang sesuai |

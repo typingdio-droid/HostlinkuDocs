@@ -9,44 +9,37 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | Provider | OpenAI |
 | Slug | `gpt-5-6-luna` |
-| Context | 1,050,000 tokens |
-| Max output | 64,000 tokens |
 | Input | text, image |
 | Output | text |
 | Release | 2026-07-09 |
 | Tags | fast |
+| Catalog context | 1,050,000 tokens |
+| Catalog max output | 64,000 tokens |
+| Service Mode | Performance, Low-Cost |
 
 ## Capabilities
 
-- `text`
-- `vision`
-- `image-input`
-- `file-input`
-- `pdf-input`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `extended-thinking`
-- `code-execution`
-- `web-search`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `multimodal`
+`text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | $0.2 |
-| Output (completion) | $1.2 |
-| Cache read | $0.02 |
-| Cache write | $0.25 |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/gpt-5-6-luna) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+|---|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 0.168 | 0.107 |
+| Output (completion) | per 1M tokens | Base | 1.008 | 0.642 |
+| Cache read | per 1M tokens | Base | 0.0168 | 0.0107 |
+| Cache write (5 minutes) | per 1M tokens | Base | 0.21 | 0.13375 |
+| Cache write (1 hour) | per 1M tokens | Base | 0.21 | 0.13375 |
+| Web search | per 1K calls | Base | 10.5 | 10.7 |
+| Input (prompt) | per 1M tokens | Prompt ≥ 272,000 tokens | 0.336 | 0.214 |
+| Output (completion) | per 1M tokens | Prompt ≥ 272,000 tokens | 1.512 | 0.963 |
+| Cache read | per 1M tokens | Prompt ≥ 272,000 tokens | 0.0336 | 0.0214 |
+| Cache write (5 minutes) | per 1M tokens | Prompt ≥ 272,000 tokens | 0.42 | 0.2675 |
+| Cache write (1 hour) | per 1M tokens | Prompt ≥ 272,000 tokens | 0.42 | 0.2675 |
 
 ## Supported endpoints
 
@@ -56,7 +49,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | native |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 

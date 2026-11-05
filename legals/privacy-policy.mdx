@@ -5,7 +5,7 @@ description: "Kebijakan privasi Hostlinku: data akun, API key, metadata request,
 
 import { Callout } from "/snippets/mdx.jsx";
 
-**Terakhir diperbarui:** 11 Oktober 2026.
+**Terakhir diperbarui:** 6 November 2026.
 
 <a id="cakupan"></a>
 
@@ -22,14 +22,14 @@ Jika kamu memakai API untuk memproses data pribadi pengguna akhir kamu, kamu ber
 ### Data akun dan autentikasi
 
 - nama, alamat email, nama perusahaan (opsional), dan foto profil bila disediakan oleh penyedia SSO;
-- hash kata sandi (kami tidak menyimpan kata sandi dalam bentuk asli);
+- data autentikasi yang dikelola Keycloak, termasuk hash kata sandi dan kredensial passkey/authenticator (bukan kata sandi asli);
 - identitas akun dari penyedia SSO (misalnya Google, GitHub, Discord) bila kamu masuk melalui SSO;
 - status verifikasi email, kode OTP sementara, peran akun, dan status akun;
 - data sesi login dan catatan audit keamanan seperti waktu login, logout, pendaftaran, perubahan pengaturan, penyesuaian saldo oleh admin, dan aktivitas API key, beserta alamat IP dan user agent terkait.
 
 ### API key
 
-Nilai API key hanya disimpan sebagai hash SHA-256 dan tidak dapat kami tampilkan ulang. Kami menyimpan nama key, awalan key untuk identifikasi, scope, masa berlaku, batas kredit, waktu pemakaian terakhir, dan status pencabutan.
+Nilai API key hanya disimpan sebagai hash SHA-256 dan tidak dapat kami tampilkan ulang. Kami menyimpan nama key, awalan key untuk identifikasi, Service Mode, masa berlaku, batas kredit, waktu pemakaian terakhir, dan status pencabutan.
 
 ### Metadata request
 
@@ -45,7 +45,7 @@ Request yang ditolak sebelum tahap tersebut, misalnya karena autentikasi gagal, 
 
 ### Saldo dan pembayaran
 
-Kami menyimpan riwayat top-up, pemakaian, pengembalian, dan penyesuaian saldo, termasuk nominal, metode, status, dan nomor referensi transaksi. Pembayaran diproses oleh iPaymu (QRIS dan virtual account) dan BlockBee (kripto). Kami tidak menerima maupun menyimpan nomor kartu lengkap, CVV, atau kredensial perbankan kamu. Untuk pembayaran kripto, alamat dompet dan hash transaksi dapat tercatat.
+Kami menyimpan riwayat top-up, pemakaian, pengembalian, dan penyesuaian saldo, termasuk nominal, metode, status, dan nomor referensi transaksi. Pembayaran diproses oleh iPaymu Direct (QRIS dan virtual account) dan Heleket (kripto hosted). Kami tidak menerima maupun menyimpan nomor kartu lengkap, CVV, atau kredensial perbankan kamu. Untuk pembayaran kripto, alamat dompet dan hash transaksi dapat tercatat.
 
 ### Data teknis dan komunikasi
 
@@ -79,7 +79,7 @@ Kami tidak menggunakan isi request maupun respons kamu untuk melatih model. Upst
 - **Menjalankan Layanan**: autentikasi, perutean request, dan pengiriman respons (pelaksanaan perjanjian).
 - **Penagihan**: reservasi dan pemotongan saldo, riwayat transaksi, pemrosesan top-up dan refund (pelaksanaan perjanjian dan kewajiban hukum).
 - **Keamanan**: rate limit, deteksi penyalahgunaan dan penipuan, captcha, audit log (kepentingan yang sah).
-- **Dukungan dan notifikasi**: OTP, reset kata sandi, peringatan saldo rendah, pemberitahuan perubahan layanan (pelaksanaan perjanjian).
+- **Dukungan dan notifikasi**: verifikasi akun, reset kata sandi, dan pemberitahuan perubahan layanan (pelaksanaan perjanjian).
 - **Peningkatan layanan**: statistik pemakaian agregat untuk kapasitas dan kualitas (kepentingan yang sah).
 - **Kepatuhan hukum**: menanggapi permintaan otoritas yang sah dan memenuhi kewajiban perpajakan atau akuntansi.
 
@@ -92,7 +92,7 @@ Kami tidak menjual data pribadi kamu.
 Data dibagikan hanya sejauh diperlukan kepada:
 
 - **Upstream provider model**: menerima isi request yang kamu kirim untuk menghasilkan respons. Kami tidak meneruskan email atau identitas akun kamu kepada mereka.
-- **Penyedia pembayaran**: iPaymu dan BlockBee untuk memproses top-up dan refund.
+- **Penyedia pembayaran**: iPaymu Direct dan Heleket untuk memproses top-up dan refund.
 - **Penyedia email**: Brevo atau Amazon SES untuk mengirim OTP, notifikasi, dan email transaksional.
 - **Penyedia identitas SSO**: Google, GitHub, Discord, atau penyedia lain yang kamu pilih untuk masuk.
 - **Infrastruktur**: Cloudflare (jaringan, perlindungan, Turnstile, dan penyimpanan objek R2) serta penyedia server dan database.
@@ -113,7 +113,7 @@ Sebagian penerima di atas, termasuk upstream provider dan penyedia pembayaran, m
 - **Isi request dan respons**: tidak disimpan saat body logging nonaktif; bila aktif, dihapus otomatis setelah masa retensi (default 14 hari).
 - **Metadata request dan riwayat transaksi**: disimpan selama akun aktif dan sesudahnya selama diperlukan untuk penagihan, akuntansi, perpajakan, penyelesaian sengketa, dan pencegahan penipuan.
 - **Audit log keamanan**: disimpan selama diperlukan untuk investigasi dan pembuktian.
-- **Kode OTP dan sesi**: kedaluwarsa otomatis; sesi login berlaku paling lama 7 hari.
+- **Kode verifikasi dan sesi**: kedaluwarsa otomatis atau dicabut sesuai alur autentikasi.
 
 Salinan cadangan dapat tetap ada untuk jangka terbatas setelah data dihapus dari sistem utama, dan tidak digunakan untuk keperluan lain selain pemulihan.
 
@@ -143,11 +143,11 @@ Ajukan permintaan ke [privacy@hostlinku.com](mailto:privacy@hostlinku.com) dari 
 
 ## 10. Cookie dan penyimpanan lokal
 
-- `hl_session` dan cookie sesi server: menjaga status login, berlaku hingga 7 hari;
+- `hl_sid`: sesi server untuk autentikasi Console; `hl_session`: cookie JWT untuk sebagian alur. Cookie sesi memiliki masa berlaku dan dapat dicabut;
 - cookie state SSO: berumur pendek untuk mengamankan alur masuk melalui penyedia identitas;
 - cookie preferensi tampilan, misalnya status sidebar console;
 - cookie Cloudflare dan Turnstile untuk perlindungan dari bot dan serangan;
-- penyimpanan lokal browser untuk riwayat percakapan playground, yang tersimpan di perangkat kamu dan tidak dikirim ke server kecuali saat kamu mengirim request.
+- penyimpanan lokal browser untuk riwayat Playground, snapshot profil, preferensi, dan Billing Profile. Billing Profile memengaruhi cetakan Console dan belum tersinkron ke invoice server/perangkat lain.
 
 Kami tidak memasang cookie iklan atau analitik pihak ketiga. Menonaktifkan cookie di browser dapat membuat login dan console tidak berfungsi.
 
@@ -161,7 +161,7 @@ Layanan ditujukan untuk developer dan bisnis. Data pribadi anak di bawah 18 tahu
 
 ## 12. Email dan komunikasi
 
-Kami mengirim email transaksional yang diperlukan untuk menjalankan akun, seperti OTP verifikasi, reset kata sandi, peringatan saldo rendah, dan pemberitahuan perubahan kebijakan. Email ini tidak dapat dihentikan selama akun aktif. Bila kami mengirim email promosi, setiap email akan memuat cara untuk berhenti berlangganan.
+Kami mengirim email transaksional yang diperlukan untuk menjalankan akun, seperti verifikasi akun, reset kata sandi, dan pemberitahuan perubahan kebijakan. Email ini tidak dapat dihentikan selama akun aktif. Bila kami mengirim email promosi, setiap email akan memuat cara untuk berhenti berlangganan.
 
 <a id="perubahan"></a>
 

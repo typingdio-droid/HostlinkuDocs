@@ -5,10 +5,10 @@ Dokumentasi publik untuk [Hostlinku](https://hostlinku.com) — gateway API untu
 ## Menjalankan lokal
 
 ```bash
-npx mint dev
+npx mint dev --port 3220
 ```
 
-Preview di `http://localhost:3000`.
+Preview di `http://localhost:3220`.
 
 ## Struktur konten (4 bahasa)
 

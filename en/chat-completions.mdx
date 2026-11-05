@@ -13,14 +13,16 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-Each response includes the `x-request-id` header (Hostlinku request ID) and, for successful non-streaming responses, the `x-model` header (the public slug of the model that served the request).
+Successful responses include `x-request-id`; successful non-streaming responses also include `x-model` (the public model slug).
+
+Choose a model available in the API key Service Mode. Vision, JSON schema, reasoning, and tool calling depend on the model and protocol path. See [compatibility limits](/en/responses).
 
 ## Body Parameters
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `model` | `string` | none | **Required.** Model slug, e.g., `gpt-5-5`. See [Model](/en/models). |
-| `messages` | `array` | none | **Required.** At least 1 message. Each item: `{ role, content, name? }`, where `role` is one of `system`, `user`, `assistant`, or `tool`. |
+| `messages` | `array` | none | **Required.** At least 1 message. Each item: `{ role, content, name? }`, where `role` is one of `system`, `developer`, `user`, `assistant`, or `tool`. |
 | `temperature` | `number` | provider default | Range `0`–`2`. The higher the value, the more random it is. |
 | `top_p` | `number` | provider default | Range `0`–`1`. An alternative to _nucleus sampling_ based on `temperature`. |
 | `n` | `integer` | `1` | Number of answer choices, `1`–`8`. |
@@ -36,8 +38,8 @@ Each response includes the `x-request-id` header (Hostlinku request ID) and, for
 | `response_format` | `any` | none | E.g., `{ "type": "json_object" }` for JSON output (depending on model support). |
 | `seed` | `integer` | none | Seed determinism (best-effort, provider-dependent). |
 
-<Callout type="note" title="Only the parameters above are processed">
-The body is validated against a strict schema before being forwarded to the provider. Fields not listed above will be **ignored** (removed from the body), and invalid bodies will be rejected with a `422 VALIDATION_FAILED` response, along with details for each field. `messages[].content` accepts both strings and arrays of multimodal content (OpenAI format) as long as the model supports them.
+<Callout type="note" title="Parameter validation">
+  The table lists the main parameters. The schema also accepts `top_k`, `web_search_options`, `reasoning_effort`, `parallel_tool_calls`, `logprobs`, `top_logprobs`, `logit_bias`, `stream_options`, `metadata`, `thinking`, `verbosity`, `service_tier`, `store`, `prompt_cache_key`, `safety_identifier`, and `truncation`. Unknown top-level fields are removed. Additional `messages[]` fields, including `tool_calls`, `tool_call_id`, `function_call`, and `reasoning_content`, are preserved. Parameter and multimodal support depend on the model/protocol. Invalid bodies return `422 VALIDATION_FAILED` with field details.
 </Callout>
 
 ## Example: Non-streaming request (curl)
@@ -80,11 +82,11 @@ Response (abridged):
 }
 ```
 
-The `model` field always contains the Hostlinku public slug (not the internal ID), and the additional `hostlinku` block is always present in a successful response, containing only the cost and latency of the request:
+`model` contains the public Hostlinku slug. The `hostlinku` block in successful non-streaming responses includes cost, Service Mode, and latency. It is not guaranteed in each SSE chunk:
 
 | Field | Meaning |
 |---|---|
-| `cost` | Request cost in USD (high-precision decimal number). |
+| `cost` | Cost in 🪙 credits; 1 credit = \$1. |
 | `latencyMs` | Total request latency from when the gateway receives the request until it is completed, in milliseconds. |
 
 ## Streaming (`stream: true`)
@@ -114,10 +116,8 @@ data: [DONE]
 
 Important note:
 
-- If a failure occurs during the stream, the gateway sends a single error event
-(`data: {"error": { "code": …, "message": … }}`) and **does not** send a fake `[DONE]`. A disconnected stream never looks like a stream that has completed normally.
-- Fixed costs are calculated based on actual usage after the stream ends; if usage data is not available,
-The invoice uses the estimate that was reserved when the request was received.
+- Handle error events and unexpected disconnections as stream failures. A `[DONE]` marker alone does not prove success; inspect errors and Request Logs using `x-request-id`.
+- Final billing uses upstream usage/cost; missing or zero values can fall back to the reserved estimate.
 - The `x-request-id` header is also sent in streaming responses to correlate with logs in
 console.
 
@@ -171,7 +171,7 @@ The same pattern applies to `openai-node` (`new OpenAI({ baseURL: 'https://api.h
 | Model slug not found in the catalog | 404 | `MODEL_NOT_FOUND` |
 | `max_tokens` exceeds the model's output limit | 400 | `BAD_REQUEST` |
 | Deprecated / currently unavailable model | 503 | `MODEL_UNAVAILABLE` |
-| Rate limit per API key exceeded | 429 | `RATE_LIMITED` |
+| Shared organization quota exceeded | 429 | `RATE_LIMITED` |
 | Upstream unavailable / temporary outage (retryable) | 503 | `UPSTREAM_ERROR` |
 
 The complete format of the error envelope is available at [Error](/en/errors).

@@ -1,6 +1,6 @@
 ---
 title: OpenAI Agents SDK
-description: Pakai OpenAI Agents SDK (Python & TypeScript) dengan Hostlinku lewat Responses API - set_default_openai_client, tracing dimatikan, tools & handoff tetap berjalan
+description: "Contoh OpenAI Agents SDK dengan Hostlinku: client, tracing, function tools, dan riwayat lokal."
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -10,7 +10,13 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 berikan client OpenAI dengan `base_url` Hostlinku, dan matikan tracing (tracing diekspor ke
 platform OpenAI, bukan lewat gateway).
 
+<Callout type="note" title="Kompatibilitas model dan tool">
+  Pilih model yang tersedia untuk Service Mode API key. Dukungan vision, JSON schema, reasoning, dan tool calling mengikuti model serta jalur protokolnya. Lihat [batas kompatibilitas](/responses).
+</Callout>
+
 <Steps>
+
+
 
 ### Instal
 
@@ -83,18 +89,13 @@ console.log(result.finalOutput);
 
 ### Verifikasi
 
-Jalankan skrip; dua request (giliran tool call dan giliran jawaban) muncul di console → **Log
-Permintaan** dengan ID `resp_…`.
+Jika model memanggil tool, contoh ini biasanya menghasilkan dua request di **Log Permintaan**: giliran tool call dan giliran jawaban.
 
 </Steps>
 
 ## Cara kerja agent loop
 
-Setiap putaran *agent loop* adalah satu request ke Hostlinku Gateway: agent mengirim prompt, model
-membalas dengan *tool call*, agent menjalankan tool secara lokal (baca/tulis file, eksekusi
-perintah) lalu mengirim hasilnya kembali - begitu seterusnya sampai model memberi jawaban akhir.
-Gateway me-routing setiap putaran ke model upstream, dan semuanya tercatat terpisah di console →
-**Log Permintaan** lengkap dengan token dan biayanya.
+Agent mengirim prompt ke gateway. Jika model meminta tool, SDK menjalankannya lalu mengirim hasilnya kembali hingga jawaban selesai. Setiap panggilan model memiliki request tersendiri di **Log Permintaan**.
 
 ![Diagram agent loop Hostlinku: IDE/coding agent, Hostlinku Gateway, model upstream, Hostlinku Console, dan workspace lokal](/images/integrations/agent-loop-detailed.webp "Agent loop lewat Hostlinku: agent mengirim prompt ke gateway, gateway me-routing ke model upstream, tool dijalankan lokal, dan setiap request tercatat di console.")
 
@@ -112,8 +113,7 @@ python agent.py
 
 ## Responses API atau Chat Completions?
 
-Default SDK adalah Responses API (`/v1/responses`) - disarankan, karena mendukung item `reasoning`
-dan alur tool yang paling lengkap. Bila ingin Chat Completions (`/v1/chat/completions`):
+Default SDK memakai Responses API (`/v1/responses`). Dukungan reasoning dan tool mengikuti model serta jalur native/bridge. Untuk memakai Chat Completions (`/v1/chat/completions`):
 
 ```python
 from agents import set_default_openai_api
@@ -139,12 +139,12 @@ Keduanya memakai API key, saldo, dan Request Logs yang sama.
 
 | Fitur Agents SDK | Status |
 |---|---|
-| `function_tool` / `tool()`, parallel tool calls | Ya |
+| `function_tool` / `tool()`, parallel tool calls | Tersedia bila model mendukung function calling; parallel tool calls mengikuti model. |
 | Handoffs antar agent (termasuk model berbeda per agent) | Ya - campur `claude-sonnet-4-6` dan `gpt-5-5` dalam satu alur |
 | Structured output (`output_type` / Zod) | Ya pada model yang mendukung JSON schema |
 | Streaming (`Runner.run_streamed`, `run(..., { stream: true })`) | Ya |
-| `reasoning={"effort": …}` via `ModelSettings` | Ya, diteruskan ke model |
-| Hosted tools OpenAI (`WebSearchTool`, `FileSearchTool`, `CodeInterpreterTool`) | Tergantung model tujuan; jalankan tool sebagai `function_tool` sendiri bila tidak tersedia |
+| `reasoning={"effort": …}` via `ModelSettings` | Diterima; nilai dan hasil mengikuti model serta jalur protokol. |
+| Hosted tools OpenAI (`WebSearchTool`, `FileSearchTool`, `CodeInterpreterTool`) | Bergantung pada Responses native upstream; bridge chat hanya menerjemahkan tool `type: "function"`. Gunakan function tool sendiri bila hosted tool tidak tersedia. |
 | Tracing ke platform OpenAI | Tidak lewat gateway - matikan, atau gunakan trace processor pihak ketiga |
 
 ## Troubleshooting

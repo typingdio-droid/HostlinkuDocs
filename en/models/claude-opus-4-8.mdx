@@ -13,44 +13,32 @@ Claude Opus 4.8 is Anthropic's high-capability Opus model for complex reasoning 
 |---|---|
 | Provider | Anthropic |
 | Slug | `claude-opus-4-8` |
-| Context | 1,000,000 tokens |
-| Max output | 128,000 tokens |
 | Input | text, image |
 | Output | text |
 | Release | 2026-05-28 |
 | Tags | reasoning |
+| Catalog context | 1,000,000 tokens |
+| Catalog max output | 128,000 tokens |
+| Service Mode | Performance, Low-Cost |
 
 ## Capabilities
 
-- `text`
-- `vision`
-- `image-input`
-- `file-input`
-- `pdf-input`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `extended-thinking`
-- `code-execution`
-- `web-search`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `multimodal`
+`text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | $5 |
-| Output (completion) | $25 |
-| Cache read | $0.5 |
-| Cache write | $6.25 |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/claude-opus-4-8) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+|---|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 4.2 | 0.8025 |
+| Output (completion) | per 1M tokens | Base | 21 | 4.0125 |
+| Cache read | per 1M tokens | Base | 0.42 | 0.08025 |
+| Cache write (5 minutes) | per 1M tokens | Base | 5.25 | 1.003125 |
+| Cache write (1 hour) | per 1M tokens | Base | 8.4 | 1.605 |
+| Web search | per 1K calls | Base | 10.5 | 10.7 |
 
 ## Supported endpoints
 
@@ -60,7 +48,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | native |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 
@@ -77,7 +65,6 @@ curl https://api.hostlinku.com/v1/chat/completions \
 ## Related models
 
 - [Claude Fable 5](/en/models/claude-fable-5)
-- [Claude Fable 5.1](/en/models/claude-fable-5-1)
 - [Claude Haiku 4.5](/en/models/claude-haiku-4-5)
 - [Claude Opus 4.6](/en/models/claude-opus-4-6)
 - [Claude Opus 4.7](/en/models/claude-opus-4-7)

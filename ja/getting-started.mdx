@@ -10,9 +10,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ## 前提条件
 
-- **アカウント Hostlinku**：[auth2.hostlinku.com](https://auth2.hostlinku.com) から無料で登録してください。
-
-デバイスが対応している場合、ログインページで **パスキーでサインイン**（WebAuthn）も利用できます。
+- **Hostlinkuアカウント**：[バックエンドから新規登録](https://api.hostlinku.com/api/auth2/register) するとKeycloakへ転送されます。
 - **クレジット残高**：ゲートウェイはトークンごとに残高を差し引きます。本番環境でのリクエストを行う前に、コンソールで残高を補充してください。テストリクエストの料金は通常1セント未満ですが、残高がゼロになってはいけません。[課金と残高](/ja/billing)をご参照ください。
 - **テストツール**：curl だけで十分です。より高度な例については、OpenAI（`pip install openai`）の公式 SDK または Node（`npm install openai`）を、コードを変更することなく使用できます。
 
@@ -22,15 +20,16 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### 登録またはログイン
 
-[auth2.hostlinku.com](https://auth2.hostlinku.com) にアクセスし、新規アカウントを作成するか、既存のアカウントでログインしてください（管理者が有効にしている場合は、SSOログインも利用可能です）。
+[新規登録](https://api.hostlinku.com/api/auth2/register) または [ログイン](https://api.hostlinku.com/api/auth2/login) から開始します。バックエンドが `auth2.hostlinku.com` のKeycloak認証を開始し、コールバック後にConsoleを開きます。パスキーとSSOはアカウント、端末、有効なプロバイダーに応じて利用できます。
 
 ### APIキーを作成する
 
 [console.hostlinku.com](https://console.hostlinku.com) にアクセスし、**API Keys** メニュー → **APIキーの作成** を選択します。APIキー作成ダイアログでは、以下の設定を行うことができます：
 
 - **名称**：識別用。例：`your-production-app`。
-- **有効期限**：オプション。「無期限」、「30日」「90日」「365日」、または「カスタム日付」から選択してください。
-- **クレジット上限**：オプション。ウィンドウごとに**毎日／毎週／毎月**のキー使用上限（例：10ドル）を設定するか、リセットなし（総上限）に設定できます。
+- **Service Mode**：**Performance**（初期値）、**Low-Cost**、**Dedicated** から選択。モードでモデルと価格が決まります。
+- **有効期限**：30日（初期値）、60日、90日、または無期限。
+- **Monthly Spending Limit**：任意の月間利用上限。Consoleフォームにスコープや日次・週次リセット選択はありません。API契約は [認証](/ja/authentication) を参照してください。
 
 <Callout type="warning" title="「シークレット」は一度だけ表示されます">
 APIキーの作成後、`sk-…`という形式のシークレットがコンソールに**1回だけ**表示されます。これをコピーして安全な場所に保管してください。サーバーはこれをSHA-256ハッシュとして保存しており、再度表示することはできません。シークレットを紛失した場合は、そのAPIキーを無効にして、新しいものを作成してください。
@@ -78,7 +77,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 ### おすすめ：ストリーミングを利用しましょう
 
-チャットアプリでは、`"stream": true`を送信してください。モデルが回答を開始するとすぐに（通常1～2秒以内）、回答がすべて完了するのを待たずに最初の単語が表示されます。所要時間は同じですが、ユーザーにとってはアプリがはるかに高速に感じられます。
+チャットでは `"stream": true` で生成中の回答を表示できます。最初のトークンまでの時間はモデルやプロバイダーの状態に依存し、特定の遅延は保証されません。
 
 ```python
 import os
@@ -110,7 +109,7 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
 
 ### 残高と取引履歴を確認する
 
-コンソールで、**クレジット/残高**メニューを開くと現在の残高を確認でき、**リクエストログ**メニューを開くと、トークン、費用、レイテンシを含むリクエストの完全な履歴を確認できます。 コンソールセッション用の対応するエンドポイントは [`GET /api/wallet/account`](/ja/billing) にあり、パブリック API（API キー `sk-…`）では `/v1/*` が使用されます。
+Consoleの **Billing** で組織残高、**Logs** でトークン、費用、遅延を確認できます。Consoleセッション用の対応エンドポイントは [`GET /api/wallet/account`](/ja/billing) です。公開API（`sk-…`）は `/v1/*` を使用します。
 
 </Steps>
 
@@ -127,14 +126,8 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
 お困りですか？ [halo@hostlinku.com](mailto:halo@hostlinku.com) までお問い合わせください。また、[サポート](/ja/support) もご参照ください。
 </Callout>
 
-## パスキーログインと 2FA
+## パスキーログインと2FA
 
-Hostlinku アカウントは `auth2.hostlinku.com` の Keycloak を使用します。メールアドレスとパスワードに加えて、以下が利用できます。
+HostlinkuアカウントはKeycloakを使用します。パスキー（WebAuthn）、TOTP認証アプリ、リカバリーコードは **Settings → Security** で利用できます。ログインで使う前に登録してください。登録・認証のチャレンジはKeycloakが処理し、SSOは有効なプロバイダーに応じて利用できます。
 
-- **パスキー（WebAuthn）** - デバイスの生体認証やセキュリティキーによるパスワードレスサインイン。
-- **Authenticator（TOTP）** - 認証アプリの 6 桁コード。
-- **リカバリーコード** - 1 回限りのバックアップコード。
-
-いずれもコンソールの **Settings -> Security** で管理します。*Add passkey* を押すとデバイスのダイアログが開き、
-登録後はログイン画面の *パスキーでサインイン* から同じダイアログが直接開きます。ダイアログを閉じてもログイン画面に
-留まるため、再試行するかパスワードでサインインできます。
+ストリーミングの費用は終了後に **Logs / Analytics / Billing** で確認してください。各SSEチャンクに `hostlinku.cost` があるとは限りません。上流がusageを返さない場合は推定費用を使うことがあります。

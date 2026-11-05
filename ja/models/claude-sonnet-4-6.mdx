@@ -3,7 +3,6 @@ title: "Claude Sonnet 4.6"
 description: "Claude Sonnet 4.6は、速度と知能のバランスを兼ね備えており、1Mのコンテキスト、最大64Kの出力、およびコーディング、エージェント、ナレッジワーク、長文コンテキスト向けの拡張思考機能を備えています..."
 ---
 
-
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 ## 概要
@@ -14,54 +13,42 @@ Claude Sonnet 4.6は、速度と知能のバランスに優れており、1Mの�
 |---|---|
 | プロバイダー | Anthropic |
 | slug | `claude-sonnet-4-6` |
-| コンテキスト | 1,000,000トークン |
-| 最大出力 | 64,000トークン |
 | 入力 | テキスト、画像 |
 | 出力 | text |
 | リリース | 2026-04-06 |
 | タグ | 本番 |
+| カタログのコンテキスト | 1,000,000 トークン |
+| カタログの最大出力 | 64,000 トークン |
+| Service Mode | Performance, Low-Cost |
 
 ## 機能
 
-- `text`
-- `vision`
-- `image-input`
-- `file-input`
-- `pdf-input`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `extended-thinking`
-- `code-execution`
-- `web-search`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `multimodal`
+`text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
+
+機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
-| 項目 | 価格 |
-|---|---|
-| 入力（プロンプト） | $3 |
-| 出力（補完） | $15 |
-| キャッシュ読み取り | $0.3 |
-| キャッシュ書き込み | $3.75 |
+**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/claude-sonnet-4-6)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
 
-価格は、APIキーHostlinkuにおける**1Mトークン**あたりの顧客価格であり、1 <CreditIcon /> = $1となります。 リクエストごとの実際の価格は引き続きService Mode API keyに基づいており、変更される可能性があります。適用される値については、[コンソール](https://console.hostlinku.com/models)または`GET /v1/models`をご確認ください。
+| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+|---|---|---|---|---|
+| 入力（プロンプト） | 100万トークンあたり | 基本 | 2.52 | 0.4815 |
+| 出力 | 100万トークンあたり | 基本 | 12.6 | 2.4075 |
+| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.252 | 0.04815 |
+| キャッシュ書き込み（5分） | 100万トークンあたり | 基本 | 3.15 | 0.601875 |
+| キャッシュ書き込み（1時間） | 100万トークンあたり | 基本 | 5.04 | 0.963 |
+| Web検索 | 1,000回あたり | 基本 | 10.5 | 10.7 |
 
 ## 対応エンドポイント
 
-| エンドポイント | フォーマット | サポート |
+| Endpoint | Format | 対応 |
 |---|---|---|
 | `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
 | `POST /v1/messages` | Anthropic Messages | ネイティブ |
-| `POST /v1/responses` | OpenAI Responses | アダプト（ブリッジ） |
+| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-エンドポイントおよびモデルの利用可能性は、カタログおよび使用されるService Mode API keyに従います。そのモードに対応するモデルが利用できない場合、リクエストは`400 MODEL_NOT_IN_SERVICE_MODE`により拒否されることがあります。
+ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
 
 ## リクエストの例
 
@@ -78,7 +65,6 @@ curl https://api.hostlinku.com/v1/chat/completions \
 ## 関連モデル
 
 - [Claude Fable 5](/ja/models/claude-fable-5)
-- [Claude Fable 5.1](/ja/models/claude-fable-5-1)
 - [Claude Haiku 4.5](/ja/models/claude-haiku-4-5)
 - [Claude Opus 4.6](/ja/models/claude-opus-4-6)
 - [Claude Opus 4.7](/ja/models/claude-opus-4-7)

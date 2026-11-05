@@ -5,22 +5,9 @@ description: Batas request Hostlinku, header yang dikirim, dan cara melakukan ba
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Batas utama gateway adalah **600 request per menit per API key** untuk endpoint `/v1/*`. Request dari semua model pada key yang sama dihitung bersama dalam jendela 60 detik.
+Kuota layanan adalah **600 request, 6.500.000 token input, dan 200.000 token output per menit**, dipakai bersama dalam organisasi yang sama. Semua API key dan anggota organisasi terdampak saat kuota tercapai.
 
-| Limit | Kuota | Cakupan |
-|---|---|---|
-| RPM gateway | **600 req/menit** | Per API key, semua model |
-| RPD | Tidak dibatasi | Dibatasi saldo dan limit kredit key |
-| TPM | Tidak dibatasi | `max_tokens` tetap harus ≤ batas output model |
-| Endpoint `/api/*` | **120 req/menit** | Per alamat IP |
-| Endpoint autentikasi | **30 percobaan / 15 menit** | Per alamat IP |
-
-Saat limit terlampaui, gateway mengembalikan **HTTP 429** dengan:
-
-- `Retry-After`: saran waktu tunggu dalam detik.
-- `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset`: kuota dan sisa jendela.
-
-Request 429 **tidak** membuat reservasi atau memotong saldo.
+Detail kuota dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
 
 ## Backoff yang disarankan
 

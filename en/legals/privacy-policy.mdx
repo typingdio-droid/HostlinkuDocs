@@ -13,7 +13,7 @@ This English translation is provided for convenience. The Indonesian version is 
 
 </Callout>
 
-**Last updated:** October 11, 2026.
+**Last updated:** November 6, 2026.
 
 <a id="cakupan"></a>
 
@@ -30,14 +30,14 @@ If you use the API to process your end users’ personal data, you act as the da
 ### Account Data and Authentication
 
 - name, email address, company name (optional), and profile photo, if provided by the SSO provider;
-- password hash (we do not store passwords in their original form);
+- authentication data managed by Keycloak, including password hashes and passkey/authenticator credentials, not plaintext passwords;
 - your account credentials from the SSO provider (e.g., Google, GitHub, Discord) if you log in via SSO;
 - email verification status, temporary OTP code, account role, and account status;
 - login session data and security audit logs, such as login and logout times, registration, changes to settings, balance adjustments by the admin, and API key activity, along with the associated IP addresses and user agents.
 
 ### API Key
 
-API keys are stored only as SHA-256 hashes, and we cannot reproduce them. We store the key name, the key prefix for identification, the scope, the expiration date, the credit limit, the last access time, and the revocation status.
+API keys are stored only as SHA-256 hashes, and we cannot reproduce them. We store the key name, the key prefix for identification, the Service Mode, the expiration date, the credit limit, the last access time, and the revocation status.
 
 ### Metadata Request
 
@@ -53,7 +53,7 @@ Requests that are rejected before that stage-for example, due to failed authenti
 
 ### Balance and Payments
 
-We store a history of top-ups, usage, refunds, and balance adjustments, including the amount, payment method, status, and transaction reference number. Payments are processed by iPaymu (QRIS and virtual accounts) and BlockBee (cryptocurrency). We do not accept or store your full card number, CVV, or banking credentials. For cryptocurrency payments, wallet addresses and transaction hashes may be recorded.
+We store a history of top-ups, usage, refunds, and balance adjustments, including the amount, payment method, status, and transaction reference number. Payments are processed by iPaymu Direct (QRIS and virtual accounts) and Heleket (hosted crypto payments). We do not accept or store your full card number, CVV, or banking credentials. For cryptocurrency payments, wallet addresses and transaction hashes may be recorded.
 
 ### Technical and Communication Data
 
@@ -87,7 +87,7 @@ We do not use the content of your requests or responses to train our models. Ups
 - **Running the Service**: authentication, request routing, and response delivery (fulfillment of the agreement).
 - **Billing**: reservations and balance deductions, transaction history, processing of top-ups and refunds (fulfillment of agreements and legal obligations).
 - **Security**: rate limits, abuse and fraud detection, CAPTCHA, audit logs (legitimate interests).
-- **Support and notifications**: OTP, password reset, low balance alerts, notifications of service changes (contract fulfillment).
+- **Support and notifications**: account verification, password reset, and service-change notifications (contract fulfillment).
 - **Service improvements**: aggregate usage statistics for capacity and quality (legitimate interest).
 - **Legal compliance**: responding to requests from legitimate authorities and fulfilling tax or accounting obligations.
 
@@ -100,7 +100,7 @@ We do not sell your personal data.
 Data is shared only to the extent necessary with:
 
 - **Upstream provider model**: receives the request content you send to generate a response. We do not forward your email or account information to them.
-- **Payment providers**: iPaymu and BlockBee for processing top-ups and refunds.
+- **Payment providers**: iPaymu Direct and Heleket for processing top-ups and refunds.
 - **Email provider**: Brevo or Amazon SES for sending OTPs, notifications, and transactional emails.
 - **SSO identity providers**: Google, GitHub, Discord, or another provider you choose to sign in with.
 - **Infrastructure**: Cloudflare (network, security, Turnstile, and R2 object storage) as well as server and database providers.
@@ -121,7 +121,7 @@ Some of the recipients listed above, including upstream providers and payment pr
 - **Request and response content**: Not stored when body logging is disabled; if enabled, it is automatically deleted after the retention period (default: 14 days).
 - **Metadata requests and transaction history**: retained for as long as the account is active and thereafter for as long as necessary for billing, accounting, tax purposes, dispute resolution, and fraud prevention.
 - **Security audit logs**: retained for as long as necessary for investigations and evidence-gathering.
-- **OTP and session codes**: expire automatically; login sessions are valid for up to 7 days.
+- **Verification codes and sessions**: expire automatically or are revoked according to authentication flows.
 
 Backup copies may remain for a limited period after the data is deleted from the main system, and are not used for any purpose other than recovery.
 
@@ -151,11 +151,11 @@ Submit a request to [privacy@hostlinku.com](mailto:privacy@hostlinku.com) from y
 
 ## 10. Cookies and Local Storage
 
-- `hl_session` and server session cookies: maintain login status; valid for up to 7 days;
+- `hl_sid`: server session for Console authentication; `hl_session`: JWT cookie used for some flows. Session cookies expire and can be revoked;
 - SSO state cookie: short-lived to secure the sign-in flow through the identity provider;
 - display preference cookies, such as the console sidebar status;
 - Cloudflare and Turnstile cookies for protection against bots and attacks;
-- Local browser storage for Playground conversation history, which is stored on your device and is not sent to the server unless you send a request.
+- Browser local storage for Playground history, profile snapshots, preferences, and Billing Profile. Billing Profile affects Console printouts and is not synchronized with server invoices or other devices.
 
 We do not use third-party advertising or analytics cookies. Disabling cookies in your browser may prevent the login and console from working.
 
@@ -169,7 +169,7 @@ This service is intended for developers and businesses. Personal data of childre
 
 ## 12. Email and Communication
 
-We send transactional emails necessary for managing your account, such as verification OTPs, password resets, low-balance alerts, and notifications of policy changes. These emails cannot be stopped while your account is active. When we send promotional emails, each email will include a way to unsubscribe.
+We send transactional emails necessary for managing your account, such as account verification, password resets, and policy-change notifications. These emails cannot be stopped while your account is active. When we send promotional emails, each email will include a way to unsubscribe.
 
 <a id="perubahan"></a>
 

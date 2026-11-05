@@ -6,7 +6,7 @@ description: "~/.codex/config.toml にカスタムプロバイダー（wire_api 
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Codex CLI](https://developers.openai.com/codex/cli) は、**OpenAI Responses** プロトコルのみを扱います。 Hostlinkuは[`POST /v1/responses`](/ja/responses)でこれを提供しています。これはステートレスであり、`reasoning.encrypted_content`のサポート、関数呼び出し、およびストリーミング機能を備えており、まさにCodexが期待する通りの仕様です。設定は、カスタムプロバイダーを1つ用意するだけで済みます。
+[Codex CLI](https://developers.openai.com/codex/cli) は OpenAI Responses を使用します。カスタム provider を [`POST /v1/responses`](/ja/responses) に設定してください。ツールと reasoning の対応はモデルと経路に依存します。
 
 <Steps>
 
@@ -79,14 +79,12 @@ codex --profile kuat
 codex --profile cepat "utils/date.ts のユニットテストを書いて"
 ```
 
-<Callout type="warning" title="CodexはOpenAIモデルのみに対応しています">
-Codexは独自のツール（シェル、パッチファイルなど）を送信します。OpenAI以外のモデルは、この種のツールを拒否し、`The requested tool type is not supported by this model`を返します。つまり、`claude-*`、`deepseek-*`、 `glm-*`、`qwen*`、`kimi-*`、および`minimax-*`は、Codex経由では**使用できません**。`gpt-*`モデルを使用してください。 その他のモデルについては、AnthropicまたはChat Completionsの方言に対応したクライアント（Claude Code、Cline、OpenCode、Aider）を使用してください。
-
-**Responses-native**（Codexツールをそのまま引き継いだ）`gpt-*`モデル： `gpt-5-3-codex`、`gpt-5-6-sol`、`gpt-5-6-luna`、`gpt-5-5`、`gpt-6-1-sol`、`gpt-6-sol`、`gpt-6-luna`、および`gpt-6-astra`。 `gpt-5-6-terra`はChat Completionsのみをサポートしているため、Codexのシェルツールを実行することは**できません**。
+<Callout type="warning" title="モデルとツールの互換性">
+  使用中の Codex のツールを扱える Responses ネイティブモデルを使用してください。Chat Completions ブリッジはテキストと function calling に対応しますが、custom shell/patch tools と暗号化 reasoning にはネイティブ対応が必要です。`The requested tool type is not supported by this model` が出たら、モデルまたは Chat/Anthropic クライアントを変更してください。[Responses API](/ja/responses)を参照してください。
 </Callout>
 
-<Callout type="note" title="ステートレス、まさにCodexのデフォルト通り">
-Codex CLIは、各ターンで`input`および`store: false`の会話履歴全体を送信し、推論項目を再送信できるよう`include: ["reasoning.encrypted_content"]`に要求します。 Hostlinkuはこのフローをそのままサポートしています。`previous_response_id`はCodexでは使用されないため、ステートレスゲートウェイの特性は影響しません。[Responses API](/ja/responses)を参照してください。
+<Callout type="note" title="Stateless">
+  履歴全体を `input` に送信し、`store: false` を使用してください。非 null の `previous_response_id` / `conversation` と `background: true` は拒否されます。暗号化 reasoning は upstream 対応が必要です。[Responses API](/ja/responses)を参照してください。
 </Callout>
 
 <Callout type="tip" title="デフォルトのOpenAIエンドポイントのみを変更したいのですか？">
@@ -96,10 +94,10 @@ Codex CLIは、各ターンで`input`および`store: false`の会話履歴全�
 ## トラブルシューティング
 
 - **`401`** - `env_key` の変数が、`codex` が実行されているシェルにはエクスポートされていません。
-- **モデルが「シェルを実行できない」と回答し、出力をでっち上げた** - このモデルはResponsesネイティブではないため、モデルに到達する前にCodexツールが除外されてしまいます。上記のCodex対応モデル一覧からモデルを選択してください。Codexには`gpt-5-6-terra`を使用しないでください。
-- **`400 previous_response_id はサポートされていません`** - *stored responses* モードを強制するプラグインやスクリプトが存在する場合にのみ発生します。`store` が `true` を強制していないことを確認してください。
+- **shell/patch ツールが動かない** — モデルと Responses 経路のツール対応を確認してください。テキスト回答だけではツール実行を証明できません。
+- **`400 previous_response_id`** — `previous_response_id` / `conversation` を削除し、履歴全体を `input` に送り、`store: false` を使用してください。
 - **モデルが表示されない / `404`** - slugが間違っています。`/v1/models` には、あなたのキーに対応する有効なリストが表示されます。
-- **旧バージョンのCodexでは`wire_api = "chat"`が必要** - Hostlinkuも[`/v1/chat/completions`](/ja/chat-completions)に対応していますが、Codexの推論機能は`responses`で最も良好に動作します。
+- **古いクライアント** — Codex を更新し、[公式設定リファレンス](https://developers.openai.com/codex/config-reference/)に従って `wire_api = "responses"` を使用してください。
 
 ## 関連リソース
 

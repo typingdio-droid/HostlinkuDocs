@@ -6,16 +6,16 @@ description: "Hostlinkuとは何か、そのアーキテクチャの仕組み、
 
 import { Callout } from "/snippets/mdx.jsx";
 
-**Hostlinku**は統合AIゲートウェイ（_unified AI gateway_）であり、OpenAIと完全に互換性のあるフォーマットを持つ単一のAPIです。 1つのAPIキーを通じて、さまざまなプロバイダー（OpenAI、Anthropic、Google、DeepSeek、Qwenなど）が提供する数百ものモデルへリクエストが転送されます。
+**Hostlinku** はOpenAI Chat Completions、Anthropic Messages、Responses API形式を提供するAIゲートウェイです。パラメータと機能の対応はモデルとエンドポイントに依存します。APIキーは作成時に選択する **Service Mode**（**Performance**、**Low-Cost**、**Dedicated**）のモデル一覧にアクセスします。最新のモデルと価格は [モデル一覧](/ja/models) と、そのキーによる `GET /v1/models` で確認してください。
 
 Hostlinkuを使えば、プロバイダーごとに異なるアカウント、APIキー、リクエスト形式を個別に管理する必要がなくなります：
 
-- すべてのモデルに**1つのAPIキー**（`sk-…`）。
+- 選択したService Modeのモデルに**1つのAPIキー**（`sk-…`）。
 - **OpenAIとの互換性**：OpenAI（`openai-python`、`openai-node`）の公式SDKを使用する場合は、`base_url`を置き換えるだけで十分です。
 - **SSEストリーミング**：OpenAIと同様に、`text/event-stream`という形式のトークンごとの応答。
 - **一元化されたモデルカタログ**：スラッグ、トークンあたりの価格、コンテキスト、および機能を1か所に集約。
 - **利用状況の管理**：APIキーごとのクレジット上限、リクエスト履歴、およびコンソール上の詳細なログ。
-- **柔軟な決済**：QRIS／バーチャルアカウント（iPaymu）または仮想通貨（BlockBee）を通じて残高をチャージできます。
+- **前払い決済**：QRIS／Virtual Account（iPaymu Direct）、暗号資産（Heleketのホスト型決済）で組織にチャージできます。サービスクレジットの単位は **1クレジット = $1** です。
 
 ## 概要
 
@@ -31,7 +31,7 @@ api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
                              └─ Commit biaya nyata    └─► …dan lainnya
 ```
 
-すべてのリクエストは、APIキーの認証、クレジット制限の確認、残高の仮予約（見積もり）、モデルサービスへの転送（障害発生時は自動再試行）、実際に使用されたトークンに基づく費用の確定、およびテレメトリの記録という同じフローを経由します。
+リクエストはAPIキー認証、上限確認、残高予約、モデルサービスへの転送を経由します。終了後に上流のusage、またはusage欠落時の推定値で費用を確定し、テレメトリを記録します。
 
 コンソール Hostlinku (`console.hostlinku.com`) は同じバックエンドを使用しています。API キー、残高、リクエスト履歴、監査ログはすべて、実際のデータゲートウェイからのものです。
 
@@ -52,5 +52,5 @@ api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
 | エラーコードとエラー応答の形式 | [エラー](/ja/errors) |
 
 <Callout type="tip" title="まずはアカウントが必要ですか？">
-[auth2.hostlinku.com](https://auth2.hostlinku.com) でアカウントを作成し、[console.hostlinku.com](https://console.hostlinku.com) で最初の API キーを作成してください。詳細は [クイックスタート](/ja/getting-started) をご覧ください。
+[バックエンドから新規登録](https://api.hostlinku.com/api/auth2/register) すると `auth2.hostlinku.com` のKeycloakへ転送されます。[Console](https://console.hostlinku.com) で最初のAPIキーを作成してください。[クイックスタート](/ja/getting-started) を参照してください。
 </Callout>

@@ -10,7 +10,7 @@ Hostlinku.
 
 ## Prasyarat
 
-- **Akun Hostlinku**: daftar gratis di [auth2.hostlinku.com](https://auth2.hostlinku.com).
+- **Akun Hostlinku**: [daftar melalui backend](https://api.hostlinku.com/api/auth2/register), yang mengarahkan browser ke Keycloak.
 - **Saldo kredit**: gateway memotong saldo per token. Isi saldo di console sebelum request
   produksi. Biaya request uji coba biasanya di bawah satu sen, tetapi saldo tetap tidak boleh
   kosong. Lihat [Billing & Saldo](/billing).
@@ -23,10 +23,7 @@ Hostlinku.
 
 ### Daftar atau masuk
 
-Buka [auth2.hostlinku.com](https://auth2.hostlinku.com): buat akun baru, atau masuk dengan akun
-
-Di halaman login juga tersedia **Masuk dengan passkey** (WebAuthn) bila perangkat Anda mendukung.
-yang sudah ada (termasuk login SSO bila diaktifkan admin).
+Buka [Daftar](https://api.hostlinku.com/api/auth2/register) atau [Masuk](https://api.hostlinku.com/api/auth2/login). Backend memulai alur Keycloak di `auth2.hostlinku.com`, memproses callback, lalu membuka Console. Opsi passkey dan SSO mengikuti akun, perangkat, dan penyedia yang tersedia.
 
 ### Buat API key
 
@@ -34,9 +31,9 @@ Masuk ke [console.hostlinku.com](https://console.hostlinku.com) → menu **API K
 API key**. Di dialog pembuatan API key kamu bisa mengatur:
 
 - **Nama**: untuk identifikasi, mis. `produksi-aplikasi-kamu`.
-- **Kedaluwarsa**: opsional, pilih tidak pernah, 30/90/365 hari, atau tanggal kustom.
-- **Limit kredit**: opsional, batas pemakaian key (mis. $10) per jendela **Harian /
-  Mingguan / Bulanan**, atau tanpa reset (limit total).
+- **Service Mode**: pilih **Performance** (default), **Low-Cost**, atau **Dedicated**. Model dan harga mengikuti mode key.
+- **Kedaluwarsa**: 30 hari (default), 60 hari, 90 hari, atau tidak pernah.
+- **Monthly Spending Limit**: opsional, batas pengeluaran bulanan key. Form Console tidak menawarkan scope atau pilihan reset harian/mingguan; lihat [Autentikasi](/authentication) untuk kontrak API.
 
 <Callout type="warning" title="Secret hanya tampil sekali">
   Setelah API key dibuat, secret berformat `sk-…` **hanya ditampilkan sekali** di console.
@@ -90,8 +87,7 @@ Slug model di atas hanya contoh. Daftar slug yang valid untuk akun kamu bisa dil
 ### Rekomendasi: pakai streaming
 
 Untuk aplikasi chat, kirim `"stream": true`. Kata pertama tampil begitu model mulai menjawab
-(biasanya di bawah 1–2 detik), tanpa menunggu seluruh jawaban selesai. Total waktunya sama,
-tetapi aplikasi terasa jauh lebih cepat bagi pengguna kamu.
+tanpa menunggu seluruh jawaban selesai. Waktu token pertama bergantung pada model dan kondisi provider; streaming bukan jaminan latensi tertentu.
 
 ```python
 import os
@@ -123,7 +119,7 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
 
 ### Cek saldo dan riwayat
 
-Di console, buka menu **Credits/Saldo** untuk melihat saldo berjalan dan menu **Log Permintaan**
+Di console, buka menu **Billing** untuk melihat saldo organisasi dan menu **Log Permintaan**
 untuk riwayat request lengkap dengan token, biaya, dan latensi. Endpoint setara tersedia di
 [`GET /api/wallet/account`](/billing) untuk sesi console, sedangkan API publik (API key
 `sk-…`) memakai `/v1/*`.
@@ -146,12 +142,6 @@ untuk riwayat request lengkap dengan token, biaya, dan latensi. Endpoint setara 
 
 ## Login passkey dan 2FA
 
-Akun Hostlinku memakai Keycloak di `auth2.hostlinku.com`. Selain email dan kata sandi, tersedia:
+Akun Hostlinku memakai Keycloak. Passkey (WebAuthn), authenticator TOTP, dan recovery codes tersedia melalui **Settings → Security**. Daftarkan opsi yang sesuai sebelum memakainya saat login. Alur registrasi dan tantangan autentikasi dilayani Keycloak; ketersediaan SSO mengikuti penyedia yang diaktifkan.
 
-- **Passkey (WebAuthn)** - masuk tanpa kata sandi memakai biometrik atau security key perangkat.
-- **Authenticator (TOTP)** - kode 6 digit dari aplikasi authenticator.
-- **Recovery codes** - kode cadangan sekali pakai.
-
-Semua opsi dikelola di Console pada **Settings -> Security**. Tombol *Add passkey* membuka dialog perangkat;
-setelah passkey terdaftar, tombol *Masuk dengan passkey* di halaman login langsung membuka dialog yang sama.
-Membatalkan dialog tidak mengeluarkan Anda dari halaman login - cukup ulangi atau masuk dengan kata sandi.
+Untuk biaya streaming, periksa **Logs / Analytics / Billing** setelah stream selesai. Jangan mengharapkan `hostlinku.cost` pada setiap chunk SSE; jika upstream tidak memberikan usage, biaya dapat dihitung dengan estimasi.

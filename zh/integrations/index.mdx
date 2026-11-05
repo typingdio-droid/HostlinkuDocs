@@ -8,6 +8,10 @@ import { Callout } from "/snippets/mdx.jsx";
 
 几乎所有现代编程代理和AI集成开发环境（IDE）都可以通过**自定义基础 URL**指向其他提供商。由于Hostlinku同时支持三种协议-OpenAI、Chat Completions、 OpenAI、Responses 和 Anthropic Messages-因此您可以使用 **一个 API 密钥和一个余额** 来管理以下所有工具，并通过控制台中的单一“请求日志”来监控所有使用情况。
 
+<Callout type="note" title="模型与工具兼容性">
+  请选择 API 密钥 Service Mode 中可用的模型。vision、JSON schema、reasoning 和 tool calling 取决于模型及协议路径。见[兼容性限制](/zh/responses)。
+</Callout>
+
 ## 选择你的工具
 
 | 工具 | 使用的API格式 | 基础 URL | 指南 |

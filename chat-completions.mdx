@@ -15,15 +15,16 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-Setiap respons menyertakan header `x-request-id` (ID request Hostlinku) dan, pada respons sukses
-non-streaming, header `x-model` (slug publik model yang melayani request).
+Respons sukses menyertakan `x-request-id`; respons sukses non-streaming juga menyertakan `x-model` (slug publik model).
+
+Pilih model yang tersedia untuk Service Mode API key. Dukungan vision, JSON schema, reasoning, dan tool calling mengikuti model serta jalur protokolnya. Lihat [batas kompatibilitas](/responses).
 
 ## Parameter body
 
 | Parameter | Tipe | Default | Keterangan |
 |---|---|---|---|
 | `model` | `string` | tidak ada | **Wajib.** Slug model, mis. `gpt-5-5`. Lihat [Model](/models). |
-| `messages` | `array` | tidak ada | **Wajib.** Minimal 1 pesan. Setiap item: `{ role, content, name? }` dengan `role` salah satu dari `system`, `user`, `assistant`, `tool`. |
+| `messages` | `array` | tidak ada | **Wajib.** Minimal 1 pesan. Setiap item: `{ role, content, name? }` dengan `role` salah satu dari `system`, `developer`, `user`, `assistant`, `tool`. |
 | `temperature` | `number` | bawaan provider | Rentang `0`–`2`. Semakin tinggi semakin acak. |
 | `top_p` | `number` | bawaan provider | Rentang `0`–`1`. Alternatif _nucleus sampling_ dari `temperature`. |
 | `n` | `integer` | `1` | Jumlah pilihan jawaban, `1`–`8`. |
@@ -39,11 +40,8 @@ non-streaming, header `x-model` (slug publik model yang melayani request).
 | `response_format` | `any` | tidak ada | Mis. `{ "type": "json_object" }` untuk output JSON (tergantung dukungan model). |
 | `seed` | `integer` | tidak ada | Seed determinisme (best-effort, tergantung provider). |
 
-<Callout type="note" title="Hanya parameter di atas yang diproses">
-  Body divalidasi dengan skema ketat sebelum diteruskan ke provider. Field di luar daftar di atas
-  akan **diabaikan** (dibuang dari body), dan body yang tidak valid ditolak dengan
-  `422 VALIDATION_FAILED` beserta detail per field. `messages[].content` menerima string maupun
-  array konten multimodal (format OpenAI) selama model mendukungnya.
+<Callout type="note" title="Validasi parameter">
+  Daftar di atas adalah parameter utama. Skema juga menerima `top_k`, `web_search_options`, `reasoning_effort`, `parallel_tool_calls`, `logprobs`, `top_logprobs`, `logit_bias`, `stream_options`, `metadata`, `thinking`, `verbosity`, `service_tier`, `store`, `prompt_cache_key`, `safety_identifier`, dan `truncation`. Field top-level yang tidak dikenal dibuang. Field tambahan di `messages[]`, termasuk `tool_calls`, `tool_call_id`, `function_call`, dan `reasoning_content`, dipertahankan. Dukungan parameter dan konten multimodal tetap bergantung pada model/protokol. Body tidak valid ditolak `422 VALIDATION_FAILED` beserta rincian field.
 </Callout>
 
 ## Contoh: request non-streaming (curl)
@@ -86,12 +84,11 @@ Respons (dipotong):
 }
 ```
 
-Field `model` selalu berisi slug publik Hostlinku (bukan identitas internal), dan blok tambahan
-`hostlinku` selalu ada pada respons sukses, hanya berisi biaya dan latensi request:
+`model` berisi slug publik Hostlinku. Blok `hostlinku` pada respons sukses non-streaming memuat biaya, Service Mode, dan latensi. Blok tersebut bukan bagian yang dijamin pada setiap chunk SSE:
 
 | Field | Arti |
 |---|---|
-| `cost` | Biaya request dalam USD (angka desimal presisi tinggi). |
+| `cost` | Biaya dalam kredit 🪙; 1 kredit = \$1. |
 | `latencyMs` | Latensi total request dari diterima gateway sampai selesai, milidetik. |
 
 ## Streaming (`stream: true`)
@@ -123,11 +120,8 @@ data: [DONE]
 
 Catatan penting:
 
-- Jika terjadi kegagalan di tengah stream, gateway mengirim satu event error
-  (`data: {"error": { "code": …, "message": … }}`) dan **tidak** mengirim `[DONE]` palsu.
-  Stream yang terputus tidak pernah terlihat seperti stream yang selesai normal.
-- Biaya tetap dihitung dari usage nyata setelah stream selesai; bila usage tidak tersedia,
-  tagihan memakai estimasi yang sudah direservasi saat request masuk.
+- Bila stream gagal, tangani event error dan putus koneksi sebagai kegagalan. Penanda `[DONE]` saja tidak membuktikan request sukses; periksa error dan Log Permintaan dengan `x-request-id`.
+- Biaya akhir memakai usage/biaya upstream; jika kosong atau nol, gateway dapat memakai estimasi reservasi.
 - Header `x-request-id` juga dikirim pada respons streaming untuk menghubungkan dengan log di
   console.
 
@@ -181,7 +175,7 @@ for chunk in stream:
 | Slug model tidak ada di katalog | 404 | `MODEL_NOT_FOUND` |
 | `max_tokens` melebihi batas output model | 400 | `BAD_REQUEST` |
 | Model deprecated / sedang tidak tersedia | 503 | `MODEL_UNAVAILABLE` |
-| Rate limit per API key terlampaui | 429 | `RATE_LIMITED` |
+| Kuota bersama organisasi terlampaui | 429 | `RATE_LIMITED` |
 | Upstream tidak tersedia / gangguan sementara (retryable) | 503 | `UPSTREAM_ERROR` |
 
 Format lengkap error envelope ada di [Error](/errors).

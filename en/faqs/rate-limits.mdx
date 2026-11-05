@@ -5,22 +5,9 @@ description: Hostlinku request limits, response headers, and recommended backoff
 
 import { Callout } from "/snippets/mdx.jsx";
 
-The main gateway limit is **600 requests per minute per API key** for `/v1/*`. Requests from all models using the same key share the 60-second window.
+The service quota is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached.
 
-| Limit | Quota | Scope |
-|---|---|---|
-| Gateway RPM | **600 req/min** | Per API key, all models |
-| RPD | Unlimited | Bounded by balance and key credit limit |
-| TPM | Unlimited | `max_tokens` must still fit the model output limit |
-| `/api/*` endpoints | **120 req/min** | Per IP address |
-| Auth endpoints | **30 attempts / 15 minutes** | Per IP address |
-
-When the limit is exceeded, the gateway returns **HTTP 429** with:
-
-- `Retry-After`: suggested wait time in seconds.
-- `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset`: quota and reset window.
-
-Rate-limited requests **do not** reserve or consume balance.
+See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
 
 ## Recommended backoff
 

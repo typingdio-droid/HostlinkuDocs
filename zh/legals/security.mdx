@@ -15,14 +15,14 @@ import { Callout } from "/snippets/mdx.jsx";
 
 </Callout>
 
-**最后更新：** 2026年10月11日。
+**最后更新：** 2026年11月6日。
 
 <a id="transport"></a>
 
 ## 1. 加密与机密存储
 
 - 所有访问网站、控制台和API的流量均通过HTTPS（TLS）进行传输。
-- 密码以 bcrypt 哈希值的形式存储，绝不会以原始形式存储。
+- Keycloak管理账户登录，不以明文保存密码。
 - 客户的API密钥以SHA-256哈希值的形式存储。
 - 集成凭据（如上游提供商的密钥和SSO密钥）在应用程序层级使用AES-256-GCM进行加密，所用的密钥与数据库分开存储。
 
@@ -30,28 +30,28 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## 2. 账户认证
 
-- 通过有效期较短的OTP验证码验证邮箱。
+- Keycloak管理邮箱验证和账户登录。
 - 如果启用了通过SSO（例如Google、GitHub、Discord）登录的选项。
-- 标记为`HttpOnly`、`Secure`和`SameSite=Lax`的会话Cookie，有效期最长为7天。
+- Console服务器会话使用 `hl_sid`；部分流程的JWT Cookie为 `hl_session`。会话Cookie使用 `HttpOnly`、`SameSite=Lax`，生产环境设置 `Secure`。
 - 登录、注册和OTP的试用请求限制，以及公共表单中的Cloudflare Turnstile。
 - 被暂停的账户无法登录，也无法使用API。
 
-目前尚不支持双因素认证。该功能发布后，本页面将进行更新。
+Console → **Settings → Security** 提供Keycloak的WebAuthn通行密钥、TOTP验证器和恢复码。
 
 <a id="api-key"></a>
 
 ## 3. API密钥的管理
 
 - 密钥在生成时会完整显示一次，此后无法再次查看。
-- 密钥的适用范围、有效期和信用额度均可进行限制，并可随时通过控制台予以撤销。
-- 请求正文中的凭据在存储前被替换为 `[redacted]`。
+- 密钥具有Service Mode、有效期、额度上限，可在Console停用。当前表单没有端点作用域选择。
+- 开启Body logging时，保存前遮蔽凭据字段；提示词文本中的秘密不自动遮蔽。
 - 上游提供商的身份信息和凭据绝不会发送给客户。
 
 <a id="akses"></a>
 
 ## 4. 隔离与访问控制
 
-- 数据请求、日志、余额和API密钥按账户分别存储；用户仅可访问其自身的数据。
+- 根据获授权用户、组织和角色检查请求、日志、余额和API密钥访问。
 - 管理员功能仅限于管理员角色，且任何敏感设置的更改（包括启用正文日志记录和调整余额）都会记录在审计日志中。
 - 请求和响应的内容默认不会被保存；如果启用了正文日志记录，内容将根据保留期限自动删除。请参阅[隐私政策](/zh/legals/privacy-policy)。
 

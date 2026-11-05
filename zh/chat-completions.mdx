@@ -14,14 +14,16 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-每个响应都包含 `x-request-id` 标头（请求 ID 为 Hostlinku），而在非流式传输的成功响应中，还会包含 `x-model` 标头（处理该请求的模型的公共 slug）。
+成功响应包含 `x-request-id`；成功的非流式响应还包含 `x-model`（公开模型 slug）。
+
+请选择 API 密钥 Service Mode 中可用的模型。vision、JSON schema、reasoning 和 tool calling 取决于模型及协议路径。见[兼容性限制](/zh/responses)。
 
 ## body 参数
 
 | 参数 | 类型 | 默认 | 说明 |
 |---|---|---|---|
 | `model` | `string` | 没有 | **必填。** 模型缩写，例如 `gpt-5-5`。参见 [模型](/zh/models)。 |
-| `messages` | `array` | 没有 | **必选。** 至少1条消息。每项需包含：`{ role, content, name? }` 及 `role`，并从 `system`、`user`、`assistant`、`tool` 中任选一项。 |
+| `messages` | `array` | 没有 | **必选。** 至少1条消息。每项需包含：`{ role, content, name? }` 及 `role`，并从 `system`、`developer`、`user`、`assistant`、`tool` 中任选一项。 |
 | `temperature` | `number` | 运营商预装 | 范围为`0`–`2`。数值越高，随机性越强。 |
 | `top_p` | `number` | 运营商预装 | 范围 `0`–`1`。`temperature` 的 _nucleus sampling_ 替代方案。 |
 | `n` | `integer` | `1` | 选项数量，`1`–`8`。 |
@@ -37,8 +39,8 @@ Content-Type: application/json
 | `response_format` | `any` | 没有 | 例如：`{ "type": "json_object" }` 用于 JSON 输出（取决于模型是否支持）。 |
 | `seed` | `integer` | 没有 | 种子确定性（尽最大努力，取决于服务提供商）。 |
 
-<Callout type="note" title="仅处理上述参数">
-在将请求主体转发给服务提供商之前，会根据严格的验证规则对其进行验证。上述列表之外的字段将被**忽略**（从请求主体中移除），而无效的请求主体将被以 `422 VALIDATION_FAILED` 状态码拒绝，并附带各字段的详细信息。 `messages[].content` 接受字符串或多模态内容数组（OpenAI 格式），前提是模型支持该格式。
+<Callout type="note" title="参数验证">
+  表格列出主要参数。schema 还接受 `top_k`、`web_search_options`、`reasoning_effort`、`parallel_tool_calls`、`logprobs`、`top_logprobs`、`logit_bias`、`stream_options`、`metadata`、`thinking`、`verbosity`、`service_tier`、`store`、`prompt_cache_key`、`safety_identifier` 和 `truncation`。未知顶层字段会移除。`messages[]` 中的额外字段（含 `tool_calls`、`tool_call_id`、`function_call` 和 `reasoning_content`）会保留。参数和多模态支持取决于模型及协议。无效请求体返回 `422 VALIDATION_FAILED` 和字段详情。
 </Callout>
 
 ## 示例：非流式请求（curl）
@@ -81,11 +83,11 @@ curl https://api.hostlinku.com/v1/chat/completions \
 }
 ```
 
-字段 `model` 始终包含公共标识符 Hostlinku（而非内部标识符），而附加块 `hostlinku` 始终出现在成功响应中，其中仅包含请求的费用和延迟：
+`model` 使用 Hostlinku 公开 slug。成功的非流式响应中，`hostlinku` 包含费用、Service Mode 和延迟。每个 SSE chunk 不保证包含该扩展：
 
 | Field | 含义 |
 |---|---|
-| `cost` | 请求费用以美元计（高精度小数）。 |
+| `cost` | 费用以 🪙 信用计；1 信用 = \$1。 |
 | `latencyMs` | 从网关接收请求到请求完成为止的总延迟，单位为毫秒。 |
 
 ## 流式传输 (`stream: true`)
@@ -115,8 +117,8 @@ data: [DONE]
 
 重要说明：
 
-- 如果流传输过程中发生故障，网关会发送一个错误事件（`data: {"error": { "code": …, "message": … }}`），但**不会**发送虚假的`[DONE]`。中断的流绝不会表现得像正常结束的流一样。
-- 固定费用根据流式传输播放结束后实际的使用量计算；如果无法获取使用量数据，则根据请求提交时预留的估计值进行计费。
+- 请将错误事件和意外断开视为流式失败。仅有 `[DONE]` 标记不能证明请求成功；使用 `x-request-id` 检查错误及请求日志。
+- 最终费用依据 upstream usage/费用；值缺失或为零时可能使用预留估算值。
 - 在流式响应中还会发送 `x-request-id` 标头，以便与控制台日志建立关联。
 
 ## 示例：Python（OpenAI 官方 SDK）

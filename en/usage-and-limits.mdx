@@ -1,76 +1,69 @@
 ---
 title: "Usage & Limits"
-description: "Gateway rate limits, credit limits per API key, and how to monitor usage in the console"
+description: "Rate limits, key spending caps, balances, and usage monitoring."
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku enforces usage limits across three complementary layers: **rate limit** (number of requests per time period), **credit limit per API key** (cost per reset window), and **account balance** (funding source). All three are checked on the server side before a request is forwarded to the provider.
+Usage is constrained by rate limits, key credit caps, and organization balance.
 
-## Rate Limit
+## Shared organization quota
 
-| Coverage | Limit | Limit Determinant |
+All API keys and members in the same organization share this quota. Adding keys or using another member account does not increase it.
+
+| Service Mode | Requests/minute | Input tokens/minute | Output tokens/minute |
+|---|---|---|---|
+| Performance | 600 | 6,500,000 | 200,000 |
+| Low-Cost | 600 | 6,500,000 | 200,000 |
+| Dedicated | 600 | 6,500,000 | 200,000 |
+
+## Other endpoint limits
+
+Console, login, and checkout endpoint limits are counted per IP, separately from model usage quotas.
+
+| Scope | Limit | Grouping |
 |---|---|---|
-| `POST /v1/chat/completions` | **600 requests per minute** | Per API key (`sk-…`) |
-| Console & public endpoints (`/api/*`) | **120 requests per minute** | Per IP address |
-| Authentication endpoints (login, sign-up, OTP, reset) | **30 attempts / 15 minutes** | Per IP address |
+| Console/public endpoints using the general limiter | **120 requests / 60 seconds** | Per IP |
+| Endpoints using the authentication limiter | **30 attempts / 15 minutes** | Per IP |
+| Token-based checkout GET | **90 requests / 60 seconds** | Per IP |
+| Token-based checkout mutations | **15 requests / 60 seconds** | Per IP |
 
-Every response that passes through the limiter includes standard headers (IETF `RateLimit-*` format): `RateLimit-Limit`, `RateLimit-Remaining`, and `RateLimit-Reset`. Check the `Reset` value to determine when the next window begins.
+<Callout type="tip" title="Pause before retrying 429">
 
-When the limit is exceeded, the response is:
+Read reset headers or `Retry-After` when available. Reduce concurrency and use exponential backoff with jitter. Repeated immediate retries do not resolve the limit.
 
-```http
-HTTP/1.1 429 Too Many Requests
-```
-
-```json
-{
-  "status": "error",
-  "error": {
-    "code": "RATE_LIMITED",
-    "message": "Rate limit exceeded. Upgrade your plan for a higher limit."
-  }
-}
-```
-
-<Callout type="tip" title="The Correct Backoff Strategy">
-For 429, wait for the `RateLimit-Reset` (or an exponential backoff of 1s → 2s → 4s… with jitter), then try again. Don’t retry immediately; that will only prolong the block in the current window.
 </Callout>
 
-## Credit Limit per API Key
+## API key credit caps
 
-In addition to the rate limit, each API key can be assigned a **cost limit** (USD) with a daily, weekly, or monthly reset window (UTC calendar), or a total limit with no reset. Usage is calculated based on the actual cost of requests per API key. API keys that reach the limit will be rejected with a **402 PAYMENT_REQUIRED** error until the next window begins. Configuration details can be found in [Authentication](/en/authentication).
+The Console form offers **Monthly Spending Limit**. The key-management API also supports `daily`, `weekly`, `monthly`, and total `lifetime`/no reset. Daily windows begin at 00:00 UTC, weekly at Monday 00:00 UTC, and monthly at 00:00 UTC on the first day. See [Authentication](/en/authentication).
 
-## Reserve the balance when making a request
+Caps use recorded costs for the key, not token counts. Once reached, subsequent requests return `402 PAYMENT_REQUIRED`. Adding balance does not change a key's cap.
 
-For each request, the gateway:
+## Balance reservations
 
-1. **Reserve** the estimated cost (based on the prompt length and `max_tokens`) from the account balance.
-2. Forward the request to the provider.
-3. **Commit** the actual cost based on the tokens used, and release the remaining reservation.
+The gateway reserves an estimated cost from organization balance, forwards the request, and settles using upstream usage. It releases the unused reservation. If usage is missing, billing may estimate it. Failures with no billable usage release the reservation.
 
-This means: the balance in the console is divided into `balance` (total) and `reserved` (held for ongoing requests). The amount available for new requests is `balance − reserved` (`available`). Failed requests **are not charged**; their reservations are automatically released.
+Balance for new requests is `available = balance − reserved`. Both balance and key caps must allow the request; see [Billing & Balance](/en/billing).
 
-## Monitoring usage in the console
+## Monitor in the Console
 
-Go to [console.hostlinku.com](https://console.hostlinku.com):
-
-| Menu | Contents |
+| Menu | Data |
 |---|---|
-| **Dashboard / Usage** | Summary of requests, token in/out, cache, and costs by time period (24 hours, 7/30/90 days). |
-| **Request Log** | Complete list of requests: model, status, token, cost, latency (including TTFT for streaming), and details for each request. |
-| **Audit Log** | Account activity history: API key creation/revocation, top-ups, setting changes, etc. |
-| **API Keys** | Usage per API key: requests, tokens, costs, `lastUsed`, expiration, and limits. |
+| **Overview / Analytics** | Requests, tokens, cache, and costs by time range |
+| **Logs** | Model, status, tokens, cost, latency, TTFT, and request details |
+| **API Keys** | Status, Service Mode, expiry, caps, and key usage |
+| **Billing** | Organization balance, top-ups, transactions, invoices |
 
-All figures come from the same backend telemetry table used for billing, with no estimates on the front end.
+Non-streaming chat completions include `hostlinku.cost`. SSE streaming does not guarantee a cost block in chunks; check the final charge in Logs/Analytics/Billing. `x-request-id` helps connect requests with logs.
 
-<Callout type="note" title="Cost per API request">
-For your own application, the `hostlinku.cost` block in each chat completion response contains the cost of that request, and the `x-request-id` header links it to a log entry in the console.
-</Callout>
+## Log content and retention
 
-## Summary of Behaviors 429 and 402
+Body logging is **off by default**. If enabled by an admin, content is size-limited and credential fields are redacted; body retention defaults to 14 days. Usage/transaction metadata remains stored. See [Privacy](/en/legals/privacy-policy).
 
-| Code | Meaning | What to Do |
+## Understanding 429 and 402
+
+| Code | Meaning | Action |
 |---|---|---|
-| `429 RATE_LIMITED` | Too many requests within the time window | Wait for `RateLimit-Reset`, back off, or reduce concurrency |
-| `402 PAYMENT_REQUIRED` | Credit issue: insufficient balance **or** API key limit reached | Check the error message. If it says "API key credit limit," wait for it to reset or increase the limit; if it says "Insufficient credit balance," top up your balance ([Billing & Balance](/en/billing)) |
+| `429 RATE_LIMITED` | Request count limit exceeded | Wait for reset, back off, reduce concurrency |
+| `402 PAYMENT_REQUIRED` | Insufficient available balance or key cap reached | Read the message: top up, wait for reset, or adjust the appropriate cap |

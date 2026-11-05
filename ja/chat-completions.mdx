@@ -16,12 +16,14 @@ Content-Type: application/json
 
 すべてのレスポンスには、ヘッダー `x-request-id`（リクエスト ID Hostlinku）が含まれており、非ストリーミングの成功レスポンスには、ヘッダー `x-model`（リクエストを処理したモデルのパブリックslug）も含まれます。
 
+API キーの Service Mode で利用可能なモデルを選択してください。vision、JSON schema、reasoning、tool calling はモデルと経路に依存します。[互換性の制限](/ja/responses)を参照してください。
+
 ## bodyパラメータ
 
 | パラメータ | タイプ | デフォルト | 説明 |
 |---|---|---|---|
 | `model` | `string` | ない | **必須。** slugモデル（例：`gpt-5-5`）。[モデル](/ja/models)を参照してください。 |
-| `messages` | `array` | ない | **必須。** 最低1件の注文が必要です。各項目：`{ role, content, name? }`および`role`に加え、`system`、`user`、`assistant`、`tool`のいずれか1つ。 |
+| `messages` | `array` | ない | **必須。** 最低1件の注文が必要です。各項目：`{ role, content, name? }`および`role`に加え、`system`、`developer`、`user`、`assistant`、`tool`のいずれか1つ。 |
 | `temperature` | `number` | プロバイダーのデフォルト設定 | 範囲：`0`～`2`。数値が高いほどランダム性が高くなる。 |
 | `top_p` | `number` | プロバイダーのデフォルト設定 | 範囲 `0`–`1`。`temperature` からの _nucleus sampling_ の代替案。 |
 | `n` | `integer` | `1` | 回答選択肢の数、`1`～`8`。 |
@@ -37,8 +39,8 @@ Content-Type: application/json
 | `response_format` | `any` | ない | 例：`{ "type": "json_object" }`（JSON出力用、モデルの対応状況による）。 |
 | `seed` | `integer` | ない | シード決定論（ベストエフォート、プロバイダによる）。 |
 
-<Callout type="note" title="処理されるのは上記のパラメータのみです">
-ボディは、プロバイダーに転送される前に厳格なスキーマに基づいて検証されます。上記のリストに含まれていないフィールドは**無視**され（ボディから削除されます）、無効なボディは`422 VALIDATION_FAILED`エラーとともに、フィールドごとの詳細情報とともに拒否されます。 `messages[].content`は、モデルが対応している限り、マルチモーダルコンテンツの文字列および配列（OpenAI形式）を受け付けます。
+<Callout type="note" title="パラメータの検証">
+  表は主なパラメータです。`top_k`、`web_search_options`、`reasoning_effort`、`parallel_tool_calls`、`logprobs`、`top_logprobs`、`logit_bias`、`stream_options`、`metadata`、`thinking`、`verbosity`、`service_tier`、`store`、`prompt_cache_key`、`safety_identifier`、`truncation` も受け付けます。未知のトップレベルフィールドは削除されます。`messages[]` の追加フィールド（`tool_calls`、`tool_call_id`、`function_call`、`reasoning_content` など）は保持します。パラメータと multimodal の対応はモデル・経路に依存します。無効な body は詳細付きの `422 VALIDATION_FAILED` です。
 </Callout>
 
 ## 例：非ストリーミングリクエスト（curl）
@@ -81,11 +83,11 @@ curl https://api.hostlinku.com/v1/chat/completions \
 }
 ```
 
-フィールド `model` には常にパブリックslug Hostlinku（内部 ID ではない）が含まれており、追加ブロック `hostlinku` は成功レスポンスに必ず存在し、リクエストのコストとレイテンシのみが含まれています：
+`model` は Hostlinku の公開 slug です。成功した非ストリーミング応答の `hostlinku` には費用、Service Mode、レイテンシが含まれます。各 SSE chunk には保証されません：
 
 | フィールド | 意味 |
 |---|---|
-| `cost` | リクエストの費用（米ドル、高精度の小数表示）。 |
+| `cost` | 費用は 🪙 クレジット。1 クレジット = \$1。 |
 | `latencyMs` | ゲートウェイでの受信から完了までのリクエストの合計レイテンシ（ミリ秒）。 |
 
 ## ストリーミング (`stream: true`)
@@ -115,8 +117,8 @@ data: [DONE]
 
 重要な注意事項：
 
-- ストリームの途中で障害が発生した場合、ゲートウェイは1つのエラーイベント（`data: {"error": { "code": …, "message": … }}`）を送信し、偽の`[DONE]`は**送信しない**。切断されたストリームは、正常に終了したストリームのように見えることは決してない。
-- 固定料金は、ストリーミング終了後の実際の使用量に基づいて計算されます。使用量が確認できない場合は、リクエスト受付時に予約された推定値に基づいて請求されます。
+- エラーイベントや予期しない切断はストリーム失敗として処理してください。`[DONE]` のみでは成功を証明できません。`x-request-id` を使いエラーとリクエストログを確認してください。
+- 最終料金は upstream の usage/費用に基づきます。値がない場合やゼロの場合は予約時の見積もりを使用することがあります。
 - ヘッダー `x-request-id` は、コンソールのログと関連付けるために、ストリーミング応答にも送信されます。
 
 ## 例：Python（OpenAI公式SDK）
@@ -167,7 +169,7 @@ for chunk in stream:
 | カタログにこのモデルのslugがありません | 404 | `MODEL_NOT_FOUND` |
 | `max_tokens`はモデルの出力上限を超えています | 400 | `BAD_REQUEST` |
 | 非推奨モデル／現在利用不可 | 503 | `MODEL_UNAVAILABLE` |
-| APIキーごとのレート制限を超過しました | 429 | `RATE_LIMITED` |
+| 組織の共有利用枠を超過しました | 429 | `RATE_LIMITED` |
 | アップストリームが利用不可／一時的な障害（再試行可能） | 503 | `UPSTREAM_ERROR` |
 
 エラーエンベロープの完全な形式については、[エラー](/ja/errors)を参照してください。

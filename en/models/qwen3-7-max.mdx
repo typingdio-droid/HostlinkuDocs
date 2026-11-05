@@ -13,35 +13,31 @@ Qwen3.7-Max is the flagship model in the Qwen3.7 series, built for agent workloa
 |---|---|
 | Provider | Alibaba |
 | Slug | `qwen3-7-max` |
-| Context | 1,000,000 tokens |
-| Max output | Not published |
 | Input | text |
 | Output | text |
 | Release | 2026-06-14 |
+| Catalog context | 1,000,000 tokens |
+| Catalog max output | Not listed |
+| Service Mode | Performance |
 
 ## Capabilities
 
-- `text`
-- `streaming`
-- `tool-calling`
-- `function-calling`
-- `json-mode`
-- `reasoning`
-- `code-generation`
-- `multilingual`
-- `agentic`
-- `long-context`
+`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `agentic`, `long-context`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | $1.765 |
-| Output (completion) | $5.294 |
-| Cache read | $0.176 |
-| Cache write | $2.206 |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/qwen3-7-max) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Performance (<CreditIcon />) |
+|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 1.4826 |
+| Output (completion) | per 1M tokens | Base | 4.44696 |
+| Cache read | per 1M tokens | Base | 0.14784 |
+| Cache write (5 minutes) | per 1M tokens | Base | 1.85304 |
+| Cache write (1 hour) | per 1M tokens | Base | 1.85304 |
+| Web search | per 1K calls | Base | 0.6174 |
 
 ## Supported endpoints
 
@@ -51,7 +47,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 

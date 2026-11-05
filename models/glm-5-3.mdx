@@ -13,36 +13,29 @@ GLM-5.3 is Zhipu AI's latest flagship text model for complex software engineerin
 |---|---|
 | Provider | Zhipu |
 | Slug | `glm-5-3` |
-| Konteks | 1,000,000 token |
-| Output maks | 64,000 token |
 | Input | text |
 | Output | text |
 | Rilis | 2026-08-17 |
 | Tag | flagship, reasoning |
+| Konteks katalog | 1,000,000 token |
+| Output maks katalog | 64,000 token |
+| Service Mode | Performance, Dedicated |
 
 ## Kapabilitas
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
+
+Fitur dan batas request mengikuti model, Service Mode, serta protokol yang digunakan.
 
 ## Harga
 
-| Item | Harga |
-|---|---|
-| Input (prompt) | $1.177 |
-| Output (completion) | $4.118 |
-| Cache read | $0.294 |
-| Cache write | - |
+Diperbarui **6 November 2026**. [Harga terkini](https://hostlinku.com/models/glm-5-3) mengikuti Service Mode API key. **1 <CreditIcon /> = \$1**. `—` berarti tarif belum dicantumkan. Tier mengikuti jumlah token prompt.
 
-Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 <CreditIcon /> = $1. Harga aktual per request tetap mengikuti Service Mode API key dan dapat berubah; cek [Console](https://console.hostlinku.com/models) atau `GET /v1/models` untuk nilai yang berlaku.
+| Item | Unit | Tier | Performance (<CreditIcon />) | Dedicated (<CreditIcon />) |
+|---|---|---|---|---|
+| Input (prompt) | per 1M token | Dasar | 0.98868 | 1.2075 |
+| Output (completion) | per 1M token | Dasar | 3.45912 | 3.795 |
+| Cache read | per 1M token | Dasar | 0.24696 | 0.22425 |
 
 ## Endpoint yang didukung
 
@@ -52,7 +45,7 @@ Harga adalah harga customer per **1M token** untuk API key Hostlinku, dengan 1 <
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Ketersediaan endpoint dan model mengikuti katalog serta Service Mode API key yang dipakai. Jika model tidak tersedia untuk mode tersebut, request dapat ditolak dengan `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridge menyesuaikan format API; fitur vendor dan tool bawaan aplikasi dapat berbeda. Gunakan API key dengan Service Mode yang tercantum di atas.
 
 ## Contoh request
 
@@ -68,10 +61,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 ## Model terkait
 
-- [GLM 5](/models/glm-5)
 - [GLM 5.1](/models/glm-5-1)
 - [GLM 5.2](/models/glm-5-2)
-- [GLM 5.3 Hyper Chat](/models/glm-5-3-hyper-chat)
 - [GLM-5.3 Flash](/models/glm-5-3-flash)
 - [GLM-5.3 Flash Hyper](/models/glm-5-3-flash-hyper)
 

@@ -13,39 +13,29 @@ DeepSeek-V4.1-Flash is a multimodal mixture-of-experts model built on an asymmet
 |---|---|
 | Provider | DeepSeek |
 | Slug | `deepseek-v4-1-flash` |
-| Context | 1,000,000 tokens |
-| Max output | 384,000 tokens |
 | Input | text, image |
 | Output | text |
 | Release | 2026-09-13 |
 | Tags | fast, budget |
+| Catalog context | 1,000,000 tokens |
+| Catalog max output | 384,000 tokens |
+| Service Mode | Performance, Dedicated |
 
 ## Capabilities
 
-- `text`
-- `tool-calling`
-- `function-calling`
-- `structured-outputs`
-- `json-mode`
-- `streaming`
-- `reasoning`
-- `code-generation`
-- `long-context`
-- `multilingual`
-- `vision`
-- `image-input`
-- `multimodal`
+`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+
+Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
-| Item | Price |
-|---|---|
-| Input (prompt) | $0.15 |
-| Output (completion) | $0.6 |
-| Cache read | $0.003 |
-| Cache write | - |
+Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/deepseek-v4-1-flash) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
 
-Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <CreditIcon /> = $1. Actual cost per request follows the API key's Service Mode and may change; check [Console](https://console.hostlinku.com/models) or `GET /v1/models` for current values.
+| Item | Unit | Tier | Performance (<CreditIcon />) | Dedicated (<CreditIcon />) |
+|---|---|---|---|---|
+| Input (prompt) | per 1M tokens | Base | 0.126 | 0.1725 |
+| Output (completion) | per 1M tokens | Base | 0.504 | 0.69 |
+| Cache read | per 1M tokens | Base | 0.00252 | 0.00345 |
 
 ## Supported endpoints
 
@@ -55,7 +45,7 @@ Prices are customer prices per **1M tokens** for a Hostlinku API key, with 1 <Cr
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Endpoint and model availability follow the catalog and the API key's Service Mode. If a model is unavailable for that mode, the request may be rejected with `400 MODEL_NOT_IN_SERVICE_MODE`.
+Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
 
 ## Example request
 
@@ -74,7 +64,5 @@ curl https://api.hostlinku.com/v1/chat/completions \
 - [DeepSeek V4 Flash](/en/models/deepseek-v4-flash)
 - [DeepSeek V4 Pro](/en/models/deepseek-v4-pro)
 - [DeepSeek-V4.1-Flash Hyper](/en/models/deepseek-v4-1-flash-hyper)
-- [DeepSeek-V4.1-Flash Hyper Chat](/en/models/deepseek-v4-1-flash-hyper-chat)
-- [DeepSeek-V4.1-Flash Turbo](/en/models/deepseek-v4-1-flash-turbo)
 
 [← Back to the model catalog](/en/models)

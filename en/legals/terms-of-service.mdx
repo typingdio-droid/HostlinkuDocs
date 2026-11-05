@@ -42,7 +42,7 @@ If you are using the Service on behalf of a company or organization, you represe
 An API key is a credential that authenticates requests to the API and serves as the basis for billing. Any request that includes your account’s API key is considered to be your request; charges are applied only to requests that are processed, as described in Section 7.
 
 - The API key is displayed in full **only once** when it is created. We only store its hash value, so a lost key cannot be recovered; create a new key and revoke the old one.
-- You can set limits on keys based on scope (e.g., `chat`, `embeddings`, `completions`), expiration, and credit limits per key via the [API key page](https://console.hostlinku.com/api-keys). These limits are cost-control tools; they do not guarantee that usage will not exceed a certain threshold under streaming or parallel request conditions.
+- Set **Service Mode**, expiration, and credit limits in [API Keys](https://console.hostlinku.com/api-keys). Credit limits help control costs; see [Authentication](/en/authentication).
 - Store the API key on the server side. Do not include it in frontend code, mobile apps, public repositories, or logs that are accessible to third parties.
 - If you suspect that your API key has been compromised or that your account has been accessed without authorization, immediately revoke the key and contact [halo@hostlinku.com](mailto:halo@hostlinku.com). You remain responsible for any charges incurred before the key is revoked, unless the leak is proven to have been caused by our negligence.
 - We may disable keys that appear to have been compromised (for example, those found in public repositories) to protect your balance.
@@ -98,7 +98,7 @@ Price changes apply to requests processed after the changes are published and ar
 
 ## 8. Rate limits and service restrictions
 
-To maintain stability, we enforce rate limits per API key and per IP address. The current limits are included in the `RateLimit-*` headers of each response, and requests that exceed the limits are rejected with a `429` status code at no charge. Default limits are subject to change at any time based on capacity and may be increased for specific accounts upon request.
+Usage quotas are shared within the same organization. Per-IP endpoint limits apply separately. Limiter-rejected requests return `429` without reserving credit. See [Usage & Limits](/en/usage-and-limits).
 
 We may also limit request size, output length, the number of concurrent requests, or access to specific models, as well as filter or block requests that appear to violate our Acceptable Use Policy or upstream policies.
 
@@ -135,7 +135,7 @@ We may use any suggestions, bug reports, or feedback you submit to improve the S
 
 ## 12. Third-Party Services
 
-The Service relies on third parties, including upstream providers, payment providers (iPaymu, BlockBee), SSO identity providers, email providers, and Cloudflare. The use of third-party services is subject to their respective terms and conditions. We are not responsible for the content, policies, or service failures of third parties beyond our reasonable control, including websites linked from the Service.
+The Service relies on third parties, including upstream providers, payment providers (iPaymu, Heleket), SSO identity providers, email providers, and Cloudflare. The use of third-party services is subject to their respective terms and conditions. We are not responsible for the content, policies, or service failures of third parties beyond our reasonable control, including websites linked from the Service.
 
 <a id="penangguhan"></a>
 
