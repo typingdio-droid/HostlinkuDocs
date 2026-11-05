@@ -1,6 +1,7 @@
 ---
 title: "SDK & Sample Code"
 description: "Python and Node.js examples for the three Hostlinku API dialects-Anthropic Messages, OpenAI Chat Completions, and OpenAI Responses."
+icon: terminal
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -86,7 +87,7 @@ stream = client.chat.completions.create(
     stream=True,
 )
 for chunk in stream:
-    delta = chunk.choices[0].delta.content
+    delta = chunk.choices[0].delta.content if chunk.choices else None
     if delta:
         print(delta, end="", flush=True)
 ```

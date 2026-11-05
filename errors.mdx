@@ -1,12 +1,14 @@
 ---
 title: Error
-description: Format envelope error Hostlinku, daftar kode error, dan cara menanganinya
+description: Format error per protokol, kode Hostlinku, dan tindakan yang sesuai.
+icon: circle-alert
 ---
 
-import { Callout } from "/snippets/mdx.jsx";
+## Format respons
 
-Semua error dari gateway Hostlinku memakai satu bentuk _envelope_ yang sama, apa pun sumbernya:
-validasi, autentikasi, billing, atau gangguan pada layanan upstream:
+Format error mengikuti endpoint. Pesan `error.message` menjelaskan masalah; gunakan HTTP status dan kode/tipe error untuk penanganan otomatis. Bahasa pesan dapat berbeda menurut layanan.
+
+**Chat Completions dan endpoint umum** memakai kode Hostlinku:
 
 ```json
 {
@@ -21,117 +23,71 @@ validasi, autentikasi, billing, atau gangguan pada layanan upstream:
 }
 ```
 
-- `status`: selalu `"error"` pada respons gagal.
-- `error.code`: kode mesin (stabil, aman untuk percabangan logika di kode kamu).
-- `error.message`: pesan manusia (bahasa Inggris).
-- `error.details`: opsional; mis. detail per-field saat validasi gagal.
-
-## Daftar kode error
-
-| HTTP | `error.code` | Arti | Umumnya muncul saat |
-|---|---|---|---|
-| 400 | `BAD_REQUEST` | Request tidak dapat diproses | Parameter kombinasi tidak masuk akal (mis. nominal top-up di luar batas, `max_tokens` melebihi batas output model) |
-| 401 | `UNAUTHORIZED` | Autentikasi gagal atau tidak ada | API key salah, sudah di-revoke, atau kedaluwarsa |
-| 402 | `PAYMENT_REQUIRED` | Butuh saldo/kredit | Saldo tidak cukup, limit kredit API key tercapai, provider pembayaran belum dikonfigurasi |
-| 403 | `FORBIDDEN` | Tidak punya izin | Mengakses resource admin dengan akun non-admin |
-| 404 | `NOT_FOUND` | Resource tidak ditemukan | Endpoint salah, ID API key/transaksi/log tidak ada (atau bukan milik kamu) |
-| 404 | `MODEL_NOT_FOUND` | Slug model tidak ada di katalog | Salah ketik slug; cek `GET /v1/models` |
-| 405 | `METHOD_NOT_ALLOWED` | Metode HTTP salah | Memakai `GET` di endpoint yang hanya menerima `POST` |
-| 409 | `CONFLICT` | Konflik state | Operasi bertentangan dengan state saat ini |
-| 422 | `VALIDATION_FAILED` | Body/query tidak valid | Field wajib hilang, tipe salah, di luar rentang |
-| 429 | `RATE_LIMITED` | Batas permintaan tercapai | Kuota kamu benar-benar habis: melebihi batas per menit (kuota organisasi atau batas per IP) |
-| 429 | `MODEL_AT_CAPACITY` | Model sedang penuh | Penyedia sedang kehabisan kapasitas untuk model itu; bukan kuota kamu. Tunggu sesuai `Retry-After` |
-| 429 | `MODEL_COOLDOWN` | Deployment model sedang dipulihkan | Semua deployment untuk model/tag itu sedang cooldown setelah gagal; tunggu beberapa detik |
-| 500 | `INTERNAL` | Kesalahan internal server | Bug tak terduga di gateway; sertakan `x-request-id` bila melapor |
-| 503 | `UPSTREAM_ERROR` | Upstream tidak tersedia / gangguan sementara | Upstream gagal merespons (5xx/timeout) setelah Hostlinku mencoba beberapa kali; aman untuk retry dengan backoff |
-| 503 | `PROVIDER_UNAVAILABLE` | Upstream tidak dapat dihubungi | Gangguan koneksi sementara ke upstream, atau layanan pembayaran gagal membuat sesi checkout |
-| 503 | `MODEL_UNAVAILABLE` | Model tidak tersedia | Model sedang status non-`available` atau sudah deprecated |
-
-## Header Retry-After
-
-Untuk `429` (dan sebagian `503`), gateway meneruskan saran waktu tunggu dari upstream:
-
-| Header | Isi |
-|---|---|
-| `Retry-After` | Detik sampai aman untuk mencoba lagi |
-| `retry-after-ms` | Saran yang sama dalam milidetik (lebih presisi) |
-
-Header hanya muncul bila upstream memberi angka pasti. Kalau tidak ada, tunggu beberapa detik
-dengan backoff eksponensial + jitter. Jangan retry seketika: model yang sedang penuh akan
-semakin lambat.
-
-<Callout type="warning" title="Endpoint tidak dikenal">
-  Path yang tidak ada juga mengembalikan envelope yang sama dengan `404 NOT_FOUND`. Periksa
-  kembali URL dan metode HTTP sebelum menyimpulkan ada gangguan.
-</Callout>
-
-## Detail validasi (422)
-
-Saat validasi gagal, `details.issues` memuat daftar masalah per field:
+**Anthropic Messages** memakai `error.type`, tanpa kode Hostlinku pada `error.code`:
 
 ```json
-{
-  "status": "error",
-  "error": {
-    "code": "VALIDATION_FAILED",
-    "message": "The request body is invalid.",
-    "details": {
-      "issues": [
-        { "path": "messages", "message": "Array must contain at least 1 element(s)" },
-        { "path": "temperature", "message": "Number must be less than or equal to 2" }
-      ]
-    }
-  }
-}
+{"type":"error","error":{"type":"invalid_request_error","message":"The request body is invalid."}}
 ```
 
-## Error pada streaming
+**OpenAI Responses** memakai format OpenAI dan kode yang dipetakan:
 
-Kegagalan yang terjadi **di tengah** stream SSE dikirim sebagai event data di stream yang sama
-(bukan sebagai HTTP status):
+```json
+{"error":{"message":"The request body is invalid.","type":"invalid_request_error","param":null,"code":"invalid_request"}}
+```
+
+Contoh pemetaan Responses: `UNAUTHORIZED` → `invalid_api_key`, `MODEL_NOT_FOUND` → `model_not_found`, dan error 429 → `rate_limit_exceeded`. Messages mengelompokkannya melalui tipe seperti `authentication_error`, `not_found_error`, dan `rate_limit_error`.
+
+Validasi schema memakai **422** pada Chat Completions, tetapi **400** pada Messages/Responses. `error.details` bersifat opsional; `error.details.issues` menunjukkan field yang tidak valid. Error sebelum handler protokol, misalnya parsing body, pembatasan request, atau path yang tidak dikenal, dapat memakai format umum Hostlinku.
+
+## Kode Hostlinku
+
+Tabel ini merujuk kode Hostlinku pada gateway dan endpoint umum. Messages/Responses memakai pemetaan di atas; kode khusus akun atau pembayaran lainnya dapat muncul pada endpoint terkait.
+
+| HTTP | Kode | Arti dan tindakan |
+|---|---|---|
+| 400 | `BAD_REQUEST` | JSON/parameter tidak dapat diproses, termasuk batas output model. Perbaiki request. |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | Model tidak tersedia pada Service Mode key. Pilih model dari `GET /v1/models` dengan key yang sama. |
+| 400 | `UPSTREAM_REJECTED` | Penyedia menolak request. Baca alasan yang disanitasi dan perbaiki input. |
+| 401 | `UNAUTHORIZED` | Autentikasi tidak ada, salah, dicabut, atau kedaluwarsa. Periksa key. |
+| 402 | `PAYMENT_REQUIRED` | Saldo tersedia kurang atau limit kredit key tercapai. Periksa [Billing](/billing). |
+| 403 | `FORBIDDEN` | Akses ditolak. Periksa izin akun. |
+| 404 | `NOT_FOUND` | Path atau resource tidak tersedia. Periksa URL dan ID. |
+| 404 | `MODEL_NOT_FOUND` | Slug model tidak ada. Periksa katalog. |
+| 405 | `METHOD_NOT_ALLOWED` | Metode HTTP salah. Gunakan metode pada header `Allow`. |
+| 413 | `BAD_REQUEST` | Payload terlalu besar. Kurangi ukuran body. |
+| 415 | `BAD_REQUEST` | Encoding/charset body tidak didukung. Periksa format body. |
+| 422 | `VALIDATION_FAILED` | Body/query gagal validasi. Perbaiki field pada `error.details.issues`. |
+| 429 | `RATE_LIMITED` | Kuota organisasi per Service Mode atau batas endpoint/IP tercapai; upstream juga dapat mengembalikan pembatasan. Tunggu dan kurangi konkurensi. |
+| 429 | `MODEL_AT_CAPACITY` | Kapasitas model penuh di penyedia. Tunggu saran retry. |
+| 429 | `MODEL_COOLDOWN` | Deployment model sedang pulih setelah kegagalan. Tunggu saran retry. |
+| 500 | `INTERNAL` | Kesalahan internal. Simpan informasi request dan laporkan jika berulang. |
+| 503 | `MODEL_UNAVAILABLE` | Model tidak tersedia atau deprecated. Periksa katalog dan model pengganti; retry bila gangguan memang sementara. |
+| 503 | `PROVIDER_UNAVAILABLE` | Jalur penyedia tidak tersedia. Coba lagi dengan jeda terbatas. |
+| 503 | `UPSTREAM_ERROR` | Gangguan upstream. Coba lagi dengan jeda terbatas. |
+| 503 | `UPSTREAM_TIMEOUT` | Upstream melewati batas waktu. Coba lagi dengan jeda terbatas. |
+| 503 | `UPSTREAM_UNREACHABLE` | Upstream tidak dapat dihubungi. Coba lagi dengan jeda terbatas. |
+
+### Console dan checkout
+
+Kode berikut berkaitan dengan akun/checkout dan bukan kontrak error inferensi `/v1/*`:
+
+| HTTP | Kode | Arti dan tindakan |
+|---|---|---|
+| 403 | `API_KEY_NOT_ALLOWED` | API key dipakai pada endpoint akun Console. Gunakan sesi login Console. |
+| 409 | `CONFLICT` | Operasi bertentangan dengan state saat ini. Muat ulang state sebelum mencoba lagi. |
+| 424 | `CHECKOUT_FAILED` | Penyedia gagal membuat tagihan. Baca pesan dan cek transaksi sebelum membuat ulang. |
+| 424 | `BANK_BUSY` | Bank/kanal iPaymu sedang sibuk. Pilih bank lain yang ditawarkan checkout. |
+
+## Retry dan streaming
+
+Jika tersedia, `Retry-After` berisi detik tunggu dan `retry-after-ms` berisi milidetik. Jika tidak ada, pakai backoff eksponensial dengan jitter serta batas percobaan. Untuk kuota bersama, menambah key atau akun anggota pada organisasi yang sama tidak menambah kuota; lihat [Pemakaian & Limit](/usage-and-limits).
+
+Setelah SSE dimulai, kegagalan dikirim sebagai event error dalam stream; HTTP status awal tidak berubah. Contoh Chat Completions:
 
 ```text
 data: {"error":{"code":"MODEL_AT_CAPACITY","message":"The model is at capacity right now. Please retry shortly.","type":"upstream_error","retry_after_ms":4000}}
 ```
 
-Gateway tidak akan mengirim `data: [DONE]` setelah event error, sehingga stream yang terputus
-selalu bisa dibedakan dari stream yang selesai normal.
+Gateway tidak menambahkan `[DONE]` setelah kegagalan stream yang ditanganinya. Koneksi juga dapat putus tanpa event error. Penanda `[DONE]` atau akhir koneksi saja tidak membuktikan sukses; periksa event error dan log request. Format event Messages/Responses dijelaskan pada [Messages](/anthropic-messages) dan [Responses](/responses).
 
-## Menangani error di kode
-
-Cara menangani tiap kelompok error:
-
-- **401**: API key salah atau kedaluwarsa. Perbaiki konfigurasi; jangan retry berulang.
-- **402**: top-up saldo atau naikkan/atur ulang limit API key. Lihat [Billing & Saldo](/billing).
-- **422**: perbaiki body request; baca `details.issues` untuk lokasi masalah.
-- **429**: periksa `error.code`. `RATE_LIMITED` = kuota key/IP habis; `MODEL_AT_CAPACITY` /
-  `MODEL_COOLDOWN` = model penuh atau sedang pulih — tunggu sesuai `Retry-After`. Lihat
-  [Pemakaian & Limit](/usage-and-limits).
-- **5xx** (`UPSTREAM_ERROR`, `PROVIDER_UNAVAILABLE`, `INTERNAL`): retry dengan backoff beberapa
-  kali; Hostlinku sudah mencoba beberapa kali sebelum menyerah.
-
-Contoh menangkap error dengan SDK OpenAI (Python):
-
-```python
-import openai
-from openai import OpenAI
-
-client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-your-api-key")
-
-try:
-    response = client.chat.completions.create(
-        model="gpt-5-5",
-        messages=[{"role": "user", "content": "Halo"}],
-    )
-except openai.AuthenticationError as err:      # 401
-    raise SystemExit(f"API key bermasalah: {err}")
-except openai.RateLimitError as err:           # 429
-    raise SystemExit(f"Rate limit: {err}")
-except openai.APIStatusError as err:           # 4xx/5xx lainnya
-    print("status:", err.status_code, "body:", err.response.text)
-```
-
-<Callout type="note" title="Selalu sertakan x-request-id saat melapor">
-  Sebaiknya catat juga header `x-request-id` dari respons yang gagal: tim dukungan memakai ID
-  itu untuk menelusuri request tersebut di log gateway.
-</Callout>
+Saat melapor, sertakan `x-request-id` bila tersedia, waktu kejadian, endpoint, model, HTTP status, dan body error tanpa secret. Lihat [Dukungan](/support).

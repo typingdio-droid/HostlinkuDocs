@@ -1,6 +1,7 @@
 ---
 title: "Responses API"
 description: "エンドポイント POST /v1/responses (OpenAI Responses API 互換) - Codex CLI、OpenAI Agents SDK、または API キー Hostlinku を使用した client.responses.create() を使用してください"
+icon: workflow
 ---
 
 
@@ -95,7 +96,7 @@ print(result.final_output)
 
 | パラメータ | タイプ | 説明 |
 |---|---|---|
-| `model` | `string` | **必須。** slug型番 Hostlinku。 |
+| `model` | `string` | **必須。** Hostlinkuの公開モデルslug。 |
 | `input` | `string` \| `array` | **必須。** 単一のテキスト、または配列の項目：`message`（`role` + `content` には `input_text`/`input_image`/…が含まれる）、 `function_call`、`function_call_output`、`reasoning`。 |
 | `instructions` | `string` | システムプロンプト（開発者向けメッセージ）。 |
 | `max_output_tokens` | `integer` | 出力トークンの上限。モデルの出力上限を超えた場合、`400`として拒否されます。 |
@@ -239,6 +240,8 @@ print(r2.output_text)
 | 403 | `permission_error` | - | アカウントが停止されました／アクセスが拒否されました。 |
 | 404 | `not_found_error` | `model_not_found` / `not_found` | slugモデルが存在しない、または `GET /v1/responses/{id}`（ステートレス）。 |
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | リクエストの制限に達しました（ヘッダー `Retry-After` を参照）。 |
-| 503 | `server_error` | `model_unavailable` / `server_error` | モデル/アップストリームが利用できません - 再試行しても問題ありません。 |
+| 503 | `server_error` | `model_unavailable` / `server_error` | モデル／上流が利用できません。カタログと代替モデルを確認し、一時的な障害なら間隔を設けて再試行してください。 |
 
-エラーは内部識別情報を隠すために処理されます。upstream の拒否理由の一部は表示される場合があります。 [Error](/ja/errors).
+表はプロトコルで処理されたエラーです。ハンドラーより前のレート制限や本文解析には一般のHostlinku形式が使われる場合があります。[エラー](/ja/errors)を参照してください。
+
+エラーは内部識別情報を隠すために処理されます。upstream の拒否理由の一部は表示される場合があります。

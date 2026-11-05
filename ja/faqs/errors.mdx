@@ -1,25 +1,21 @@
 ---
 title: "よく発生するエラー"
 description: "最もよく見られるエラーコード「Hostlinku」の原因と解決策。"
+icon: circle-alert
 ---
 
 
 import { Callout } from "/snippets/mdx.jsx";
 
-すべてのエラーは同じエンベロープ「`{"error": {"code": "...", "message": "..."}}`」を使用しています。完全なリストは [エラー](/ja/errors) に記載されています。
+以下のコードはChat Completions形式です。MessagesとResponsesには独自のエラー形式があります。詳しくは[エラー](/ja/errors)を参照してください。
 
-## 401 アクセス拒否
+## 401 UNAUTHORIZED
 
-APIキーが存在しない、コピーミスがある、無効化されている、または有効期限が切れている可能性があります。ヘッダーに「`Authorization: Bearer sk-...`」または「`x-api-key`」が使用されていることを確認し、コンソールの**API Keys**でキーのステータスを確認してください。
+Console → **API Keys**でキーの値と状態を確認してください。ゲートウェイのエンドポイントは`Authorization: Bearer sk-...`または`x-api-key`を受け付けます。無効・停止・期限切れのキーで再試行しないでください。
 
-## 402 支払いが必要
+## 402 PAYMENT_REQUIRED
 
-原因は2つあります：
-
-- **アカウントの残高**が、リクエストの推定費用に不足しています。
-- **APIキーのクレジット上限**に達しました（1日、1週間、1か月、または合計）。
-
-エラーメッセージを確認して、原因を特定してください。コンソールで残高とキーの制限を確認してください。詳細：[請求・残高](/ja/billing)。
+エラーメッセージを確認し、利用可能な組織残高が不足していればチャージし、キーの利用上限に達していれば上限を変更するかリセットを待ってください。チャージしてもキーの上限は増えません。[課金と残高](/ja/billing)を参照してください。
 
 ## 404 MODEL_NOT_FOUND
 
@@ -29,13 +25,13 @@ APIキーが存在しない、コピーミスがある、無効化されてい�
 
 モデルは存在しますが、使用されているService Mode API keyでは利用できません。例：キー「Low-Cost」が、ルート「Performance」のみを持つモデルを呼び出しています。適切なモードのキーを作成するか、別のモデルを選択してください。
 
-## 422 検証に失敗しました
+## 422 VALIDATION_FAILED
 
-リクエスト本文が検証に失敗しました：`messages` が空であるか、フィールドのタイプが間違っているか、必須フィールドが欠落しています。レスポンスにはフィールドごとの詳細が含まれています。[Chat Completions](/ja/chat-completions) のリクエスト本文の例を確認してください。
+`details.issues`のフィールドを修正してください。例えば`messages`が空、または型が不正な場合です。Chat Completionsの検証は422、MessagesとResponsesは400を返します。[リクエスト例](/ja/chat-completions)を参照してください。
 
 ## 429 RATE_LIMITED
 
-リクエスト制限を超えました。ヘッダー `Retry-After` および `RateLimit-*` を確認し、指数関数的なバックオフを適用して再試行してください。リミッターによって拒否されたリクエストは、残高から差し引かれません。詳細：[使用状況と制限](/ja/usage-and-limits)。
+各Service Modeの利用枠は組織内で共有します。`Retry-After`に従って待機し、バックオフと送信量の調整を行ってください。limiterが拒否したリクエストは残高から引かれません。[使用状況と制限](/ja/usage-and-limits)を参照してください。
 
 ## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
 

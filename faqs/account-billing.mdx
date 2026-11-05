@@ -1,6 +1,7 @@
 ---
 title: "Akun, billing & kebijakan"
 description: "Jawaban singkat tentang akun, pembayaran, biaya, dan privasi."
+icon: users
 ---
 
 ## Akun dan API key
@@ -45,7 +46,7 @@ Belum tersedia pada Billing aktif. Pantau saldo dan top-up sebelum pemakaian pro
 
 ### Apa tindakan untuk 429 atau 402?
 
-Kuota layanan adalah **600 request, 6.500.000 token input, dan 200.000 token output per menit**, dipakai bersama dalam organisasi yang sama. Semua API key dan anggota organisasi terdampak saat kuota tercapai. Detail kuota dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
+Untuk 429, tunggu sesuai `Retry-After` dan gunakan backoff; lihat [Pemakaian & Limit](/usage-and-limits). Untuk 402, periksa saldo tersedia dan limit kredit key; lihat [Billing & Saldo](/billing).
 
 ### Apakah semua request gagal bebas biaya?
 

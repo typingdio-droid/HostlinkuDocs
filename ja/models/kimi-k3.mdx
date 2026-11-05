@@ -1,13 +1,9 @@
 ---
 title: "Kimi K3"
-description: "Kimi K3は、Kimiのフラッグシップモデルであり、長距離プログラミングやエンドツーエンドのナレッジワーク向けに設計されています。100万トークンのコンテキストウィンドウを備え、..."
+description: "MoonshotのKimi K3。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Kimi K3は、Kimiのフラッグシップモデルであり、長距離プログラミングやエンドツーエンドのナレッジワーク向けに設計されています。100万トークンのコンテキストウィンドウを備え、最先端の包括的なインテリジェンスを提供します。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ Kimi K3は、Kimiのフラッグシップモデルであり、長距離プログ
 ## 機能
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -46,7 +40,7 @@ Kimi K3は、Kimiのフラッグシップモデルであり、長距離プログ
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

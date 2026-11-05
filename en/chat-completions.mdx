@@ -1,6 +1,7 @@
 ---
 title: "Chat Completions"
 description: "Reference for the POST endpoint /v1/chat/completions, including parameters, SSE streaming, and examples using curl and Python"
+icon: messages-square
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -152,7 +153,7 @@ stream = client.chat.completions.create(
     stream=True,
 )
 for chunk in stream:
-    delta = chunk.choices[0].delta.content
+    delta = chunk.choices[0].delta.content if chunk.choices else None
     if delta:
         print(delta, end="", flush=True)
 ```

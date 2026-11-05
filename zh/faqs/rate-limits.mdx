@@ -1,6 +1,7 @@
 ---
 title: "速率限制"
 description: "Hostlinku请求的限制、发送的头部以及如何进行退避。"
+icon: gauge
 ---
 
 
@@ -10,7 +11,7 @@ import { Callout } from "/snippets/mdx.jsx";
 
 配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
 
-## 建议的后退距离
+## 建议的退避方式
 
 1. 读取`Retry-After`；如果存在，则等待该值所对应的时间。
 2. 如果没有，则从1秒开始，每次试验将时间翻倍（1、2、4、8秒），并加入抖动。

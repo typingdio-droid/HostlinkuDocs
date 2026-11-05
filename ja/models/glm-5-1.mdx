@@ -1,13 +1,9 @@
 ---
 title: "GLM 5.1"
-description: "GLM-5.1は、Zhipuの主力テキストモデルであり、20万のコンテキストと12万8千の最大出力を持つほか、長期的な計画立案、エージェント的コーディング、ツールの使用、構造化された..."
+description: "ZhipuのGLM 5.1。カタログのコンテキストは200,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-GLM-5.1は、Zhipuの主力テキストモデルであり、20万のコンテキストと12万8千の最大出力を持つ。長期計画、エージェント的コーディング、ツールの使用、構造化出力、コンテキストキャッシュ、およびMCPの面で強化されている。
 
 | プロパティ | 値 |
 |---|---|
@@ -23,8 +19,6 @@ GLM-5.1は、Zhipuの主力テキストモデルであり、20万のコンテキ
 ## 機能
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -47,7 +41,7 @@ GLM-5.1は、Zhipuの主力テキストモデルであり、20万のコンテキ
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

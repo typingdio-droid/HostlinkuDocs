@@ -1,13 +1,9 @@
 ---
 title: "GLM 5.2"
-description: "GLM-5.2 是一款专为长上下文任务时代设计的旗舰模型。它支持真正可用的 100 万Token上下文窗口-能够处理项目..."
+description: "Zhipu的GLM 5.2，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-GLM-5.2 是一款专为长上下文任务时代设计的旗舰模型。 它支持真正可用的 100 万Token上下文窗口-能够处理现实世界测试中的项目级工程上下文-并在执行长距离任务时提供更高的稳定性，在遵循工程标准方面具备更高的可靠性，从而进一步提高开发场景中的成功率。 它能够通过单个任务完成整个开发生命周期-从需求定义到可跨平台部署的构建产物。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ GLM-5.2 是一款专为长上下文任务时代设计的旗舰模型。 它支�
 ## 能力
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -45,7 +39,7 @@ GLM-5.2 是一款专为长上下文任务时代设计的旗舰模型。 它支�
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

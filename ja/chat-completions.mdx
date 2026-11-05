@@ -1,6 +1,7 @@
 ---
 title: "Chat Completions"
 description: "エンドポイント POST /v1/chat/completions のリファレンス。パラメータ、SSE ストリーミング、および curl と Python のサンプルを含みます。"
+icon: messages-square
 ---
 
 
@@ -150,7 +151,7 @@ stream = client.chat.completions.create(
     stream=True,
 )
 for chunk in stream:
-    delta = chunk.choices[0].delta.content
+    delta = chunk.choices[0].delta.content if chunk.choices else None
     if delta:
         print(delta, end="", flush=True)
 ```

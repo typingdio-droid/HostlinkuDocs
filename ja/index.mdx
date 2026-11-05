@@ -1,56 +1,41 @@
 ---
 title: "はじめに"
-description: "Hostlinkuとは何か、そのアーキテクチャの仕組み、およびこのドキュメントの読み進め方"
+description: 最初のリクエストと次に読むガイド
+icon: house
 ---
 
+HostlinkuはOpenAI Chat Completions、Anthropic Messages、Responses APIを1つのゲートウェイで提供します。APIキーには**Performance**、**Low-Cost**、**Dedicated**のService Modeが設定され、そのモードに応じたモデルと料金を利用できます。
 
-import { Callout } from "/snippets/mdx.jsx";
+## 最初のリクエスト
 
-**Hostlinku** はOpenAI Chat Completions、Anthropic Messages、Responses API形式を提供するAIゲートウェイです。パラメータと機能の対応はモデルとエンドポイントに依存します。APIキーは作成時に選択する **Service Mode**（**Performance**、**Low-Cost**、**Dedicated**）のモデル一覧にアクセスします。最新のモデルと価格は [モデル一覧](/ja/models) と、そのキーによる `GET /v1/models` で確認してください。
+[Console](https://console.hostlinku.com)で登録し、組織の残高をチャージしてAPIキーを作成してください。キーのモデル一覧からslugを選び、必要に応じて例を変更します。[クイックスタート](/ja/getting-started)。
 
-Hostlinkuを使えば、プロバイダーごとに異なるアカウント、APIキー、リクエスト形式を個別に管理する必要がなくなります：
-
-- 選択したService Modeのモデルに**1つのAPIキー**（`sk-…`）。
-- **OpenAIとの互換性**：OpenAI（`openai-python`、`openai-node`）の公式SDKを使用する場合は、`base_url`を置き換えるだけで十分です。
-- **SSEストリーミング**：OpenAIと同様に、`text/event-stream`という形式のトークンごとの応答。
-- **一元化されたモデルカタログ**：スラッグ、トークンあたりの価格、コンテキスト、および機能を1か所に集約。
-- **利用状況の管理**：APIキーごとのクレジット上限、リクエスト履歴、およびコンソール上の詳細なログ。
-- **前払い決済**：QRIS／Virtual Account（iPaymu Direct）、暗号資産（Heleketのホスト型決済）で組織にチャージできます。サービスクレジットの単位は **1クレジット = $1** です。
-
-## 概要
-
-```text
-あなたのアプリケーション
-    │  Authorization: Bearer sk-…
-    ▼
-api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
-(v1/chat/completions)        │                        │
-                             │                        ├─► OpenAI
-                             ├─ Reservasi saldo       ├─► Anthropic
-                             ├─ Telemetri & log       ├─► Google
-                             └─ Commit biaya nyata    └─► …dan lainnya
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-5-5","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
-リクエストはAPIキー認証、上限確認、残高予約、モデルサービスへの転送を経由します。終了後に上流のusage、またはusage欠落時の推定値で費用を確定し、テレメトリを記録します。
+## 次のステップ
 
-コンソール Hostlinku (`console.hostlinku.com`) は同じバックエンドを使用しています。API キー、残高、リクエスト履歴、監査ログはすべて、実際のデータゲートウェイからのものです。
-
-## クイックリンク
-
-| ニーズ | ページ |
-|---|---|
-| 最初のリクエストを送信する | [クイックスタート](/ja/getting-started) |
-| APIキー、有効期限、およびAPIキーごとの制限について理解する | [認証](/ja/authentication) |
-| すべてのエンドポイント、レート制限、エラーコードの概要 | [APIリファレンス](/ja/api-reference) |
-| エンドポイント参照 `POST /v1/chat/completions` | [Chat Completions](/ja/chat-completions) |
-| `POST /v1/messages` を通じて Anthropic SDK / Claude Code を使用する | [Anthropic Messages](/ja/anthropic-messages) |
-| `POST /v1/responses` を通じて Codex CLI / OpenAI Agents SDK を使用する | [Responses API](/ja/responses) |
-| Claude Code、Codex CLI、Cursor、Zed、Cline、Continue、OpenCode、Aider の設定 | [IDEとエージェントの統合](/ja/integrations) |
-| モデルのリストと選び方 | [モデル](/ja/models) |
-| レート制限と使用状況の監視 | [使用方法と制限](/ja/usage-and-limits) |
-| 残高、チャージ、およびトークンあたりの手数料 | [請求・残高](/ja/billing) |
-| エラーコードとエラー応答の形式 | [エラー](/ja/errors) |
-
-<Callout type="tip" title="まずはアカウントが必要ですか？">
-[バックエンドから新規登録](https://api.hostlinku.com/api/auth2/register) すると `auth2.hostlinku.com` のKeycloakへ転送されます。[Console](https://console.hostlinku.com) で最初のAPIキーを作成してください。[クイックスタート](/ja/getting-started) を参照してください。
-</Callout>
+<CardGroup cols={2}>
+  <Card title="認証" icon="key" href="/ja/authentication">
+    キー、Service Mode、クレジット上限を管理。
+  </Card>
+  <Card title="モデル" icon="box" href="/ja/models">
+    slug、機能、料金を確認。
+  </Card>
+  <Card title="連携" icon="terminal" href="/ja/integrations">
+    SDK、IDE、coding agentを接続。
+  </Card>
+  <Card title="API Reference" icon="code" href="/ja/api-reference">
+    エンドポイントと形式を選択。
+  </Card>
+  <Card title="課金と残高" icon="credit-card" href="/ja/billing">
+    チャージと使用料金を確認。
+  </Card>
+  <Card title="使用状況と制限" icon="gauge" href="/ja/usage-and-limits">
+    組織共有の利用枠と429を理解。
+  </Card>
+</CardGroup>

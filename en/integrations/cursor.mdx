@@ -1,6 +1,7 @@
 ---
 title: "Cursor"
 description: "Use the Hostlinku model in Cursor by overriding the OpenAI base URL-chat, Cmd-K, and Agent-with your own API key"
+icon: mouse-pointer-2
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -56,8 +57,7 @@ While **Override OpenAI Base URL** is enabled, all OpenAI family models in Curso
 public - `https://api.hostlinku.com` meets this requirement (the `localhost` address is rejected by Cursor).
 - **The Tab cursor (autocomplete) is not affected.** The Tab feature uses Cursor's specialized infrastructure and
 It cannot be transferred to any other provider. Hostlinku supports chat, Cmd-K, and Agent.
-- **Agent mode** requires models with *tool calling* and *streaming* capabilities - all models that
-As recommended in the [Overview](/en/integrations), make sure to follow these instructions. If the Agent returns a *BAD_MODEL_NAME* error, double-check the slug and ensure the **OpenAI API Key** toggle is enabled.
+- **Agent mode** requires *tool calling* and *streaming*. Check support in the [catalog](/en/models). If you see *BAD_MODEL_NAME*, verify the slug and enable the **OpenAI API Key** toggle.
 - **Connection hangs / protocol error** - in the same settings, change *HTTP Compatibility*
 Mode* to **HTTP/1.1**.
 

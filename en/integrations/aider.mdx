@@ -1,6 +1,7 @@
 ---
 title: "Aider"
 description: "Run Aider via Hostlinku with OPENAI_API_BASE and the model prefix openai/ - plus the model metadata so that the context and cost are calculated correctly"
+icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -69,7 +70,9 @@ Aider doesn't recognize the Hostlinku slug, so it issues a *"model is unknown"* 
 }
 ```
 
-The prices above are just examples (Performance mode) - copied from `pricing` in the [catalog](/en/models), which are stated per **1M tokens**, then **divide by 1,000,000** because Aider uses a price per 1 token (e.g., `pricing.input: 2.4` → `input_cost_per_token: 0.0000024`). Aider’s cost estimate will then be close to the actual bill shown in the console.
+The `max_input_tokens` and `max_output_tokens` values above are example limits for Aider. Match them to the model limits in the [catalog](/en/models); lower values limit usage within the tool.
+
+The prices above are examples for Performance mode. Copy current values from `pricing` in the [catalog](/en/models), which are stated per **1M tokens**, then **divide by 1,000,000** because Aider uses a price per token (e.g., `pricing.input: 2.4` → `input_cost_per_token: 0.0000024`). This gives Aider a closer cost estimate.
 
 </Steps>
 

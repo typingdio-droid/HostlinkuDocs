@@ -1,6 +1,7 @@
 ---
 title: "Junie CLI"
 description: "通过自定义模型配置文件（Chat Completions 或 Anthropic Messages）将 JetBrains 的 Junie CLI 连接到 Hostlinku"
+icon: terminal
 ---
 
 
@@ -77,9 +78,9 @@ junie --model custom:hostlinku
 
 ## 故障排除
 
-| 症状 | Solusi |
+| 症状 | 解决方法 |
 |---|---|
 | `404` | `baseUrl` 尚未完成-应以 `/v1/chat/completions` 或 `/v1/messages` 结尾。 |
 | 个人资料未显示 | 文件名/位置错误，或 JSON 格式无效。配置文件 = 不包含 `.json` 的文件名。 |
 | 环境变量错误 | 在运行 `junie` 的 shell 中导出 `HOSTLINKU_API_KEY`。 |
-| 呼叫工具失败 / 代理程序无限循环 | 该模型对于代理编码而言过于小-请将主模型替换为[概述](/zh/integrations)中的推荐模型。 |
+| 工具调用失败／Agent循环运行 | 请在[目录](/zh/models)中检查tool calling支持和模型限制。更换模型前先检查请求日志。 |

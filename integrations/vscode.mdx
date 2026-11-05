@@ -1,6 +1,7 @@
 ---
 title: VS Code (Chat)
 description: Pakai model Hostlinku di chat & agent bawaan VS Code lewat provider Custom Endpoint - tanpa login GitHub, cukup API key Hostlinku
+icon: code-xml
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -77,6 +78,8 @@ VS Code membuka `chatLanguageModels.json`. Isi array `models` dengan slug dari
   }
 ]
 ```
+
+`contextWindow` dan `maxOutputTokens` di atas adalah contoh batas lokal VS Code. Sesuaikan dengan halaman model di [katalog](/models); nilai yang lebih kecil membatasi penggunaan di tool.
 
 ![chatLanguageModels.json di VS Code berisi provider Hostlinku dengan url https://api.hostlinku.com/v1/chat/completions](/images/integrations/vscode-chatlanguagemodels.webp "chatLanguageModels.json setelah diisi: provider customendpoint Hostlinku, url lengkap ke /v1/chat/completions, apiKey berupa referensi secret.")
 

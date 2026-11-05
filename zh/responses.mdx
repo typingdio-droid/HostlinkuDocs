@@ -1,6 +1,7 @@
 ---
 title: "Responses API"
 description: "POST /v1/responses 端点参考（兼容 OpenAI Responses API）-使用 Codex CLI、OpenAI Agents SDK 或 client.responses.create() 并配合 Hostlinku API 密钥"
+icon: workflow
 ---
 
 
@@ -239,6 +240,8 @@ print(r2.output_text)
 | 403 | `permission_error` | - | 账户已被暂停/访问被拒绝。 |
 | 404 | `not_found_error` | `model_not_found` / `not_found` | 未找到模型标识符；或 `GET /v1/responses/{id}`（无状态）。 |
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | 已达到需求上限（参见标题 `Retry-After`）。 |
-| 503 | `server_error` | `model_unavailable` / `server_error` | 模型/上游当前不可用-可以安全地重试。 |
+| 503 | `server_error` | `model_unavailable` / `server_error` | 模型／上游不可用。请检查目录及替代模型；暂时故障可延迟重试。 |
 
-错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。 [Error](/zh/errors).
+表格列出协议处理器处理的错误。处理器之前的请求限流或正文解析可能使用通用Hostlinku格式；请参阅 [错误](/zh/errors)。
+
+错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。

@@ -1,6 +1,7 @@
 ---
 title: "Aider"
 description: "Hostlinku を通じて Aider を実行する際は、OPENAI_API_BASE とモデルプレフィックス openai/ を指定し、コンテキストとコストが正しく計算されるようモデルのメタデータも追加してください"
+icon: terminal
 ---
 
 
@@ -70,7 +71,9 @@ Aiderはslug「Hostlinku」を認識していないため、*「model is unknown
 }
 ```
 
-上記の価格はあくまで一例です（パフォーマンスモード）- [カタログ](/ja/models) の `pricing` から転載したもので、**100万トークン**単位で表示されており、 、Aiderは1トークンあたりの価格を使用するため、**1,000,000で割る**必要があります（例：`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。これにより、Aiderによる費用見積もりは、コンソール上の実際の請求額に近くなります。
+上記の`max_input_tokens`と`max_output_tokens`はAider側の制限の例です。[カタログ](/ja/models)のモデル上限に合わせてください。低い値を設定すると、ツール内の使用が制限されます。
+
+上記の価格はPerformanceモードの例です。[カタログ](/ja/models)の`pricing`から現在の値をコピーし、**100万トークン**単位の価格を**1,000,000で割って**ください。Aiderは1トークン単位の価格を使用します（例：`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。これにより費用見積もりが実際の金額に近づきます。
 
 </Steps>
 

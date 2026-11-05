@@ -1,6 +1,7 @@
 ---
 title: "Anthropic Messages"
 description: "エンドポイント POST /v1/messages (Anthropic 互換) のリファレンス - Anthropic SDK、Claude Code、または Hostlinku API キーを使用した Cursor をご利用ください"
+icon: message-square
 ---
 
 
@@ -17,7 +18,7 @@ anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
 
-認証では、`x-api-key`（Anthropic形式）**または**`Authorization: Bearer sk-…`のヘッダーを受け付けます。 すべての応答には、`request-id` / `x-request-id` ヘッダー（リクエスト ID: Hostlinku、フォーマット: `msg_…`）が含まれ、非ストリーミングの成功応答には `x-model` が含まれます。
+認証では、`x-api-key`（Anthropic形式）**または**`Authorization: Bearer sk-…`のヘッダーを受け付けます。 成功した応答には `request-id` / `x-request-id`（HostlinkuのリクエストID、形式 `msg_…`）が含まれ、成功した非ストリーミング応答には `x-model` も含まれます。ハンドラーより前のエラーにはこれらのIDがない場合があります。
 
 <Callout type="note" title="どんなモデルでも、クロードだけじゃない">
 `model`は、[モデルカタログ](/ja/models)と同じパブリックslugHostlinkuを使用しています。例：`claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 Claude以外のモデルも、Anthropic形式で呼び出すことができます。翻訳を行うゲートウェイが対応します。
@@ -72,7 +73,7 @@ const msg = await client.messages.create({
 
 | パラメータ | タイプ | 説明 |
 |---|---|---|
-| `model` | `string` | **必須。** slug型番 Hostlinku。 |
+| `model` | `string` | **必須。** Hostlinkuの公開モデルslug。 |
 | `messages` | `array` | **必須。** `{ role: "user" \| "assistant", content }`; `content` 文字列またはブロック配列 (`text`、`image`、`tool_use`、`tool_result`、…)。 |
 | `max_tokens` | `integer` | **必須**（仕様 Anthropic に準拠）。モデルの出力上限を超える場合は、`400` により拒否されます。 |
 | `system` | `string` \| `array` | システムプロンプト：ブロック配列は`cache_control`に対応しています。 |
@@ -167,6 +168,8 @@ POST https://api.hostlinku.com/v1/messages/count_tokens
 | 403 | `permission_error` | アカウントが停止されました／アクセスが拒否されました。 |
 | 404 | `not_found_error` | カタログにこのモデルのslugがありません。 |
 | 429 | `rate_limit_error` | リクエストの上限に達しました。 |
-| 503 | `overloaded_error` | モデル/アップストリームが利用できません - 再試行しても問題ありません。 |
+| 503 | `overloaded_error` | モデル／上流が利用できません。カタログと代替モデルを確認し、一時的な障害なら間隔を設けて再試行してください。 |
+
+表はプロトコルで処理されたエラーです。ハンドラーより前のレート制限や本文解析には一般のHostlinku形式が使われる場合があります。[エラー](/ja/errors)を参照してください。
 
 エラーは内部識別情報を隠すために処理されます。upstream の拒否理由の一部は表示される場合があります。 [Error](/ja/errors).

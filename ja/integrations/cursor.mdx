@@ -1,6 +1,7 @@
 ---
 title: "Cursor"
 description: "CursorでHostlinkuモデルを使用するには、OpenAIのベースURLをオーバーライドしてください - チャット、Cmd-K、およびエージェントで、ご自身のAPIキーを使用してください"
+icon: mouse-pointer-2
 ---
 
 
@@ -55,7 +56,7 @@ deepseek-v4-flash
 
 - **リクエストはCursorのサーバーから送信されます**。あなたのコンピュータからではありません。そのため、ベースURLは公開されている必要があります。`https://api.hostlinku.com`はこの条件を満たしています（`localhost`のアドレスはCursorによって拒否されました）。
 - **CursorのTab機能（オートコンプリート）は影響を受けません。** Tab機能はCursor独自のインフラストラクチャを使用しており、どのプロバイダーにも切り替えることはできません。Hostlinkuは、チャット、Cmd-K、およびエージェントに対応しています。
-- **エージェントモード**では、*ツール呼び出し*および*ストリーミング*機能を備えたモデルが必要です。 [概要](/ja/integrations) で推奨されているすべてのモデルが、この要件を満たしています。 エージェントが *BAD_MODEL_NAME* を理由に拒否した場合は、slugを再確認し、**OpenAI API キー** のトグルが有効になっていることを確認してください。
+- **エージェントモード**には*tool calling*と*streaming*が必要です。[カタログ](/ja/models)で対応を確認してください。*BAD_MODEL_NAME*が表示された場合はslugを確認し、**OpenAI API Key**を有効にしてください。
 - **接続が応答しない／プロトコルエラー** - 同じ設定で、*HTTP Compatibility Mode* を **HTTP/1.1** に変更してください。
 
 <Callout type="tip" title="モデル「クロード」、ルートOpenAI経由">

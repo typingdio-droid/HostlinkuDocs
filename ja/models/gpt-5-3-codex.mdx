@@ -1,6 +1,6 @@
 ---
 title: "GPT 5.3 Codex"
-description: "GPT-5.3-Codexは、OpenAIのエージェント型コーディング用モデルであり、テキスト／画像入力、40万語のコンテキスト、最大12万8千語の出力、関数呼び出し、および構造化された出力を備えています。"
+description: "OpenAIのGPT 5.3 Codex。カタログのコンテキストは400,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -19,8 +19,6 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 ## 機能
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -41,7 +39,7 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | ネイティブ |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

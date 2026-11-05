@@ -1,6 +1,7 @@
 ---
 title: "認証"
 description: "APIキー、Consoleへのログイン、Service Mode、有効期限、利用上限。"
+icon: key
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -53,7 +54,7 @@ Consoleは **Monthly Spending Limit** を提供します。キー管理APIはUTC
 
 ## レート制限とエラー
 
-利用枠は **毎分 600 リクエスト、6,500,000 入力 token、200,000 出力 token** で、同じ組織内で共有します。上限に達すると、その組織のすべての API キーとメンバーが影響を受けます。 利用枠と 429 の対応は[使用状況と制限](/ja/usage-and-limits)を参照してください。
+すべてのAPIキーと組織メンバーが **Service Modeごとに** クォータを共有します。キーやメンバーアカウントを増やしてもクォータは増えません。上限値と429の対処は [使用状況と制限](/ja/usage-and-limits) を参照してください。
 
 | 状況 | HTTP | コード |
 |---|---|---|

@@ -1,13 +1,9 @@
 ---
 title: "DeepSeek V4 Flash"
-description: "DeepSeek V4 Flash is the efficiency-oriented V4 variant, supporting a 1M context window for everyday chat, summarization, code generation, structured process..."
+description: "DeepSeek V4 Flash dari DeepSeek, dengan konteks katalog 1,000,000 token."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## Ringkasan
-
-DeepSeek V4 Flash is the efficiency-oriented V4 variant, supporting a 1M context window for everyday chat, summarization, code generation, structured processing, and high-throughput production calls.
 
 | Properti | Nilai |
 |---|---|
@@ -23,8 +19,6 @@ DeepSeek V4 Flash is the efficiency-oriented V4 variant, supporting a 1M context
 ## Kapabilitas
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `long-context`.
-
-Fitur dan batas request mengikuti model, Service Mode, serta protokol yang digunakan.
 
 ## Harga
 
@@ -44,7 +38,7 @@ Diperbarui **6 November 2026**. [Harga terkini](https://hostlinku.com/models/dee
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Bridge menyesuaikan format API; fitur vendor dan tool bawaan aplikasi dapat berbeda. Gunakan API key dengan Service Mode yang tercantum di atas.
+[Batas kompatibilitas](/api-reference#kompatibilitas-model-dan-tool).
 
 ## Contoh request
 

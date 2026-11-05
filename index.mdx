@@ -1,69 +1,41 @@
 ---
 title: Pengenalan
-description: Apa itu Hostlinku, cara kerja arsitekturnya, dan urutan membaca dokumentasi ini
+description: Kirim request pertama dan pilih panduan berikutnya
+icon: house
 ---
 
-import { Callout } from "/snippets/mdx.jsx";
+Hostlinku menyediakan OpenAI Chat Completions, Anthropic Messages, dan Responses API melalui satu gateway. API key terikat pada Service Mode **Performance**, **Low-Cost**, atau **Dedicated**; model dan harga mengikuti mode tersebut.
 
-**Hostlinku** adalah gateway AI dengan format OpenAI Chat Completions, Anthropic Messages,
-dan Responses API. Dukungan parameter serta kapabilitas mengikuti model dan endpoint.
-Satu API key mengakses katalog pada **Service Mode** yang dipilih saat membuat key:
-**Performance**, **Low-Cost**, atau **Dedicated**. Model dan harga dapat berubah; gunakan
-[katalog model](/models) dan `GET /v1/models` dengan key kamu sebagai rujukan.
+## Request pertama
 
-Dengan Hostlinku kamu tidak perlu mengelola akun, API key, dan format request yang berbeda-beda
-untuk setiap provider:
+Daftar di [Console](https://console.hostlinku.com), isi saldo organisasi, lalu buat API key. Contoh berikut memakai model dari katalog key; ganti slug bila perlu. [Panduan lengkap](/getting-started).
 
-- **Satu API key** untuk model pada Service Mode yang dipilih (`sk-…`).
-- **Kompatibel OpenAI**: pakai SDK resmi OpenAI (`openai-python`, `openai-node`) cukup dengan
-  mengganti `base_url`.
-- **Streaming SSE**: respons token-per-token dengan format `text/event-stream` seperti OpenAI.
-- **Katalog model terpusat**: slug, harga per token, konteks, dan kapabilitas di satu tempat.
-- **Kontrol pemakaian**: batas kredit per API key, riwayat request, dan log lengkap di console.
-- **Billing prabayar**: kredit organisasi diisi via QRIS / Virtual Account (iPaymu Direct) atau
-  crypto (Heleket hosted). **1 kredit = $1** sebagai satuan kredit layanan.
-
-## Arsitektur singkat
-
-```text
-Aplikasi kamu
-    │  Authorization: Bearer sk-…
-    ▼
-api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
-(v1/chat/completions)        │                        │
-                             │                        ├─► OpenAI
-                             ├─ Reservasi saldo       ├─► Anthropic
-                             ├─ Telemetri & log       ├─► Google
-                             └─ Commit biaya nyata    └─► …dan lainnya
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-5-5","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
-Setiap request melewati alur yang sama: autentikasi API key, pemeriksaan limit kredit, reservasi
-saldo (estimasi), penerusan ke layanan model (dengan percobaan ulang otomatis bila ada
-gangguan), lalu penyelesaian biaya berdasarkan pemakaian upstream atau estimasi bila usage
-tidak tersedia, serta pencatatan telemetri.
+## Langkah berikutnya
 
-Console Hostlinku (`console.hostlinku.com`) memakai backend yang sama: API key, saldo, riwayat
-request, dan log audit semuanya berasal dari data gateway yang nyata.
-
-## Tautan cepat
-
-| Kebutuhan | Halaman |
-|---|---|
-| Kirim request pertamamu | [Memulai Cepat](/getting-started) |
-| Pahami API key, kedaluwarsa, dan limit per API key | [Autentikasi](/authentication) |
-| Referensi ringkas semua endpoint, rate limit & kode error | [API Reference](/api-reference) |
-| Referensi endpoint `POST /v1/chat/completions` | [Chat Completions](/chat-completions) |
-| Pakai Anthropic SDK / Claude Code lewat `POST /v1/messages` | [Anthropic Messages](/anthropic-messages) |
-| Pakai Codex CLI / OpenAI Agents SDK lewat `POST /v1/responses` | [Responses API](/responses) |
-| Konfigurasi Claude Code, Codex CLI, Cursor, Zed, Cline, Continue, OpenCode, Aider | [Integrasi IDE & Agent](/integrations) |
-| Daftar model dan cara memilihnya | [Model](/models) |
-| Rate limit dan pemantauan pemakaian | [Pemakaian & Limit](/usage-and-limits) |
-| Saldo, top-up, dan biaya per token | [Billing & Saldo](/billing) |
-| Kode error dan format respons error | [Error](/errors) |
-
-<Callout type="tip" title="Butuh akun dulu?">
-  [Daftar melalui backend](https://api.hostlinku.com/api/auth2/register), yang mengarahkan browser
-  ke Keycloak di `auth2.hostlinku.com`, lalu buat API key pertamamu di
-  [console.hostlinku.com](https://console.hostlinku.com). Selengkapnya di
-  [Memulai Cepat](/getting-started).
-</Callout>
+<CardGroup cols={2}>
+  <Card title="Autentikasi" icon="key" href="/authentication">
+    Kelola key, Service Mode, dan limit kredit.
+  </Card>
+  <Card title="Model" icon="box" href="/models">
+    Pilih slug, kapabilitas, dan tarif.
+  </Card>
+  <Card title="Integrasi" icon="terminal" href="/integrations">
+    Hubungkan SDK, IDE, atau coding agent.
+  </Card>
+  <Card title="Referensi API" icon="code" href="/api-reference">
+    Pilih endpoint dan format request.
+  </Card>
+  <Card title="Billing & Saldo" icon="credit-card" href="/billing">
+    Isi saldo dan baca biaya penggunaan.
+  </Card>
+  <Card title="Pemakaian & Limit" icon="gauge" href="/usage-and-limits">
+    Pahami kuota bersama dan penanganan 429.
+  </Card>
+</CardGroup>

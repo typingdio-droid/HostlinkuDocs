@@ -1,24 +1,20 @@
 ---
 title: Error yang sering muncul
 description: Penyebab dan solusi kode error Hostlinku yang paling sering ditemui.
+icon: circle-alert
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Semua error memakai envelope yang sama: `{"error": {"code": "...", "message": "..."}}`. Daftar lengkap ada di [Error](/errors).
+Kode berikut memakai format Chat Completions. Messages dan Responses memiliki format error sendiri; lihat [Error](/errors) untuk referensi lengkap.
 
 ## 401 UNAUTHORIZED
 
-API key tidak ada, salah salin, sudah dicabut, atau kedaluwarsa. Pastikan header memakai `Authorization: Bearer sk-...` atau `x-api-key`, lalu cek status key di Console → **API Keys**.
+Periksa nilai dan status key di Console → **API Keys**. Endpoint gateway menerima `Authorization: Bearer sk-...` atau `x-api-key`. Jangan mengulang request dengan key yang sama jika key salah, nonaktif, atau kedaluwarsa.
 
 ## 402 PAYMENT_REQUIRED
 
-Ada dua penyebab:
-
-- **Saldo akun** tidak cukup untuk estimasi biaya request.
-- **Limit kredit API key** tercapai (harian, mingguan, bulanan, atau total).
-
-Baca pesan error untuk membedakannya. Cek saldo dan limit key di Console. Detail: [Billing & Saldo](/billing).
+Baca pesan error: isi saldo organisasi jika saldo tersedia kurang, atau ubah limit kredit key/tunggu reset jika limit tercapai. Top-up tidak menaikkan limit key. Lihat [Billing & Saldo](/billing).
 
 ## 404 MODEL_NOT_FOUND
 
@@ -30,11 +26,11 @@ Model ada, tetapi tidak tersedia untuk Service Mode API key yang dipakai. Contoh
 
 ## 422 VALIDATION_FAILED
 
-Body request tidak lolos validasi: `messages` kosong, tipe field salah, atau field wajib hilang. Respons menyertakan detail per field. Periksa contoh body di [Chat Completions](/chat-completions).
+Perbaiki field yang disebut pada `details.issues`, misalnya `messages` kosong atau tipe field salah. Status 422 berlaku untuk validasi Chat Completions; Messages dan Responses memakai 400. Lihat [contoh request](/chat-completions).
 
 ## 429 RATE_LIMITED
 
-Batas request terlampaui. Baca header `Retry-After` dan `RateLimit-*`, lalu ulangi dengan backoff eksponensial. Request yang ditolak limiter tidak memotong saldo. Detail: [Pemakaian & Limit](/usage-and-limits).
+Kuota Service Mode dipakai bersama organisasi. Tunggu sesuai `Retry-After`, gunakan backoff, dan kurangi burst. Request yang ditolak limiter tidak memotong saldo. Detail ada di [Pemakaian & Limit](/usage-and-limits).
 
 ## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
 

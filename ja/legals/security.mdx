@@ -1,6 +1,7 @@
 ---
 title: "セキュリティ"
 description: "Hostlinkuのセキュリティ対策：暗号化、認証、APIキーの管理、データの隔離、監査ログ、インシデント対応、および脆弱性の報告方法。"
+icon: lock
 ---
 
 
@@ -33,7 +34,7 @@ import { Callout } from "/snippets/mdx.jsx";
 - メール確認とログインはKeycloakが管理します。
 - SSO（Google、GitHub、Discordなど）によるログインオプションが有効になっている場合。
 - Consoleのサーバーセッションは `hl_sid`、一部フローのJWT Cookieは `hl_session` です。セッションCookieは `HttpOnly` と `SameSite=Lax` を使用し、本番では `Secure` を設定します。
-- ログイン、登録、OTPの試行回数制限、および公開フォームにおけるCloudflare Turnstile。
+- 組織の共有利用枠とIPごとのリクエスト制限は[使用状況と制限](/ja/usage-and-limits)に記載しています。
 - 停止されたアカウントは、ログインもAPIの利用もできません。
 
 KeycloakのWebAuthnパスキー、TOTP認証アプリ、リカバリーコードはConsole → **Settings → Security** で利用できます。

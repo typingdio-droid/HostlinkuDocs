@@ -1,13 +1,9 @@
 ---
 title: "GPT-6 Sol"
-description: "OpenAIは、複雑なコーディングやエージェント型ワークフロー向けに構築されたモデルです。テキストおよび画像の入力、テキスト出力、推論。処理負荷：なし／低／中／高／超高／最大；1,050,000..."
+description: "OpenAIのGPT-6 Sol。カタログのコンテキストは1,050,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-OpenAIのモデルは、複雑なコーディングやエージェント型ワークフロー向けに構築されています。 テキストおよび画像入力、テキスト出力；推論の負荷：なし／低／中／高／超高／最大；コンテキスト容量1,050,000、最大出力128K。入力トークン数が272Kを超えるプロンプトについては、ロングコンテキスト料金が適用されます。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ OpenAIのモデルは、複雑なコーディングやエージェント型ワ�
 ## 機能
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -53,7 +47,7 @@ OpenAIのモデルは、複雑なコーディングやエージェント型ワ�
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | ネイティブ |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

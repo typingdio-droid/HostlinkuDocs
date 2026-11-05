@@ -1,6 +1,7 @@
 ---
 title: "GitHub Copilot"
 description: "Use the Hostlinku model in the GitHub Copilot CLI and the GitHub Copilot app via BYOK, plus Copilot limitations in the IDE"
+icon: bot
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -42,9 +43,11 @@ export COPILOT_PROVIDER_MAX_PROMPT_TOKENS=1000000
 export COPILOT_PROVIDER_MAX_OUTPUT_TOKENS=64000
 ```
 
-Check with `env | grep '^COPILOT_' | sort` in the same shell before running `copilot`:
+Check that the key is set in the same shell before running `copilot`, without printing its value:
 
-![Terminal: Export COPILOT_PROVIDER_BASE_URL, COPILOT_PROVIDER_API_KEY, COPILOT_MODEL, and the token limit, then run `env | grep COPILOT_`](/images/integrations/copilot-terminal-env.webp "All COPILOT_PROVIDER_* variables are filled in: base URL https://api.hostlinku.com/v1, API key, model slug, and token limit.")
+```bash
+test -n "$COPILOT_PROVIDER_API_KEY" && echo "API key is set" || echo "API key is not set"
+```
 
 ### Run
 
@@ -69,16 +72,13 @@ export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
 export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
-<Callout type="note" title="The model must support calling and streaming">
-Copilot CLI rejects models without *tool calling* or *streaming*, and recommends a minimum context size of 128K tokens. All recommendations in the [Overview](/en/integrations) meet this requirement - `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`, `glm-5-3`.
+<Callout type="note" title="Tool calling and streaming are required">
+  Copilot CLI requires *tool calling* and *streaming*, and recommends a context window of at least 128K tokens. Check all three in the [catalog](/en/models) before choosing a model.
 </Callout>
 
-- **Leave the API wire set to the default (Chat Completions).** The Responses API on Hostlinku is *stateless*
-([details](/en/responses)); Chat Completions supports all catalog models without any restrictions.
-- **Without GitHub login**, features that rely on GitHub servers (`/delegate`, the GitHub MCP server,
-(code search) is not available. Log in with `copilot login` if you need that feature-the request model remains with Hostlinku.
-- **`COPILOT_OFFLINE=true`** disables all connections to GitHub (including telemetry). The prompt remains the same
-sent to `api.hostlinku.com`.
+- **Choose an API format supported by the tool and model.** Chat Completions is the default for the `openai` provider; see the [Responses reference](/en/responses) for its limits.
+- **Without GitHub login**, features that rely on GitHub servers (`/delegate`, the GitHub MCP server, code search) are unavailable. Sign in with `copilot login` to use them; model requests still go to Hostlinku.
+- **`COPILOT_OFFLINE=true`** disables GitHub connections, including telemetry. Prompts are still sent to `api.hostlinku.com`.
 
 <a id="github-copilot-app"></a>
 
@@ -125,7 +125,7 @@ Applies only to chat and agents.
 
 | Symptoms | Solutions |
 |---|---|
-| `401` | `COPILOT_PROVIDER_API_KEY` is empty or incorrect in the shell running `copilot`. Check it with `echo ${COPILOT_PROVIDER_API_KEY:0:6}`. |
+| `401` | `COPILOT_PROVIDER_API_KEY` is empty or incorrect in the shell running `copilot`. Use the check above to confirm it is set; copy it again from the console if the request is still rejected. |
 | `404` on all requests | The `openai` provider without `/v1`, or the `anthropic` provider with `/v1`. |
 | `404 model_not_found` | `COPILOT_MODEL` must be the exact slug from `GET /v1/models`. |
 | Error: Model does not support tool calling | Switch to a *tool calling* model from the [catalog](/en/models). |

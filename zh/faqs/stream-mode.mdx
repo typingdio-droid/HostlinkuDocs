@@ -1,12 +1,13 @@
 ---
 title: "流式传输模式"
 description: "如何在 Hostlinku 和 OpenAI SDK 上使用 SSE 流式传输，以及 Python requests、curl 和 Node.js。"
+icon: radio
 ---
 
 
 import { Callout } from "/snippets/mdx.jsx";
 
-流模式通过 SSE（`text/event-stream`）以Token为单位发送答案。第一个Token会更快出现，无需等待整个答案发送完毕。使用 `"stream": true` 启用此模式。
+流模式通过 SSE（`text/event-stream`）以Token为单位发送答案。模型开始回答时即可显示Token，无需等待整段答案；首个Token的等待时间取决于模型和提供商。使用 `"stream": true` 启用此模式。
 
 ## 简述：curl
 
@@ -16,7 +17,7 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
+    "messages": [{ "role": "user", "content": "从1数到5。" }],
     "stream": true
   }'
 ```
@@ -43,7 +44,7 @@ client = OpenAI(
 
 stream = client.chat.completions.create(
     model="gpt-5-5",
-    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
+    messages=[{"role": "user", "content": "写一个简短段落。"}],
     stream=True,
 )
 for chunk in stream:
@@ -68,7 +69,7 @@ response = requests.post(
     },
     json={
         "model": "gpt-5-5",
-        "messages": [{"role": "user", "content": "Halo!"}],
+        "messages": [{"role": "user", "content": "你好！"}],
         "stream": True,
     },
     stream=True,
@@ -103,7 +104,7 @@ const client = new OpenAI({
 
 const stream = await client.chat.completions.create({
   model: "gpt-5-5",
-  messages: [{ role: "user", content: "Halo!" }],
+  messages: [{ role: "user", content: "你好！" }],
   stream: true,
 });
 
@@ -117,9 +118,9 @@ for await (const chunk of stream) {
 
 - `x-request-id` 标头仍会在流响应中发送。
 - 如果流在传输过程中失败，网关会发送 `data: {"error": {...}}` 事件，并且**不会**发送虚假的 `[DONE]` 事件。
-- 费用将根据流式传输播放结束后实际的使用量计算；如果无法获取实际使用量，则按预留量的预估值计费。
+- 费用将根据流式响应结束后实际的使用量计算；如果无法获取实际使用量，则按预留量的预估值计费。
 - 请勿在反向代理或CDN中缓存响应。请原样转发`text/event-stream`。
 
-<Callout type="tip" title="什么时候最适合进行直播？">
-对于需要快速响应的聊天应用或客服系统，请使用 `stream: true`。对于不显示进度条的批处理/任务，非流式处理更为简单。
+<Callout type="tip" title="什么时候适合使用流式传输？">
+对于需要快速响应的聊天应用或agent，请使用 `stream: true`。对于不显示进度条的批处理/任务，非流式处理更为简单。
 </Callout>

@@ -1,12 +1,14 @@
 ---
-title: "错误"
-description: "信封格式错误 Hostlinku、错误代码列表及处理方法"
+title: 错误
+description: 各协议的错误格式、Hostlinku代码及处理方法。
+icon: circle-alert
 ---
 
+## 响应格式
 
-import { Callout } from "/snippets/mdx.jsx";
+错误格式取决于端点。`error.message` 说明问题；自动处理应使用HTTP状态和错误代码／类型。消息语言可能因服务而异。
 
-Hostlinku网关的所有错误都采用相同的_envelope_格式，无论其来源是验证、身份验证、计费还是上游服务故障：
+**Chat Completions和通用端点**使用Hostlinku代码：
 
 ```json
 {
@@ -21,110 +23,71 @@ Hostlinku网关的所有错误都采用相同的_envelope_格式，无论其来�
 }
 ```
 
-- `status`：响应失败时总是显示`"error"`。
-- `error.code`：机器代码（稳定，可用于代码中的逻辑分支）。
-- `error.message`：人类信息，能说印尼语。
-- `error.details`：可选；例如，在验证失败时显示各字段的详细信息。
-
-## 错误代码列表
-
-| HTTP | `error.code` | 含义 | 通常出现在……时 |
-|---|---|---|---|
-| 400 | `BAD_REQUEST` | 无法处理该请求 | 组合参数不合理（例如：充值金额超出限额，`max_tokens`超出模型输出限值） |
-| 401 | `UNAUTHORIZED` | 身份验证失败或未进行身份验证 | API密钥错误、已被撤销或已过期 |
-| 402 | `PAYMENT_REQUIRED` | 需要余额/额度 | 余额不足、API密钥的额度已用尽、尚未配置支付提供商 |
-| 403 | `FORBIDDEN` | 没有许可证 | 使用非管理员账户访问管理员资源 |
-| 404 | `NOT_FOUND` | 未找到资源 | 端点错误，API密钥/交易/日志ID不存在（或不属于您） |
-| 404 | `MODEL_NOT_FOUND` | 该模型的Slug未收录在产品目录中 | slug 输入有误；请查看 `GET /v1/models` |
-| 405 | `METHOD_NOT_ALLOWED` | HTTP 方法错误 | 在仅接受 `POST` 的端点上使用 `GET` |
-| 409 | `CONFLICT` | 状态冲突 | 该操作与当前状态不符 |
-| 422 | `VALIDATION_FAILED` | 正文/查询无效 | 必填字段缺失、类型错误、超出范围 |
-| 429 | `RATE_LIMITED` | 请求频率超限 | 你的配额确实已用尽：超过每分钟限制（按 API 密钥或 IP） |
-| 429 | `MODEL_AT_CAPACITY` | 模型负载已满 | 上游该模型容量不足（不是你的配额问题），请按 `Retry-After` 等待 |
-| 429 | `MODEL_COOLDOWN` | 部署正在恢复 | 该模型/标签的所有部署在失败后进入冷却，请等待数秒 |
-| 500 | `INTERNAL` | 服务器内部错误 | 网关中存在一个意外错误；提交报告时请注明 `x-request-id` |
-| 503 | `UPSTREAM_ERROR` | 上游服务不可用/暂时中断 | 在 Hostlinku 尝试多次后，上游未响应（5xx/超时）；可以安全地采用退避策略重试 |
-| 503 | `PROVIDER_UNAVAILABLE` | 无法联系上游 | 与上游的连接暂时中断，或支付服务导致结账会话失败 |
-| 503 | `MODEL_UNAVAILABLE` | 该模型暂无库存 | 该模型当前状态为非`available`或已弃用 |
-
-## Retry-After 响应头
-
-对于 `429`（以及部分 `503`），网关会转发上游给出的等待建议：
-
-| 响应头 | 内容 |
-|---|---|
-| `Retry-After` | 可重试前的秒数 |
-| `retry-after-ms` | 同一建议的毫秒值（更精确） |
-
-仅当上游给出具体数值时才会出现。若没有，请使用指数退避加抖动等待数秒，不要立即重试。
-
-<Callout type="warning" title="未知端点">
-不存在的路径也会返回与`404 NOT_FOUND`相同的响应包。在断定存在故障之前，请重新检查URL和HTTP方法。
-</Callout>
-
-## 验证详情 (422)
-
-当验证失败时，`details.issues` 会按字段列出问题清单：
+**Anthropic Messages**使用 `error.type`，不在 `error.code` 中包含Hostlinku代码：
 
 ```json
-{
-  "status": "error",
-  "error": {
-    "code": "VALIDATION_FAILED",
-    "message": "The request body is invalid.",
-    "details": {
-      "issues": [
-        { "path": "messages", "message": "Array must contain at least 1 element(s)" },
-        { "path": "temperature", "message": "Number must be less than or equal to 2" }
-      ]
-    }
-  }
-}
+{"type":"error","error":{"type":"invalid_request_error","message":"The request body is invalid."}}
 ```
 
-## 流式传输错误
+**OpenAI Responses**使用OpenAI格式和映射后的代码：
 
-发生在 SSE 流**中间**的故障将作为事件数据发送到同一流中（而非作为 HTTP 状态）：
+```json
+{"error":{"message":"The request body is invalid.","type":"invalid_request_error","param":null,"code":"invalid_request"}}
+```
+
+Responses映射示例：`UNAUTHORIZED` → `invalid_api_key`、`MODEL_NOT_FOUND` → `model_not_found`、429错误 → `rate_limit_exceeded`。Messages将这些错误归为 `authentication_error`、`not_found_error`、`rate_limit_error` 等类型。
+
+Schema验证失败在Chat Completions中返回 **422**，在Messages/Responses中返回 **400**。`error.details` 是可选字段；`error.details.issues` 指出无效字段。协议处理器之前的错误，例如正文解析、请求限流或未知路径，可能使用通用Hostlinku格式。
+
+## Hostlinku代码
+
+下表列出网关和通用端点的Hostlinku代码。Messages/Responses使用上述映射；账户或支付端点还可能返回其他专用代码。
+
+| HTTP | 代码 | 含义与处理 |
+|---|---|---|
+| 400 | `BAD_REQUEST` | JSON／参数无法处理，包括模型输出上限。请修正请求。 |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | 模型不可用于密钥的Service Mode。请使用同一密钥从 `GET /v1/models` 选择模型。 |
+| 400 | `UPSTREAM_REJECTED` | 提供商拒绝请求。请阅读经过清理的原因并修正输入。 |
+| 401 | `UNAUTHORIZED` | 缺少身份验证，或密钥无效、已撤销、已过期。请检查密钥。 |
+| 402 | `PAYMENT_REQUIRED` | 可用余额不足或达到密钥支出限额。请查看 [Billing](/zh/billing)。 |
+| 403 | `FORBIDDEN` | 访问被拒绝。请检查账户权限。 |
+| 404 | `NOT_FOUND` | 路径或资源不可用。请检查URL和ID。 |
+| 404 | `MODEL_NOT_FOUND` | 模型slug不存在。请检查目录。 |
+| 405 | `METHOD_NOT_ALLOWED` | HTTP方法错误。请使用 `Allow` 响应头中的方法。 |
+| 413 | `BAD_REQUEST` | 正文过大。请减小正文。 |
+| 415 | `BAD_REQUEST` | 正文编码／字符集不受支持。请检查格式。 |
+| 422 | `VALIDATION_FAILED` | 正文／查询验证失败。请修正 `error.details.issues` 中的字段。 |
+| 429 | `RATE_LIMITED` | 达到每个Service Mode的组织共享配额或端点／IP限制；上游也可能返回限流。请等待并降低并发。 |
+| 429 | `MODEL_AT_CAPACITY` | 提供商的模型容量已满。请遵循重试建议。 |
+| 429 | `MODEL_COOLDOWN` | 模型部署在失败后恢复中。请遵循重试建议。 |
+| 500 | `INTERNAL` | 内部错误。请保存请求信息，反复出现时报告。 |
+| 503 | `MODEL_UNAVAILABLE` | 模型不可用或已弃用。请检查目录及替代模型；暂时故障可重试。 |
+| 503 | `PROVIDER_UNAVAILABLE` | 提供商路由不可用。请延迟重试并限制尝试次数。 |
+| 503 | `UPSTREAM_ERROR` | 上游故障。请延迟重试并限制尝试次数。 |
+| 503 | `UPSTREAM_TIMEOUT` | 上游超时。请延迟重试并限制尝试次数。 |
+| 503 | `UPSTREAM_UNREACHABLE` | 无法连接上游。请延迟重试并限制尝试次数。 |
+
+### Console和结账
+
+以下代码用于账户／结账，与 `/v1/*` 推理错误契约分开：
+
+| HTTP | 代码 | 含义与处理 |
+|---|---|---|
+| 403 | `API_KEY_NOT_ALLOWED` | 在Console账户端点使用了API密钥。请使用Console登录会话。 |
+| 409 | `CONFLICT` | 操作与当前状态冲突。请重新获取状态后再试。 |
+| 424 | `CHECKOUT_FAILED` | 支付提供商未能创建账单。请阅读消息并检查交易后再创建。 |
+| 424 | `BANK_BUSY` | iPaymu银行／通道繁忙。请选择结账页面提供的其他银行。 |
+
+## 重试与流式传输
+
+`Retry-After` 表示等待秒数，`retry-after-ms` 表示毫秒。没有响应头时，请采用带抖动的指数退避，并限制尝试次数。同一组织内增加密钥或成员账户不会增加共享配额；请参阅[用量与限制](/zh/usage-and-limits)。
+
+SSE开始后，故障以流内错误事件发送；初始HTTP状态不会改变。Chat Completions示例：
 
 ```text
-data: {"error":{"code":"UPSTREAM_ERROR","message":"上游当前不可用。请稍后重试。","type":"upstream_error"}}
+data: {"error":{"code":"MODEL_AT_CAPACITY","message":"The model is at capacity right now. Please retry shortly.","type":"upstream_error","retry_after_ms":4000}}
 ```
 
-网关在发生错误事件后不会发送 `data: [DONE]`，因此断开的流始终可以与正常结束的流区分开来。
+网关处理流式故障后不会添加 `[DONE]`。连接也可能在没有错误事件的情况下断开。`[DONE]` 或连接结束本身不能证明成功；请检查错误事件及请求日志。各事件格式请参阅 [Messages](/zh/anthropic-messages) 和 [Responses](/zh/responses)。
 
-## 处理代码中的错误
-
-处理各类错误的方法：
-
-- **401**：API密钥错误或已过期。请修正配置；请勿反复重试。
-- **402**：充值余额或提高/重置 API 密钥限额。请参阅 [计费与余额](/zh/billing)。
-- **422**：修复请求正文；请参阅 `details.issues` 以了解问题所在。
-- **429**：检查 `error.code`。`RATE_LIMITED` 表示密钥/IP 配额用尽；
-  `MODEL_AT_CAPACITY` / `MODEL_COOLDOWN` 表示模型繁忙或恢复中（按 `Retry-After` 等待）。
-  请参阅[使用与限制](/zh/usage-and-limits)。
-- **5xx**（`UPSTREAM_ERROR`、`PROVIDER_UNAVAILABLE`、`INTERNAL`）：经过多次退避重试；Hostlinku在放弃前已尝试多次。
-
-使用 OpenAI SDK 捕获错误的示例（Python）：
-
-```python
-import openai
-from openai import OpenAI
-
-client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-your-api-key")
-
-try:
-    response = client.chat.completions.create(
-        model="gpt-5-5",
-        messages=[{"role": "user", "content": "Halo"}],
-    )
-except openai.AuthenticationError as err:      # 401
-    raise SystemExit(f"API key bermasalah: {err}")
-except openai.RateLimitError as err:           # 429
-    raise SystemExit(f"Rate limit: {err}")
-except openai.APIStatusError as err:           # 4xx/5xx lainnya
-    print("status:", err.status_code, "body:", err.response.text)
-```
-
-<Callout type="note" title="提交报告时请务必附上 x-request-id">
-建议同时记录失败响应中的 `x-request-id` 标头：支持团队会使用该 ID 在网关日志中追踪该请求。
-</Callout>
+报告时请附上可用的 `x-request-id`、时间、端点、模型、HTTP状态以及去除密钥的错误正文。请参阅[支持](/zh/support)。

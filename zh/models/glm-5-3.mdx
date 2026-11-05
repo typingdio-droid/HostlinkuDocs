@@ -1,13 +1,9 @@
 ---
 title: "GLM 5.3"
-description: "GLM-5.3 是 Zhipu AI 针对复杂软件工程和长周期智能体任务推出的最新旗舰文本模型。它提升了编码、终端操作以及……"
+description: "Zhipu的GLM 5.3，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-GLM-5.3 是 Zhipu AI 针对复杂软件工程和长周期智能体任务推出的最新旗舰文本模型。与 GLM-5.2 相比，它在编码、终端操作和长期任务性能方面均有提升，且始终启用推理功能。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ GLM-5.3 是 Zhipu AI 针对复杂软件工程和长周期智能体任务推出�
 ## 能力
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -45,7 +39,7 @@ GLM-5.3 是 Zhipu AI 针对复杂软件工程和长周期智能体任务推出�
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

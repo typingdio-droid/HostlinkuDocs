@@ -1,24 +1,20 @@
 ---
 title: Common errors
 description: Causes and fixes for the most common Hostlinku error codes.
+icon: circle-alert
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Every error uses the same envelope: `{"error": {"code": "...", "message": "..."}}`. See the full list in [Errors](/en/errors).
+These codes use the Chat Completions format. Messages and Responses use their own error formats; see [Errors](/en/errors) for the full reference.
 
 ## 401 UNAUTHORIZED
 
-The API key is missing, incorrect, revoked, or expired. Use `Authorization: Bearer sk-...` or `x-api-key`, then check the key status in Console → **API Keys**.
+Check the key value and status in Console → **API Keys**. Gateway endpoints accept `Authorization: Bearer sk-...` or `x-api-key`. Do not retry with a key that is invalid, disabled, or expired.
 
 ## 402 PAYMENT_REQUIRED
 
-Two common causes:
-
-- **Account balance** is too low for the estimated request cost.
-- **API key credit limit** is reached (daily, weekly, monthly, or total).
-
-Read the error message to tell them apart. Check balance and key limits in Console. Details: [Billing & Balance](/en/billing).
+Read the error message: top up the organization balance if available credit is insufficient, or adjust the key credit limit/wait for its reset if the limit is reached. Topping up does not raise a key limit. See [Billing & Balance](/en/billing).
 
 ## 404 MODEL_NOT_FOUND
 
@@ -30,11 +26,11 @@ The model exists but is not available for the API key's Service Mode. Create a k
 
 ## 422 VALIDATION_FAILED
 
-The request body failed validation: empty `messages`, wrong field type, or a missing required field. The response includes per-field details.
+Fix the fields listed in `details.issues`, such as empty `messages` or an incorrect field type. Validation uses 422 for Chat Completions and 400 for Messages and Responses. See the [request examples](/en/chat-completions).
 
 ## 429 RATE_LIMITED
 
-The request limit was exceeded. Read `Retry-After` and `RateLimit-*`, then retry with exponential backoff. Rate-limited requests do not consume balance. Details: [Usage & Limits](/en/usage-and-limits).
+Each Service Mode quota is shared within the organization. Honor `Retry-After`, use backoff, and reduce bursts. Limiter-rejected requests do not deduct credit. See [Usage & Limits](/en/usage-and-limits).
 
 ## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
 

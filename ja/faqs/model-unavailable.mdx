@@ -1,6 +1,7 @@
 ---
-title: "このモデルは取り扱っておりません"
+title: "モデルを利用できない場合"
 description: "404と503の違い、Service Mode、非推奨モデル、および対処方法。"
+icon: server-off
 ---
 
 
@@ -12,7 +13,7 @@ import { Callout } from "/snippets/mdx.jsx";
 |---|---|---|---|
 | 404 | `MODEL_NOT_FOUND` | カタログにslugがありません | `GET /v1/models`からslugを取得する |
 | 400 | `MODEL_NOT_IN_SERVICE_MODE` | モデルは存在しますが、APIキーモードでは利用できません | キー／モードを変更するか、別のモデルを選択してください |
-| 503 | `MODEL_UNAVAILABLE` | このモデルは非推奨／現在利用不可です | `replacement_slug`にエラーがあるか、カタログを確認してください |
+| 503 | `MODEL_UNAVAILABLE` | このモデルは非推奨／現在利用不可です | エラーまたはカタログ内の`replacement_slug`を確認してください |
 | 503 | `UPSTREAM_ERROR` | 上流側で一時的な障害が発生しています | バックオフして、もう一度試してみてください |
 
 ## 非推奨のモデル

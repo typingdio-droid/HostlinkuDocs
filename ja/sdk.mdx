@@ -1,6 +1,7 @@
 ---
 title: "SDK およびサンプルコード"
 description: "Hostlinku～Anthropic Messages、OpenAI、Chat Completions、およびOpenAI Responsesの3つのAPI方言に関するPythonおよびNode.jsのサンプル。"
+icon: terminal
 ---
 
 
@@ -87,7 +88,7 @@ stream = client.chat.completions.create(
     stream=True,
 )
 for chunk in stream:
-    delta = chunk.choices[0].delta.content
+    delta = chunk.choices[0].delta.content if chunk.choices else None
     if delta:
         print(delta, end="", flush=True)
 ```

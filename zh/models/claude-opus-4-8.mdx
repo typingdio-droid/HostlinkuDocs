@@ -1,13 +1,9 @@
 ---
 title: "Claude Opus 4.8"
-description: "Claude Opus 4.8 是 Anthropic 的高性能版本 Opus，专用于复杂推理和代理编码，支持文本/图像输入、文本输出，以及 1M 的上下文窗口……"
+description: "Anthropic的Claude Opus 4.8，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-Claude Opus 4.8 是 Anthropic 的高性能 Opus 模型，专用于复杂推理和代理编码，支持文本/图像输入、文本输出，具有 1M 的上下文窗口，最大输出为 128K。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ Claude Opus 4.8 是 Anthropic 的高性能 Opus 模型，专用于复杂推理�
 ## 能力
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -48,7 +42,7 @@ Claude Opus 4.8 是 Anthropic 的高性能 Opus 模型，专用于复杂推理�
 | `POST /v1/messages` | Anthropic Messages | 原生 |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

@@ -1,13 +1,9 @@
 ---
 title: "Claude Fable 5"
-description: "Claude Fable 5は、AnthropicのフラッグシップモデルであるMythosクラスで、長期的な推論、エージェント型コーディング、および自律的なワークフローに最適化されています。テキストおよび..."
+description: "AnthropicのClaude Fable 5。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Claude Fable 5は、AnthropicのフラッグシップモデルであるMythosクラスに属し、長期的な推論、エージェント型コーディング、および自律的なワークフローに最適化されています。テキストおよび画像の入力をサポートし、テキストを出力します。100万トークンのコンテキストウィンドウと、最大12万8千トークンの出力容量を備えています。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ Claude Fable 5は、AnthropicのフラッグシップモデルであるMythosク
 ## 機能
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -48,7 +42,7 @@ Claude Fable 5は、AnthropicのフラッグシップモデルであるMythosク
 | `POST /v1/messages` | Anthropic Messages | ネイティブ |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

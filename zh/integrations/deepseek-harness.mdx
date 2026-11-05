@@ -1,6 +1,7 @@
 ---
 title: DeepSeek Harness
 description: 通过 DEEPSEEK_BASE_URL 将 DeepSeek 开源编程代理 DeepSeek Harness (dsh) 连接到 Hostlinku。包含已验证的安装步骤、cordis.patch.yml 配置与故障排除指南。
+icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -113,8 +114,7 @@ dsh web
 | 开源权重替代方案 | `kimi-k2-7-code`, `glm-5-3` | 支持工具调用与推理。 |
 
 <Callout type="tip" title="根据模型调整 maxTokens">
-  `maxTokens` 是单次请求的最大输出上限，而非上下文窗口大小。`32000` 对绝大多数模型都是安全值。各模型的最大输出上限
-  （例如 `deepseek-v4-flash` 为 `131072`）可在对应模型的目录详情页查看。
+  `maxTokens`限制单次请求的输出，而非上下文大小。示例中的`32000`是初始配置，并非模型最大值。请在[目录](/zh/models)中检查输出上限；若未列出上限，在请求被拒绝时降低该值。
 </Callout>
 
 ## 安全建议

@@ -1,6 +1,7 @@
 ---
 title: "使用政策"
 description: "Hostlinku API 使用政策：允许的使用方式、禁止的内容和活动、速率限制、政策执行以及违规举报方式。"
+icon: scale
 ---
 
 
@@ -15,7 +16,7 @@ import { Callout } from "/snippets/mdx.jsx";
 
 </Callout>
 
-**最后更新：** 2026年10月11日。
+**最后更新：** 2026年11月6日。
 
 <a id="cakupan"></a>
 
@@ -28,7 +29,7 @@ import { Callout } from "/snippets/mdx.jsx";
 ## 2. 允许的使用方式
 
 - 聊天应用、语音助手、摘要、翻译和文本生成；
-- 用于搜索、推荐和分类的嵌入；
+- 按模型能力进行搜索、推荐和分类；公开网关尚不提供embeddings端点；
 - 代码生成、代理和工作流自动化；
 - 研究、评估、实验和原型；
 - 基于API构建的商业产品，只要符合本政策即可。
@@ -78,13 +79,9 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## 7. 速率限制
 
-当前默认限制：
+每个Service Mode的配额由组织共享。Console、公开、checkout和后端认证端点还设有按IP计算的限制。数值和端点范围见[用量与限额](/zh/usage-and-limits)；Keycloak登录保护遵循realm设置。
 
-- 推理 API：Performance、Low-Cost、Dedicated 配额为 **每分钟 600 次请求、6,500,000 输入 token 和 200,000 输出 token**，由组织共享。
-- API 控制台和公共 API：每个 IP 地址每分钟 120 次请求；
-- 身份验证端点（登录、注册、一次性密码）：每15分钟限30次尝试。
-
-超出限额的请求将被拒绝，状态码为`429`，且不收取费用。 剩余配额将通过 `RateLimit-*` 标头发送。限额可能根据容量而变化，并可针对特定账户进行提高；请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)。
+限流器拒绝的请求返回`429`且不收费；若有`Retry-After`，请按其值等待。限额可能根据容量而变化，并可针对特定账户提高；请联系[halo@hostlinku.com](mailto:halo@hostlinku.com)。
 
 <a id="penegakan"></a>
 

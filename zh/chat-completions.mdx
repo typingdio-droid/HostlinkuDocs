@@ -1,6 +1,7 @@
 ---
 title: "Chat Completions"
 description: "POST /v1/chat/completions 端点参考，包括参数、SSE 流式传输以及 curl 和 Python 示例"
+icon: messages-square
 ---
 
 
@@ -150,7 +151,7 @@ stream = client.chat.completions.create(
     stream=True,
 )
 for chunk in stream:
-    delta = chunk.choices[0].delta.content
+    delta = chunk.choices[0].delta.content if chunk.choices else None
     if delta:
         print(delta, end="", flush=True)
 ```
@@ -169,7 +170,7 @@ for chunk in stream:
 | 该模型的Slug未收录在产品目录中 | 404 | `MODEL_NOT_FOUND` |
 | `max_tokens` 超出了模型的输出限制 | 400 | `BAD_REQUEST` |
 | 该模型已停用/目前不可用 | 503 | `MODEL_UNAVAILABLE` |
-| 每个API密钥的调用限制已超出 | 429 | `RATE_LIMITED` |
+| 组织共享的 Service Mode 配额已超出 | 429 | `RATE_LIMITED` |
 | 上游不可用/暂时故障（可重试） | 503 | `UPSTREAM_ERROR` |
 
 错误信封的完整格式请参见 [错误](/zh/errors)。

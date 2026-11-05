@@ -1,59 +1,41 @@
 ---
 title: Introduction
-description: What Hostlinku is, how it works, and how to read this documentation
+description: Send your first request and choose your next guide
+icon: house
 ---
 
-import { Callout } from "/snippets/mdx.jsx";
+Hostlinku provides OpenAI Chat Completions, Anthropic Messages, and Responses API through one gateway. Each API key belongs to **Performance**, **Low-Cost**, or **Dedicated** Service Mode; its models and rates follow that mode.
 
-**Hostlinku** is an AI gateway with OpenAI Chat Completions, Anthropic Messages, and Responses API formats. Parameter and capability support depends on the model and endpoint. An API key accesses the catalog for the **Service Mode** chosen when creating it: **Performance**, **Low-Cost**, or **Dedicated**. Models and prices may change; use the [model catalog](/en/models) and `GET /v1/models` with your key as the reference.
+## Your first request
 
-With Hostlinku you don't need to manage separate accounts, API keys, and request formats for every provider:
+Register in [Console](https://console.hostlinku.com), top up your organization balance, and create an API key. Use a model from your key’s catalog; replace the example slug when needed. [Full quickstart](/en/getting-started).
 
-- **One API key** for the models in your selected Service Mode (`sk-…`).
-- **OpenAI-compatible**: use the official OpenAI SDKs (`openai-python`, `openai-node`) by changing only `base_url`.
-- **SSE streaming**: token-by-token responses in `text/event-stream` format, just like OpenAI.
-- **Centralized model catalog**: slugs, per-token pricing, context windows, and capabilities in one place.
-- **Usage controls**: per-key credit limits, request history, and full logs in the console.
-- **Prepaid billing**: top up organization credits with QRIS / Virtual Account (iPaymu Direct) or crypto (Heleket hosted payments). **1 credit = $1** as the service-credit unit.
-
-## Architecture at a glance
-
-```text
-Your application
-    │  Authorization: Bearer sk-…
-    ▼
-api.hostlinku.com  ──►  Hostlinku Gateway  ──►  Routing & failover
-(v1/chat/completions)        │                        │
-                             │                        ├─► OpenAI
-                             ├─ Reserve balance      ├─► Anthropic
-                             ├─ Telemetry & logs     ├─► Google
-                             └─ Commit actual cost   └─► …and more
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-5-5","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
-Every request follows the same path: API key authentication, credit-limit checks, balance reservation (estimate), forwarding to the model service (with automatic retries on failure), then settling cost from upstream usage or an estimate when usage is unavailable, and recording telemetry.
+## Next steps
 
-The Hostlinku Console (`console.hostlinku.com`) uses the same backend: API keys, balance, request history, and audit logs all come from real gateway data.
-
-## Quick links
-
-| Need | Page |
-|---|---|
-| Send your first request | [Quickstart](/en/getting-started) |
-| Understand API keys, expiry, and per-key limits | [Authentication](/en/authentication) |
-| Concise reference for every endpoint, rate limit, and error code | [API Reference](/en/api-reference) |
-| `POST /v1/chat/completions` reference | [Chat Completions](/en/chat-completions) |
-| Use the Anthropic SDK / Claude Code via `POST /v1/messages` | [Anthropic Messages](/en/anthropic-messages) |
-| Use Codex CLI / OpenAI Agents SDK via `POST /v1/responses` | [Responses API](/en/responses) |
-| Configure Claude Code, Codex CLI, Cursor, Zed, Cline, Continue, OpenCode, Aider | [IDE & Agent Integrations](/en/integrations) |
-| Model list and how to choose | [Models](/en/models) |
-| Rate limits and usage monitoring | [Usage & Limits](/en/usage-and-limits) |
-| Balance, top-ups, and per-token pricing | [Billing & Balance](/en/billing) |
-| Error codes and error response format | [Errors](/en/errors) |
-
-<Callout type="tip" title="Need an account first?">
-  [Sign up through the backend](https://api.hostlinku.com/api/auth2/register), which redirects your browser to Keycloak at `auth2.hostlinku.com`, then create your first API key in
-  [console.hostlinku.com](https://console.hostlinku.com). Learn more in
-  [Quickstart](/en/getting-started).
-</Callout>
-
-{/* Build verified after repo rename to HostlinkuDocs - 2026-10-26 */}
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/en/authentication">
+    Manage keys, Service Mode, and credit limits.
+  </Card>
+  <Card title="Models" icon="box" href="/en/models">
+    Choose slugs, capabilities, and rates.
+  </Card>
+  <Card title="Integrations" icon="terminal" href="/en/integrations">
+    Connect an SDK, IDE, or coding agent.
+  </Card>
+  <Card title="API Reference" icon="code" href="/en/api-reference">
+    Choose an endpoint and request format.
+  </Card>
+  <Card title="Billing & Balance" icon="credit-card" href="/en/billing">
+    Top up and read usage costs.
+  </Card>
+  <Card title="Usage & Limits" icon="gauge" href="/en/usage-and-limits">
+    Understand shared quotas and 429 responses.
+  </Card>
+</CardGroup>

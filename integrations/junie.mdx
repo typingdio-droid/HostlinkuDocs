@@ -1,6 +1,7 @@
 ---
 title: Junie CLI
 description: Hubungkan Junie CLI dari JetBrains ke Hostlinku lewat custom model profile (Chat Completions atau Anthropic Messages)
+icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -93,4 +94,4 @@ Lalu jalankan `junie --model custom:hostlinku-claude`.
 | `404` | `baseUrl` belum lengkap - harus berakhir `/v1/chat/completions` atau `/v1/messages`. |
 | Profil tidak muncul | Nama/letak file salah, atau JSON tidak valid. Profil = nama file tanpa `.json`. |
 | Error variabel environment | Export `HOSTLINKU_API_KEY` di shell yang menjalankan `junie`. |
-| Tool call gagal / agent berputar-putar | Model terlalu kecil untuk agentic coding - ganti model utama ke rekomendasi di [Ikhtisar](/integrations). |
+| Tool call gagal / agent berputar-putar | Periksa dukungan tool calling dan batas model di [katalog](/models). Periksa log request sebelum mengganti model. |

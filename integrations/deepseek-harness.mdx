@@ -1,6 +1,7 @@
 ---
 title: DeepSeek Harness
 description: Hubungkan DeepSeek Harness (dsh) - agent coding open-source dari DeepSeek - ke Hostlinku lewat DEEPSEEK_BASE_URL. Panduan instal, konfigurasi cordis.patch.yml, dan troubleshooting yang sudah diuji.
+icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -121,9 +122,7 @@ yang aktif untuk key kamu ada di `GET /v1/models`.
 | Alternatif open-weight | `kimi-k2-7-code`, `glm-5-3` | Tool calling dan reasoning. |
 
 <Callout type="tip" title="Sesuaikan maxTokens dengan model">
-  `maxTokens` adalah batas output per request, bukan ukuran konteks. `32000` aman untuk hampir semua
-  model. Nilai maksimal per model (mis. `131072` untuk `deepseek-v4-flash`) tercantum di halaman
-  model masing-masing.
+  `maxTokens` membatasi output per request, bukan ukuran konteks. Nilai `32000` pada contoh adalah konfigurasi awal, bukan maksimum model. Periksa batas output model di [katalog](/models); bila batas belum dicantumkan, kurangi nilai jika request ditolak.
 </Callout>
 
 ## Keamanan

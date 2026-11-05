@@ -1,13 +1,9 @@
 ---
 title: "Kimi K2.7 Code"
-description: "Kimi K2.7 Codeは、Kimiがこれまでに開発した中で最も高度なコーディングモデルです。長いコンテキストにおいても指示をより確実に実行し、プログラミングタスクを完了することができます..."
+description: "MoonshotのKimi K2.7 Code。カタログのコンテキストは256,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Kimi K2.7 Codeは、Kimiがこれまでに開発した中で最も高度なコーディングモデルです。長いコンテキストにおいても指示をより確実に実行し、プログラミングタスクをより高い成功率で完了させることができます。テキスト入力に対応しており、思考モード、対話、およびエージェントタスクのみをサポートしています。
 
 | プロパティ | 値 |
 |---|---|
@@ -23,8 +19,6 @@ Kimi K2.7 Codeは、Kimiがこれまでに開発した中で最も高度なコ�
 ## 機能
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `long-context`, `vision`, `image-input`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -45,7 +39,7 @@ Kimi K2.7 Codeは、Kimiがこれまでに開発した中で最も高度なコ�
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

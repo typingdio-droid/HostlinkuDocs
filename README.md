@@ -19,14 +19,25 @@ Preview di `http://localhost:3220`.
 | `ja/` | 日本語 |
 | `zh/` | 简体中文 |
 
-Setiap halaman memiliki path yang sama di keempat bahasa (mis. `chat-completions.mdx`, `en/chat-completions.mdx`, `ja/chat-completions.mdx`, `zh/chat-completions.mdx`). Navigasi diatur di `docs.json`.
+Setiap halaman memiliki path yang sama di keempat bahasa (mis. `chat-completions.mdx`, `en/chat-completions.mdx`, `ja/chat-completions.mdx`, `zh/chat-completions.mdx`). `docs.json` memakai satu sidebar per bahasa. Integrasi, FAQ, dan legal berada dalam grup yang bisa dibuka; halaman model tetap dapat dicari dan ditautkan dari katalog.
 
 ## Aturan konten
 
 - **Nama produk, endpoint, dan model tidak diterjemahkan** — tetap dalam bentuk aslinya: `Chat Completions`, `Claude Code`, `Cursor`, `Zed`, `/v1/chat/completions`, `claude-sonnet-4-6`, dst.
-- **Contoh pesan error mengikuti backend** — pesan error di docs adalah pesan aktual yang dikirim backend (`HostlinkuApi`), yang saat ini berbahasa Inggris.
+- **Kode mesin tidak diterjemahkan.** Pesan error dapat berbeda menurut backend/upstream; gunakan contoh yang cocok dengan format endpoint. Referensi lengkap ada di `errors.mdx`.
 - **Placeholder API key** memakai `sk-your-api-key` (bukan variasi lokal).
-- Gunakan komponen Mintlify (`<Callout>`, `<Steps>`, `<Card>`, dst.) untuk konsistensi.
+- Gunakan komponen Mintlify (`<Callout>`, `<Steps>`, `<Card>`, dst.) untuk konsistensi. `styles.css` menetapkan sudut 0 px untuk seluruh UI, termasuk hover dan popover.
+- Beranda memandu request pertama; `api-reference.mdx` hanya ikhtisar. Parameter dan contoh lengkap berada di halaman endpoint. FAQ berisi solusi singkat dan tautan, bukan salinan seluruh referensi.
+- Deskripsi model dibuat pendek dari nama, provider, dan konteks katalog. Harga, batas output, serta kapabilitas mengacu katalog aktif; jangan mengganti nilai karena ingin merapikan teks.
+
+## Verifikasi
+
+```bash
+npx mint validate
+npx mint broken-links --check-anchors --check-snippets --check-redirects
+```
+
+Buka preview untuk memeriksa sidebar, tautan kartu, tabel/kode, light/dark, dan mobile. Validasi tautan lokal tidak membuktikan semua situs eksternal atau perilaku API produksi.
 
 ## Deploy
 

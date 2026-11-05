@@ -1,13 +1,9 @@
 ---
 title: "Kimi K2.6"
-description: "Kimi K2.6は、Kimiの最新かつ最も高性能なモデルであり、強化され、より安定した長距離コーディング機能を備え、指示処理能力も大幅に向上しています..."
+description: "MoonshotのKimi K2.6。カタログのコンテキストは256,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Kimi K2.6は、Kimiの最新かつ最も高度なモデルであり、強化され、より安定した長距離コーディング機能を備え、指示の遂行能力や自己修正能力が大幅に向上しています。また、「思考」モードと非思考モードの両方をサポートし、会話型インタラクションやエージェントタスクにも対応しています。
 
 | プロパティ | 値 |
 |---|---|
@@ -23,8 +19,6 @@ Kimi K2.6は、Kimiの最新かつ最も高度なモデルであり、強化さ�
 ## 機能
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -45,7 +39,7 @@ Kimi K2.6は、Kimiの最新かつ最も高度なモデルであり、強化さ�
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

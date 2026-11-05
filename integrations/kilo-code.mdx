@@ -1,6 +1,7 @@
 ---
 title: Kilo Code
 description: Buat Configuration Profile Hostlinku di Kilo Code lewat provider OpenAI (custom base URL), OpenAI Compatible, atau Anthropic
+icon: code-xml
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -64,7 +65,7 @@ pada model Claude yang dikenal Kilo Code - pilih yang slug-nya identik dengan ka
 - **Custom headers tidak diperlukan.** Hostlinku cukup memakai API key; kosongkan bagian custom
   headers.
 - **Autocomplete inline** Kilo Code memakai endpoint FIM yang tidak dilayani Hostlinku - biarkan
-  fitur itu di provider bawaan (lihat [Ikhtisar](/integrations#masalah-umum)).
+  fitur itu di provider bawaan (lihat [Ikhtisar](/integrations#compatibility-limits)).
 
 ## Troubleshooting
 
@@ -74,4 +75,4 @@ pada model Claude yang dikenal Kilo Code - pilih yang slug-nya identik dengan ka
 | `404` di semua request | Base URL kurang `/v1` (jalur OpenAI) atau malah memakai `/v1` di jalur Anthropic. Bandingkan dengan screenshot di atas. |
 | `404 model_not_found` | Model ID salah ketik; salin dari `GET /v1/models`. |
 | Model Claude/DeepSeek tidak ada di dropdown | Provider `OpenAI` hanya menampilkan model OpenAI - pakai **OpenAI Compatible**. |
-| Agent berhenti tanpa memanggil tool | Model tanpa *tool calling*. Pakai rekomendasi di [Ikhtisar](/integrations). |
+| Agent berhenti tanpa memanggil tool | Periksa dukungan *tool calling* pada model di [katalog](/models). |

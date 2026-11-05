@@ -1,13 +1,9 @@
 ---
 title: "Claude Sonnet 4.6"
-description: "Claude Sonnet 4.6は、速度と知能のバランスを兼ね備えており、1Mのコンテキスト、最大64Kの出力、およびコーディング、エージェント、ナレッジワーク、長文コンテキスト向けの拡張思考機能を備えています..."
+description: "AnthropicのClaude Sonnet 4.6。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Claude Sonnet 4.6は、速度と知能のバランスに優れており、1Mのコンテキスト、最大64Kの出力を備え、コーディング、エージェント、ナレッジワーク、および長文コンテキストを要するタスクに対応する高度な推論能力を備えています。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ Claude Sonnet 4.6は、速度と知能のバランスに優れており、1Mの�
 ## 機能
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -48,7 +42,7 @@ Claude Sonnet 4.6は、速度と知能のバランスに優れており、1Mの�
 | `POST /v1/messages` | Anthropic Messages | ネイティブ |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

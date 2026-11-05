@@ -1,14 +1,15 @@
 (function () {
-  var ID_TEXT =
-    "Gateway AI terpadu dengan API kompatibel OpenAI. Satu API key untuk mengakses model dari berbagai provider, lengkap dengan katalog model, kontrol pemakaian, dan billing dalam satu platform.";
-  var EN_TEXT =
-    "Unified AI gateway with an OpenAI-compatible API. One API key to access models from multiple providers, with a model catalog, usage controls, and billing in one platform.";
+  var TEXT = {
+    id: "Satu gateway untuk model AI, pemakaian, dan billing organisasi.",
+    en: "One gateway for AI models, usage, and organization billing.",
+    ja: "AIモデル、使用量、組織の課金を一元管理するゲートウェイ。",
+    zh: "统一管理AI模型、用量和组织计费的网关。"
+  };
 
   function textForLanguage() {
-    var lang = (document.documentElement.lang || "").toLowerCase();
-    if (lang.indexOf("en") === 0) return EN_TEXT;
-    if (lang) return ID_TEXT;
-    return location.pathname.indexOf("/en") === 0 ? EN_TEXT : ID_TEXT;
+    var segment = location.pathname.split("/")[1];
+    var lang = (document.documentElement.lang || segment || "id").toLowerCase().split("-")[0];
+    return TEXT[segment] || TEXT[lang] || TEXT.id;
   }
 
   function addFooterDescription() {
@@ -32,4 +33,57 @@
   addFooterDescription();
   window.addEventListener("mintlify:navigate", addFooterDescription);
   setTimeout(addFooterDescription, 300);
+})();
+
+
+(function () {
+  if (window.hostlinkuSidebarPreferences) return;
+  window.hostlinkuSidebarPreferences = true;
+  var storageKey = "hostlinku-docs-sidebar";
+  var states = {};
+  try { states = JSON.parse(sessionStorage.getItem(storageKey) || "{}"); } catch (_) {}
+  var restoring = false;
+  var scheduled = false;
+
+  function groupKey(button) {
+    var locale = location.pathname.split("/")[1];
+    if (["en", "ja", "zh"].indexOf(locale) === -1) locale = "id";
+    return locale + ":" + button.textContent.trim();
+  }
+
+  function restoreGroups() {
+    scheduled = false;
+    restoring = true;
+    document.querySelectorAll('#sidebar button[aria-expanded]:not([aria-haspopup]), #mobile-nav button[aria-expanded]:not([aria-haspopup])').forEach(function (button) {
+      var key = groupKey(button);
+      if (Object.prototype.hasOwnProperty.call(states, key) &&
+          (button.getAttribute("aria-expanded") === "true") !== states[key]) {
+        button.click();
+      }
+    });
+    restoring = false;
+  }
+
+  function scheduleRestore() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(restoreGroups);
+  }
+
+  document.addEventListener("click", function (event) {
+    if (restoring || !(event.target instanceof Element)) return;
+    var button = event.target.closest('#sidebar button[aria-expanded]:not([aria-haspopup]), #mobile-nav button[aria-expanded]:not([aria-haspopup])');
+    if (!button) return;
+    states[groupKey(button)] = button.getAttribute("aria-expanded") !== "true";
+    try { sessionStorage.setItem(storageKey, JSON.stringify(states)); } catch (_) {}
+  }, true);
+
+  new MutationObserver(scheduleRestore).observe(document.body, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ["aria-expanded"]
+  });
+  window.addEventListener("mintlify:navigate", scheduleRestore);
+  scheduleRestore();
 })();
