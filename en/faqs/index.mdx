@@ -1,9 +1,8 @@
 ---
 title: "FAQ"
 description: "Frequently Asked Questions About the Hostlinku Gateway"
+icon: circle-help
 ---
-
-import { Callout } from "/snippets/mdx.jsx";
 
 ## What is Hostlinku Playground?
 
@@ -29,10 +28,10 @@ The gateway can try another route according to its available routing configurati
 
 Registration is free and does not require a credit card. Trial credits are not available; top up before making paid Playground or API requests.
 
-## Topic
+## Topics
 
 - [Stream Mode](/en/faqs/stream-mode): how to use SSE with the OpenAI SDK, Python `requests`, and curl.
-- [Common errors](/en/faqs/errors): 401, 402, 404, 422, 429, and 503.
+- [Common errors](/en/faqs/errors): causes and fixes for common errors.
 - [Rate limit](/en/faqs/rate-limits): quota, `Retry-After` header, and backoff.
 - [Billing & Top-Up](/en/faqs/billing): balance, key limit, and error 402.
 - [Model not available](/en/faqs/model-unavailable): 404 vs. 503, deprecated, and Service Mode.
@@ -40,7 +39,7 @@ Registration is free and does not require a credit card. Trial credits are not a
 
 ## Can the official OpenAI SDK be used?
 
-Yes, without any code changes. Set `base_url`/`baseURL` to `https://api.hostlinku.com/v1` and use your Hostlinku API key starting with `sk-…` as the `api_key`. A complete example is available at [Chat Completions](/en/chat-completions#contoh-python-sdk-resmi-openai).
+Yes. Set `base_url`/`baseURL` to `https://api.hostlinku.com/v1` and use your Hostlinku API key starting with `sk-…` as the `api_key`. A complete example is available at [Chat Completions](/en/chat-completions#contoh-python-sdk-resmi-openai).
 
 ## What endpoints are available?
 
@@ -60,11 +59,11 @@ See the [model catalog](/en/models) or **Models** in Console. `GET /v1/models` r
 
 ## Why was my request rejected with a 401 error?
 
-Most common causes: The `Authorization` header is missing or not in `Bearer` format; the API key was copied incorrectly, has been revoked, or has expired. Create or check your API key at [console.hostlinku.com](https://console.hostlinku.com). Full details: [Authentication](/en/authentication).
+Check the API key and authentication header. Gateway endpoints accept `Authorization: Bearer sk-...` or `x-api-key`; the key must be correct, active, and unexpired. See [Authentication](/en/authentication).
 
 ## Why am I getting a 402 error even though I have a balance?
 
-Check the error message. A 402 error has two possible causes: insufficient **account balance** (`available` is less than the estimated cost of the request), or the **API key credit limit** has been reached. If the message mentions "API key credit limit," wait for the reset window (daily/weekly/monthly) or change the limit in the console. For more details, see [Billing & Balance](/en/billing).
+Check the error message. A 402 error has two possible causes: insufficient **organization balance** (`available` is less than the estimated cost of the request), or the **API key credit limit** has been reached. If the message mentions "API key credit limit," wait for the reset window (daily/weekly/monthly) or change the limit in the console. For more details, see [Billing & Balance](/en/billing).
 
 ## How much does a single request cost?
 
@@ -72,7 +71,7 @@ Rates depend on the model, Service Mode, and token/cache dimensions used. Non-st
 
 ## Is there a rate limit?
 
-The service quota is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached. See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
+Each Service Mode has a quota of **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached. See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
 
 ## How do I send an image or multimodal message?
 
@@ -84,7 +83,7 @@ Disable the key in Console → **API Keys** to reject subsequent requests. Creat
 
 ## Do request logs store the content of my conversations?
 
-Token, cost, status, and latency metadata is recorded. Body storage follows [the prompt explanation above](#are-my-prompts-stored) and [Privacy](/en/legals/privacy-policy).
+See [the prompt storage answer](#are-my-prompts-stored).
 
 ## How should I read latency, TTFT, and TPS?
 
@@ -113,7 +112,3 @@ Raw health probe records have a default retention of 30 days and are cleaned up 
 ## How do I contact support?
 
 See [Support](/en/support): email **halo@hostlinku.com**; please include the `x-request-id` from the problematic response.
-
-<Callout type="note" title="Can't find the answer?">
-Send your questions to [halo@hostlinku.com](mailto:halo@hostlinku.com). This FAQ is updated based on the most frequently asked questions.
-</Callout>

@@ -1,6 +1,7 @@
 ---
 title: "VS Code (チャット)"
 description: "VS Codeに標準搭載のチャット＆エージェントで、カスタムエンドポイントプロバイダーを介してモデルHostlinkuを使用する - GitHubへのログインは不要、APIキーHostlinkuだけで十分"
+icon: code-xml
 ---
 
 
@@ -68,6 +69,8 @@ VS Code が `chatLanguageModels.json` を開きます。[カタログ](/ja/model
   }
 ]
 ```
+
+上記の`contextWindow`と`maxOutputTokens`はVS Code側の制限の例です。[カタログ](/ja/models)のモデルページに合わせてください。低い値を設定すると、ツール内の使用が制限されます。
 
 ![VS Code の chatLanguageModels.json には、URL https://api.hostlinku.com/v1/chat/completions のプロバイダー Hostlinku が含まれています。](/images/integrations/vscode-chatlanguagemodels.webp "chatLanguageModels.json に以下の内容を入力しました：プロバイダー customendpoint Hostlinku、完全な URL は /v1/chat/completions、apiKey はリファレンスシークレットです。")
 

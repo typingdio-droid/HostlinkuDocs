@@ -1,6 +1,7 @@
 ---
 title: Anthropic Messages
 description: Referensi endpoint POST /v1/messages (Anthropic-compatible) - pakai Anthropic SDK, Claude Code, atau Cursor dengan API key Hostlinku
+icon: message-square
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -20,8 +21,7 @@ Content-Type: application/json
 ```
 
 Autentikasi menerima header `x-api-key` (gaya Anthropic) **atau** `Authorization: Bearer sk-…`.
-Setiap respons menyertakan header `request-id` / `x-request-id` (ID request Hostlinku, format
-`msg_…`) dan, pada respons sukses non-streaming, `x-model`.
+Respons sukses menyertakan header `request-id` / `x-request-id` (ID request Hostlinku, format `msg_…`); respons sukses non-streaming juga menyertakan `x-model`. Error sebelum handler dapat tidak menyertakan ID ini.
 
 <Callout type="note" title="Model apa saja, bukan hanya Claude">
   `model` memakai slug publik Hostlinku yang sama dengan [katalog model](/models) -
@@ -183,6 +183,8 @@ Body: `model`, `messages`, opsional `system`, `tools`, `tool_choice`, `thinking`
 | 403 | `permission_error` | Akun ditangguhkan / akses ditolak. |
 | 404 | `not_found_error` | Slug model tidak ada di katalog. |
 | 429 | `rate_limit_error` | Batas permintaan tercapai. |
-| 503 | `overloaded_error` | Model/upstream sedang tidak tersedia - aman untuk di-retry. |
+| 503 | `overloaded_error` | Model/upstream tidak tersedia. Periksa katalog dan model pengganti; retry dengan jeda bila gangguan sementara. |
+
+Tabel menunjukkan error yang ditangani protokol. Pembatasan request atau parsing body sebelum handler dapat memakai format umum Hostlinku; lihat [Error](/errors).
 
 Pesan error disanitasi untuk menyamarkan identitas internal; sebagian alasan penolakan upstream tetap dapat muncul. [Error](/errors).

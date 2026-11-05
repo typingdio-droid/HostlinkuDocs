@@ -1,6 +1,6 @@
 ---
 title: "GLM-5.3 Flash"
-description: "GLM-5.3-Flashは、日常的な分析や能動的な作業向けに開発された、GLM-5.3の軽量版マルチモーダルAI「Zhipu」です。Hostlinku専用チャネルで利用可能です。"
+description: "ZhipuのGLM-5.3 Flash。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -21,8 +21,6 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
 
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
-
 ## 価格
 
 **2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/glm-5-3-flash)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
@@ -41,7 +39,7 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

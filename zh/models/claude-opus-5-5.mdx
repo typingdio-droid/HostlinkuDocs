@@ -1,13 +1,9 @@
 ---
 title: "Claude Opus 5.5"
-description: "Anthropic用于长期运行的代理编码和知识工作的模型。自适应思维始终处于激活状态（默认努力程度为中等），1M上下文，最大输出128K；缓存..."
+description: "Anthropic的Claude Opus 5.5，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-Anthropic用于长期运行的代理编码和知识工作的模型。自适应思维始终处于开启状态（默认努力程度为中等），1M上下文，最大输出128K；缓存读取按输入价格的5%计费。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ Anthropic用于长期运行的代理编码和知识工作的模型。自适应�
 ## 能力
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -48,7 +42,7 @@ Anthropic用于长期运行的代理编码和知识工作的模型。自适应�
 | `POST /v1/messages` | Anthropic Messages | 原生 |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

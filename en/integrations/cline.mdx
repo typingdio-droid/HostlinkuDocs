@@ -1,6 +1,7 @@
 ---
 title: "Cline & Roo Code"
 description: "Configure an OpenAI-compatible provider (or Anthropic with a custom base URL) in Cline and Roo Code to use Hostlinku models"
+icon: bot
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -34,7 +35,7 @@ Open the **Model Configuration** section so that Cline can manage the context an
 
 - **Supports Images**: Check this box for vision models (`claude-sonnet-4-6`, `gpt-5-5`).
 - **Context Window Size**: `context_window` from the catalog (e.g., `1000000`).
-- **Max Output Tokens**: `64000` is a safe value for large models.
+- **Max Output Tokens**: follow the model's output limit in the [catalog](/en/models). `64000` is only an example; use a smaller value if the model's limit is lower.
 - **Input/Output Price**: Copy from the `pricing` catalog if you want an accurate estimate of Cline's costs;
 The actual bill is the one recorded in the console.
 
@@ -74,7 +75,6 @@ active, not another profile.
 - **`404 model_not_found`** - Incorrect model ID; copy it from `GET /v1/models`.
 - **`404` on all requests** - the base URL is missing `/v1` (OpenAI path) or actually uses `/v1` in
 Anthropic path. Compare it to the screenshot above.
-- **Empty response in Act mode** - a model without *tool calling*. Use a model from the recommendations in
-[Overview](/en/integrations).
+- **Empty response in Act mode** - check the model’s *tool calling* support in the [catalog](/en/models).
 - **Context runs out quickly** - set the *Context Window Size* according to the catalog so that Cline truncates the history
 correctly.

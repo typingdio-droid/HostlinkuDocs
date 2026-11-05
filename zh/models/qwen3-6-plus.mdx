@@ -1,13 +1,9 @@
 ---
 title: "Qwen 3.6 Plus"
-description: "Qwen3.6-Plus 是一款托管于 Alibaba Cloud Model Studio 平台上的模型，用于代理式编码、多模态感知与推理、工具使用以及现实世界商业任务的执行……"
+description: "Alibaba的Qwen 3.6 Plus，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-Qwen3.6-Plus 是一款托管于 Alibaba Cloud Model Studio 平台上的模型，用于代理式编码、多模态感知与推理、工具使用以及现实世界商业任务的执行。
 
 | 属性 | 值 |
 |---|---|
@@ -23,8 +19,6 @@ Qwen3.6-Plus 是一款托管于 Alibaba Cloud Model Studio 平台上的模型，
 ## 能力
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `agentic`, `long-context`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -52,7 +46,7 @@ Qwen3.6-Plus 是一款托管于 Alibaba Cloud Model Studio 平台上的模型，
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

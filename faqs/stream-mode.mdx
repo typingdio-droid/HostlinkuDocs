@@ -1,11 +1,12 @@
 ---
 title: Stream Mode
 description: Cara memakai streaming SSE di Hostlinku dengan OpenAI SDK, Python requests, curl, dan Node.js.
+icon: radio
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Stream mode mengirim jawaban token-per-token lewat SSE (`text/event-stream`). Token pertama muncul lebih cepat, tanpa menunggu seluruh jawaban selesai. Aktifkan dengan `"stream": true`.
+Stream mode mengirim jawaban token-per-token lewat SSE (`text/event-stream`). Token dapat ditampilkan saat model mulai menjawab, tanpa menunggu seluruh jawaban selesai; waktu token pertama mengikuti model dan provider. Aktifkan dengan `"stream": true`.
 
 ## Ringkas: curl
 

@@ -1,6 +1,6 @@
 ---
 title: "Model Baize"
-description: "Model BaizeモデルとAnonymousモデル。"
+description: "AnonymousのModel Baize。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -20,8 +20,6 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `long-context`.
 
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
-
 ## 価格
 
 **2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/model-baize)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
@@ -40,7 +38,7 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

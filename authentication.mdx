@@ -1,6 +1,7 @@
 ---
 title: "Autentikasi"
 description: "API key gateway, login Console, Service Mode, kedaluwarsa, dan limit kredit."
+icon: key
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -53,7 +54,7 @@ Akumulasi memakai biaya request yang tercatat untuk key. Setelah limit tercapai,
 
 ## Rate limit dan error
 
-Kuota layanan adalah **600 request, 6.500.000 token input, dan 200.000 token output per menit**, dipakai bersama dalam organisasi yang sama. Semua API key dan anggota organisasi terdampak saat kuota tercapai. Detail kuota dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
+Kuota dipakai bersama oleh semua API key dan anggota organisasi **untuk setiap Service Mode**. Menambah key atau akun anggota tidak menambah kuota. Angka batas dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
 
 | Kondisi | HTTP | Kode |
 |---|---|---|

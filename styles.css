@@ -1,63 +1,57 @@
-:root { --hl-surface: #ffffff; --hl-border: rgba(0,0,0,.14); --hl-muted: rgba(0,0,0,.06); }
-html.dark, [data-theme="dark"] { --hl-surface: #0b0b0f; --hl-border: rgba(255,255,255,.16); --hl-muted: rgba(255,255,255,.07); }
-
-.hl-callout { display:flex; gap:12px; margin:1rem 0; padding:16px 20px; border:1px solid color-mix(in srgb, var(--hl-callout-color) 30%, transparent); border-radius:4px; background:color-mix(in srgb, var(--hl-callout-color) 10%, transparent); }
-.hl-callout-icon { flex:0 0 auto; margin-top:2px; }
-.hl-callout-title { font-weight:700; color:var(--hl-callout-color); font-size:.92rem; margin-bottom:4px; }
-.hl-callout-content > :first-child { margin-top:0; }
-.hl-callout-content > :last-child { margin-bottom:0; }
-
-.hl-steps { counter-reset:step; position:relative; margin:1.5rem 0; padding-left:44px; }
-.hl-steps::before { content:""; position:absolute; top:4px; bottom:4px; left:14px; width:1px; background:var(--hl-border); }
-.hl-steps h3 { counter-increment:step; position:relative; }
-.hl-steps h3::before { content:counter(step); position:absolute; left:-44px; top:50%; transform:translateY(-50%); display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--hl-muted); border:1px solid var(--hl-border); outline:6px solid var(--hl-surface); font-size:.875rem; font-weight:600; }
-
-
-/* Kolom konten lebih lebar; TOC sedikit dipersempit. */
-#content-container { max-width: none; }
-#content-side-layout { width: 240px; max-width: 240px; }
-#table-of-contents-layout { width: 240px; padding-left: 20px; }
-#table-of-contents { width: 220px; }
-@media (min-width: 1024px) {
-  #content-area {
-    margin-left: 0 !important;
-    padding-left: 44px !important;
-    padding-right: 16px !important;
-  }
+/* Tema monokrom dan sudut 0 px pada seluruh komponen, hover, serta popover. */
+:root {
+  --sidebar-width: 18rem;
+  --content-width: 840px;
+  --hl-surface: #ffffff;
+  --hl-border: rgba(0, 0, 0, .14);
+  --hl-muted: rgba(0, 0, 0, .06);
 }
-
-/* Hilangkan garis trek vertikal penuh pada scrollbar sidebar */
-#sidebar [data-component-part="scrollbar"] {
-  background: transparent !important;
+html.dark, [data-theme="dark"] {
+  --hl-surface: #0b0b0f;
+  --hl-border: rgba(255, 255, 255, .16);
+  --hl-muted: rgba(255, 255, 255, .07);
 }
-
-
-/* Samakan semua sudut UI dengan radius card Mintlify (6px), bukan pill. */
-header button,
-header a[href*="console.hostlinku.com"],
-header a[href*="console.hostlinku.com"] *,
-#sidebar a[aria-current="page"],
-.hl-callout,
-.code-block,
-.code-block button,
-.code-block [role="button"],
-button,
-[class*="chat-assistant"],
-#content img,
-#content :not(pre) > code,
-[role="dialog"],
-[role="menu"],
-[role="listbox"] {
-  border-radius: 4px !important;
+body, body *, body *::before, body *::after {
+  border-radius: 0 !important;
 }
-
-/* Kontras tombol Console pada tema monokrom. */
-header a[href*="console.hostlinku.com"] .text-white,
-header a[href*="console.hostlinku.com"] svg {
-  color: #ffffff !important;
+.hl-callout {
+  display: flex;
+  gap: 12px;
+  margin: 1rem 0;
+  padding: 16px 20px;
+  border: 1px solid color-mix(in srgb, var(--hl-callout-color) 30%, transparent);
+  background: color-mix(in srgb, var(--hl-callout-color) 10%, transparent);
 }
-
-/* Isi slot brand footer yang kosong. */
+.hl-callout-icon { flex: 0 0 auto; margin-top: 2px; }
+.hl-callout-title { font-weight: 700; color: var(--hl-callout-color); font-size: .92rem; margin-bottom: 4px; }
+.hl-callout-content > :first-child { margin-top: 0; }
+.hl-callout-content > :last-child { margin-bottom: 0; }
+.hl-steps { counter-reset: step; position: relative; margin: 1.5rem 0; padding-left: 44px; }
+.hl-steps::before { content: ""; position: absolute; top: 4px; bottom: 4px; left: 14px; width: 1px; background: var(--hl-border); }
+.hl-steps h3 { counter-increment: step; position: relative; }
+.hl-steps h3::before {
+  content: counter(step);
+  position: absolute;
+  left: -44px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--hl-muted);
+  border: 1px solid var(--hl-border);
+  outline: 6px solid var(--hl-surface);
+  font-size: .875rem;
+  font-weight: 600;
+}
+#sidebar [data-component-part="scrollbar"] { background: transparent !important; }
+#navbar a[href*="console.hostlinku.com"] .text-white,
+#navbar a[href*="console.hostlinku.com"] svg { color: #ffffff !important; }
+.card, [data-component-part="card"] {
+  transition: border-color .15s ease, background-color .15s ease;
+}
 footer [data-hl-footer-desc] {
   max-width: 320px;
   margin-top: 14px;
@@ -66,54 +60,18 @@ footer [data-hl-footer-desc] {
   color: #737373;
 }
 html.dark footer [data-hl-footer-desc] { color: #a3a3a3; }
-@media (max-width: 767px) {
-  footer [data-hl-footer-desc] { display: none; }
+@media (max-width: 767px) { footer [data-hl-footer-desc] { display: none; } }
+.hl-credit-icon { display: inline-block; width: 1em; height: 1em; vertical-align: -.125em; margin-inline: .05em; }
+
+/* Grup hanya melipat daftar; halaman ikhtisar memakai tautan tersendiri. */
+#sidebar a, #sidebar button, #mobile-nav a, #mobile-nav button {
+  min-height: 36px;
+  transition: background-color .12s ease, color .12s ease;
 }
-
-@media (min-width: 768px) {
-  footer div[class*="md:flex-col"] {
-    row-gap: 12px !important;
-    gap: 12px !important;
-    justify-content: flex-start !important;
-  }
+#sidebar a:active, #sidebar button:active, #mobile-nav a:active, #mobile-nav button:active {
+  background-color: var(--hl-border) !important;
 }
-
-.hl-credit-icon { display:inline-block; width:1em; height:1em; vertical-align:-0.125em; margin-inline:0.05em; }
-
-
-/* ==========================================================================
-   Enterprise Animations & Micro-interactions (SiliconFlow / Linear style)
-   ========================================================================== */
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* Card & CardGroup hover lift */
-.card,
-[class*="card"] {
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease !important;
-}
-
-.card:hover,
-[class*="card"]:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Contextual menu & split button interactions */
-[data-slot="contextual"] button,
-[class*="contextual"] button {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-[data-slot="contextual"] button:hover,
-[class*="contextual"] button:hover {
-  transform: translateY(-1px);
-}
-
-/* Code block & tabs transition */
-.code-block pre,
-[role="tabpanel"] {
-  transition: opacity 0.15s ease-in-out;
+#sidebar a:focus-visible, #sidebar button:focus-visible, #mobile-nav a:focus-visible, #mobile-nav button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
 }

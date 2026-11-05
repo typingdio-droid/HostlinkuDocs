@@ -1,6 +1,7 @@
 ---
 title: "JetBrains AIアシスタント"
 description: "AI AssistantのOpenAI互換プロバイダーを通じて、IntelliJ IDEA、PyCharm、WebStorm、GoLand、およびその他のJetBrains IDEでHostlinkuモデルを使用する"
+icon: code-xml
 ---
 
 
@@ -33,7 +34,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### （オプション）モデル割り当ての設定
 
-**Model Assignment** セクションでは、**Core features**（例：`claude-sonnet-4-6`）および **Instant helpers**（例：`claude-haiku-4-5`）に対して、モデル Hostlinku を選択できます。 **Completion model**は*Not selected*のままにしておいてください。インラインオートコンプリートには、HostlinkuでサポートされていないFIMが使用されます（[概要](/ja/integrations#masalah-umum)を参照）。
+**Model Assignment** セクションでは、**Core features**（例：`claude-sonnet-4-6`）および **Instant helpers**（例：`claude-haiku-4-5`）に対して、モデル Hostlinku を選択できます。 **Completion model**は*Not selected*のままにしておいてください。インラインオートコンプリートには、HostlinkuでサポートされていないFIMが使用されます（[概要](/ja/integrations#compatibility-limits)を参照）。
 
 ### AIチャットでモデルを選択してください
 
@@ -53,7 +54,7 @@ AIアシスタントは現在、サードパーティ向けには*OpenAI互換*�
 
 - **ベースURLは必ず`/v1`で終わらせる必要があります。** IDEは`/models`と`/chat/completions`を自動的に追加します。`/v1`が含まれていない場合、「*Test Connection*」は`404`エラーで失敗します。
 - **カスタムヘッダーはありません。** AIアシスタントはAPIキーを「`Authorization: Bearer sk-…`」として送信するのみです。これだけでHostlinkuには十分です。
-- **すべてのモデルがChatに対応しているわけではありません。** IDE内でツールを呼び出す機能が動作するように、*ツール呼び出し*機能を備えたモデルを選択してください（設定で**ツール呼び出し**にチェックを入れてください）。推奨事項については、[概要](/ja/integrations)をご覧ください。
+- **IDEのtool calling**には対応モデルが必要です。[カタログ](/ja/models)を確認し、モデル設定で**Tool calling**を有効にしてください。
 - **JetBrainsのClaude Code**は、独立した統合機能（Claude Codeプラグインは独自のCLIを使用しています）です。[Claude Code](/ja/integrations/claude-code)をご覧ください。
 
 ## トラブルシューティング

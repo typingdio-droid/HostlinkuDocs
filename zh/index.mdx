@@ -1,56 +1,41 @@
 ---
 title: "简介"
-description: "什么是 Hostlinku、其架构的工作原理以及阅读本文档的顺序"
+description: 发送第一个请求并选择后续指南
+icon: house
 ---
 
+Hostlinku通过一个网关提供OpenAI Chat Completions、Anthropic Messages和Responses API。每个API密钥绑定**Performance**、**Low-Cost**或**Dedicated** Service Mode，模型和价格随该模式而定。
 
-import { Callout } from "/snippets/mdx.jsx";
+## 第一个请求
 
-**Hostlinku** 是提供 OpenAI Chat Completions、Anthropic Messages 和 Responses API 格式的 AI 网关。参数与能力支持取决于模型和端点。API 密钥访问创建时选择的 **Service Mode** 目录：**Performance**、**Low-Cost** 或 **Dedicated**。最新模型和价格请查看 [模型目录](/zh/models) 及目标密钥的 `GET /v1/models`。
+在[Console](https://console.hostlinku.com)注册、为组织充值并创建API密钥。从密钥目录选择模型slug，必要时替换示例。[完整入门指南](/zh/getting-started)。
 
-使用 Hostlinku，您无需为每个提供商分别管理账户、API 密钥和不同的请求格式：
-
-- **一个API密钥**访问所选 Service Mode 的模型（`sk-…`）。
-- **兼容 OpenAI**：使用官方 SDK OpenAI（`openai-python`、`openai-node`）时，只需将 `base_url` 替换掉即可。
-- **SSE 流式传输**：以 `text/event-stream` 格式（如 OpenAI）返回逐个Token的响应。
-- **集中式模型目录**：将别名、每Token价格、上下文和功能集中在一个地方。
-- **使用控制**：每个 API 密钥的额度限制、请求历史记录以及控制台中的完整日志。
-- **预付充值**：通过 QRIS/Virtual Account（iPaymu Direct）或加密货币（Heleket 托管支付）为组织充值。服务信用记账单位为 **1信用额度 = $1**。
-
-## 简要架构
-
-```text
-你的应用程序
-    │  Authorization: Bearer sk-…
-    ▼
-api.hostlinku.com  ──►  Gateway Hostlinku  ──►  Routing & failover
-(v1/chat/completions)        │                        │
-                             │                        ├─► OpenAI
-                             ├─ Reservasi saldo       ├─► Anthropic
-                             ├─ Telemetri & log       ├─► Google
-                             └─ Commit biaya nyata    └─► …dan lainnya
+```bash
+curl https://api.hostlinku.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-5-5","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
-请求经过API密钥认证、限额检查、余额预留和模型服务转发，结束后依据上游usage结算费用；缺少usage时可能使用估算值，并记录遥测数据。
+## 下一步
 
-控制台 Hostlinku (`console.hostlinku.com`) 使用相同的后端：API 密钥、余额、请求历史记录和审计日志均来自真实的数据网关。
-
-## 快速链接
-
-| 需求 | 页面 |
-|---|---|
-| 发送你的第一个请求 | [快速入门](/zh/getting-started) |
-| 了解 API 密钥、有效期以及每个 API 密钥的限制 | [身份验证](/zh/authentication) |
-| 所有端点、速率限制和错误代码的简明参考 | [API 参考](/zh/api-reference) |
-| 端点参考编号 `POST /v1/chat/completions` | [Chat Completions](/zh/chat-completions) |
-| 通过 `POST /v1/messages` 使用 Anthropic SDK / Claude Code | [Anthropic Messages](/zh/anthropic-messages) |
-| 通过 `POST /v1/responses` 使用 Codex CLI / OpenAI Agents SDK | [Responses API](/zh/responses) |
-| Claude Code、Codex CLI、Cursor、Zed、Cline、Continue、OpenCode、Aider 的配置 | [IDE 与代理的集成](/zh/integrations) |
-| 模型列表及选购指南 | [模型](/zh/models) |
-| 速率限制和使用情况监控 | [使用与限制](/zh/usage-and-limits) |
-| 余额、充值和每枚Token的费用 | [账单与余额](/zh/billing) |
-| 错误代码和错误响应格式 | [错误](/zh/errors) |
-
-<Callout type="tip" title="需要先注册账号吗？">
-从 [后端注册](https://api.hostlinku.com/api/auth2/register) 开始，浏览器会跳转至 `auth2.hostlinku.com` 的 Keycloak，然后在 [Console](https://console.hostlinku.com) 创建首个 API 密钥。参阅 [快速开始](/zh/getting-started)。
-</Callout>
+<CardGroup cols={2}>
+  <Card title="认证" icon="key" href="/zh/authentication">
+    管理密钥、Service Mode和信用额度。
+  </Card>
+  <Card title="模型" icon="box" href="/zh/models">
+    查看slug、能力与价格。
+  </Card>
+  <Card title="集成" icon="terminal" href="/zh/integrations">
+    连接SDK、IDE或coding agent。
+  </Card>
+  <Card title="API Reference" icon="code" href="/zh/api-reference">
+    选择端点和请求格式。
+  </Card>
+  <Card title="计费与余额" icon="credit-card" href="/zh/billing">
+    充值并了解使用费用。
+  </Card>
+  <Card title="用量与限额" icon="gauge" href="/zh/usage-and-limits">
+    了解组织共享配额与429。
+  </Card>
+</CardGroup>

@@ -1,6 +1,7 @@
 ---
 title: "Anthropic Messages"
 description: "POST /v1/messages endpoint reference (Anthropic-compatible) - use the Anthropic SDK, Claude Code, or Cursor with your Hostlink API key"
+icon: message-square
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -16,7 +17,7 @@ anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
 
-Authentication accepts the `x-api-key` header (Anthropic style) **or** `Authorization: Bearer sk-…`. Each response includes the `request-id` / `x-request-id` header (Hostlinku request ID, in the format `msg_…`) and, for successful non-streaming responses, `x-model`.
+Authentication accepts the `x-api-key` header (Anthropic style) **or** `Authorization: Bearer sk-…`. Successful responses include `request-id` / `x-request-id` (Hostlinku request ID, in the format `msg_…`); successful non-streaming responses also include `x-model`. Errors before the handler may omit these IDs.
 
 <Callout type="note" title="Any model, not just Claude">
 `model` uses the same Hostlinku public slug as the [model catalog](/en/models) - e.g., `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Non-Claude models can still be invoked via the Anthropic format; the gateway handles the translation.
@@ -168,6 +169,8 @@ Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`
 | 403 | `permission_error` | Account suspended / access denied. |
 | 404 | `not_found_error` | The model slug does not exist in the catalog. |
 | 429 | `rate_limit_error` | Request limit reached. |
-| 503 | `overloaded_error` | The model/upstream is currently unavailable - it is safe to retry. |
+| 503 | `overloaded_error` | Model/upstream unavailable. Check the catalog and replacements; retry with a delay for temporary outages. |
+
+The table shows protocol-handled errors. Request rate limiting or body parsing before the handler can use the general Hostlinku format; see [Errors](/en/errors).
 
 Errors are sanitized to mask internal identities; some upstream rejection reasons can still appear. [Error](/en/errors).

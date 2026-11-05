@@ -1,13 +1,9 @@
 ---
 title: "DeepSeek-V4.1-Flash Hyper"
-description: "DeepSeek-V4.1-Flashは、非対称な因果エンコーダー・デコーダーアーキテクチャに基づいて構築され、ネイティブな視覚理解機能を備えたマルチモーダルなミクスチャー・オブ・エキスパートモデルである。これは..."
+description: "DeepSeekのDeepSeek-V4.1-Flash Hyper。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-DeepSeek-V4.1-Flashは、非対称な因果エンコーダー・デコーダーアーキテクチャに基づいて構築されたマルチモーダルなミクスチャー・オブ・エキスパートモデルであり、ネイティブな視覚理解機能を備えています。 100万トークンのコンテキストウィンドウ、最大384Kの出力トークン、思考モードと非思考モード、ツール呼び出し、構造化されたJSON出力をサポートしています。HostlinkuのDedicatedカタログで利用できます。性能はモデルとリクエストによって異なります。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ DeepSeek-V4.1-Flashは、非対称な因果エンコーダー・デコーダー�
 ## 機能
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -45,7 +39,7 @@ DeepSeek-V4.1-Flashは、非対称な因果エンコーダー・デコーダー�
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

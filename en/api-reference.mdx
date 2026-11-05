@@ -1,365 +1,42 @@
 ---
-title: "API Reference"
-description: "A one-page reference guide-rate limits, the Anthropic Messages API, OpenAI Chat Completions, the OpenAI Responses API, error codes, and a list of models"
+title: API Reference
+description: Hostlinku endpoints, authentication, and metrics at a glance
+icon: code
 ---
 
-import { CreditIcon } from "/snippets/credit-icon.jsx";
+Gateway endpoints use an API key. Console account endpoints under `/api/*` use a login session. Parameter, vision, reasoning, caching, and tool support depend on the model and protocol route.
 
-import { Callout } from "/snippets/mdx.jsx";
+| Endpoint | Purpose | Guide |
+|---|---|---|
+| `GET /v1/models` | Catalog for the key’s Service Mode | [Models](/en/models) |
+| `POST /v1/chat/completions` | Chat and SSE streaming | [Chat Completions](/en/chat-completions) |
+| `POST /v1/messages` | Anthropic-format messages | [Anthropic Messages](/en/anthropic-messages) |
+| `POST /v1/messages/count_tokens` | Unbilled Anthropic-format token counting | [Count tokens](/en/anthropic-messages) |
+| `POST /v1/responses` | Stateless Responses | [Responses API](/en/responses) |
 
-Base URL: `https://api.hostlinku.com`. All gateway endpoints are located under `/v1` and accept the Hostlinku API key (`sk-…`) via the `Authorization: Bearer` **or** `x-api-key` header.
+## Base URL and authentication
+
+The OpenAI SDK uses `https://api.hostlinku.com/v1`; the Anthropic SDK uses `https://api.hostlinku.com`. The gateway accepts `Authorization: Bearer sk-your-api-key` or `x-api-key`. See [Authentication](/en/authentication).
 
 ## Model and tool compatibility
 
-Choose a model available in the API key Service Mode. Vision, reasoning, caching, JSON schema, and tool calling depend on the model. Native Responses passes upstream features through; the Chat Completions bridge supports messages, model-supported images, and `type: "function"` tools. Hosted/custom tools and encrypted reasoning require native support.
+Use catalog slugs on supported endpoints. Format compatibility does not guarantee every client feature. Check [Responses limits](/en/responses) and [your integration](/en/integrations).
 
 ## Shared organization quota
 
-All API keys and members in the same organization share this quota. Adding keys or using another member account does not increase it.
-
-| Service Mode | Requests/minute | Input tokens/minute | Output tokens/minute |
-|---|---|---|---|
-| Performance | 600 | 6,500,000 | 200,000 |
-| Low-Cost | 600 | 6,500,000 | 200,000 |
-| Dedicated | 600 | 6,500,000 | 200,000 |
-
-See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
-
-Console, login, and checkout endpoint limits are counted per IP, separately from model usage quotas.
-
-<Callout type="note" title="Need a higher limit?">
-Contact [halo@hostlinku.com](mailto:halo@hostlinku.com) and provide your account email address and estimated data usage.
-</Callout>
-
-## Anthropic Messages API Format
-
-`POST /v1/messages`
-
-Call the model using the native Anthropic format. The request header must include `x-api-key: YOUR_API_KEY` (or `Authorization: Bearer`). Compatible with the Anthropic SDK, Claude Code, Cursor, and Cline-simply set `ANTHROPIC_BASE_URL=https://api.hostlinku.com`. Complete documentation: [Anthropic Messages](/en/anthropic-messages).
-
-### Request Body Parameters
-
-| Parameter | Type | Description | Required |
-|---|---|---|---|
-| `model` | string | Hostlinku model slug, e.g., `claude-sonnet-4-6` | true |
-| `messages` | array | Array of conversation messages (`role`: `user` | `assistant`) | true |
-| `max_tokens` | integer | Maximum number of output tokens | true |
-| `system` | string \| array | System prompt (block arrays support `cache_control`) | false |
-| `stream` | boolean | SSE streaming, default `false` | false |
-| `tools`, `tool_choice`, `thinking`, `temperature`, `top_p`, `top_k`, `stop_sequences`, `metadata` | - | As specified by Anthropic | false |
-
-### Example Request
-
-```bash
-curl --request POST \
-  --url https://api.hostlinku.com/v1/messages \
-  --header 'content-type: application/json' \
-  --header 'x-api-key: YOUR_API_KEY' \
-  --header 'anthropic-version: 2023-06-01' \
-  --data '{
-    "model": "claude-sonnet-4-6",
-    "max_tokens": 1024,
-    "system": "You are a professional coding assistant",
-    "messages": [
-      { "role": "user", "content": "Write a quicksort in Python" }
-    ]
-  }'
-```
-
-### Response Example
-
-```json
-{
-  "id": "msg_mv5ujf05qf6ayfbx",
-  "type": "message",
-  "role": "assistant",
-  "model": "claude-sonnet-4-6",
-  "content": [
-    { "type": "text", "text": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." }
-  ],
-  "stop_reason": "end_turn",
-  "stop_sequence": null,
-  "usage": {
-    "input_tokens": 14,
-    "output_tokens": 86,
-    "cache_creation_input_tokens": 0,
-    "cache_read_input_tokens": 0,
-    "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 }
-  },
-  "hostlinku": { "cost": 0.0013, "currency": "🪙", "serviceMode": "performance", "latencyMs": 2410 }
-}
-```
-
-### Output Streaming
-
-```bash
-curl -N --request POST \
-  --url https://api.hostlinku.com/v1/messages \
-  --header 'content-type: application/json' \
-  --header 'x-api-key: YOUR_API_KEY' \
-  --header 'accept: text/event-stream' \
-  --data '{
-    "model": "claude-sonnet-4-6",
-    "max_tokens": 1024,
-    "messages": [{ "role": "user", "content": [{ "type": "text", "text": "Hello" }] }],
-    "stream": true
-  }'
-```
-
-Responses are sent per segment in SSE format:
-
-```text
-event: message_start
-data: {"type":"message_start","message":{"id":"msg_…","type":"message","role":"assistant","model":"claude-sonnet-4-6","content":[],"stop_reason":null,"usage":{"input_tokens":10,"output_tokens":1}}}
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello"}}
-
-event: message_delta
-data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":10,"output_tokens":5}}
-
-event: message_stop
-data: {"type":"message_stop"}
-```
-
-## OpenAI Protocol (Chat Completions API)
-
-`POST /v1/chat/completions`
-
-Call any model using the OpenAI Chat Completions format. The request header can use `Authorization: Bearer YOUR_API_KEY` or `x-api-key`. The OpenAI SDK simply needs to be configured with `base_url="https://api.hostlinku.com/v1"`. Full documentation: [Chat Completions](/en/chat-completions).
-
-### Request Body Parameters
-
-| Parameter | Type | Description | Required |
-|---|---|---|---|
-| `model` | string | Hostlinku model slug, e.g., `gpt-5-5` | true |
-| `messages` | array | Array of conversation messages (`system` | `user` | `assistant` | `tool`) | true |
-| `max_tokens` | integer | Maximum number of output tokens | false |
-| `stream` | boolean | SSE streaming, default `false` | false |
-| `temperature`, `top_p`, `tools`, `tool_choice`, `response_format`, `reasoning_effort`, `thinking` | - | As per OpenAI specifications (+ the "thinking" extension) | false |
-
-### Example Request
-
-```bash
-curl https://api.hostlinku.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-YOUR_API_KEY" \
-  -d '{
-    "model": "gpt-5-5",
-    "messages": [
-      { "role": "user", "content": "Write a quicksort in Python" }
-    ],
-    "stream": false
-  }'
-```
-
-### Example Response
-
-```json
-{
-  "id": "cmpl_mv5strfqh3zktr",
-  "object": "chat.completion",
-  "created": 1770000000,
-  "model": "gpt-5-5",
-  "choices": [
-    {
-      "index": 0,
-      "message": { "role": "assistant", "content": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    ..." },
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": { "prompt_tokens": 12, "completion_tokens": 86, "total_tokens": 98 },
-  "hostlinku": { "cost": 0.0009, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1890 }
-}
-```
-
-### Output Streaming
-
-```bash
-curl -N https://api.hostlinku.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-YOUR_API_KEY" \
-  -d '{
-    "model": "gpt-5-5",
-    "messages": [{ "role": "user", "content": "Hello" }],
-    "stream": true
-  }'
-```
-
-```text
-data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
-
-data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"Hello"}}]}
-
-data: {"id":"cmpl_…","object":"chat.completion.chunk","model":"gpt-5-5","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":5,"completion_tokens":12,"total_tokens":17}}
-
-data: [DONE]
-```
-
-## OpenAI Responses API Format
-
-`POST /v1/responses`
-
-The format used by **Codex CLI**, **OpenAI Agents SDK**, and `client.responses.create()`. The request header includes `Authorization: Bearer YOUR_API_KEY`; the base URL is `https://api.hostlinku.com/v1`. Stateless: `store` is always `false`, `previous_response_id` results in a `400` error - send the full history in `input`. Complete documentation: [Responses API](/en/responses).
-
-### Request Body Parameters
-
-| Parameter | Type | Description | Required |
-|---|---|---|---|
-| `model` | string | Hostlinku model slug, e.g., `gpt-5-5` | true |
-| `input` | string \| array | Text, or an array of items: `message` / `function_call` / `function_call_output` / `reasoning` | true |
-| `instructions` | string | System prompt | false |
-| `max_output_tokens` | integer | Maximum number of output tokens | false |
-| `stream` | boolean | SSE streaming (`event: response.*`), default `false` | false |
-| `tools`, `tool_choice`, `reasoning`, `include`, `text`, `temperature`, `top_p`, `metadata` | - | As specified in the OpenAI Responses documentation | false |
-
-### Example Request
-
-```bash
-curl https://api.hostlinku.com/v1/responses \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-YOUR_API_KEY" \
-  -d '{
-    "model": "gpt-5-5",
-    "instructions": "Be concise.",
-    "input": "Write a quicksort in Python",
-    "max_output_tokens": 512
-  }'
-```
-
-### Example Response
-
-```json
-{
-  "id": "resp_mv5xpsggbnpc4x7g",
-  "object": "response",
-  "created_at": 1791850828,
-  "status": "completed",
-  "model": "gpt-5-5",
-  "output": [
-    { "id": "rs_…", "type": "reasoning", "summary": [], "encrypted_content": "…" },
-    { "id": "msg_…", "type": "message", "status": "completed", "role": "assistant",
-      "content": [{ "type": "output_text", "text": "def quicksort(arr): …", "annotations": [] }] }
-  ],
-  "usage": { "input_tokens": 20, "output_tokens": 95, "total_tokens": 115,
-             "input_tokens_details": { "cached_tokens": 0 }, "output_tokens_details": { "reasoning_tokens": 12 } },
-  "previous_response_id": null,
-  "store": false,
-  "hostlinku": { "cost": 0.0011, "currency": "🪙", "serviceMode": "performance", "latencyMs": 1420 }
-}
-```
-
-### Output Streaming
-
-```text
-event: response.created
-data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_…","status":"in_progress","model":"gpt-5-5","output":[]}}
-
-event: response.output_text.delta
-data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"def quicksort"}
-
-event: response.completed
-data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_…","status":"completed","output":[…],"usage":{"input_tokens":20,"output_tokens":95,"total_tokens":115}}}
-```
+Each Service Mode has **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared by all organization members and API keys. Login, Console, and checkout have separate per-IP limits. See [Usage & Limits](/en/usage-and-limits).
 
 ## Error Codes
 
-The envelope error follows the protocol of the called endpoint: `/v1/chat/completions` → `{ "status": "error", "error": { "code", "message" } }`; `/v1/messages` → `{ "type": "error", "error": { "type", "message" } }`; `/v1/responses` → `{ "error": { "message", "type", "param", "code" } }`.
-
-| HTTP Status Code | Description | Example Error Message |
-|---|---|---|
-| 400 | Invalid body, `max_tokens` exceeds the model's output limit, or the model is not available with this Service Mode API key. | `max_tokens (20000) exceeds the output limit of the 'claude-haiku-4-5' model (16000).` |
-| 401 | The API key was not provided, is invalid, has been revoked, or has expired. | `The API key is invalid or has been revoked.` |
-| 402 | Insufficient balance to cover the estimated cost of the request, or the API key's credit limit has been reached. | `Insufficient balance.` |
-| 403 | Account suspended / access denied. | `You do not have access to this resource.` |
-| 404 | The model slug is not in the catalog. | `Model 'xxx' not found.` |
-| 413 | The request body exceeds the maximum size. | `Payload is too large.` |
-| 422 | Body validation failed (only `/v1/chat/completions`; `/v1/messages` and `/v1/responses` return a 400). | `Invalid request body.` |
-| 429 | Rate limit exceeded. | `Rate limit exceeded. Upgrade to a plan with a higher limit.` |
-| 503 | Model/upstream is currently unavailable - it is safe to retry with backoff. | `The model is currently unavailable. Please try again later.` |
-
-Errors are sanitized to mask internal identities; some upstream rejection reasons can still appear. [Error](/en/errors).
-
-### 429 Response Headers
-
-| Response Header | Description |
-|---|---|
-| `Retry-After` | Recommended wait time before retrying (seconds) |
-| `RateLimit-Limit` | RPM Limit |
-| `RateLimit-Remaining` | Remaining requests in the current window |
-| `RateLimit-Reset` | Seconds until the next window begins |
+Error formats follow the endpoint; errors before its handler can use the common Hostlinku envelope. See [Errors](/en/errors) for codes and handling, and [Anthropic Messages](/en/anthropic-messages#format-error) or [Responses](/en/responses#format-error) for protocol-specific formats.
 
 ## Query Available Models
 
-`GET /v1/models`
+`GET /v1/models` returns models and rates for the key’s Service Mode. The site catalog uses `GET /api/public/models-v2`. See [Models](/en/models) for capabilities and rate details.
 
-Returns the available models for the **Service Mode API key** being used, along with the price <CreditIcon /> per 1M tokens in that mode.
+## Costs and streaming
 
-### Example Request
-
-```bash
-curl --request GET \
-  --url https://api.hostlinku.com/v1/models \
-  --header 'Authorization: Bearer YOUR_API_KEY'
-```
-
-### Response Example
-
-```json
-{
-  "object": "list",
-  "service_mode": "performance",
-  "data": [
-    {
-      "id": "claude-haiku-4-5",
-      "object": "model",
-      "created": 1760000000,
-      "owned_by": "hostlinku",
-      "context_window": 200000,
-      "capabilities": ["text", "tool-calling", "json-mode", "streaming", "long-context"],
-      "service_mode": "performance",
-      "pricing": { "input": 0.8, "output": 4, "cache_read": 0.08, "cache_write": 1, "unit": "1M_tokens", "currency": "🪙" }
-    },
-    {
-      "id": "claude-sonnet-4-6",
-      "object": "model",
-      "created": 1760000000,
-      "owned_by": "hostlinku",
-      "context_window": 1000000,
-      "capabilities": ["text", "vision", "tool-calling", "json-mode", "streaming", "reasoning", "long-context"],
-      "service_mode": "performance",
-      "pricing": { "input": 2.4, "output": 12, "cache_read": 0.24, "cache_write": 3, "unit": "1M_tokens", "currency": "🪙" }
-    }
-  ]
-}
-```
-
-<Callout type="note">
-Use this endpoint to retrieve the latest model name; `id` is the slug used in the `model` field in all three API formats. The complete catalog and pricing are available at [Models](/en/models).
-</Callout>
-
-## Retry Recommendations
-
-- `400`, `401`, `402`, `403`, and `404` require a request parameter or account-balance change and should not be retried automatically.
-- `429`, `500`, `502`, and `503` can be retried with exponential backoff and random jitter (respecting the `Retry-After` header on `429`).
-- Include the response ID (`cmpl_…`, `msg_…`, or `resp_…`) when contacting technical support so the request can be traced in Request Logs.
-
-## Security Recommendations
-
-API keys authorize billable gateway access according to Service Mode and limits; account management uses a Console session.
-
-- Keep your API key on a server or in a protected local environment. Inject it through environment variables (`HOSTLINKU_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`) rather than committing it to code repositories.
-- Use separate API keys with independent **credit limits** and **expiration dates** for development, testing, and production.
-- Revoke a leaked API key immediately in [Console → API Keys](https://console.hostlinku.com/api-keys) and keep only masked forms (`sk-****`) in application logs.
-
-## Related Resources
-
-- Hostlinku documentation: [https://docs.hostlinku.com/en](https://docs.hostlinku.com/en)
-- Hostlinku website & model catalog: [https://hostlinku.com/en](https://hostlinku.com/en) · [Models](/en/models)
-- AI Coding Tools & Harness guides: [Claude Code](/en/integrations/claude-code) · [Codex CLI](/en/integrations/codex-cli) · [DeepSeek Harness](/en/integrations/deepseek-harness) · [CC Switch](/en/integrations/cc-switch)
-- OpenAI API documentation: [https://developers.openai.com/](https://developers.openai.com/)
-- OpenAI Codex documentation: [https://developers.openai.com/codex/](https://developers.openai.com/codex/)
-- Anthropic API & Claude Code documentation: [https://docs.anthropic.com/](https://docs.anthropic.com/)
+Non-streaming chat responses include `hostlinku.cost` and `hostlinku.latencyMs`. After streaming completes, read costs in Logs / Analytics / Billing; do not expect costs in every chunk. Record `x-request-id` when available. See [Billing & Balance](/en/billing).
 
 ## Metrics and example figures
 

@@ -1,6 +1,7 @@
 ---
 title: Responses API
 description: Referensi endpoint POST /v1/responses (OpenAI Responses API-compatible) - pakai Codex CLI, OpenAI Agents SDK, atau client.responses.create() dengan API key Hostlinku
+icon: workflow
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -256,6 +257,8 @@ print(r2.output_text)
 | 403 | `permission_error` | - | Akun ditangguhkan / akses ditolak. |
 | 404 | `not_found_error` | `model_not_found` / `not_found` | Slug model tidak ada; atau `GET /v1/responses/{id}` (stateless). |
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | Batas permintaan tercapai (lihat header `Retry-After`). |
-| 503 | `server_error` | `model_unavailable` / `server_error` | Model/upstream sedang tidak tersedia - aman untuk di-retry. |
+| 503 | `server_error` | `model_unavailable` / `server_error` | Model/upstream tidak tersedia. Periksa katalog dan model pengganti; retry dengan jeda bila gangguan sementara. |
 
-Pesan error disanitasi untuk menyamarkan identitas internal; sebagian alasan penolakan upstream tetap dapat muncul. [Error](/errors).
+Tabel menunjukkan error yang ditangani protokol. Pembatasan request atau parsing body sebelum handler dapat memakai format umum Hostlinku; lihat [Error](/errors).
+
+Pesan error disanitasi untuk menyamarkan identitas internal; sebagian alasan penolakan upstream tetap dapat muncul.

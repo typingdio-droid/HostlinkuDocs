@@ -1,41 +1,37 @@
 ---
 title: "常见错误"
 description: "最常见的Hostlinku错误代码的原因及解决方法。"
+icon: circle-alert
 ---
 
 
 import { Callout } from "/snippets/mdx.jsx";
 
-所有错误都使用相同的封装：`{"error": {"code": "...", "message": "..."}}`。完整列表请参见 [错误](/zh/errors)。
+以下代码使用Chat Completions格式。Messages和Responses有各自的错误格式；完整参考见[错误](/zh/errors)。
 
-## 401 访问被拒绝
+## 401 UNAUTHORIZED
 
-API密钥不存在、复制错误、已被撤销或已过期。请确保请求头中使用了`Authorization: Bearer sk-...`或`x-api-key`，然后在控制台 → **API密钥** 中检查密钥状态。
+在Console → **API Keys**检查密钥值和状态。网关端点接受`Authorization: Bearer sk-...`或`x-api-key`。不要用无效、停用或过期的密钥重试。
 
-## 402 需付款
+## 402 PAYMENT_REQUIRED
 
-原因有两个：
+阅读错误消息：组织可用余额不足时充值；达到密钥额度时调整额度或等待重置。充值不会提高密钥额度。见[计费与余额](/zh/billing)。
 
-- **账户余额**不足以支付该请求的预估费用。
-- **API密钥的额度**已达到上限（每日、每周、每月或总计）。
-
-请阅读错误信息以进行区分。在控制台中查看余额和密钥限额。详情请参见：[计费与余额](/zh/billing)。
-
-## 404 未找到模板
+## 404 MODEL_NOT_FOUND
 
 该模型的slug在目录中不存在。请直接从`GET /v1/models`或[模型](/zh/models)页面获取确切的slug。请勿根据显示名称猜测slug。
 
-## 400 模型未处于服务模式
+## 400 MODEL_NOT_IN_SERVICE_MODE
 
 虽然存在该模型，但不适用于当前使用的 Service Mode API key。例如：key“Low-Cost”调用了仅包含“Performance”路由的模型。请创建具有相应模式的 key，或选择其他模型。
 
-## 422 验证失败
+## 422 VALIDATION_FAILED
 
-请求正文未通过验证：`messages` 为空、字段类型错误或缺少必填字段。响应中包含各字段的详细信息。请参阅 [Chat Completions](/zh/chat-completions) 中的请求正文示例。
+修正`details.issues`指出的字段，例如空`messages`或错误类型。Chat Completions验证失败返回422，Messages和Responses返回400。见[请求示例](/zh/chat-completions)。
 
 ## 429 RATE_LIMITED
 
-请求超限。请查阅 `Retry-After` 和 `RateLimit-*` 报头，然后采用指数退避算法重试。被限流器拒绝的请求不会扣除配额。详情：[使用情况与限额](/zh/usage-and-limits)。
+每个Service Mode的配额由组织共享。遵循`Retry-After`等待，采用退避并减少突发请求。被限流器拒绝的请求不会扣除余额。见[用量与限额](/zh/usage-and-limits)。
 
 ## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
 

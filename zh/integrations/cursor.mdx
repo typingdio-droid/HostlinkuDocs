@@ -1,6 +1,7 @@
 ---
 title: "Cursor"
 description: "在 Cursor 中使用 Hostlinku 模型，通过覆盖 OpenAI 基础 URL - 聊天、Cmd-K 以及 Agent，并使用您自己的 API 密钥"
+icon: mouse-pointer-2
 ---
 
 
@@ -55,7 +56,7 @@ deepseek-v4-flash
 
 - **请求是从 Cursor 服务器发送的**，而不是从你的计算机发送的。因此，基础 URL 必须是公开的-`https://api.hostlinku.com` 符合这一要求（`localhost` 的地址被 Cursor 拒绝）。
 - **光标 Tab（自动完成）功能不受影响。** Tab 功能使用光标专用的基础设施，无法切换至任何提供商。Hostlinku 支持聊天、Cmd-K 和 Agent 功能。
-- **代理模式**需要支持 *工具调用* 和 *流式传输* 的模型-[概述](/zh/integrations) 中推荐的所有模型均符合此要求。 如果代理因 *BAD_MODEL_NAME* 报错，请重新检查 slug，并确保 **OpenAI API 密钥** 已启用。
+- **Agent模式**需要*tool calling*和*streaming*。请在[目录](/zh/models)中检查支持情况。若出现*BAD_MODEL_NAME*，请核对slug并启用**OpenAI API Key**。
 - **连接挂起/协议错误** - 在同一设置中，将 *HTTP 兼容模式* 更改为 **HTTP/1.1**。
 
 <Callout type="tip" title="Claude 模型，通过 OpenAI 通道">

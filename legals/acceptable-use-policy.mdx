@@ -1,11 +1,12 @@
 ---
 title: "Kebijakan Penggunaan"
 description: "Kebijakan penggunaan API Hostlinku: penggunaan yang diizinkan, konten dan aktivitas terlarang, rate limit, penegakan, dan cara melaporkan pelanggaran."
+icon: scale
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-**Terakhir diperbarui:** 11 Oktober 2026.
+**Terakhir diperbarui:** 6 November 2026.
 
 <a id="cakupan"></a>
 
@@ -18,7 +19,7 @@ Kebijakan ini berlaku untuk setiap akun, API key, dan request ke Hostlinku, term
 ## 2. Penggunaan yang diizinkan
 
 - aplikasi percakapan, asisten, ringkasan, terjemahan, dan generasi teks;
-- embeddings untuk pencarian, rekomendasi, dan klasifikasi;
+- pencarian, rekomendasi, dan klasifikasi sesuai kapabilitas model; endpoint embeddings belum tersedia pada gateway publik;
 - code generation, agent, dan otomatisasi alur kerja;
 - riset, evaluasi, eksperimen, dan prototipe;
 - produk komersial yang dibangun di atas API, selama mematuhi kebijakan ini.
@@ -68,13 +69,9 @@ Setiap model dijalankan oleh upstream provider yang memiliki kebijakan penggunaa
 
 ## 7. Rate limit
 
-Batas default saat ini:
+Setiap Service Mode memiliki kuota yang dipakai bersama organisasi. Endpoint Console, publik, checkout, dan backend autentikasi juga memiliki batas per IP. Angka dan cakupan endpoint dijelaskan di [Pemakaian & Limit](/usage-and-limits); perlindungan login di Keycloak mengikuti pengaturan realm.
 
-- API inferensi: kuota bersama organisasi **600 request, 6.500.000 token input, dan 200.000 token output per menit** untuk Performance, Low-Cost, dan Dedicated;
-- API console dan publik: 120 request per menit per alamat IP;
-- endpoint autentikasi (login, daftar, OTP): 30 percobaan per 15 menit.
-
-Request yang melewati batas ditolak dengan status `429` tanpa biaya. Sisa kuota dikirim melalui header `RateLimit-*`. Batas dapat berubah sesuai kapasitas dan dapat dinaikkan untuk akun tertentu; hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com).
+Request yang ditolak limiter mendapat status `429` tanpa biaya; baca `Retry-After` bila tersedia. Batas dapat berubah sesuai kapasitas dan dapat dinaikkan untuk akun tertentu; hubungi [halo@hostlinku.com](mailto:halo@hostlinku.com).
 
 <a id="penegakan"></a>
 

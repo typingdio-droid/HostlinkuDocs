@@ -1,13 +1,9 @@
 ---
 title: "Kimi K2.7 Code"
-description: "Kimi K2.7 Code 是 Kimi 迄今为止最智能的编程模型。它在长上下文中能更可靠地执行指令，并能完成编程任务……"
+description: "Moonshot的Kimi K2.7 Code，目录上下文为256,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-Kimi K2.7 Code 是 Kimi 迄今为止最智能的编程模型。它在长文本场景中能更可靠地执行指令，并能以更高的成功率完成编程任务。支持文本输入，仅支持思考模式、对话和代理任务。
 
 | 属性 | 值 |
 |---|---|
@@ -23,8 +19,6 @@ Kimi K2.7 Code 是 Kimi 迄今为止最智能的编程模型。它在长文本�
 ## 能力
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `long-context`, `vision`, `image-input`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -45,7 +39,7 @@ Kimi K2.7 Code 是 Kimi 迄今为止最智能的编程模型。它在长文本�
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

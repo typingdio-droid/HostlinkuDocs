@@ -1,13 +1,9 @@
 ---
 title: "Claude Sonnet 4.6"
-description: "Claude Sonnet 4.6 balances speed and intelligence, with 1M context, 64K max output, and extended thinking for coding, agents, knowledge work, and long-contex..."
+description: "Claude Sonnet 4.6 by Anthropic, with a catalog context window of 1,000,000 tokens."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## Overview
-
-Claude Sonnet 4.6 balances speed and intelligence, with 1M context, 64K max output, and extended thinking for coding, agents, knowledge work, and long-context tasks.
 
 | Property | Value |
 |---|---|
@@ -24,8 +20,6 @@ Claude Sonnet 4.6 balances speed and intelligence, with 1M context, 64K max outp
 ## Capabilities
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-Features and request limits depend on the model, Service Mode, and API protocol.
 
 ## Pricing
 
@@ -48,7 +42,7 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/cl
 | `POST /v1/messages` | Anthropic Messages | native |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Bridges adapt API formats; vendor features and application built-in tools may differ. Use an API key with a Service Mode listed above.
+[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
 
 ## Example request
 

@@ -1,6 +1,7 @@
 ---
 title: "Account, billing & policies"
 description: "Short answers about accounts, payments, costs, and privacy."
+icon: users
 ---
 
 ## Accounts and API keys
@@ -45,7 +46,7 @@ Not in the current Billing flow. Monitor and top up before production usage. Add
 
 ### What should I do for 429 or 402?
 
-The service quota is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached. See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
+For 429, honor `Retry-After` and use backoff; see [Usage & Limits](/en/usage-and-limits). For 402, check available credit and the key credit limit; see [Billing & Balance](/en/billing).
 
 ### Are all failed requests free?
 

@@ -1,6 +1,7 @@
 ---
 title: "Kilo Code"
 description: "Create a Hostlinku configuration profile in Kilo Code using the OpenAI provider (custom base URL), OpenAI Compatible, or Anthropic"
+icon: code-xml
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -52,7 +53,7 @@ and *Debug*. Example: Architect = `claude-opus-4-6`, Code = `claude-sonnet-4-6`.
 - **Custom headers are not required.** Hostlinku only needs an API key; leave the custom section blank
 headers.
 - **Inline autocomplete** Kilo Code uses a FIM endpoint that isn't served by Hostlinku - leave it as is
-That feature is available in the default provider (see [Overview](/en/integrations#masalah-umum)).
+That feature is available in the default provider (see [Overview](/en/integrations#compatibility-limits)).
 
 ## Troubleshooting
 
@@ -62,4 +63,4 @@ That feature is available in the default provider (see [Overview](/en/integratio
 | `404` on all requests | The base URL is missing `/v1` (OpenAI path) or, conversely, uses `/v1` in the Anthropic path. Compare with the screenshot above. |
 | `404 model_not_found` | Incorrect model ID; copy it from `GET /v1/models`. |
 | The Claude/DeepSeek model is not in the dropdown | The `OpenAI` provider only displays OpenAI models - use **OpenAI Compatible**. |
-| The agent stops without calling a tool | Model without *tool calling*. Follow the recommendations in [Overview](/en/integrations). |
+| The agent stops without calling a tool | Check the model’s *tool calling* support in the [catalog](/en/models). |

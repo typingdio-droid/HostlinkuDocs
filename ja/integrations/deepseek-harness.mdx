@@ -1,6 +1,7 @@
 ---
 title: DeepSeek Harness
 description: DeepSeek のオープンソースコーディングエージェント DeepSeek Harness (dsh) を DEEPSEEK_BASE_URL 経由で Hostlinku に接続する。検証済みのインストール手順、cordis.patch.yml 設定、トラブルシューティングガイド。
+icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -121,9 +122,7 @@ API キーとともに記録されます。
 | オープンウェイトの代替モデル | `kimi-k2-7-code`, `glm-5-3` | ツール呼び出しと推論に対応。 |
 
 <Callout type="tip" title="モデルに合わせて maxTokens を調整する">
-  `maxTokens` は 1 リクエストあたりの最大出力トークン数であり、コンテキストウィンドウではありません。`32000` は
-  ほぼすべてのモデルで安全な値です。モデルごとの最大出力値（例：`deepseek-v4-flash` は `131072`）は各モデルの
-  カタログページに記載されています。
+  `maxTokens`はリクエストごとの出力上限であり、コンテキストサイズではありません。例の`32000`は初期設定で、モデルの最大値ではありません。[カタログ](/ja/models)で出力上限を確認し、記載がない場合はリクエストが拒否されたときに値を下げてください。
 </Callout>
 
 ## セキュリティ

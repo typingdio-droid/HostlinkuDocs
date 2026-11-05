@@ -1,6 +1,7 @@
 ---
 title: "安全"
 description: "Hostlinku 安全实践：加密、身份验证、API 密钥管理、数据隔离、审计日志、事件响应以及漏洞报告方法。"
+icon: lock
 ---
 
 
@@ -33,7 +34,7 @@ import { Callout } from "/snippets/mdx.jsx";
 - Keycloak管理邮箱验证和账户登录。
 - 如果启用了通过SSO（例如Google、GitHub、Discord）登录的选项。
 - Console服务器会话使用 `hl_sid`；部分流程的JWT Cookie为 `hl_session`。会话Cookie使用 `HttpOnly`、`SameSite=Lax`，生产环境设置 `Secure`。
-- 登录、注册和OTP的试用请求限制，以及公共表单中的Cloudflare Turnstile。
+- 组织共享配额和按IP的请求限制见[用量与限额](/zh/usage-and-limits)。
 - 被暂停的账户无法登录，也无法使用API。
 
 Console → **Settings → Security** 提供Keycloak的WebAuthn通行密钥、TOTP验证器和恢复码。
@@ -60,7 +61,7 @@ Console → **Settings → Security** 提供Keycloak的WebAuthn通行密钥、TO
 ## 5. 服务保障
 
 - 公共流量会经过Cloudflare，以缓解机器人攻击和流量型攻击。
-- 每个API密钥和每个IP地址的调用限制，详见[使用政策](/zh/legals/acceptable-use-policy)。
+- 组织共享配额和按IP的请求限制见[用量与限额](/zh/usage-and-limits)。
 - 在请求转发前预留余额，可防止使用量过度超出可用余额。
 - 模型和上游的健康监测结果已发布在[状态](https://status.hostlinku.com)页面上。
 

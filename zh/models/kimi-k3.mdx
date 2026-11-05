@@ -1,13 +1,9 @@
 ---
 title: "Kimi K3"
-description: "Kimi K3 是 Kimi 的旗舰机型，专为长距离编程和端到端知识工作而设计；它具备 100 万Token的上下文窗口，并提供……"
+description: "Moonshot的Kimi K3，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-Kimi K3 是 Kimi 的旗舰机型，专为长距离编程和端到端知识工作而设计；它具备 100 万Token的上下文窗口，并提供领先的综合智能能力。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ Kimi K3 是 Kimi 的旗舰机型，专为长距离编程和端到端知识工作
 ## 能力
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -46,7 +40,7 @@ Kimi K3 是 Kimi 的旗舰机型，专为长距离编程和端到端知识工作
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

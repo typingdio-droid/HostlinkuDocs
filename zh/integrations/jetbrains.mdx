@@ -1,6 +1,7 @@
 ---
 title: "JetBrains AI 助手"
 description: "通过AI Assistant中的OpenAI兼容提供程序，在IntelliJ IDEA、PyCharm、WebStorm、GoLand及其他JetBrains IDE中使用Hostlinku模型"
+icon: code-xml
 ---
 
 
@@ -33,7 +34,7 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 
 ### （可选）设置模型分配
 
-在 **模型分配** 部分，您可以为 **核心功能**（例如 `claude-sonnet-4-6`）和 **即时助手**（例如 `claude-haiku-4-5`）选择 Hostlinku 模型。 请将**Completion model**保留为*Not selected*-内联自动完成功能使用的是未由 Hostlinku 支持的 FIM（参见 [概述](/zh/integrations#masalah-umum)）。
+在 **模型分配** 部分，您可以为 **核心功能**（例如 `claude-sonnet-4-6`）和 **即时助手**（例如 `claude-haiku-4-5`）选择 Hostlinku 模型。 请将**Completion model**保留为*Not selected*-内联自动完成功能使用的是未由 Hostlinku 支持的 FIM（参见 [概述](/zh/integrations#compatibility-limits)）。
 
 ### 在AI Chat中选择模型
 
@@ -53,7 +54,7 @@ AI Assistant 目前仅支持 *OpenAI 兼容* 的第三方提供商-尚无 Anthro
 
 - **基础 URL 必须以 `/v1` 结尾。** IDE 会自动添加 `/models` 和 `/chat/completions`；若缺少 `/v1`，*测试连接* 将因 `404` 错误而失败。
 - **没有自定义标头。** AI Assistant 仅将 API 密钥作为 `Authorization: Bearer sk-…` 发送-这对 Hostlinku 来说已经足够了。
-- **并非所有模型都适用于 Chat。**请选择带有 *工具调用* 功能的模型（在设置中勾选 **工具调用**），以便 IDE 内的工具调用功能能够正常运行。相关建议请参见 [概述](/zh/integrations)。
+- **IDE内的tool calling**需要模型支持。请检查[目录](/zh/models)，并在模型设置中启用**Tool calling**。
 - **JetBrains 中的 Claude Code** 是一个独立的集成（Claude Code 插件使用其命令行界面）。请参阅 [Claude Code](/zh/integrations/claude-code)。
 
 ## 故障排除

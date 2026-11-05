@@ -1,6 +1,7 @@
 ---
 title: "Terms and Conditions"
 description: "Hostlinku Terms and Conditions: accounts, API keys, prepaid balances, per-request billing, service limitations, liability, and dispute resolution."
+icon: file-text
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -13,11 +14,11 @@ This English translation is provided for convenience. The Indonesian version is 
 
 </Callout>
 
-**Last updated:** October 11, 2026.
+**Last updated:** November 6, 2026.
 
 <a id="ruang-lingkup"></a>
 
-## 1. Scope and Approval
+## 1. Scope and Consent
 
 Hostlinku (hereinafter **Hostlinku** or **we**) is a service whose business entity information is listed in the [Contact section](#kontak). Hostlinku provides a single API compatible with the OpenAI format for accessing various AI models from a number of upstream providers, along with a console for managing API keys, balances, and usage history (hereinafter referred to as the **Service**).
 
@@ -30,7 +31,7 @@ If you are using the Service on behalf of a company or organization, you represe
 ## 2. Accounts and Eligibility
 
 - You must have legal capacity to enter into an agreement. Users under the age of 18 may only use the Service with the consent and supervision of a parent or guardian.
-- Registration information (name, email address, and company name, if provided) must be accurate and updated if it changes. The email address must be verified using an OTP code before the account can be fully activated.
+- Registration information (name, email address, and company name, if provided) must be accurate and updated if it changes. Email verification and login follow the Keycloak flow.
 - You can sign up with an email address and password, or via single sign-on (such as Google, GitHub, or Discord) if enabled. SSO accounts are also subject to the terms and conditions of the respective identity providers.
 - One account is for one person or one organization only. Creating multiple accounts to circumvent restrictions, suspensions, or usage limits is prohibited.
 - You are responsible for all activity that occurs through your account, including activity by team members or systems to which you have granted access.
@@ -59,7 +60,7 @@ You may not resell, rent, or share direct access to your API key or account as a
 
 ## 5. Prohibited Uses
 
-Use of the Service is subject to the [Terms of Use](/en/legals/acceptable-use-policy). In summary, you are prohibited from:
+Use of the Service is subject to the [Acceptable Use Policy](/en/legals/acceptable-use-policy). In summary, you are prohibited from:
 
 - using the Service for activities that violate Indonesian law or the laws applicable to you;
 - reverse engineering, decompiling, or attempting to obtain source code, internal pricing models, or the identities of upstream parties that we do not disclose;
@@ -74,11 +75,11 @@ Use of the Service is subject to the [Terms of Use](/en/legals/acceptable-use-po
 
 The service uses a **pay-as-you-go** model based on a prepaid balance in U.S. dollars (USD). There are no subscriptions and no recurring charges. New accounts start with a zero balance.
 
-- You can add funds to your balance via [top-up](https://console.hostlinku.com/add-balance) using the available methods, which currently include QRIS, virtual accounts (via iPaymu), and cryptocurrency (via BlockBee). The available payment methods, minimum amount, and maximum amount are displayed on the top-up page and are subject to change.
+- You can add funds to your balance via [top-up](https://console.hostlinku.com/billing) using the available methods, which currently include QRIS, virtual accounts (via iPaymu), and cryptocurrency (via Heleket). The available payment methods, minimum amount, and maximum amount are displayed on the top-up page and are subject to change.
 - Payments in rupiah or cryptocurrency are converted to USD at the exchange rate displayed at checkout. Balances that have already been credited do not change in response to exchange rate fluctuations.
 - A balance is a prepaid amount used to purchase Services. The balance is not a deposit, is not a means of payment, does not accrue interest, and cannot be transferred to another account or exchanged for cash, except as provided in the [Refund Policy](/en/legals/refund-policy).
 - Top-up bonuses, promotional credits, or compensation credits have no cash value, are non-refundable, and may be subject to expiration dates or usage restrictions in accordance with the terms of each promotion.
-- We send an email alert when your available balance falls below the account's low-balance threshold (default: $25). These alerts are for informational purposes only and may be delayed or not delivered; it is your responsibility to monitor your balance.
+- Monitor your balance in Console. Auto-recharge and low-balance email settings are not available in the current Billing flow.
 
 <a id="penagihan"></a>
 
@@ -145,7 +146,7 @@ You can stop using the Service at any time and request to close your account via
 
 We may restrict, suspend, or terminate an account or API key, with or without prior notice, if necessary to prevent loss, if:
 
-- there is a violation of these terms or the Terms of Use;
+- there is a violation of these terms or the Acceptable Use Policy;
 - there are indications of fraud, payment misuse, or a chargeback related to a legitimate transaction;
 - required by law, an order from a competent authority, or an upstream provider;
 - account activity that jeopardizes the security or stability of the Service for other users;
@@ -179,7 +180,7 @@ Our total liability for all claims related to the Service is limited to the amou
 
 <a id="ganti-rugi"></a>
 
-## 16. Compensation
+## 16. Indemnification
 
 You agree to indemnify and hold harmless Hostlinku, its officers, and employees from any claims, losses, and reasonable expenses (including legal fees) arising from the use of the Service through your account, a violation of these terms, the input you submit, or the use of the output by you or your end users. We will notify you of such claims and cooperate reasonably in their resolution.
 

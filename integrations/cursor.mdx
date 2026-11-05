@@ -1,6 +1,7 @@
 ---
 title: Cursor
 description: Pakai model Hostlinku di Cursor lewat Override OpenAI Base URL - chat, Cmd-K, dan Agent dengan API key kamu sendiri
+icon: mouse-pointer-2
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -63,9 +64,7 @@ muncul di console → **Log Permintaan**.
   publik - `https://api.hostlinku.com` memenuhi syarat ini (alamat `localhost` ditolak Cursor).
 - **Cursor Tab (autocomplete) tidak terpengaruh.** Fitur Tab memakai infrastruktur khusus Cursor dan
   tidak bisa dialihkan ke provider mana pun. Hostlinku melayani chat, Cmd-K, dan Agent.
-- **Agent mode** memerlukan model dengan *tool calling* dan *streaming* - semua model yang
-  direkomendasikan di [Ikhtisar](/integrations) memenuhinya. Bila Agent menolak dengan
-  *BAD_MODEL_NAME*, periksa kembali slug dan pastikan toggle **OpenAI API Key** aktif.
+- **Agent mode** memerlukan *tool calling* dan *streaming*. Periksa dukungannya di [katalog](/models). Bila muncul *BAD_MODEL_NAME*, periksa slug dan pastikan toggle **OpenAI API Key** aktif.
 - **Koneksi menggantung / error protokol** - di pengaturan yang sama, ubah *HTTP Compatibility
   Mode* ke **HTTP/1.1**.
 

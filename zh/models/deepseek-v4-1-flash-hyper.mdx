@@ -1,13 +1,9 @@
 ---
 title: "DeepSeek-V4.1-Flash Hyper"
-description: "DeepSeek-V4.1-Flash 是一种基于非对称因果编码器-解码器架构的多模态专家混合模型，具备原生视觉理解能力。它……"
+description: "DeepSeek的DeepSeek-V4.1-Flash Hyper，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-DeepSeek-V4.1-Flash 是一种基于非对称因果编码器-解码器架构的多模态专家混合模型，具备原生视觉理解能力。 它支持 100 万Token的上下文窗口、最多 38.4 万个输出Token、思考模式和非思考模式、工具调用以及结构化 JSON 输出。可通过Hostlinku的Dedicated目录使用，性能取决于模型和请求。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ DeepSeek-V4.1-Flash 是一种基于非对称因果编码器-解码器架构的�
 ## 能力
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -45,7 +39,7 @@ DeepSeek-V4.1-Flash 是一种基于非对称因果编码器-解码器架构的�
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

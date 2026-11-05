@@ -1,6 +1,7 @@
 ---
 title: "Junie CLI"
 description: "Connect JetBrains' Junie CLI to Hostlinku using a custom model profile (Chat Completions or Anthropic Messages)"
+icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -84,4 +85,4 @@ but it is *stateless* ([details](/en/responses)). `OpenAICompletion` is the safe
 | `404` | `baseUrl` is incomplete - it must end with `/v1/chat/completions` or `/v1/messages`. |
 | Profile not found | Incorrect file name or location, or invalid JSON. Profile = filename without `.json`. |
 | Environment variable error | Export `HOSTLINKU_API_KEY` in the shell running `junie`. |
-| Tool call failed / agent is stuck in a loop | The model is too small for agentic coding - replace the main model with the one recommended in the [Overview](/en/integrations). |
+| Tool call failed / agent is stuck in a loop | Check tool calling support and model limits in the [catalog](/en/models). Inspect request logs before switching models. |

@@ -1,10 +1,9 @@
 ---
 title: "常见问题解答"
 description: "关于Hostlinku网关最常被问到的问题"
+icon: circle-help
 ---
 
-
-import { Callout } from "/snippets/mdx.jsx";
 
 ## 什么是Hostlinku Playground？
 
@@ -17,6 +16,8 @@ Playground是[Console](https://console.hostlinku.com/playground)中用于试用�
 ## 如何计费？
 
 为组织余额充值，按模型和Service Mode的价格支付用量费用。输入、输出和缓存分别计价。QRIS/VA通过iPaymu Direct支付，加密货币通过Heleket支付。参见[计费与余额](/zh/billing)。
+
+<a id="prompt-storage"></a>
 
 ## 我的提示词会被保存吗？
 
@@ -33,15 +34,15 @@ Playground是[Console](https://console.hostlinku.com/playground)中用于试用�
 ## 主题
 
 - [流模式](/zh/faqs/stream-mode)：如何结合 OpenAI SDK、Python `requests` 和 curl 使用 SSE。
-- [常见错误](/zh/faqs/errors)：401、402、404、422、429 和 503。
+- [常见错误](/zh/faqs/errors)：常见错误的原因和处理方法。
 - [速率限制](/zh/faqs/rate-limits)：配额、`Retry-After`标头和退避策略。
-- [计费与充值](/zh/faqs/billing)：余额、限额密钥和错误代码402。
-- [该模型已停产](/zh/faqs/model-unavailable)：404 与 503、已弃用，以及 Service Mode。
+- [计费与充值](/zh/faqs/billing)：余额、密钥额度和错误代码402。
+- [模型不可用](/zh/faqs/model-unavailable)：404 与 503、已弃用，以及 Service Mode。
 - [账户、计费与政策](/zh/faqs/account-billing)：账户、API 密钥、余额、充值、错误、隐私与法律。
 
 ## OpenAI的官方SDK可以使用吗？
 
-可以，无需修改代码。将 `base_url`/`baseURL` 指向 `https://api.hostlinku.com/v1`，并将 API 密钥 `sk-…` Hostlinku 作为 `api_key` 使用。 完整示例请参见 [Chat Completions](/zh/chat-completions#contoh-python-sdk-resmi-openai)。
+可以。将`base_url`/`baseURL`设为`https://api.hostlinku.com/v1`，并将以`sk-…`开头的Hostlinku API密钥作为`api_key`使用。完整示例请参见[Chat Completions](/zh/chat-completions)。
 
 ## 有哪些可用端点？
 
@@ -61,11 +62,11 @@ Playground是[Console](https://console.hostlinku.com/playground)中用于试用�
 
 ## 为什么我的请求被401拒绝了？
 
-最常见的原因：`Authorization` 标头不存在或格式不正确（`Bearer`），API 密钥复制有误、已被撤销或已过期。 请在 [console.hostlinku.com](https://console.hostlinku.com) 上创建/检查 API 密钥。详细信息：[身份验证](/zh/authentication)。
+检查API密钥和认证标头。网关接受`Authorization: Bearer sk-...`或`x-api-key`；密钥必须正确、启用且未过期。参见[身份验证](/zh/authentication)。
 
 ## 明明我有余额，为什么会显示402？
 
-请检查错误信息。402 错误有两种原因：**账户余额**不足（`available` 低于请求的预估费用），或者**API 密钥的额度**已用尽。 如果错误信息中提到“API密钥额度”，请等待重置周期（每日/每周/每月）结束，或在控制台中调整额度。详情请参阅 [计费与余额](/zh/billing)。
+请检查错误信息。402 错误有两种原因：**组织余额**不足（`available` 低于请求的预估费用），或者**API 密钥的额度**已用尽。 如果错误信息中提到“API密钥额度”，请等待重置周期（每日/每周/每月）结束，或在控制台中调整额度。详情请参阅 [计费与余额](/zh/billing)。
 
 ## 一个请求需要多少钱？
 
@@ -73,7 +74,7 @@ Playground是[Console](https://console.hostlinku.com/playground)中用于试用�
 
 ## 是否有请求频率限制？
 
-服务配额为 **每分钟 600 次请求、6,500,000 输入 token 和 200,000 输出 token**，由同一组织共享。达到配额时，该组织所有 API 密钥和成员都会受到影响。 配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
+每个Service Mode的配额为 **每分钟 600 次请求、6,500,000 输入 token 和 200,000 输出 token**，由同一组织共享。达到配额时，该组织所有 API 密钥和成员都会受到影响。 配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
 
 ## 如何发送图片/多媒体消息？
 
@@ -85,7 +86,7 @@ Playground是[Console](https://console.hostlinku.com/playground)中用于试用�
 
 ## 请求日志会保存我的对话内容吗？
 
-token数、费用、状态和延迟元数据会被记录。body存储参见上方提示词存储说明与[隐私政策](/zh/legals/privacy-policy)。
+请参阅[提示词存储说明](#prompt-storage)。
 
 ## 如何理解延迟、TTFT和TPS？
 
@@ -114,7 +115,3 @@ landing页脚徽章目前使用固定状态值。监控结果和故障请查看[
 ## 如何联系客服？
 
 请参阅 [支持](/zh/support)：发送邮件至 **halo@hostlinku.com**，建议在邮件中附上出现问题的回复中的 `x-request-id`。
-
-<Callout type="note" title="没找到答案？">
-请将问题发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)。本常见问题解答根据收到的最常见问题进行了更新。
-</Callout>

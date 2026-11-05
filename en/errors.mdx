@@ -1,11 +1,14 @@
 ---
-title: "Error"
-description: "Hostlinku Envelope Format Error, List of Error Codes, and How to Resolve Them"
+title: Errors
+description: Error formats by protocol, Hostlinku codes, and how to respond.
+icon: circle-alert
 ---
 
-import { Callout } from "/snippets/mdx.jsx";
+## Response formats
 
-All errors from the Hostlinku gateway use the same _envelope_ format, regardless of the source: validation, authentication, billing, or an issue with the upstream service:
+The error format depends on the endpoint. `error.message` explains the problem; use the HTTP status and error code/type for automated handling. Message language can vary by service.
+
+**Chat Completions and general endpoints** use Hostlinku codes:
 
 ```json
 {
@@ -20,113 +23,71 @@ All errors from the Hostlinku gateway use the same _envelope_ format, regardless
 }
 ```
 
-- `status`: always `"error"` in a failed response.
-- `error.code`: machine code (stable, safe for use in conditional logic in your code).
-- `error.message`: human-readable message; can be in Indonesian.
-- `error.details`: optional; e.g., per-field details when validation fails.
-
-## List of Error Codes
-
-| HTTP | `error.code` | Meaning | Typically occurs when |
-|---|---|---|---|
-| 400 | `BAD_REQUEST` | Request cannot be processed | Invalid parameter combination (e.g., top-up amount outside the limit, `max_tokens` exceeds the model's output limit) |
-| 401 | `UNAUTHORIZED` | Authentication failed or none | API key is incorrect, has been revoked, or has expired |
-| 402 | `PAYMENT_REQUIRED` | Balance/credit required | Insufficient balance, API key credit limit reached, payment provider not configured |
-| 403 | `FORBIDDEN` | No permission | Accessing an admin resource with a non-admin account |
-| 404 | `NOT_FOUND` | Resource not found | Incorrect endpoint; API key/transaction/log ID does not exist (or does not belong to you) |
-| 404 | `MODEL_NOT_FOUND` | The model slug does not exist in the catalog | The slug is misspelled; check `GET /v1/models` |
-| 405 | `METHOD_NOT_ALLOWED` | Invalid HTTP method | Using `GET` on an endpoint that only accepts `POST` |
-| 409 | `CONFLICT` | State conflict | Operation conflicts with the current state |
-| 422 | `VALIDATION_FAILED` | Invalid body/query | Required field missing, incorrect type, out of range |
-| 429 | `RATE_LIMITED` | Rate limit reached | Your quota is genuinely exhausted: per-minute limit exceeded (per organization or per IP) |
-| 429 | `MODEL_AT_CAPACITY` | Model is at capacity | The provider is out of capacity for this model; not your quota. Wait for `Retry-After` |
-| 429 | `MODEL_COOLDOWN` | Model deployments are recovering | All deployments for this model/tag are cooling down after failures; wait a few seconds |
-| 500 | `INTERNAL` | Internal server error | Unexpected bug in the gateway; include `x-request-id` when reporting |
-| 503 | `UPSTREAM_ERROR` | Upstream unavailable / temporary outage | Upstream failed to respond (5xx/timeout) after Hostlinku tried several times; it is safe to retry with backoff |
-| 503 | `PROVIDER_UNAVAILABLE` | Upstream cannot be reached | Temporary connection issue with the upstream, or the payment service failed to create a checkout session |
-| 503 | `MODEL_UNAVAILABLE` | Model unavailable | The model is in a non-`available` state or has been deprecated |
-
-## Retry-After headers
-
-For `429` (and some `503`) responses, the gateway forwards the upstream retry advice:
-
-| Header | Meaning |
-|---|---|
-| `Retry-After` | Seconds to wait before retrying |
-| `retry-after-ms` | The same advice in milliseconds (more precise) |
-
-The header is present only when the upstream provides a concrete number. Otherwise, wait a few
-seconds with exponential backoff and jitter. Do not retry immediately: a full model will only
-get slower.
-
-<Callout type="warning" title="Unknown endpoint">
-A nonexistent path also returns the same response as `404 NOT_FOUND`. Double-check the URL and HTTP method before concluding that there is an issue.
-</Callout>
-
-## Validation Details (422)
-
-When validation fails, `details.issues` contains a list of issues by field:
+**Anthropic Messages** uses `error.type`, without a Hostlinku code in `error.code`:
 
 ```json
-{
-  "status": "error",
-  "error": {
-    "code": "VALIDATION_FAILED",
-    "message": "The request body is invalid.",
-    "details": {
-      "issues": [
-        { "path": "messages", "message": "Array must contain at least 1 element(s)" },
-        { "path": "temperature", "message": "Number must be less than or equal to 2" }
-      ]
-    }
-  }
-}
+{"type":"error","error":{"type":"invalid_request_error","message":"The request body is invalid."}}
 ```
 
-## Streaming Error
+**OpenAI Responses** uses the OpenAI format with mapped codes:
 
-Errors that occur **in the middle** of an SSE stream are sent as data events in the same stream (not as HTTP status codes):
+```json
+{"error":{"message":"The request body is invalid.","type":"invalid_request_error","param":null,"code":"invalid_request"}}
+```
+
+Responses mapping examples: `UNAUTHORIZED` → `invalid_api_key`, `MODEL_NOT_FOUND` → `model_not_found`, and 429 errors → `rate_limit_exceeded`. Messages groups these through types such as `authentication_error`, `not_found_error`, and `rate_limit_error`.
+
+Schema validation returns **422** for Chat Completions and **400** for Messages/Responses. `error.details` is optional; `error.details.issues` identifies invalid fields. Errors before a protocol handler, such as body parsing, request rate limiting, or unknown paths, can use the general Hostlinku format.
+
+## Hostlinku codes
+
+This table covers Hostlinku codes for gateway and general endpoints. Messages/Responses use the mapping above; other account or payment codes can appear on their respective endpoints.
+
+| HTTP | Code | Meaning and action |
+|---|---|---|
+| 400 | `BAD_REQUEST` | Invalid JSON/parameters, including the model output limit. Correct the request. |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | The model is unavailable in the key's Service Mode. Choose from `GET /v1/models` using the same key. |
+| 400 | `UPSTREAM_REJECTED` | The provider rejected the request. Read the sanitized reason and correct the input. |
+| 401 | `UNAUTHORIZED` | Missing, invalid, revoked, or expired authentication. Check the key. |
+| 402 | `PAYMENT_REQUIRED` | Insufficient available balance or key spending limit reached. Check [Billing](/en/billing). |
+| 403 | `FORBIDDEN` | Access denied. Check account permissions. |
+| 404 | `NOT_FOUND` | Path or resource unavailable. Check the URL and ID. |
+| 404 | `MODEL_NOT_FOUND` | Unknown model slug. Check the catalog. |
+| 405 | `METHOD_NOT_ALLOWED` | Incorrect HTTP method. Use a method from the `Allow` header. |
+| 413 | `BAD_REQUEST` | Payload too large. Reduce the body size. |
+| 415 | `BAD_REQUEST` | Unsupported body encoding/charset. Check the body format. |
+| 422 | `VALIDATION_FAILED` | Body/query validation failed. Correct fields in `error.details.issues`. |
+| 429 | `RATE_LIMITED` | Organization quota per Service Mode or endpoint/IP limit reached; upstream can also return rate limiting. Wait and reduce concurrency. |
+| 429 | `MODEL_AT_CAPACITY` | The provider's model capacity is full. Follow retry advice. |
+| 429 | `MODEL_COOLDOWN` | Model deployments are recovering after failures. Follow retry advice. |
+| 500 | `INTERNAL` | Internal error. Save request details and report repeated failures. |
+| 503 | `MODEL_UNAVAILABLE` | Model unavailable or deprecated. Check the catalog and replacements; retry if the outage is temporary. |
+| 503 | `PROVIDER_UNAVAILABLE` | Provider route unavailable. Retry with a delay and a limited attempt count. |
+| 503 | `UPSTREAM_ERROR` | Upstream failure. Retry with a delay and a limited attempt count. |
+| 503 | `UPSTREAM_TIMEOUT` | Upstream timed out. Retry with a delay and a limited attempt count. |
+| 503 | `UPSTREAM_UNREACHABLE` | Upstream unreachable. Retry with a delay and a limited attempt count. |
+
+### Console and checkout
+
+These account/checkout codes are separate from the `/v1/*` inference error contract:
+
+| HTTP | Code | Meaning and action |
+|---|---|---|
+| 403 | `API_KEY_NOT_ALLOWED` | An API key was used on a Console account endpoint. Use a Console login session. |
+| 409 | `CONFLICT` | The operation conflicts with the current state. Reload the state before retrying. |
+| 424 | `CHECKOUT_FAILED` | The provider failed to create an invoice. Read the message and check the transaction before creating another. |
+| 424 | `BANK_BUSY` | The iPaymu bank/channel is busy. Choose another bank offered by checkout. |
+
+## Retry and streaming
+
+When present, `Retry-After` gives the wait in seconds and `retry-after-ms` gives milliseconds. Otherwise, use exponential backoff with jitter and a limited attempt count. Adding keys or member accounts within the same organization does not increase the shared quota; see [Usage & Limits](/en/usage-and-limits).
+
+Once SSE begins, failures are sent as error events within the stream; the initial HTTP status does not change. Chat Completions example:
 
 ```text
-data: {"error":{"code":"UPSTREAM_ERROR","message":"The upstream is unavailable. Please try again.","type":"upstream_error"}}
+data: {"error":{"code":"MODEL_AT_CAPACITY","message":"The model is at capacity right now. Please retry shortly.","type":"upstream_error","retry_after_ms":4000}}
 ```
 
-The gateway will not send `data: [DONE]` after an error event, so a disconnected stream can always be distinguished from a stream that completed normally.
+The gateway does not append `[DONE]` after a stream failure it handles. A connection can also close without an error event. `[DONE]` or connection closure alone does not establish success; check error events and request logs. See [Messages](/en/anthropic-messages) and [Responses](/en/responses) for their event formats.
 
-## Handling Errors in Code
-
-How to handle each error category:
-
-- **401**: Invalid or expired API key. Correct the configuration; do not retry repeatedly.
-- **402**: Top up your balance or increase/reset your API key limit. See [Billing & Balance](/en/billing).
-- **422**: Fix the request body; see `details.issues` for the location of the problem.
-- **429**: check `error.code`. `RATE_LIMITED` means your key/IP quota is exhausted;
-`MODEL_AT_CAPACITY` / `MODEL_COOLDOWN` means the model is full or recovering — wait for
-`Retry-After`. See [Usage & Limits](/en/usage-and-limits).
-- **5xx** (`UPSTREAM_ERROR`, `PROVIDER_UNAVAILABLE`, `INTERNAL`): retry with a backoff of several
-times; Hostlinku tried several times before giving up.
-
-Example of handling errors with the OpenAI SDK (Python):
-
-```python
-import openai
-from openai import OpenAI
-
-client = OpenAI(base_url="https://api.hostlinku.com/v1", api_key="sk-your-api-key")
-
-try:
-    response = client.chat.completions.create(
-        model="gpt-5-5",
-        messages=[{"role": "user", "content": "Halo"}],
-    )
-except openai.AuthenticationError as err:      # 401
-    raise SystemExit(f"API key bermasalah: {err}")
-except openai.RateLimitError as err:           # 429
-    raise SystemExit(f"Rate limit: {err}")
-except openai.APIStatusError as err:           # 4xx/5xx lainnya
-    print("status:", err.status_code, "body:", err.response.text)
-```
-
-<Callout type="note" title="Always include the x-request-id when reporting">
-You should also note the `x-request-id` header from the failed response: the support team uses that ID to track down the request in the gateway logs.
-</Callout>
+When reporting, include `x-request-id` if available, time, endpoint, model, HTTP status, and the error body without secrets. See [Support](/en/support).

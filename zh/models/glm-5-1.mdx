@@ -1,13 +1,9 @@
 ---
 title: "GLM 5.1"
-description: "GLM-5.1 是 Zhipu 的旗舰文本模型，具备 20 万上下文容量和 12.8 万最大输出长度，在长时序规划、代理编码、工具使用、结构化……等方面得到了强化。"
+description: "Zhipu的GLM 5.1，目录上下文为200,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-GLM-5.1 是 Zhipu 的旗舰文本模型，具备 20 万词的上下文容量和 12.8 万词的最大输出长度，在长时规划、代理编码、工具使用、结构化输出、上下文缓存以及 MCP 方面得到了强化。
 
 | 属性 | 值 |
 |---|---|
@@ -23,8 +19,6 @@ GLM-5.1 是 Zhipu 的旗舰文本模型，具备 20 万词的上下文容量和 
 ## 能力
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -47,7 +41,7 @@ GLM-5.1 是 Zhipu 的旗舰文本模型，具备 20 万词的上下文容量和 
 | `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

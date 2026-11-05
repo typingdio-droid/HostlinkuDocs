@@ -1,13 +1,9 @@
 ---
 title: "Claude Sonnet 5"
-description: "Claude Sonnet 5は、これまでのSonnetモデルの中で最もエージェント機能に優れたモデルとなるよう設計されています。計画立案や、ブラウザやターミナルなどのツールの使用、自律的な動作が可能で……"
+description: "AnthropicのClaude Sonnet 5。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Claude Sonnet 5は、これまでのSonnetモデルの中で最もエージェント機能に優れたモデルとして設計されています。このモデルは、計画立案やブラウザ・ターミナルなどのツールの使用が可能であり、つい最近まではより大型で高価なモデルでしか実現できなかったレベルの自律的な動作を行うことができます。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ Claude Sonnet 5は、これまでのSonnetモデルの中で最もエージェ�
 ## 機能
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -48,7 +42,7 @@ Claude Sonnet 5は、これまでのSonnetモデルの中で最もエージェ�
 | `POST /v1/messages` | Anthropic Messages | ネイティブ |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

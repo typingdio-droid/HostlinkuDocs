@@ -1,6 +1,7 @@
 ---
-title: "该模型暂无库存"
+title: "模型不可用"
 description: "404与503的区别、Service Mode、已弃用的模型以及可采取的措施。"
+icon: server-off
 ---
 
 
@@ -10,10 +11,10 @@ import { Callout } from "/snippets/mdx.jsx";
 
 | 状态 | 代码 | 含义 | 措施 |
 |---|---|---|---|
-| 404 | `MODEL_NOT_FOUND` | 该Slug未在目录中 | 从 `GET /v1/models` 中提取短链接 |
+| 404 | `MODEL_NOT_FOUND` | 该Slug未在目录中 | 从`GET /v1/models`复制模型slug |
 | 400 | `MODEL_NOT_IN_SERVICE_MODE` | 该模型已存在，但不支持API密钥模式 | 更改密钥/模式或选择其他模型 |
-| 503 | `MODEL_UNAVAILABLE` | 该模型已弃用/目前不可用 | 检查`replacement_slug`是否存在错误或是否在目录中 |
-| 503 | `UPSTREAM_ERROR` | 上游出现临时故障 | 请尝试使用backoff |
+| 503 | `MODEL_UNAVAILABLE` | 该模型已弃用/目前不可用 | 检查错误信息中的`replacement_slug`或查阅目录 |
+| 503 | `UPSTREAM_ERROR` | 上游出现临时故障 | 等待后退避重试 |
 
 ## 已弃用的模型
 

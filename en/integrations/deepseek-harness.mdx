@@ -1,6 +1,7 @@
 ---
 title: DeepSeek Harness
 description: Connect DeepSeek Harness (dsh) - the open-source coding agent from DeepSeek - to Hostlinku via DEEPSEEK_BASE_URL. Verified installation, cordis.patch.yml configuration, and troubleshooting guide.
+icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -122,9 +123,7 @@ can check the active list for your key via `GET /v1/models`.
 | Open-weight alternatives | `kimi-k2-7-code`, `glm-5-3` | Tool calling and reasoning. |
 
 <Callout type="tip" title="Match maxTokens to your model">
-  `maxTokens` is the per-request output limit, not the context window. `32000` is safe for almost
-  every model. Maximum output values per model (e.g., `131072` for `deepseek-v4-flash`) are listed
-  on each model's catalog page.
+  `maxTokens` limits output per request, not the context window. The example value `32000` is an initial configuration, not the model’s maximum. Check the model’s output limit in the [catalog](/en/models); if none is listed, reduce the value when a request is rejected.
 </Callout>
 
 ## Security

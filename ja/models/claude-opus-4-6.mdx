@@ -1,6 +1,6 @@
 ---
 title: "Claude Opus 4.6"
-description: "Claude Opus 4.6は、複雑なコーディング、専門的な知識作業、企業のワークフロー、および長時間実行されるエージェントタスクに対応する、高性能なOpusモデルです。"
+description: "AnthropicのClaude Opus 4.6。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -20,8 +20,6 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 ## 機能
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -44,7 +42,7 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | `POST /v1/messages` | Anthropic Messages | ネイティブ |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

@@ -1,6 +1,7 @@
 ---
 title: "Junie CLI"
 description: "JetBrainsのJunie CLIを、カスタムモデルプロファイル（Chat CompletionsまたはAnthropic Messages）を介してHostlinkuに接続する"
+icon: terminal
 ---
 
 
@@ -77,9 +78,9 @@ Messages API（フルプロンプトキャッシュ）を使用したClaudeモ�
 
 ## トラブルシューティング
 
-| 症状 | Solusi |
+| 症状 | 対処方法 |
 |---|---|
 | `404` | `baseUrl` は不完全です - `/v1/chat/completions` または `/v1/messages` で終わる必要があります。 |
 | プロフィールが表示されない | ファイル名またはファイルの場所が間違っているか、JSONが無効です。プロファイル = `.json`を含まないファイル名。 |
 | 環境変数のエラー | `junie` を実行しているシェルで、`HOSTLINKU_API_KEY` をエクスポートします。 |
-| ツール呼び出しに失敗した／エージェントがループしている | このモデルはエージェント型コーディングには小さすぎます - メインのモデルを[概要](/ja/integrations)の推奨モデルに変更してください。 |
+| ツール呼び出しに失敗する／エージェントがループする | [カタログ](/ja/models)でtool calling対応とモデル上限を確認してください。モデルを変更する前にリクエストログを調べてください。 |

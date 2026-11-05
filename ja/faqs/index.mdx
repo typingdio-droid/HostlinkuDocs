@@ -1,10 +1,9 @@
 ---
 title: "よくある質問"
 description: "Hostlinkuゲートウェイに関して最もよく寄せられる質問"
+icon: circle-help
 ---
 
-
-import { Callout } from "/snippets/mdx.jsx";
 
 ## Hostlinku Playgroundとは何ですか？
 
@@ -17,6 +16,8 @@ SDKやアプリの接続先をHostlinkuに設定し、APIキーとモデルのsl
 ## 課金はどのように行われますか？
 
 組織残高をチャージし、モデルとService Modeの料金で使用量に応じて支払います。入力・出力・キャッシュの料金はそれぞれ異なります。QRIS/VAはiPaymu Direct、暗号資産はHeleketで決済します。[課金と残高](/ja/billing)を参照してください。
+
+<a id="prompt-storage"></a>
 
 ## プロンプトは保存されますか？
 
@@ -33,15 +34,15 @@ SDKやアプリの接続先をHostlinkuに設定し、APIキーとモデルのsl
 ## トピック
 
 - [ストリームモード](/ja/faqs/stream-mode)：OpenAI SDK、Python `requests`、およびcurlを使用してSSEを利用する方法。
-- [よく発生するエラー](/ja/faqs/errors)：401、402、404、422、429、および503。
+- [よく発生するエラー](/ja/faqs/errors)：一般的なエラーの原因と対処方法。
 - [レート制限](/ja/faqs/rate-limits)：クォータ、`Retry-After`ヘッダー、およびバックオフ。
-- [請求・チャージ](/ja/faqs/billing)：残高、リミットキー、およびエラー402。
-- [モデルは利用不可](/ja/faqs/model-unavailable)：404 対 503、非推奨、および Service Mode。
+- [請求・チャージ](/ja/faqs/billing)：残高、キーの利用上限、およびエラー402。
+- [モデルを利用できない場合](/ja/faqs/model-unavailable)：404 対 503、非推奨、および Service Mode。
 - [アカウント・請求・ポリシー](/ja/faqs/account-billing)：アカウント、API キー、残高、チャージ、エラー、プライバシー、法務。
 
 ## OpenAIの公式SDKは使用できますか？
 
-可能です。コードの変更は不要です。`base_url`/`baseURL`を`https://api.hostlinku.com/v1`にリダイレクトし、`sk-…`およびHostlinkuのAPIキーを`api_key`として使用してください。 完全な例は [Chat Completions](/ja/chat-completions#contoh-python-sdk-resmi-openai) にあります。
+はい。`base_url`/`baseURL`を`https://api.hostlinku.com/v1`に設定し、`sk-…`で始まるHostlinkuのAPIキーを`api_key`として使用してください。完全な例は[Chat Completions](/ja/chat-completions)にあります。
 
 ## どのようなエンドポイントが利用可能ですか？
 
@@ -61,11 +62,11 @@ SDKやアプリの接続先をHostlinkuに設定し、APIキーとモデルのsl
 
 ## なぜ私のリクエストが401で拒否されたのですか？
 
-最も一般的な原因：`Authorization`ヘッダーが存在しない、または`Bearer`の形式ではない、APIキーのコピーが間違っている、APIキーが失効している、または有効期限が切れている。 [console.hostlinku.com](https://console.hostlinku.com) で API キーを作成または確認してください。詳細はこちら：[認証](/ja/authentication)。
+APIキーと認証ヘッダーを確認してください。ゲートウェイは`Authorization: Bearer sk-...`または`x-api-key`を受け付けます。キーは正しく、有効で、期限内である必要があります。[認証](/ja/authentication)を参照してください。
 
 ## 残高があるのに、なぜ402エラーが表示されるのですか？
 
-エラーメッセージを確認してください。402エラーには2つの原因があります：**アカウント残高**が不足している（`available`：リクエストの推定費用を下回っている）、または**APIキーのクレジット制限**に達している場合です。 メッセージに「APIキーのクレジット制限」と表示されている場合は、リセット期間（毎日／毎週／毎月）を待つか、コンソールで制限を変更してください。詳細は[課金と残高](/ja/billing)をご覧ください。
+エラーメッセージを確認してください。402エラーには2つの原因があります：**組織の残高**が不足している（`available`：リクエストの推定費用を下回っている）、または**APIキーのクレジット制限**に達している場合です。 メッセージに「APIキーのクレジット制限」と表示されている場合は、リセット期間（毎日／毎週／毎月）を待つか、コンソールで制限を変更してください。詳細は[課金と残高](/ja/billing)をご覧ください。
 
 ## 1回のリクエストにかかる費用はいくらですか？
 
@@ -73,7 +74,7 @@ SDKやアプリの接続先をHostlinkuに設定し、APIキーとモデルのsl
 
 ## レート制限はありますか？
 
-利用枠は **毎分 600 リクエスト、6,500,000 入力 token、200,000 出力 token** で、同じ組織内で共有します。上限に達すると、その組織のすべての API キーとメンバーが影響を受けます。 利用枠と 429 の対応は[使用状況と制限](/ja/usage-and-limits)を参照してください。
+各Service Modeの利用枠は **毎分 600 リクエスト、6,500,000 入力 token、200,000 出力 token** で、同じ組織内で共有します。上限に達すると、その組織のすべての API キーとメンバーが影響を受けます。 利用枠と 429 の対応は[使用状況と制限](/ja/usage-and-limits)を参照してください。
 
 ## 画像やマルチメディアメッセージを送信するにはどうすればよいですか？
 
@@ -85,7 +86,7 @@ Console → **API Keys**でキーを無効にすると、以降のリクエス�
 
 ## リクエストログには、私の会話の内容が記録されていますか？
 
-token数・料金・状態・レイテンシのメタデータは記録されます。bodyの保存については、上のプロンプト保存の回答と[プライバシー](/ja/legals/privacy-policy)を参照してください。
+[プロンプト保存の回答](#prompt-storage)を参照してください。
 
 ## レイテンシ、TTFT、TPSは何を表しますか？
 
@@ -114,7 +115,3 @@ health probeの生データはデフォルト30日間保持され、定期的に
 ## サポートにはどのように連絡すればよいですか？
 
 [サポート](/ja/support)をご覧ください：**halo@hostlinku.com** 宛てにメールをお送りください。問題のある返信に含まれる「`x-request-id`」を必ず記載してください。
-
-<Callout type="note" title="答えが見つかりませんか？">
-ご質問は [halo@hostlinku.com](mailto:halo@hostlinku.com) までお送りください。このFAQは、最も頻繁に寄せられる質問に基づいて更新されています。
-</Callout>

@@ -1,13 +1,9 @@
 ---
 title: "Claude Fable 5"
-description: "Claude Fable 5 是 Anthropic 的旗舰 Mythos 级模型，专为长时域推理、代理编码和自主工作流进行了优化。它支持文本和..."
+description: "Anthropic的Claude Fable 5，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-Claude Fable 5 是 Anthropic 的旗舰级 Mythos 类模型，专为长时域推理、代理编码和自主工作流进行了优化。它支持文本和图像输入，并生成文本输出，具有 100 万Token的上下文窗口和 12.8 万的最大输出容量。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ Claude Fable 5 是 Anthropic 的旗舰级 Mythos 类模型，专为长时域推�
 ## 能力
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -48,7 +42,7 @@ Claude Fable 5 是 Anthropic 的旗舰级 Mythos 类模型，专为长时域推�
 | `POST /v1/messages` | Anthropic Messages | 原生 |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

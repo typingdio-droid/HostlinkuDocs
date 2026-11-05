@@ -1,13 +1,9 @@
 ---
 title: "Claude Sonnet 5"
-description: "Claude Sonnet 5 is designed to be the most agent-capable Sonnet model to date. It can plan, use tools such as browsers and terminals, and operate autonomousl..."
+description: "Claude Sonnet 5 dari Anthropic, dengan konteks katalog 1,000,000 token."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## Ringkasan
-
-Claude Sonnet 5 is designed to be the most agent-capable Sonnet model to date. It can plan, use tools such as browsers and terminals, and operate autonomously at a level that until recently only larger, more expensive models could achieve.
 
 | Properti | Nilai |
 |---|---|
@@ -24,8 +20,6 @@ Claude Sonnet 5 is designed to be the most agent-capable Sonnet model to date. I
 ## Kapabilitas
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-Fitur dan batas request mengikuti model, Service Mode, serta protokol yang digunakan.
 
 ## Harga
 
@@ -48,7 +42,7 @@ Diperbarui **6 November 2026**. [Harga terkini](https://hostlinku.com/models/cla
 | `POST /v1/messages` | Anthropic Messages | native |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-Bridge menyesuaikan format API; fitur vendor dan tool bawaan aplikasi dapat berbeda. Gunakan API key dengan Service Mode yang tercantum di atas.
+[Batas kompatibilitas](/api-reference#kompatibilitas-model-dan-tool).
 
 ## Contoh request
 

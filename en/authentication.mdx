@@ -1,6 +1,7 @@
 ---
 title: "Authentication"
 description: "Gateway API keys, Console login, Service Modes, expiry, and credit limits."
+icon: key
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -53,7 +54,7 @@ Usage is accumulated from recorded request costs for the key. Once the cap is re
 
 ## Rate limits and errors
 
-The service quota is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached. See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
+All API keys and organization members share the quota **for each Service Mode**. Adding keys or member accounts does not increase it. See [Usage & Limits](/en/usage-and-limits) for quota values and handling 429.
 
 | Condition | HTTP | Code |
 |---|---|---|

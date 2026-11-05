@@ -1,6 +1,7 @@
 ---
 title: "身份验证"
 description: "网关 API 密钥、Console 登录、Service Mode、有效期及用量限额。"
+icon: key
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -53,7 +54,7 @@ Console提供 **Monthly Spending Limit**，密钥管理API支持以下UTC日历�
 
 ## 速率限制和错误
 
-服务配额为 **每分钟 600 次请求、6,500,000 输入 token 和 200,000 输出 token**，由同一组织共享。达到配额时，该组织所有 API 密钥和成员都会受到影响。 配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
+所有API密钥和组织成员 **按每个Service Mode** 共享配额。增加密钥或成员账户不会增加配额。具体上限及429处理请参阅 [用量与限额](/zh/usage-and-limits)。
 
 | 情况 | HTTP | 代码 |
 |---|---|---|

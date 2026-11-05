@@ -1,6 +1,7 @@
 ---
 title: "VS Code（聊天）"
 description: "在 VS Code 的内置聊天和客服功能中，通过“自定义端点”提供商使用 Hostlinku 模型-无需登录 GitHub，仅需 API 密钥 Hostlinku"
+icon: code-xml
 ---
 
 
@@ -68,6 +69,8 @@ VS Code 打开了 `chatLanguageModels.json`。将 [目录](/zh/models) 中的 sl
   }
 ]
 ```
+
+上方的`contextWindow`和`maxOutputTokens`是VS Code的本地限制示例。请按[目录](/zh/models)中的模型页面调整；较低的值会限制工具内的使用量。
 
 ![VS Code 中的 chatLanguageModels.json 文件包含提供商 Hostlinku，其网址为 https://api.hostlinku.com/v1/chat/completions](/images/integrations/vscode-chatlanguagemodels.webp "填写完 chatLanguageModels.json 后：提供商 customendpoint Hostlinku，完整 URL 为 /v1/chat/completions，apiKey 为密钥引用。")
 

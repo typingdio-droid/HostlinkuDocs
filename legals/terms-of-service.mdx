@@ -1,11 +1,12 @@
 ---
 title: "Syarat dan Ketentuan"
 description: "Syarat dan Ketentuan penggunaan Hostlinku: akun, API key, saldo prabayar, penagihan per request, batasan layanan, tanggung jawab, dan penyelesaian sengketa."
+icon: file-text
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-**Terakhir diperbarui:** 11 Oktober 2026.
+**Terakhir diperbarui:** 6 November 2026.
 
 <a id="ruang-lingkup"></a>
 
@@ -22,7 +23,7 @@ Jika kamu menggunakan Layanan atas nama perusahaan atau organisasi, kamu menyata
 ## 2. Akun dan kelayakan
 
 - Kamu harus cakap secara hukum untuk membuat perjanjian. Pengguna di bawah 18 tahun hanya boleh menggunakan Layanan dengan persetujuan dan pengawasan orang tua atau wali.
-- Data pendaftaran (nama, email, dan nama perusahaan bila diisi) wajib benar dan diperbarui bila berubah. Alamat email harus diverifikasi melalui kode OTP sebelum akun dapat digunakan sepenuhnya.
+- Data pendaftaran (nama, email, dan nama perusahaan bila diisi) wajib benar dan diperbarui bila berubah. Verifikasi email dan login mengikuti alur Keycloak.
 - Kamu dapat mendaftar dengan email dan kata sandi, atau melalui single sign-on (misalnya Google, GitHub, atau Discord) bila diaktifkan. Akun SSO tunduk juga pada ketentuan penyedia identitas tersebut.
 - Satu akun hanya untuk satu orang atau satu organisasi. Membuat banyak akun untuk menghindari pembatasan, penangguhan, atau batas pemakaian dilarang.
 - Kamu bertanggung jawab atas seluruh aktivitas yang terjadi melalui akun kamu, termasuk aktivitas anggota tim atau sistem yang kamu beri akses.
@@ -66,11 +67,11 @@ Penggunaan Layanan tunduk pada [Kebijakan Penggunaan](/legals/acceptable-use-pol
 
 Layanan menggunakan model **pay-as-you-go** berbasis saldo prabayar dalam dolar Amerika Serikat (USD). Tidak ada langganan dan tidak ada tagihan berulang. Akun baru dimulai dengan saldo nol.
 
-- Saldo ditambah melalui [top-up](https://console.hostlinku.com/add-balance) menggunakan metode yang tersedia, saat ini QRIS dan virtual account (melalui iPaymu) serta aset kripto (melalui BlockBee). Ketersediaan metode, nominal minimum, dan nominal maksimum ditampilkan di halaman top-up dan dapat berubah.
+- Saldo ditambah melalui [top-up](https://console.hostlinku.com/billing) menggunakan metode yang tersedia, saat ini QRIS dan virtual account (melalui iPaymu) serta aset kripto (melalui Heleket). Ketersediaan metode, nominal minimum, dan nominal maksimum ditampilkan di halaman top-up dan dapat berubah.
 - Pembayaran dalam rupiah atau aset kripto dikonversi ke USD dengan kurs yang ditampilkan saat checkout. Saldo yang sudah dikreditkan tidak berubah mengikuti fluktuasi kurs.
 - Saldo adalah nilai prabayar untuk membeli Layanan. Saldo bukan simpanan, bukan alat pembayaran, tidak berbunga, dan tidak dapat dipindahkan ke akun lain atau ditukar dengan uang tunai kecuali sebagaimana diatur dalam [Kebijakan Pengembalian Dana](/legals/refund-policy).
 - Bonus top-up, kredit promosi, atau kredit kompensasi tidak memiliki nilai tunai, tidak dapat dikembalikan, dan dapat dibatasi masa berlaku atau penggunaannya sesuai syarat promosi masing-masing.
-- Kami mengirim email peringatan saat saldo tersedia turun melewati ambang saldo rendah akun (default USD 25). Peringatan ini bersifat informatif dan dapat terlambat atau tidak terkirim; memantau saldo tetap tanggung jawab kamu.
+- Pantau saldo melalui Console. Pengaturan auto-recharge dan email saldo rendah belum tersedia pada alur Billing aktif.
 
 <a id="penagihan"></a>
 

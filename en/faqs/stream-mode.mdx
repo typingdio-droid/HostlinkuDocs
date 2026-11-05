@@ -1,11 +1,12 @@
 ---
 title: Stream Mode
 description: How to use SSE streaming in Hostlinku with the OpenAI SDK, Python requests, curl, and Node.js.
+icon: radio
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Stream mode sends the answer token by token over SSE (`text/event-stream`). The first token appears sooner, without waiting for the full answer. Enable it with `"stream": true`.
+Stream mode sends the answer token by token over SSE (`text/event-stream`). Tokens can be displayed as the model starts answering, without waiting for the full answer; time to the first token depends on the model and provider. Enable it with `"stream": true`.
 
 ## Quick start: curl
 

@@ -1,43 +1,26 @@
 ---
-title: "快速入门"
-description: "从账户注册到向Hostlinku网关发送首个请求仅需五分钟"
+title: 快速入门
+description: 创建API密钥并向Hostlinku发送第一个请求。
+icon: rocket
 ---
 
+import { Steps } from "/snippets/mdx.jsx";
 
-import { Callout, Steps } from "/snippets/mdx.jsx";
-
-本页面将引导你从零开始，成功通过 Hostlinku 发送一条聊天补全请求。
-
-## 先决条件
-
-- **Hostlinku 账户**：从 [后端注册](https://api.hostlinku.com/api/auth2/register) 开始，浏览器会跳转至Keycloak。
-- **余额**：网关会按每个Token扣除余额。在提交生产请求前，请在控制台中充值。测试请求的费用通常低于一分钱，但余额仍不得为零。请参阅 [计费与余额](/zh/billing)。
-- **测试工具**：仅需 curl 即可。对于高级示例，可直接使用官方 SDK OpenAI（`pip install openai`）或 Node（`npm install openai`），无需修改代码。
-
-## 步骤
+准备好curl和余额，然后按照以下步骤操作。
 
 <Steps>
 
-### 注册或登录
+### 登录并充值
 
-打开 [注册](https://api.hostlinku.com/api/auth2/register) 或 [登录](https://api.hostlinku.com/api/auth2/login)。后端启动 `auth2.hostlinku.com` 的Keycloak流程，处理回调后打开Console。通行密钥和SSO选项取决于账户、设备及可用提供商。
+打开 [注册](https://api.hostlinku.com/api/auth2/register) 或 [登录](https://api.hostlinku.com/api/auth2/login)。登录由Keycloak处理。在 [Console](https://console.hostlinku.com) 的 **Billing** 中充值后再发送请求。支付方式请参阅 [Billing](/zh/billing)。
 
-### 创建 API 密钥
+### 创建API密钥
 
-进入 [console.hostlinku.com](https://console.hostlinku.com) → **API 密钥** 菜单 → **创建 API 密钥**。在创建 API 密钥的对话框中，您可以设置：
-
-- **名称**：用于识别，例如 `your-production-app`。
-- **Service Mode**：选择 **Performance**（默认）、**Low-Cost** 或 **Dedicated**。模式决定模型和价格。
-- **有效期**：30天（默认）、60天、90天或永不过期。
-- **Monthly Spending Limit**：可选的每月支出限额。Console表单没有作用域或每日/每周重置选项；API合约请参阅 [身份验证](/zh/authentication)。
-
-<Callout type="warning" title="密钥只显示过一次">
-API密钥创建后，格式为`sk-…`的密钥密文**仅在控制台中显示一次**。请将其复制并保存在安全的地方：服务器会将其以SHA-256哈希值的形式存储，且无法再次显示。如果密钥密文丢失，请撤销该API密钥，然后创建一个新的。
-</Callout>
+打开 **API Keys → 创建API密钥**，输入名称并选择 **Performance**（默认）、**Low-Cost** 或 **Dedicated**。Service Mode决定模型及价格。复制仅显示一次的 `sk-…` 密钥并保存在服务器环境变量中。有效期、支出限额及通行密钥／2FA设置请参阅 [身份验证](/zh/authentication)。
 
 ### 发送第一个请求
 
-所有网关端点均位于 `https://api.hostlinku.com`，采用 `Authorization: Bearer sk-…` 进行身份验证。非流式请求示例：
+使用密钥Service Mode支持的模型。本例使用 `gpt-5-5`；Dedicated密钥或其他模型请从 [`GET /v1/models`](/zh/models) 获取slug。
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -45,89 +28,42 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [
-      { "role": "user", "content": "Halo! Perkenalkan dirimu singkat saja." }
-    ]
+    "messages": [{"role": "user", "content": "你好！请简短介绍自己。"}]
   }'
 ```
 
-如果一切正常，你将收到类似 OpenAI 格式的 JSON 响应，以及包含请求费用和延迟的 `hostlinku` 数据块：
+非流式响应为JSON。以下为节选示例，Token数、费用和延迟仅作说明：
 
 ```json
 {
   "id": "cmpl_…",
   "object": "chat.completion",
   "model": "gpt-5-5",
-  "choices": [
-    {
-      "index": 0,
-      "message": { "role": "assistant", "content": "你好! 我是 …" },
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": { "prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60 },
+  "choices": [{
+    "index": 0,
+    "message": {"role": "assistant", "content": "你好！我是 …"},
+    "finish_reason": "stop"
+  }],
+  "usage": {"prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60},
   "hostlinku": {
     "cost": 0.000123,
+    "currency": "🪙",
+    "serviceMode": "performance",
     "latencyMs": 812
   }
 }
 ```
 
-上述模型 slug仅供示例。您可以在控制台（**模型**菜单）或通过 [端点 `GET /v1/models`](/zh/models) 查看您账户的有效别名列表。
+### 检查结果
 
-### 建议：使用流式传输
-
-聊天应用可发送 `"stream": true`，在生成过程中显示回答。首个Token时间取决于模型和提供商状态，不保证特定延迟。
-
-```python
-import os
-from openai import OpenAI
-
-client = OpenAI(
-    base_url="https://api.hostlinku.com/v1",
-    api_key=os.environ["HOSTLINKU_API_KEY"],
-)
-
-stream = client.chat.completions.create(
-    model="gpt-5-5",
-    messages=[{"role": "user", "content": "Halo!"}],
-    stream=True,
-)
-for chunk in stream:
-    if chunk.choices and chunk.choices[0].delta.content:
-        print(chunk.choices[0].delta.content, end="", flush=True)
-```
-
-使用 curl 时，添加 `-N` 以防止输出被缓冲：
-
-```bash
-curl -N https://api.hostlinku.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-your-api-key" \
-  -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
-```
-
-### 查询余额和交易记录
-
-在Console的 **Billing** 查看组织余额，在 **Logs** 查看Token、费用和延迟。Console会话对应端点为 [`GET /api/wallet/account`](/zh/billing)，公开API（`sk-…`）使用 `/v1/*`。
+在 **Logs** 查看请求Token数、费用和延迟，在 **Billing** 查看组织余额。请求失败时请查看 [错误代码](/zh/errors)。API密钥用于 `/v1/*`；Console账户端点使用登录会话。
 
 </Steps>
 
 ## 下一步
 
-- [身份验证](/zh/authentication)：API密钥详情、有效期和额度限制。
-- [Chat Completions](/zh/chat-completions)：所有参数、SSE流处理以及Python示例。
-- [模型](/zh/models)：模型目录及如何选择合适的模型。
-- [错误](/zh/errors)：各错误代码的含义及处理方法。
-- [Claude Code](/zh/integrations/claude-code)、[Codex CLI](/zh/integrations/codex-cli)、[DeepSeek Harness](/zh/integrations/deepseek-harness) 与 [CC Switch](/zh/integrations/cc-switch)：将您的 API 密钥直接连接到 AI 编程代理与 Harness。
-- [SDK 与代码示例](/zh/sdk)：三种 API 方言的 Python 和 TypeScript 示例。
-
-<Callout type="note" title="注释">
-需要帮助吗？请联系 [halo@hostlinku.com](mailto:halo@hostlinku.com)，另请参阅 [支持](/zh/support)。
-</Callout>
-
-## 通行密钥登录与2FA
-
-Hostlinku账户使用Keycloak。通行密钥（WebAuthn）、TOTP验证器和恢复码可通过 **Settings → Security** 使用。登录前请注册适合的选项。Keycloak处理注册和认证挑战，SSO取决于启用的提供商。
-
-流式费用请在结束后查看 **Logs / Analytics / Billing**。每个SSE分块不保证包含 `hostlinku.cost`；上游未返回usage时，计费可能使用估算值。
+- [API参考](/zh/api-reference)：选择Chat Completions、Messages或Responses。
+- [SDK与代码示例](/zh/sdk)：Python、TypeScript和流式传输。
+- [IDE与Agent集成](/zh/integrations)：应用及编程Agent指南。
+- [用量与限制](/zh/usage-and-limits)：组织共享配额。
+- [支持](/zh/support)：帮助及报告所需信息。

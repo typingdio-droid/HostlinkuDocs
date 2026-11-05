@@ -1,6 +1,7 @@
 ---
 title: "Anthropic Messages"
 description: "POST /v1/messages 端点参考（兼容 Anthropic）-请使用 Anthropic SDK、Claude Code 或 Cursor，并配合 Hostlinku API 密钥"
+icon: message-square
 ---
 
 
@@ -17,7 +18,7 @@ anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
 
-身份验证接收 `x-api-key`（Anthropic 样式）**或** `Authorization: Bearer sk-…` 标头。 每个响应都包含 `request-id` / `x-request-id` 标头（请求 ID 为 Hostlinku，格式为 `msg_…`），而在非流式传输的成功响应中，还包含 `x-model`。
+身份验证接收 `x-api-key`（Anthropic 样式）**或** `Authorization: Bearer sk-…` 标头。 成功响应包含 `request-id` / `x-request-id`（Hostlinku请求ID，格式为 `msg_…`）；成功的非流式响应还包含 `x-model`。处理器之前的错误可能没有这些ID。
 
 <Callout type="note" title="任何模型，而不仅仅是克劳德">
 `model` 使用与 [模型目录](/zh/models) 相同的公共 slug Hostlinku - 例如 `claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 非Claude模型仍可通过 Anthropic 格式调用；由网关进行转换。
@@ -72,7 +73,7 @@ const msg = await client.messages.create({
 
 | 参数 | 类型 | 说明 |
 |---|---|---|
-| `model` | `string` | **必填。** 模型为 Hostlinku 的蛞蝓。 |
+| `model` | `string` | **必填。** Hostlinku公开模型slug。 |
 | `messages` | `array` | **必选。** `{ role: "user" \| "assistant", content }`；`content` 字符串或数组块（`text`、`image`、`tool_use`、`tool_result`、……）。 |
 | `max_tokens` | `integer` | **必填**（符合Anthropic规范）。若超过模型输出限制，则`400`将被拒绝。 |
 | `system` | `string` \| `array` | 系统提示；块数组支持 `cache_control`。 |
@@ -167,6 +168,8 @@ POST https://api.hostlinku.com/v1/messages/count_tokens
 | 403 | `permission_error` | 账户已被暂停/访问被拒绝。 |
 | 404 | `not_found_error` | 该模型的Slug未收录在产品目录中。 |
 | 429 | `rate_limit_error` | 已达到请求上限。 |
-| 503 | `overloaded_error` | 模型/上游当前不可用-可以安全地重试。 |
+| 503 | `overloaded_error` | 模型／上游不可用。请检查目录及替代模型；暂时故障可延迟重试。 |
+
+表格列出协议处理器处理的错误。处理器之前的请求限流或正文解析可能使用通用Hostlinku格式；请参阅 [错误](/zh/errors)。
 
 错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。 [Error](/zh/errors).

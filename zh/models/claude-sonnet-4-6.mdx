@@ -1,13 +1,9 @@
 ---
 title: "Claude Sonnet 4.6"
-description: "Claude Sonnet 4.6 兼顾速度与智能，具备 1M 上下文容量、64K 最大输出量，并拥有扩展的推理能力，适用于编程、智能代理、知识工作以及长上下文场景……"
+description: "Anthropic的Claude Sonnet 4.6，目录上下文为1,000,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 摘要
-
-Claude Sonnet 4.6 在速度与智能之间取得了平衡，具备 1M 的上下文处理能力、64K 的最大输出量，并能针对编程、智能代理、知识工作及长上下文任务进行扩展推理。
 
 | 属性 | 值 |
 |---|---|
@@ -24,8 +20,6 @@ Claude Sonnet 4.6 在速度与智能之间取得了平衡，具备 1M 的上下�
 ## 能力
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -48,7 +42,7 @@ Claude Sonnet 4.6 在速度与智能之间取得了平衡，具备 1M 的上下�
 | `POST /v1/messages` | Anthropic Messages | 原生 |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

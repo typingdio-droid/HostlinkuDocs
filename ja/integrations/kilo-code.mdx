@@ -1,6 +1,7 @@
 ---
 title: "Kilo Code"
 description: "Kilo Code で、プロバイダー OpenAI（カスタムベース URL）、OpenAI（互換）、または Anthropic を使用して、構成プロファイル Hostlinku を作成してください。"
+icon: code-xml
 ---
 
 
@@ -50,14 +51,14 @@ Anthropic ルートを通じて、Kilo Code が `cache_control` を送信し、H
 
 - **モードごとに1つのプロファイル。** Kilo Codeでは、*Architect*、*Code*、*Debug*の各モードで異なるプロファイルを使用できます。節約例：Architect = `claude-opus-4-6`、Code = `claude-sonnet-4-6`。
 - **カスタムヘッダーは不要です。** Hostlinku では API キーを使用するだけで十分です。カスタムヘッダーの欄は空欄のままにしてください。
-- **インラインオートコンプリート** Kilo Code は、Hostlinku でサポートされていない FIM エンドポイントを使用しています。この機能は、デフォルトのプロバイダーのままにしておいてください（[概要](/ja/integrations#masalah-umum) を参照）。
+- **インラインオートコンプリート** Kilo Code は、Hostlinku でサポートされていない FIM エンドポイントを使用しています。この機能は、デフォルトのプロバイダーのままにしておいてください（[概要](/ja/integrations#compatibility-limits) を参照）。
 
 ## トラブルシューティング
 
-| 症状 | Solusi |
+| 症状 | 対処方法 |
 |---|---|
 | `401` | キーが間違っている、または取り外されている、あるいは別のプロフィールに登録されている - **Hostlinku**のプロフィールがアクティブになっていることを確認してください。 |
 | すべてのリクエストにおける`404` | ベースURLに`/v1`（OpenAIルート）が含まれていないか、あるいはAnthropicルートで`/v1`が使用されている。上のスクリーンショットと比較してください。 |
 | `404 model_not_found` | モデルIDの入力ミス；`GET /v1/models`からコピーしてください。 |
 | モデル「Claude/DeepSeek」がドロップダウンメニューに表示されません | プロバイダー `OpenAI` では、モデル OpenAI のみが表示されています - **OpenAI 互換** をご使用ください。 |
-| Agentはツールを呼び出さずに停止した | *ツール呼び出し*のないモデル。[概要](/ja/integrations) の推奨事項に従ってください。 |
+| エージェントがツールを呼び出さずに停止する | [カタログ](/ja/models)でモデルの*tool calling*対応を確認してください。 |

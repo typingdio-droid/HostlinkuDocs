@@ -1,6 +1,7 @@
 ---
 title: "VS Code (Chat)"
 description: "Use the Hostlinku model in VS Code’s built-in chat and agent via the Custom Endpoint provider-no GitHub login required; just your Hostlinku API key"
+icon: code-xml
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -68,7 +69,9 @@ VS Code opens `chatLanguageModels.json`. Populate the `models` array with slugs 
 ]
 ```
 
-![The `chatLanguageModels.json` file in VS Code contains the Hostlinku provider with the URL https://api.hostlinku.com/v1/chat/completions](/images/integrations/vscode-chatlanguagemodels.webp "chatLanguageModels.json setelah diisi: provider customendpoint Hostlinku, url lengkap ke /v1/chat/completions, apiKey berupa referensi secret.")
+The `contextWindow` and `maxOutputTokens` values above are example limits for VS Code. Match them to the model page in the [catalog](/en/models); lower values limit usage within the tool.
+
+![The `chatLanguageModels.json` file in VS Code contains the Hostlinku provider with the URL https://api.hostlinku.com/v1/chat/completions](/images/integrations/vscode-chatlanguagemodels.webp "Provider customendpoint Hostlinku with the full /v1/chat/completions URL and a secret reference for apiKey.")
 
 Enter the `url` **including the endpoint path** (`/v1/chat/completions`) so VS Code doesn't have to guess. `toolCalling: true` is required for the model to appear in **Agent** mode.
 

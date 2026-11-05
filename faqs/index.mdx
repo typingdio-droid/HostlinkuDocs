@@ -1,9 +1,8 @@
 ---
 title: FAQ
 description: Pertanyaan yang paling sering muncul tentang gateway Hostlinku
+icon: circle-help
 ---
-
-import { Callout } from "/snippets/mdx.jsx";
 
 ## Apa itu Hostlinku Playground?
 
@@ -32,7 +31,7 @@ Mendaftar gratis dan tidak memerlukan kartu kredit. Kredit uji coba tidak tersed
 ## Topik
 
 - [Stream Mode](/faqs/stream-mode): cara memakai SSE dengan OpenAI SDK, Python `requests`, dan curl.
-- [Error yang sering muncul](/faqs/errors): 401, 402, 404, 422, 429, dan 503.
+- [Error yang sering muncul](/faqs/errors): penyebab dan tindakan untuk error umum.
 - [Rate limit](/faqs/rate-limits): kuota, header `Retry-After`, dan backoff.
 - [Billing & top-up](/faqs/billing): saldo, limit key, dan error 402.
 - [Model tidak tersedia](/faqs/model-unavailable): 404 vs 503, deprecated, dan Service Mode.
@@ -40,7 +39,7 @@ Mendaftar gratis dan tidak memerlukan kartu kredit. Kredit uji coba tidak tersed
 
 ## Apakah SDK resmi OpenAI bisa dipakai?
 
-Bisa, tanpa perubahan kode. Arahkan `base_url`/`baseURL` ke `https://api.hostlinku.com/v1` dan
+Bisa. Arahkan `base_url`/`baseURL` ke `https://api.hostlinku.com/v1` dan
 pakai API key `sk-…` Hostlinku sebagai `api_key`. Contoh lengkap ada di
 [Chat Completions](/chat-completions#contoh-python-sdk-resmi-openai).
 
@@ -62,14 +61,11 @@ Lihat [katalog model](/models) atau menu **Models** di Console. `GET /v1/models`
 
 ## Kenapa request saya ditolak 401?
 
-Penyebab paling umum: header `Authorization` tidak ada atau bukan format `Bearer`, API key salah
-salin, sudah di-revoke, atau sudah lewat masa berlaku. Buat/periksa API key di
-[console.hostlinku.com](https://console.hostlinku.com). Detail lengkap:
-[Autentikasi](/authentication).
+Periksa API key dan header autentikasi. Gateway menerima `Authorization: Bearer sk-...` atau `x-api-key`; key harus benar, aktif, dan belum kedaluwarsa. Lihat [Autentikasi](/authentication).
 
 ## Kenapa muncul 402 padahal saya punya saldo?
 
-Periksa pesan errornya. 402 punya dua sebab: **saldo akun** tidak cukup (`available` kurang dari
+Periksa pesan errornya. 402 punya dua sebab: **saldo organisasi** tidak cukup (`available` kurang dari
 estimasi biaya request), atau **limit kredit API key** tercapai. Kalau pesannya menyebut "Limit
 kredit API key", tunggu jendela reset (harian/mingguan/bulanan) atau ubah limitnya di console.
 Selengkapnya di [Billing & Saldo](/billing).
@@ -80,7 +76,7 @@ Harga mengikuti model, Service Mode, dan dimensi token/cache yang dipakai. Respo
 
 ## Apakah ada rate limit?
 
-Kuota layanan adalah **600 request, 6.500.000 token input, dan 200.000 token output per menit**, dipakai bersama dalam organisasi yang sama. Semua API key dan anggota organisasi terdampak saat kuota tercapai. Detail kuota dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
+Kuota setiap Service Mode adalah **600 request, 6.500.000 token input, dan 200.000 token output per menit**, dipakai bersama dalam organisasi yang sama. Semua API key dan anggota organisasi terdampak saat kuota tercapai. Detail kuota dan cara menangani 429 ada di [Pemakaian & Limit](/usage-and-limits).
 
 ## Bagaimana cara mengirim pesan gambar / multimodal?
 
@@ -94,7 +90,7 @@ Nonaktifkan key di Console → **API Keys** agar request berikutnya ditolak. Bua
 
 ## Apakah log request menyimpan isi percakapan saya?
 
-Metadata token, biaya, status, dan latensi tetap dicatat. Penyimpanan body mengikuti [keterangan prompt di atas](#apakah-prompt-saya-disimpan) dan [Privasi](/legals/privacy-policy).
+Lihat [jawaban tentang penyimpanan prompt](#apakah-prompt-saya-disimpan).
 
 ## Bagaimana membaca latensi, TTFT, dan TPS?
 
@@ -124,8 +120,3 @@ Data mentah probe kesehatan memiliki retensi default 30 hari dan dibersihkan ber
 
 Lihat [Dukungan](/support): email **halo@hostlinku.com**, sebaiknya sertakan
 `x-request-id` dari respons bermasalah.
-
-<Callout type="note" title="Tidak menemukan jawaban?">
-  Kirim pertanyaan ke [halo@hostlinku.com](mailto:halo@hostlinku.com). FAQ ini diperbarui
-  berdasarkan pertanyaan yang paling sering masuk.
-</Callout>

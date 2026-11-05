@@ -1,6 +1,7 @@
 ---
 title: Cline & Roo Code
 description: Konfigurasi provider OpenAI Compatible (atau Anthropic dengan base URL kustom) di Cline dan Roo Code untuk memakai model Hostlinku
+icon: bot
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
@@ -38,7 +39,7 @@ Buka bagian **Model Configuration** agar Cline mengelola konteks dan harga denga
 
 - **Supports Images**: centang untuk model bervisi (`claude-sonnet-4-6`, `gpt-5-5`).
 - **Context Window Size**: `context_window` dari katalog (mis. `1000000`).
-- **Max Output Tokens**: `64000` adalah nilai aman untuk model besar.
+- **Max Output Tokens**: ikuti batas output model di [katalog](/models). `64000` hanya contoh; gunakan nilai lebih kecil jika batas model lebih rendah.
 - **Input / Output Price**: salin dari `pricing` katalog bila ingin estimasi biaya Cline akurat;
   tagihan sebenarnya tetap yang tercatat di console.
 
@@ -88,7 +89,6 @@ cline --model claude-sonnet-4-6 "tambahkan validasi input di handler login"
 - **`404 model_not_found`** - Model ID salah ketik; salin dari `GET /v1/models`.
 - **`404` di semua request** - base URL kurang `/v1` (jalur OpenAI) atau malah memakai `/v1` di
   jalur Anthropic. Bandingkan dengan screenshot di atas.
-- **Respons kosong di Act mode** - model tanpa *tool calling*. Gunakan model dari rekomendasi di
-  [Ikhtisar](/integrations).
+- **Respons kosong di Act mode** - periksa dukungan *tool calling* pada model di [katalog](/models).
 - **Konteks cepat habis** - isi *Context Window Size* sesuai katalog agar Cline memangkas riwayat
   dengan benar.

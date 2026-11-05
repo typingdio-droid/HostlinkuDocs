@@ -1,6 +1,7 @@
 ---
-title: "Terms of Use"
+title: "Acceptable Use Policy"
 description: "Hostlinku API Usage Policy: permitted uses, prohibited content and activities, rate limits, enforcement, and how to report violations."
+icon: scale
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
@@ -13,7 +14,7 @@ This English translation is provided for convenience. The Indonesian version is 
 
 </Callout>
 
-**Last updated:** October 11, 2026.
+**Last updated:** November 6, 2026.
 
 <a id="cakupan"></a>
 
@@ -26,7 +27,7 @@ This policy applies to every account, API key, and request to Hostlinku, includi
 ## 2. Permitted Uses
 
 - chat apps, virtual assistants, summarization, translation, and text generation;
-- embeddings for search, recommendations, and classification;
+- search, recommendations, and classification according to model capabilities; embeddings endpoints are not available on the public gateway;
 - code generation, agents, and workflow automation;
 - research, evaluation, experimentation, and prototyping;
 - commercial products built on the API, provided they comply with this policy.
@@ -76,13 +77,9 @@ Each model is hosted by an upstream provider that has its own usage policies. Yo
 
 ## 7. Rate Limit
 
-Current default limit:
+Each Service Mode has a quota shared within the organization. Console, public, checkout, and backend authentication endpoints also have per-IP limits. See [Usage & Limits](/en/usage-and-limits) for values and endpoint scope; Keycloak login protection follows the realm settings.
 
-- Inference API: an organization shares **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute** for Performance, Low-Cost, and Dedicated;
-- Console and public APIs: 120 requests per minute per IP address;
-- Authentication endpoints (login, sign-up, OTP): 30 attempts per 15 minutes.
-
-Requests that exceed the limit are rejected with a `429` status code at no charge. The remaining quota is returned via the `RateLimit-*` headers. Limits may vary based on capacity and can be increased for specific accounts; contact [halo@hostlinku.com](mailto:halo@hostlinku.com).
+Limiter-rejected requests receive `429` at no charge; honor `Retry-After` when available. Limits may vary based on capacity and can be increased for specific accounts; contact [halo@hostlinku.com](mailto:halo@hostlinku.com).
 
 <a id="penegakan"></a>
 

@@ -1,6 +1,6 @@
 ---
 title: "Claude Haiku 4.5"
-description: "Claude Haiku 4.5 是 Anthropic 系列中速度最快的近前沿模型，支持 200K 上下文、64K 最大输出，并具备扩展推理能力，适用于低延迟、高吞吐量的场景。"
+description: "Anthropic的Claude Haiku 4.5，目录上下文为200,000个Token。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -20,8 +20,6 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 ## 能力
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
-
-功能和请求限制取决于模型、Service Mode及API协议。
 
 ## 价格
 
@@ -44,7 +42,7 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | `POST /v1/messages` | Anthropic Messages | 原生 |
 | `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
 
-桥接会转换API格式，供应商专有功能和应用内置工具的支持情况可能不同。请使用属于上列Service Mode的API密钥。
+[兼容性限制](/zh/api-reference#模型与工具兼容性)。
 
 ## 请求示例
 

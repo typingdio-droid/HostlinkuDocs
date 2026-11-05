@@ -1,43 +1,26 @@
 ---
-title: "クイックスタート"
-description: "アカウント登録から、Hostlinkuゲートウェイへの最初のリクエストまで5分以内"
+title: クイックスタート
+description: APIキーを作成し、Hostlinkuへ最初のリクエストを送信します。
+icon: rocket
 ---
 
+import { Steps } from "/snippets/mdx.jsx";
 
-import { Callout, Steps } from "/snippets/mdx.jsx";
-
-このページでは、Hostlinku を使用してチャット補完のリクエストを 1 件送信できるようになるまで、ゼロから順を追って解説します。
-
-## 前提条件
-
-- **Hostlinkuアカウント**：[バックエンドから新規登録](https://api.hostlinku.com/api/auth2/register) するとKeycloakへ転送されます。
-- **クレジット残高**：ゲートウェイはトークンごとに残高を差し引きます。本番環境でのリクエストを行う前に、コンソールで残高を補充してください。テストリクエストの料金は通常1セント未満ですが、残高がゼロになってはいけません。[課金と残高](/ja/billing)をご参照ください。
-- **テストツール**：curl だけで十分です。より高度な例については、OpenAI（`pip install openai`）の公式 SDK または Node（`npm install openai`）を、コードを変更することなく使用できます。
-
-## 手順
+curlとクレジット残高を用意し、次の手順に従ってください。
 
 <Steps>
 
-### 登録またはログイン
+### ログインしてチャージする
 
-[新規登録](https://api.hostlinku.com/api/auth2/register) または [ログイン](https://api.hostlinku.com/api/auth2/login) から開始します。バックエンドが `auth2.hostlinku.com` のKeycloak認証を開始し、コールバック後にConsoleを開きます。パスキーとSSOはアカウント、端末、有効なプロバイダーに応じて利用できます。
+[新規登録](https://api.hostlinku.com/api/auth2/register)または[ログイン](https://api.hostlinku.com/api/auth2/login)を開きます。ログインはKeycloakが処理します。[Console](https://console.hostlinku.com)の **Billing** で、リクエスト前に残高をチャージしてください。決済方法は [Billing](/ja/billing) を参照してください。
 
 ### APIキーを作成する
 
-[console.hostlinku.com](https://console.hostlinku.com) にアクセスし、**API Keys** メニュー → **APIキーの作成** を選択します。APIキー作成ダイアログでは、以下の設定を行うことができます：
-
-- **名称**：識別用。例：`your-production-app`。
-- **Service Mode**：**Performance**（初期値）、**Low-Cost**、**Dedicated** から選択。モードでモデルと価格が決まります。
-- **有効期限**：30日（初期値）、60日、90日、または無期限。
-- **Monthly Spending Limit**：任意の月間利用上限。Consoleフォームにスコープや日次・週次リセット選択はありません。API契約は [認証](/ja/authentication) を参照してください。
-
-<Callout type="warning" title="「シークレット」は一度だけ表示されます">
-APIキーの作成後、`sk-…`という形式のシークレットがコンソールに**1回だけ**表示されます。これをコピーして安全な場所に保管してください。サーバーはこれをSHA-256ハッシュとして保存しており、再度表示することはできません。シークレットを紛失した場合は、そのAPIキーを無効にして、新しいものを作成してください。
-</Callout>
+**API Keys → APIキーを作成** で名前を入力し、**Performance**（初期値）、**Low-Cost**、**Dedicated** を選びます。Service Modeによってモデルと価格が決まります。一度だけ表示される `sk-…` シークレットをコピーし、サーバーの環境変数に保存してください。有効期限、利用上限、パスキー／2FAの設定は [認証](/ja/authentication) に記載されています。
 
 ### 最初のリクエストを送信する
 
-すべてのゲートウェイエンドポイントは `https://api.hostlinku.com` にあり、認証は `Authorization: Bearer sk-…` で行われます。非ストリーミングのリクエストの例：
+キーのService Modeで利用できるモデルを使います。この例は `gpt-5-5` です。Dedicatedキーや別のモデルを使う場合は、[`GET /v1/models`](/ja/models) からslugを取得してください。
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -45,89 +28,42 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [
-      { "role": "user", "content": "Halo! Perkenalkan dirimu singkat saja." }
-    ]
+    "messages": [{"role": "user", "content": "こんにちは。簡単に自己紹介してください。"}]
   }'
 ```
 
-すべてが正しければ、OpenAI形式のJSONレスポンスに加え、リクエストのコストとレイテンシを含む`hostlinku`ブロックを受け取ります：
+非ストリーミングのレスポンスはJSONです。以下は省略した例で、トークン数、費用、レイテンシは説明用の値です：
 
 ```json
 {
   "id": "cmpl_…",
   "object": "chat.completion",
   "model": "gpt-5-5",
-  "choices": [
-    {
-      "index": 0,
-      "message": { "role": "assistant", "content": "こんにちは! 私は …" },
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": { "prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60 },
+  "choices": [{
+    "index": 0,
+    "message": {"role": "assistant", "content": "こんにちは。私は …"},
+    "finish_reason": "stop"
+  }],
+  "usage": {"prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60},
   "hostlinku": {
     "cost": 0.000123,
+    "currency": "🪙",
+    "serviceMode": "performance",
     "latencyMs": 812
   }
 }
 ```
 
-上記のslugモデルはあくまで一例です。ご自身のアカウントで有効なslugの一覧は、コンソール（**モデル**メニュー）または [エンドポイント `GET /v1/models`](/ja/models) から確認できます。
+### 結果を確認する
 
-### おすすめ：ストリーミングを利用しましょう
-
-チャットでは `"stream": true` で生成中の回答を表示できます。最初のトークンまでの時間はモデルやプロバイダーの状態に依存し、特定の遅延は保証されません。
-
-```python
-import os
-from openai import OpenAI
-
-client = OpenAI(
-    base_url="https://api.hostlinku.com/v1",
-    api_key=os.environ["HOSTLINKU_API_KEY"],
-)
-
-stream = client.chat.completions.create(
-    model="gpt-5-5",
-    messages=[{"role": "user", "content": "Halo!"}],
-    stream=True,
-)
-for chunk in stream:
-    if chunk.choices and chunk.choices[0].delta.content:
-        print(chunk.choices[0].delta.content, end="", flush=True)
-```
-
-curl を使用する場合、出力がバッファに蓄積されないように `-N` を追加してください：
-
-```bash
-curl -N https://api.hostlinku.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-your-api-key" \
-  -d '{ "model": "gpt-5-5", "stream": true, "messages": [{ "role": "user", "content": "Halo!" }] }'
-```
-
-### 残高と取引履歴を確認する
-
-Consoleの **Billing** で組織残高、**Logs** でトークン、費用、遅延を確認できます。Consoleセッション用の対応エンドポイントは [`GET /api/wallet/account`](/ja/billing) です。公開API（`sk-…`）は `/v1/*` を使用します。
+**Logs** でトークン数、費用、レイテンシを、**Billing** で組織の残高を確認します。失敗した場合は [エラーコード](/ja/errors) を参照してください。APIキーは `/v1/*` で使い、Consoleのアカウント用エンドポイントにはログインセッションを使います。
 
 </Steps>
 
 ## 次のステップ
 
-- [認証](/ja/authentication)：APIキーの詳細、有効期限、およびクレジットの制限。
-- [Chat Completions](/ja/chat-completions)：すべてのパラメータ、SSEストリーミング、およびPythonのサンプル。
-- [モデル](/ja/models)：モデルカタログと適切なモデルの選び方。
-- [エラー](/ja/errors)：各エラーコードの意味と対処方法。
-- [Claude Code](/ja/integrations/claude-code)、[Codex CLI](/ja/integrations/codex-cli)、[DeepSeek Harness](/ja/integrations/deepseek-harness)、[CC Switch](/ja/integrations/cc-switch)：APIキーをAIコーディングエージェントやハーネスに直接接続します。
-- [SDK & コード例](/ja/sdk)：3つのAPIダイアレクトすべてのPythonおよびTypeScriptサンプル。
-
-<Callout type="note" title="注記">
-お困りですか？ [halo@hostlinku.com](mailto:halo@hostlinku.com) までお問い合わせください。また、[サポート](/ja/support) もご参照ください。
-</Callout>
-
-## パスキーログインと2FA
-
-HostlinkuアカウントはKeycloakを使用します。パスキー（WebAuthn）、TOTP認証アプリ、リカバリーコードは **Settings → Security** で利用できます。ログインで使う前に登録してください。登録・認証のチャレンジはKeycloakが処理し、SSOは有効なプロバイダーに応じて利用できます。
-
-ストリーミングの費用は終了後に **Logs / Analytics / Billing** で確認してください。各SSEチャンクに `hostlinku.cost` があるとは限りません。上流がusageを返さない場合は推定費用を使うことがあります。
+- [APIリファレンス](/ja/api-reference)：Chat Completions、Messages、Responsesの選択。
+- [SDK・コード例](/ja/sdk)：Python、TypeScript、ストリーミング。
+- [IDE・Agent統合](/ja/integrations)：アプリとコーディングAgent。
+- [使用量と上限](/ja/usage-and-limits)：組織の共有クォータ。
+- [サポート](/ja/support)：問い合わせと報告に必要な情報。

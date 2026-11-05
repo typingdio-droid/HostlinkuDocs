@@ -1,13 +1,9 @@
 ---
 title: "GPT-6 Astra"
-description: "OpenAIのフラッグシップモデルで、複雑な推論、コーディング、専門的な作業に対応し、テキストおよび画像の入力、テキスト出力、1.05Mのコンテキストウィンドウ、最大128Kの..."
+description: "OpenAIのGPT-6 Astra。カタログのコンテキストは1,050,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-OpenAIのフラッグシップモデルで、複雑な推論、コーディング、専門的な業務に対応し、テキストおよび画像の入力、テキスト出力、1.05Mのコンテキストウィンドウ、最大128Kの出力を備えています。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ OpenAIのフラッグシップモデルで、複雑な推論、コーディン�
 ## 機能
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -53,7 +47,7 @@ OpenAIのフラッグシップモデルで、複雑な推論、コーディン�
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | ネイティブ |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

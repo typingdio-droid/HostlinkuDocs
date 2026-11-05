@@ -1,13 +1,9 @@
 ---
 title: "Qwen 3.6 Plus"
-description: "Qwen3.6-Plus は、エージェント型コーディング、マルチモーダル知覚と推論、道具の使用、および実世界のビジネスタスクの実行を目的とした、Alibaba Cloud Model Studio のホスト型モデルです..."
+description: "AlibabaのQwen 3.6 Plus。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Qwen3.6-Plusは、エージェント型コーディング、マルチモーダル知覚と推論、道具の使用、および実世界のビジネスタスクの実行を目的とした、Alibaba Cloud Model Studioのホスト型モデルです。
 
 | プロパティ | 値 |
 |---|---|
@@ -23,8 +19,6 @@ Qwen3.6-Plusは、エージェント型コーディング、マルチモーダ�
 ## 機能
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `agentic`, `long-context`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -52,7 +46,7 @@ Qwen3.6-Plusは、エージェント型コーディング、マルチモーダ�
 | `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 

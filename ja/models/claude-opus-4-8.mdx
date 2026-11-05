@@ -1,13 +1,9 @@
 ---
 title: "Claude Opus 4.8"
-description: "Claude Opus 4.8は、Anthropicの高度な機能を備えたOpusモデルであり、複雑な推論やエージェント型コーディングに対応し、テキスト／画像入力、テキスト出力、1Mのコンテキストウィンドウなどを備えています。..."
+description: "AnthropicのClaude Opus 4.8。カタログのコンテキストは1,000,000トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
-
-## 概要
-
-Claude Opus 4.8は、Anthropicの高度な機能を備えたOpusモデルであり、複雑な推論やエージェント型コーディングに対応しています。テキスト／画像入力、テキスト出力、1Mのコンテキストウィンドウ、最大128Kの出力を備えています。
 
 | プロパティ | 値 |
 |---|---|
@@ -24,8 +20,6 @@ Claude Opus 4.8は、Anthropicの高度な機能を備えたOpusモデルであ�
 ## 機能
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
-
-機能とリクエストの上限は、モデル、Service Mode、APIプロトコルによって異なります。
 
 ## 価格
 
@@ -48,7 +42,7 @@ Claude Opus 4.8は、Anthropicの高度な機能を備えたOpusモデルであ�
 | `POST /v1/messages` | Anthropic Messages | ネイティブ |
 | `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
 
-ブリッジはAPI形式を変換します。ベンダー固有機能やアプリの組み込みツールへの対応は異なる場合があります。上記のService Modeに対応したAPIキーを使用してください。
+[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
 
 ## リクエストの例
 
