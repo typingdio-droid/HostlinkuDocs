@@ -5,6 +5,30 @@ description: Pertanyaan yang paling sering muncul tentang gateway Hostlinku
 
 import { Callout } from "/snippets/mdx.jsx";
 
+## Apa itu Hostlinku Playground?
+
+Playground adalah antarmuka di [Console](https://console.hostlinku.com/playground) untuk mencoba model yang tersedia dan memilih Service Mode. Playground memakai sesi login dan saldo organisasi yang sama dengan API; kamu tidak perlu memasukkan API key.
+
+## Bagaimana cara kerja integrasinya?
+
+Arahkan SDK atau aplikasi ke Hostlinku, gunakan API key, lalu pilih slug model. OpenAI Chat Completions dan Responses memakai base URL `https://api.hostlinku.com/v1`; Anthropic Messages memakai `https://api.hostlinku.com`. Dukungan fitur mengikuti model dan protokol. Lihat [Integrasi](/integrations/index).
+
+## Bagaimana sistem billing-nya?
+
+Isi saldo organisasi, lalu bayar penggunaan sesuai harga model dan Service Mode. Input, output, dan cache memiliki tarif masing-masing. Pembayaran tersedia melalui iPaymu Direct untuk QRIS/VA dan Heleket untuk crypto. Lihat [Billing & Saldo](/billing).
+
+## Apakah prompt saya disimpan?
+
+Body request dan respons tidak disimpan secara default. Metadata token, biaya, status, dan latensi tetap dicatat. Jika admin mengaktifkan body logging, retensi body default 14 hari; rahasia dalam teks prompt tidak otomatis disaring. Lihat [Privasi](/legals/privacy-policy).
+
+## Apa yang terjadi jika sebuah model mengalami gangguan?
+
+Gateway dapat mencoba jalur lain sesuai konfigurasi routing yang tersedia. Jika request tetap gagal, aplikasi menerima error seperti `503`; gunakan backoff dan periksa [Status](https://status.hostlinku.com). Pergantian otomatis ke model lain dalam keluarga yang sama tidak dijamin.
+
+## Apakah Hostlinku gratis dicoba?
+
+Mendaftar gratis dan tidak memerlukan kartu kredit. Kredit uji coba tidak tersedia; isi saldo sebelum menjalankan request berbayar di Playground atau API.
+
 ## Topik
 
 - [Stream Mode](/faqs/stream-mode): cara memakai SSE dengan OpenAI SDK, Python `requests`, dan curl.
@@ -22,20 +46,19 @@ pakai API key `sk-…` Hostlinku sebagai `api_key`. Contoh lengkap ada di
 
 ## Endpoint apa saja yang tersedia?
 
-Saat ini gateway mengutamakan dua endpoint inti yang kompatibel OpenAI:
+Endpoint gateway menerima API key:
 
-- `POST /v1/chat/completions`: [Chat Completions](/chat-completions)
-- `GET /v1/models`: [Model](/models)
+- `POST /v1/chat/completions`: [Chat Completions](/chat-completions).
+- `POST /v1/messages`: [Anthropic Messages](/anthropic-messages).
+- `POST /v1/messages/count_tokens`: menghitung token format Anthropic.
+- `POST /v1/responses`: [Responses API](/responses), stateless.
+- `GET /v1/models`: [katalog sesuai Service Mode key](/models).
 
-Endpoint lain (mis. embeddings) belum tersedia di gateway publik. Katalog publik non-`/v1`
-(untuk situs) tersedia di `/api/public/models`. Halaman konsol memakai endpoint `/api/*` dengan
-sesi cookie, bukan API key.
+Katalog situs memakai `GET /api/public/models-v2`. Endpoint akun Console pada `/api/*` memakai sesi login. Embeddings belum tersedia pada gateway publik.
 
 ## Model apa saja yang bisa saya pakai?
 
-Lihat [Model](/models): daftar resminya diambil dari `GET /v1/models` atau menu **Model**
-di console. Katalog mencakup model dari OpenAI, Anthropic, Google, DeepSeek, Qwen, dan lainnya,
-masing-masing dengan slug unik.
+Lihat [katalog model](/models) atau menu **Models** di Console. `GET /v1/models` menampilkan model dan harga yang tersedia untuk Service Mode API key yang kamu pakai.
 
 ## Kenapa request saya ditolak 401?
 
@@ -53,9 +76,7 @@ Selengkapnya di [Billing & Saldo](/billing).
 
 ## Berapa biaya satu request?
 
-Biaya = token input × harga input + token output × harga output (per token, sesuai model). Harga
-tiap model ada di katalog; biaya aktual setiap request muncul di `hostlinku.cost` dan di log
-console. Rincian ada di [Billing & Saldo](/billing).
+Harga mengikuti model, Service Mode, dan dimensi token/cache yang dipakai. Respons chat non-streaming memuat `hostlinku.cost`; biaya streaming dilihat setelah selesai di Logs/Billing dan dapat memakai estimasi bila usage upstream tidak tersedia. Lihat [Billing & Saldo](/billing).
 
 ## Apakah ada rate limit?
 
@@ -69,16 +90,35 @@ katalog. Tingkat dukungan tergantung provider model.
 
 ## Bagaimana cara menghentikan pemakaian API key yang bocor?
 
-Segera **revoke** API key tersebut di console, menu **API Keys**. API key yang di-revoke langsung
-ditolak (401) untuk seluruh request berikutnya. Untuk menghapus permanen, gunakan **purge**.
-Riwayat pemakaian sebelum revoke tetap tercatat untuk audit.
+Nonaktifkan key di Console → **API Keys** agar request berikutnya ditolak. Buat key pengganti, perbarui aplikasi, lalu hapus key lama bila tidak diperlukan. Riwayat pemakaian tetap tercatat.
 
 ## Apakah log request menyimpan isi percakapan saya?
 
-Log request menyimpan **metadata teknis**: model, status, jumlah token, biaya, latensi, dan ID
-request. Data itu dibutuhkan untuk penagihan dan pemantauan. Untuk pertanyaan soal retensi
-data sesuai kebutuhan kepatuhan kamu, hubungi
-[halo@hostlinku.com](mailto:halo@hostlinku.com).
+Metadata token, biaya, status, dan latensi tetap dicatat. Penyimpanan body mengikuti [keterangan prompt di atas](#apakah-prompt-saya-disimpan) dan [Privasi](/legals/privacy-policy).
+
+## Bagaimana membaca latensi, TTFT, dan TPS?
+
+Latensi adalah waktu dari gateway menerima request sampai respons selesai. TTFT adalah waktu sampai token pertama teramati pada stream. TPS adalah laju token output selama fase generasi setelah token pertama, dari sampel stream yang memenuhi syarat. Ketiganya memiliki arti berbeda; lihat [Referensi API](/api-reference#arti-metrik-dan-contoh-angka).
+
+## Apakah animasi dan grafik model adalah hasil pengukuran langsung?
+
+Animasi kecepatan landing memakai angka contoh yang tetap. Grafik 60 batang pada detail model dibentuk dari agregat latensi rata-rata, P95, dan jumlah kegagalan; posisi tiap batang tidak mewakili urutan 60 request terakhir. Angka agregat dan grafik pemakaian Console berasal dari data request. Periksa periode dan sampel sebelum membandingkan performa.
+
+## Apakah indikator hijau di footer menunjukkan status live?
+
+Badge footer landing saat ini memakai nilai status tetap. Gunakan [halaman Status](https://status.hostlinku.com) untuk memeriksa pemantauan dan insiden layanan.
+
+## Apa arti status “reachable”?
+
+Endpoint memberi respons HTTP di bawah 500, termasuk `401`, `403`, atau `404`. Ini menunjukkan server dapat dijangkau; keberhasilan login atau inferensi memerlukan hasil pemeriksaan fungsi terkait.
+
+## Mengapa rincian biaya historis dapat berbeda?
+
+Total biaya yang sudah ditagihkan disimpan pada log transaksi. Sebagian rincian input/output/cache di analytics dihitung ulang memakai tarif saat ini, sehingga jumlah rincian bisa berbeda dari total historis. Ini tidak menagih ulang request lama. Lihat [Billing & Saldo](/billing).
+
+## Berapa lama data probe disimpan?
+
+Data mentah probe kesehatan memiliki retensi default 30 hari dan dibersihkan berkala. Retensi ini terpisah dari body request 14 hari serta metadata pemakaian/transaksi. Lihat [Pemakaian & Limit](/usage-and-limits).
 
 ## Bagaimana cara menghubungi dukungan?
 

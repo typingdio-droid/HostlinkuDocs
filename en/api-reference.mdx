@@ -369,4 +369,9 @@ API keys authorize billable gateway access according to Service Mode and limits;
 | TTFT | Time to the first observed streaming token; can be absent for non-streaming. |
 | TPS | Output tokens per second after the first token, from qualifying stream samples. |
 
-Read the period and sample population shown with statistics. Landing speed animations are illustrative; monitoring results are available on [Status](https://status.hostlinku.com).
+- **Landing animations** use fixed example figures rather than measurements from an inference request while the animation runs.
+- **The 60-bar model detail chart** is generated from average/P95 latency and failure aggregates. Each bar is synthetic, rather than a request or probe in sequence. Console usage charts use aggregated request data.
+- **The landing footer badge** uses a fixed status; check [Status](https://status.hostlinku.com) for monitoring results and incidents.
+- **Reachable** means an HTTP response below 500, including 401/403/404. It indicates endpoint reachability; login and inference success are checked through their respective functions.
+
+Compare metrics for the same period, Service Mode, and sample population. Animations, capacity specifications, traffic aggregates, and benchmarks have different sources.

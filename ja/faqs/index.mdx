@@ -6,6 +6,30 @@ description: "Hostlinkuゲートウェイに関して最もよく寄せられる
 
 import { Callout } from "/snippets/mdx.jsx";
 
+## Hostlinku Playgroundとは何ですか？
+
+Playgroundは、利用可能なモデルを試し、Service Modeを選べる[Console](https://console.hostlinku.com/playground)の画面です。ログインセッションとAPIと共通の組織残高を使うため、APIキーの入力は不要です。
+
+## 連携はどのように動作しますか？
+
+SDKやアプリの接続先をHostlinkuに設定し、APIキーとモデルのslugを指定します。OpenAI Chat CompletionsとResponsesのbase URLは`https://api.hostlinku.com/v1`、Anthropic Messagesは`https://api.hostlinku.com`です。機能はモデルとプロトコルに依存します。[連携ガイド](/ja/integrations/index)を参照してください。
+
+## 課金はどのように行われますか？
+
+組織残高をチャージし、モデルとService Modeの料金で使用量に応じて支払います。入力・出力・キャッシュの料金はそれぞれ異なります。QRIS/VAはiPaymu Direct、暗号資産はHeleketで決済します。[課金と残高](/ja/billing)を参照してください。
+
+## プロンプトは保存されますか？
+
+リクエストと応答のbodyはデフォルトでは保存されません。token数・料金・状態・レイテンシのメタデータは記録されます。管理者がbody loggingを有効にした場合、bodyの保持期間はデフォルト14日です。プロンプト本文の秘密情報は自動では伏せられません。[プライバシー](/ja/legals/privacy-policy)を参照してください。
+
+## モデルに障害が発生するとどうなりますか？
+
+ゲートウェイは利用可能なルーティング設定に従って別の経路を試すことがあります。それでも失敗すると`503`などのエラーが返されます。バックオフを使い、[Status](https://status.hostlinku.com)を確認してください。同じモデル系統の別モデルへの自動切り替えは保証されません。
+
+## Hostlinkuは無料で試せますか？
+
+登録は無料で、クレジットカードは不要です。試用クレジットはありません。PlaygroundやAPIで有料リクエストを実行する前に残高をチャージしてください。
+
 ## トピック
 
 - [ストリームモード](/ja/faqs/stream-mode)：OpenAI SDK、Python `requests`、およびcurlを使用してSSEを利用する方法。
@@ -21,16 +45,19 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## どのようなエンドポイントが利用可能ですか？
 
-現在、ゲートウェイでは、OpenAIと互換性のある2つの主要なエンドポイントを優先しています：
+ゲートウェイのエンドポイントはAPIキーを使います：
 
-- `POST /v1/chat/completions`: [Chat Completions](/ja/chat-completions)
-- `GET /v1/models`: [モデル](/ja/models)
+- `POST /v1/chat/completions`：[Chat Completions](/ja/chat-completions)。
+- `POST /v1/messages`：[Anthropic Messages](/ja/anthropic-messages)。
+- `POST /v1/messages/count_tokens`：Anthropic形式のtoken数計算。
+- `POST /v1/responses`：ステートレスな[Responses API](/ja/responses)。
+- `GET /v1/models`：[キーのService Modeに対応するカタログ](/ja/models)。
 
-その他のエンドポイント（例：埋め込み）は、パブリックゲートウェイではまだ利用できません。`/v1`以外のパブリックカタログ（サイト用）は、`/api/public/models`で利用可能です。コンソールページでは、APIキーではなく、セッションクッキーを使用した`/api/*`エンドポイントが使用されます。
+サイトのカタログは`GET /api/public/models-v2`を使います。Consoleのアカウント用`/api/*`はログインセッションを使います。公開ゲートウェイではembeddingsは利用できません。
 
 ## どのようなモデルが使用できますか？
 
-[モデル](/ja/models)を参照してください：公式リストは`GET /v1/models`、またはコンソールの**モデル**メニューから取得できます。 カタログには、OpenAI、Anthropic、Google、DeepSeek、Qwenなどのモデルが含まれており、それぞれに固有のslugが割り当てられています。
+[モデルカタログ](/ja/models)またはConsoleの**Models**を確認してください。`GET /v1/models`は、使用するAPIキーのService Modeで利用可能なモデルと料金を返します。
 
 ## なぜ私のリクエストが401で拒否されたのですか？
 
@@ -42,7 +69,7 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## 1回のリクエストにかかる費用はいくらですか？
 
-費用 = 入力トークン × 入力単価 + 出力トークン × 出力単価（トークン単位、モデルに応じて）。各モデルの単価はカタログに記載されています。各リクエストの実際の費用は、`hostlinku.cost` およびコンソールログに表示されます。詳細については、[請求と残高](/ja/billing) をご覧ください。
+料金はモデル、Service Mode、入力・出力・キャッシュの使用量に依存します。非ストリーミングのchat応答には`hostlinku.cost`が含まれます。streamの料金は完了後にLogs/Billingで確認でき、upstreamのusageがない場合は推定値を使うことがあります。[課金と残高](/ja/billing)を参照してください。
 
 ## レート制限はありますか？
 
@@ -54,11 +81,35 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## 漏洩したAPIキーの使用を停止するにはどうすればよいですか？
 
-コンソールの**API Keys**メニューで、直ちにそのAPIキーを**revoke**してください。**revoke**されたAPIキーは、それ以降のすべてのリクエストに対して即座に拒否（401）されます。完全に削除するには、**purge**を使用してください。**revoke**前の利用履歴は、監査のために引き続き記録されます。
+Console → **API Keys**でキーを無効にすると、以降のリクエストは拒否されます。代替キーを作成してアプリを更新し、不要になった古いキーを削除してください。使用履歴は保持されます。
 
 ## リクエストログには、私の会話の内容が記録されていますか？
 
-リクエストログには、**技術的なメタデータ**（モデル、ステータス、トークン数、料金、レイテンシ、リクエストID）が記録されます。これらのデータは、課金および監視のために必要です。 コンプライアンス要件に基づくデータ保持期間に関するご質問は、[halo@hostlinku.com](mailto:halo@hostlinku.com) までお問い合わせください。
+token数・料金・状態・レイテンシのメタデータは記録されます。bodyの保存については、上のプロンプト保存の回答と[プライバシー](/ja/legals/privacy-policy)を参照してください。
+
+## レイテンシ、TTFT、TPSは何を表しますか？
+
+レイテンシはゲートウェイがリクエストを受信してから応答完了までの時間です。TTFTはstreamの最初のtokenを観測するまでの時間、TPSは最初のtoken以降の生成区間における出力token/秒です。TPSには条件を満たすstreamサンプルを使います。[API Reference](/ja/api-reference#メトリクスと表示例の意味)を参照してください。
+
+## アニメーションやモデルのグラフは実測値ですか？
+
+landingの速度アニメーションは固定の例示値を使います。モデル詳細の60本の棒は平均・P95レイテンシと失敗数の集計から生成され、直近60リクエストの順序を表しません。集計値とConsoleの使用量グラフはリクエストデータに基づきます。比較時には期間とサンプルを確認してください。
+
+## フッターの緑の表示はlive状態ですか？
+
+landingのフッターバッジは現在、固定の状態値を使っています。監視結果と障害は[Statusページ](https://status.hostlinku.com)で確認してください。
+
+## “reachable”は何を意味しますか？
+
+エンドポイントが500未満のHTTP応答を返したことを意味し、`401`・`403`・`404`も含みます。サーバーへの到達性を示すもので、ログインや推論の成功は対応する機能の検査で確認します。
+
+## 過去の料金内訳が異なるのはなぜですか？
+
+請求済み合計は取引ログに保存されます。analyticsの入力・出力・キャッシュの一部内訳は現在の料金で再計算されるため、過去の合計と異なる場合があります。過去のリクエストが再課金されることはありません。[課金と残高](/ja/billing)を参照してください。
+
+## probeデータは何日間保存されますか？
+
+health probeの生データはデフォルト30日間保持され、定期的に削除されます。これはbodyの14日間保持および使用量・取引メタデータとは別です。[使用状況と制限](/ja/usage-and-limits)を参照してください。
 
 ## サポートにはどのように連絡すればよいですか？
 

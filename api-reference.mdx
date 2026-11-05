@@ -382,4 +382,9 @@ API key memberi akses ke gateway berbayar sesuai Service Mode dan limit; pengelo
 | TTFT | Waktu sampai token pertama teramati pada stream; dapat kosong pada non-streaming. |
 | TPS | Token output per detik setelah token pertama, dari sampel stream yang memenuhi syarat. |
 
-Baca periode dan sampel pada statistik. Animasi kecepatan di landing adalah ilustrasi; hasil pemantauan tersedia di [Status](https://status.hostlinku.com).
+- **Animasi landing** memakai angka contoh yang tetap; angka animasi tidak berasal dari request inferensi pada saat diputar.
+- **Grafik 60 batang pada detail model** dibentuk dari agregat rata-rata/P95 latensi dan jumlah kegagalan. Setiap batang merupakan visualisasi sintetis, bukan satu request atau probe berurutan. Grafik pemakaian Console menggunakan agregat data request.
+- **Badge footer landing** memakai status tetap; periksa [Status](https://status.hostlinku.com) untuk hasil pemantauan dan insiden.
+- **Reachable** berarti respons HTTP di bawah 500, termasuk 401/403/404. Pemeriksaan ini menunjukkan keterjangkauan endpoint; keberhasilan login dan inferensi diperiksa melalui fungsi masing-masing.
+
+Bandingkan metrik dari periode, Service Mode, dan sampel yang sama. Hasil animasi, spesifikasi kapasitas, agregat trafik, dan benchmark memiliki sumber yang berbeda.
