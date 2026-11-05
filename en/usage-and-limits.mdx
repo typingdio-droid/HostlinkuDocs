@@ -61,6 +61,12 @@ Non-streaming chat completions include `hostlinku.cost`. SSE streaming does not 
 
 Body logging is **off by default**. If enabled by an admin, content is size-limited and credential fields are redacted; body retention defaults to 14 days. Usage/transaction metadata remains stored. See [Privacy](/en/legals/privacy-policy).
 
+Raw health probe records have a default retention of **30 days** and are cleaned up periodically. Probe retention is separate from 14-day request body retention; usage and transaction metadata is retained.
+
+## Historical costs
+
+Charged totals use stored log values. Some analytics breakdowns are recalculated from tokens and current rates; they may differ from historical totals without charging old requests again.
+
 ## Understanding 429 and 402
 
 | Code | Meaning | Action |

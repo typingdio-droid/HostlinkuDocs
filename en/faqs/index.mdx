@@ -5,6 +5,30 @@ description: "Frequently Asked Questions About the Hostlinku Gateway"
 
 import { Callout } from "/snippets/mdx.jsx";
 
+## What is Hostlinku Playground?
+
+Playground is the [Console](https://console.hostlinku.com/playground) interface for trying available models and choosing a Service Mode. It uses your login session and the same organization balance as the API; you do not need to enter an API key.
+
+## How does the integration work?
+
+Point your SDK or application to Hostlinku, use an API key, and choose a model slug. OpenAI Chat Completions and Responses use `https://api.hostlinku.com/v1`; Anthropic Messages uses `https://api.hostlinku.com`. Features depend on the model and protocol. See [Integrations](/en/integrations/index).
+
+## How does billing work?
+
+Top up your organization balance and pay for usage at the model and Service Mode rates. Input, output, and cache have separate rates. Payments use iPaymu Direct for QRIS/VA and Heleket for crypto. See [Billing & Balance](/en/billing).
+
+## Are my prompts stored?
+
+Request and response bodies are not stored by default. Token, cost, status, and latency metadata is recorded. If an admin enables body logging, default body retention is 14 days; secrets written in prompt text are not automatically redacted. See [Privacy](/en/legals/privacy-policy).
+
+## What happens if a model has an outage?
+
+The gateway can try another route according to its available routing configuration. If the request still fails, your application receives an error such as `503`; use backoff and check [Status](https://status.hostlinku.com). Automatic switching to another model in the same family is not guaranteed.
+
+## Is there a free trial for Hostlinku?
+
+Registration is free and does not require a credit card. Trial credits are not available; top up before making paid Playground or API requests.
+
 ## Topic
 
 - [Stream Mode](/en/faqs/stream-mode): how to use SSE with the OpenAI SDK, Python `requests`, and curl.
@@ -20,16 +44,19 @@ Yes, without any code changes. Set `base_url`/`baseURL` to `https://api.hostlink
 
 ## What endpoints are available?
 
-Currently, the gateway prioritizes two core OpenAI-compatible endpoints:
+Gateway endpoints accept an API key:
 
-- `POST /v1/chat/completions`: [Chat Completions](/en/chat-completions)
-- `GET /v1/models`: [Model](/en/models)
+- `POST /v1/chat/completions`: [Chat Completions](/en/chat-completions).
+- `POST /v1/messages`: [Anthropic Messages](/en/anthropic-messages).
+- `POST /v1/messages/count_tokens`: Anthropic-format token counting.
+- `POST /v1/responses`: stateless [Responses API](/en/responses).
+- `GET /v1/models`: [catalog for the key’s Service Mode](/en/models).
 
-Other endpoints (e.g., embeddings) are not yet available on the public gateway. The non-`/v1` public catalog (for sites) is available at `/api/public/models`. The console page uses the `/api/*` endpoint with a session cookie instead of an API key.
+The site catalog uses `GET /api/public/models-v2`. Console account endpoints under `/api/*` use a login session. Embeddings are not available on the public gateway.
 
 ## What models can I use?
 
-See [Models](/en/models): the official list is retrieved from `GET /v1/models` or the **Models** menu in the console. The catalog includes models from OpenAI, Anthropic, Google, DeepSeek, Qwen, and others, each with a unique slug.
+See the [model catalog](/en/models) or **Models** in Console. `GET /v1/models` returns models and rates available for the Service Mode of the API key you use.
 
 ## Why was my request rejected with a 401 error?
 
@@ -41,7 +68,7 @@ Check the error message. A 402 error has two possible causes: insufficient **acc
 
 ## How much does a single request cost?
 
-Cost = input tokens × input price + output tokens × output price (per token, depending on the model). Prices for each model are listed in the catalog; the actual cost of each request appears in `hostlinku.cost` and in the console log. Details are available at [Billing & Balance](/en/billing).
+Rates depend on the model, Service Mode, and token/cache dimensions used. Non-streaming chat responses include `hostlinku.cost`; streaming costs are available after completion in Logs/Billing and can use estimates when upstream usage is unavailable. See [Billing & Balance](/en/billing).
 
 ## Is there a rate limit?
 
@@ -53,11 +80,35 @@ Populate `messages[].content` with an array of content in the OpenAI format (e.g
 
 ## How can I stop the use of a leaked API key?
 
-Immediately **revoke** the API key in the console, under the **API Keys** menu. Revoked API keys will be immediately rejected (401) for all subsequent requests. To permanently delete an API key, use **purge**. Usage history prior to revocation remains recorded for auditing purposes.
+Disable the key in Console → **API Keys** to reject subsequent requests. Create a replacement, update your application, and delete the old key when no longer needed. Usage history is retained.
 
 ## Do request logs store the content of my conversations?
 
-Request logs store **technical metadata**: model, status, number of tokens, cost, latency, and request ID. This data is required for billing and monitoring. For questions regarding data retention in accordance with your compliance requirements, please contact [halo@hostlinku.com](mailto:halo@hostlinku.com).
+Token, cost, status, and latency metadata is recorded. Body storage follows [the prompt explanation above](#are-my-prompts-stored) and [Privacy](/en/legals/privacy-policy).
+
+## How should I read latency, TTFT, and TPS?
+
+Latency runs from gateway receipt of the request to response completion. TTFT is time to the first observed streaming token. TPS is the output token rate during generation after the first token, from qualifying stream samples. See [API Reference](/en/api-reference#metrics-and-example-figures).
+
+## Are animations and model charts direct measurements?
+
+Landing speed animations use fixed example figures. The 60 bars on model detail pages are generated from average/P95 latency and failure-count aggregates; bar positions do not represent the last 60 requests in sequence. Aggregate figures and Console usage charts come from request data. Check the period and sample population before comparing performance.
+
+## Does the green footer badge show live status?
+
+The landing footer badge currently uses a fixed status value. Check the [Status page](https://status.hostlinku.com) for monitoring results and incidents.
+
+## What does “reachable” mean?
+
+The endpoint returns an HTTP response below 500, including `401`, `403`, or `404`. This indicates server reachability; successful login or inference requires a check of the relevant function.
+
+## Why can historical cost breakdowns differ?
+
+The charged total is stored in transaction logs. Some input/output/cache breakdowns in analytics are recalculated at current rates and may differ from the historical total. This does not charge old requests again. See [Billing & Balance](/en/billing).
+
+## How long are probe records kept?
+
+Raw health probe records have a default retention of 30 days and are cleaned up periodically. This is separate from 14-day request body retention and usage/transaction metadata. See [Usage & Limits](/en/usage-and-limits).
 
 ## How do I contact support?
 

@@ -370,4 +370,9 @@ API 密钥按 Service Mode 和额度授权付费网关访问；账户管理使�
 | TTFT | 观察到第一个流式 token 的时间；非流式请求可能为空。 |
 | TPS | 符合条件的流式样本中，第一个 token 之后每秒输出 token 数。 |
 
-请查看统计的时间范围及样本。landing 速度动画为示例；监控结果见 [Status](https://status.hostlinku.com)。
+- **landing动画**使用固定示例数值，并非动画播放时推理请求的测量结果。
+- **模型详情60柱图**由平均/P95延迟和失败汇总生成。每根柱为合成展示，不代表按时间排序的请求或probe。Console用量图表使用请求数据汇总。
+- **landing页脚徽章**使用固定状态；监控结果与故障请查看[Status](https://status.hostlinku.com)。
+- **Reachable**表示低于500的HTTP响应，包括401/403/404。它说明端点可访问；登录和推理是否成功需分别检查相应功能。
+
+请比较同一时间范围、Service Mode和样本的指标。动画、容量规格、流量汇总和benchmark的数据来源各不相同。
