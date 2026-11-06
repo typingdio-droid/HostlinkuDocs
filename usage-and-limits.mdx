@@ -12,7 +12,7 @@ Penggunaan dibatasi rate limit, limit kredit key, dan saldo organisasi.
 
 Kuota berikut dipakai bersama oleh semua API key dan anggota dalam organisasi yang sama. Menambah key atau memakai akun anggota lain tidak menambah kuota.
 
-| Service Mode | Request/menit | Token input/menit | Token output/menit |
+| Service Mode | Request/menit | Token `input` per menit | Token `output` per menit |
 |---|---|---|---|
 | Performance | 600 | 6,500,000 | 200,000 |
 | Low-Cost | 600 | 6,500,000 | 200,000 |
@@ -29,7 +29,7 @@ Batas endpoint Console, login, dan checkout dihitung per IP dan terpisah dari ku
 | GET checkout bertoken | **90 request / 60 detik** | Per IP |
 | Mutasi checkout bertoken | **15 request / 60 detik** | Per IP |
 
-<Callout type="tip" title="Tangani 429 dengan jeda">
+<Callout type="tip" title="Tunggu sebelum mengulang request yang ditolak dengan 429">
 
 Baca header reset atau `Retry-After` bila tersedia. Kurangi konkurensi dan gunakan backoff eksponensial dengan jitter. Mengulang request terus-menerus tanpa jeda tidak menyelesaikan pembatasan.
 
@@ -62,7 +62,7 @@ Chat completion non-streaming memuat `hostlinku.cost`. Streaming SSE tidak menja
 
 Body logging **nonaktif secara default**. Jika diaktifkan admin, isi dibatasi ukuran dan field kredensial disaring; retensi body default 14 hari. Metadata penggunaan/transaksi tetap disimpan. Lihat [Privasi](/legals/privacy-policy).
 
-Data mentah probe kesehatan memiliki retensi default **30 hari** dan dibersihkan berkala. Retensi probe terpisah dari body request 14 hari; metadata pemakaian dan transaksi tetap disimpan.
+Data mentah probe kesehatan disimpan selama **30 hari** secara default, lalu dibersihkan berkala. Isi request memiliki retensi tersendiri selama **14 hari**. Metadata pemakaian dan transaksi tetap disimpan.
 
 ## Biaya historis
 

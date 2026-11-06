@@ -1,33 +1,44 @@
 ---
-title: "模型不可用"
-description: "404与503的区别、Service Mode、已弃用的模型以及可采取的措施。"
+title: "“Model”一词未提供"
+description: "404 与 503 的区别、服务模式、已弃用的模型以及可采取的措施。"
 icon: server-off
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
+
+<a id="404-atau-503"></a>
 
 ## 404 还是 503？
 
-| 状态 | 代码 | 含义 | 措施 |
+| 状态 | 代码 | 含义 | 操作 |
 |---|---|---|---|
-| 404 | `MODEL_NOT_FOUND` | 该Slug未在目录中 | 从`GET /v1/models`复制模型slug |
-| 400 | `MODEL_NOT_IN_SERVICE_MODE` | 该模型已存在，但不支持API密钥模式 | 更改密钥/模式或选择其他模型 |
-| 503 | `MODEL_UNAVAILABLE` | 该模型已弃用/目前不可用 | 检查错误信息中的`replacement_slug`或查阅目录 |
-| 503 | `UPSTREAM_ERROR` | 上游出现临时故障 | 等待后退避重试 |
+| 404 | `MODEL_NOT_FOUND` | “Slug”未收录在词汇表中 | 从 `GET /v1/models` 中提取 slug |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | Model 存在，但不适用于 API 密钥模式 | 替换 key/mode 或选择其他模型 |
+| 503 | `MODEL_UNAVAILABLE` | 已弃用/当前不可用的模型 | 请检查错误信息或目录中的 `replacement_slug` |
+| 503 | `UPSTREAM_ERROR` | 上游出现临时故障 | 请尝试使用 backoff 重新尝试 |
+
+<a id="model-deprecated"></a>
 
 ## 已弃用的模型
 
-已弃用的模型不再出现在 `GET /v1/models` 中。如果错误消息中包含 `replacement_slug`，请使用该 slug。有效模型列表请参见 [模型](/zh/models)。
+已弃用的模型将不再出现在 `GET /v1/models` 中。如果错误消息包含 `replacement_slug`，请使用该 slug。活跃模型列表位于 [模型](/zh/models)。
 
-## 为什么我的密钥里没有模型了？
+<a id="kenapa-model-hilang-dari-key-saya"></a>
 
-不同 Service Mode 的目录可能有所不同。Performance 和 Low-Cost 类型的 API 密钥可查看不同的模型列表。请使用正确的密钥查看 `GET /v1/models`，或在控制台中按所需模式创建密钥。
+<a id="为什么我的密钥里没有模型了"></a>
 
-## 请求会被自动重定向吗？
+## 为什么我的密钥中没有模型？
 
-对于上游故障，网关会在放弃之前尝试其他路径。但如果该模型确实不在目录中或没有可用路由，请求仍会失败。故障转移不会改变你使用的slug。
+不同服务模式下的目录可能有所不同。Performance 和 Low-Cost 模式的 API 密钥可查看不同的模型列表。请使用正确的密钥查询 `GET /v1/models`，或在 Console 中创建具有所需模式的密钥。
+
+<a id="apakah-request-otomatis-dialihkan"></a>
+
+<a id="请求会被自动重定向吗"></a>
+
+## 请求会自动重定向吗？
+
+对于上游中断，网关会在放弃之前尝试其他路径。但如果模型确实不在目录中或没有活动路由，请求仍会失败。故障转移不会更改您使用的 slug。
 
 <Callout type="tip" title="快速检查">
-请将该slug与[模型目录](/zh/models)进行对比，然后查看[错误](/zh/errors)中的详细错误代码。如果仍然失败，请将`x-request-id`发送至[支持部门](/zh/support)。
+  将 slug 与 [模型目录](/zh/models) 进行对比，然后查看 [错误](/zh/errors) 中的错误代码详情。如果仍然失败，请将 `x-request-id` 发送至 [支持](/zh/support)。
 </Callout>

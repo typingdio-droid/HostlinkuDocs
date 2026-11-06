@@ -1,26 +1,30 @@
 ---
 title: "GitHub Copilot"
-description: "通过BYOK在GitHub Copilot CLI和GitHub Copilot应用中使用Hostlinku模型，以及IDE中Copilot的限制"
+description: "在 GitHub Copilot CLI 和 GitHub Copilot 应用中通过 BYOK 使用 Hostlinku 模型，并遵守 IDE 中 Copilot 的限制"
 icon: bot
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[GitHub Copilot](https://docs.github.com/en/copilot) 在某些界面中支持 **BYOK（自带密钥）**。 在支持自定义 *base URL* 的场景中，你可以将其指向 Hostlinku，并使用 Hostlinku 中的模型。
+[GitHub Copilot](https://docs.github.com/en/copilot) 在
+某些界面中支持 **BYOK（自带密钥）**。在支持自定义 *base URL* 的位置，你可以将其指向
+Hostlinku，并使用目录中的模型，该模型由Hostlinku余额支持。
 
-| Copilot 界面 | 能否转接至Hostlinku？ | 指南 |
+| Copilot 界面 | 能否跳转到 Hostlinku？ | 指南 |
 |---|---|---|
-| **Copilot CLI** (`copilot`) | 是的-环境变量 `COPILOT_PROVIDER_*` | [下方](#copilot-cli) |
-| **GitHub Copilot 应用**（桌面版） | 是的 - *设置 → 模型提供商*（公开预览版） | [下方](#github-copilot-app) |
-| **VS Code 中的 Copilot Chat** | 是的-*自定义端点*提供商 | [VS Code](/zh/integrations/vscode) |
-| JetBrains、Visual Studio、Xcode 中的 Copilot；内联自动完成 | 不-没有设置基础 URL | [限制](#limitations) |
+| **Copilot CLI** (`copilot`) | 是 - 环境变量 `COPILOT_PROVIDER_*` | [下方](#copilot-cli) |
+| **GitHub Copilot 应用**（桌面版） | 是 - *设置 → 模型提供商*（公开预览版） | [下方](#github-copilot-app) |
+| **VS Code 中的 Copilot Chat** | 是 - 提供商 *自定义端点* | [VS Code](/zh/integrations/vscode) |
+| JetBrains、Visual Studio、Xcode 中的 Copilot；内联自动补全 | 不——没有基础 URL 设置 | [限制](#batasan) |
 
 ## Copilot CLI
 
-当设置 BYOK 变量时，Copilot CLI 会将所有模型请求发送至您的提供商。此模式下**无需登录 GitHub**。
+当设置 BYOK 变量时，Copilot CLI 会将所有模型请求发送至您的提供商。**登录
+GitHub 并非必需**。
 
 <Steps>
+
+<a id="set-environment-variable"></a>
 
 ### 设置环境变量
 
@@ -31,38 +35,51 @@ export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
 export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
-`COPILOT_PROVIDER_TYPE` 的默认值为 `openai`（Chat Completions），因此无需设置。Copilot 会自动添加 `/chat/completions` - 基础 URL 只需设置到 `/v1` 即可。
+`COPILOT_PROVIDER_TYPE` 的默认值为 `openai`（Chat Completions），因此无需设置。Copilot
+会自动添加 `/chat/completions` —— 基础 URL 只需保留至 `/v1` 即可。
 
-### （建议）指定模型Token的限制
+<a id="disarankan-beri-tahu-batas-token-model"></a>
 
-Copilot CLI 不识别 Hostlinku 这个 slug，因此请从 [目录](/zh/models) 中填写边界值，以便正确截取上下文：
+<a id="建议指定模型token的限制"></a>
+
+### （建议）说明令牌模型的限制
+
+Copilot CLI 不识别 Hostlinku 的 slug，因此请从 [目录](/zh/models) 中填充其边界，以便
+上下文能被正确截取：
 
 ```bash
 export COPILOT_PROVIDER_MAX_PROMPT_TOKENS=1000000
 export COPILOT_PROVIDER_MAX_OUTPUT_TOKENS=64000
 ```
 
-运行`copilot`前，在同一终端中检查密钥是否已设置，不打印密钥值：
+在运行 `copilot` 之前，请检查同一 shell 中是否已填入 key，且不打印其值：
 
 ```bash
-test -n "$COPILOT_PROVIDER_API_KEY" && echo "API密钥已设置" || echo "API密钥未设置"
+test -n "$COPILOT_PROVIDER_API_KEY" && echo "API key tersedia" || echo "API key belum diatur"
 ```
+
+<a id="jalankan"></a>
 
 ### 运行
 
 ```bash
 copilot
-# 或者按会话切换模型
+# atau ganti model per sesi
 copilot --model gpt-5-5
 ```
 
-第一个请求显示在控制台中 → **请求日志**。
+第一个请求在控制台中显示为 → **请求日志**。
 
 </Steps>
 
-### 版本：Anthropic格式
+<a id="varian-format-anthropic"></a>
 
-对于通过 Messages API（全提示缓存）调用的 Claude 模型，请使用 `anthropic` 提供商，且基础 URL 中**不包含** `/v1`：
+<a id="版本anthropic格式"></a>
+
+### 变体：Anthropic 格式
+
+对于通过 Messages API 调用的 Claude 模型（完全提示缓存），请使用提供商 `anthropic`，其基础
+URL **不包含** `/v1`：
 
 ```bash
 export COPILOT_PROVIDER_TYPE=anthropic
@@ -71,58 +88,82 @@ export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
 export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
-<Callout type="note" title="模型必须支持调用和流式处理功能">
-  Copilot CLI需要*tool calling*和*streaming*，并建议上下文至少为128K个Token。选择模型前请在[目录](/zh/models)中确认。
+<Callout type="note" title="模型必须支持调用工具和流式传输">
+  Copilot CLI 需要 *工具调用* 和 *流式处理*，并建议上下文长度至少为 128K 个令牌。在选择模型之前，请在 [目录](/zh/models) 中检查这三项。
 </Callout>
 
-- **选择工具和模型支持的API格式。** `openai`提供商默认使用Chat Completions；Responses的限制详见[Responses参考](/zh/responses)。
-- **若未登录 GitHub**，依赖 GitHub 服务器的功能（`/delegate`、GitHub MCP 服务器、代码搜索）将不可用。如需使用这些功能，请使用 `copilot login` 登录-请求模型仍为 Hostlinku。
-- **`COPILOT_OFFLINE=true`** 关闭了所有与 GitHub 的连接（包括遥测）。提示仍会发送至 `api.hostlinku.com`。
+- **请使用与工具和模型相匹配的 API 格式。** Chat Completions 的默认提供商为 `openai`；关于 Responses 的限制，请参阅 [Responses 参考文档](/zh/responses)。
+- **未登录 GitHub** 时，依赖 GitHub 服务器的功能（`/delegate`、GitHub MCP 服务器、
+  代码搜索）不可用。如需使用这些功能，请通过 `copilot login` 登录——请求模型
+  仍需发送至 Hostlinku。
+- **`COPILOT_OFFLINE=true`** 将关闭与 GitHub 的所有连接（包括遥测）。提示仍将
+  发送至 `api.hostlinku.com`。
 
 <a id="github-copilot-app"></a>
 
 ## GitHub Copilot 应用
 
-GitHub Copilot 桌面应用支持自定义模型提供商（公开预览版）。您仍需登录 GitHub，但如果仅使用自定义模型提供商，则**无需购买 Copilot 套餐**。
+GitHub Copilot 桌面应用程序支持自定义模型提供程序（公开预览版）。您仍
+需登录 GitHub，但如果仅使用自定义提供程序，则**无需 Copilot 套餐**。
 
 <Steps>
 
-### 添加运营商
+<a id="tambah-provider"></a>
+
+<a id="添加运营商"></a>
+
+### 添加提供商
 
 打开应用设置 → **模型提供商** → **添加提供商** → 选择 **OpenAI-compatible**。
 
-### 填写服务提供商详细信息
+<a id="isi-detail-provider"></a>
 
-| Field | 值 |
+<a id="填写服务提供商详细信息"></a>
+
+### 提供商详细信息
+
+| 字段 | 值 |
 |---|---|
 | **显示名称** | `Hostlinku` |
 | **基础 URL** | `https://api.hostlinku.com/v1` |
-| **API密钥** | `sk-…`（API密钥 Hostlinku） |
+| **API密钥** | `sk-…`（Hostlinku API密钥） |
 
-点击**“添加提供商”**。密钥将保存在操作系统的凭据存储中。
+点击 **Add provider**。密钥存储在操作系统的凭据存储中。
 
-### 按每次会话选择模型
+<a id="pilih-model-per-sesi"></a>
 
-模型 Hostlinku 会出现在模型选择器中，位于 GitHub 模型旁边。在启动代理会话时，请选择其中一个。
+<a id="按每次会话选择模型"></a>
+
+### 选择按会话计费的模式
+
+Hostlinku 模型会出现在模型选择器中，位于 GitHub 模型旁边。在启动
+代理会话时，请选择其中一个。
 
 </Steps>
 
-对于Claude模型，你还可以选择提供商**Anthropic**，并填写基础 URL `https://api.hostlinku.com`（不包含`/v1`）-仅当提供商表单中显示基础 URL字段时可用。
+对于 Claude 模型，您还可以选择 **Anthropic** 提供商，并填写基础 URL
+`https://api.hostlinku.com`（不带 `/v1`）——当提供商表单中显示“基础 URL”字段时可用。
 
-<a id="limitations"></a>
+<a id="batasan"></a>
 
 ## 限制
 
-- **JetBrains、Visual Studio 和 Xcode 中的 Copilot** 不支持按用户设置基础 URL 或自定义提供程序。 在 JetBrains 中，请使用 [JetBrains AI Assistant](/zh/integrations/jetbrains) 或 [Junie CLI](/zh/integrations/junie) 来调用 Hostlinku 模型。
-- 所有编辑器中的**内联自动补全（幽灵文本）**功能始终使用Copilot的基础架构。BYOK仅适用于聊天和代理。
-- **Copilot Business/Enterprise：** 组织管理员必须在 Copilot 策略设置中启用 BYOK（以及 Copilot 应用的 Copilot CLI）。
+- **JetBrains、Visual Studio 和 Xcode 中的 Copilot** 没有针对每个用户的 base URL 或自定义提供商
+  设置。在 JetBrains 中，请使用 [JetBrains AI Assistant](/zh/integrations/jetbrains)
+  或 [Junie CLI](/zh/integrations/junie) 来使用 Hostlinku 模型。
+- 所有编辑器中的**内联自动完成（幽灵文本）**始终使用 Copilot 基础设施。BYOK
+  仅适用于聊天和代理。
+- **Copilot Business/Enterprise：** 组织管理员必须在 Copilot 策略设置中启用 BYOK（以及 Copilot CLI 用于
+  Copilot 应用）。
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-| 症状 | Solusi |
+| 症状 | 解决方案 |
 |---|---|
-| `401` | 运行`copilot`的终端中，`COPILOT_PROVIDER_API_KEY`为空或不正确。使用上方的检查确认是否已设置；若请求仍被拒绝，请从控制台重新复制。 |
-| 所有请求中均包含`404` | 提供商`openai`不包含`/v1`，或者提供商`anthropic`包含`/v1`。 |
-| `404 model_not_found` | `COPILOT_MODEL` 的 slug 必须与 `GET /v1/models` 完全一致。 |
-| 错误：模型不支持调用工具 | 切换至[产品目录](/zh/models)中带*工具调用*功能的模型。 |
-| 仍采用GitHub模式 | 变量已导出到其他shell中-请在同一shell中运行`copilot`，或将其添加到`~/.zshrc`中。 |
+| `401` | 在运行 `copilot` 的 shell 中，`COPILOT_PROVIDER_API_KEY` 为空或错误。请使用上述检查方法确保密钥已填写；如果仍被拒绝，请从控制台重新复制。 |
+| 所有请求中的 `404` | 提供商 `openai` 不带 `/v1`，或提供商 `anthropic` 带 `/v1`。 |
+| `404 model_not_found` | `COPILOT_MODEL` 必须与 `GET /v1/models` 中的 slug 完全一致。 |
+| 错误模型不支持调用工具 | 请改用 [目录](/zh/models) 中带 *tool calling* 的模型。 |
+| 仍采用 GitHub 模型 | 变量在其他 shell 中导出——请在同一 shell 中运行 `copilot` 或将其添加到 `~/.zshrc` 中。 |

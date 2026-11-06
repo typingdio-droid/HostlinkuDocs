@@ -1,114 +1,190 @@
 ---
 title: "FAQ"
-description: "Frequently Asked Questions About the Hostlinku Gateway"
+description: "Frequently asked questions about the Hostlinku gateway"
 icon: circle-help
 ---
 
+<a id="apa-itu-hostlinku-playground"></a>
+
 ## What is Hostlinku Playground?
 
-Playground is the [Console](https://console.hostlinku.com/playground) interface for trying available models and choosing a Service Mode. It uses your login session and the same organization balance as the API; you do not need to enter an API key.
+Playground is an interface in [Console](https://console.hostlinku.com/playground) for trying out available models and selecting a Service Mode. Playground uses the same login session and organization balance as the API; you do not need to enter an API key.
+
+<a id="bagaimana-cara-kerja-integrasinya"></a>
 
 ## How does the integration work?
 
-Point your SDK or application to Hostlinku, use an API key, and choose a model slug. OpenAI Chat Completions and Responses use `https://api.hostlinku.com/v1`; Anthropic Messages uses `https://api.hostlinku.com`. Features depend on the model and protocol. See [Integrations](/en/integrations/index).
+Point the SDK or application to Hostlinku, use the API key, then select the model slug. OpenAI Chat Completions and Responses use the base URL `https://api.hostlinku.com/v1`; Anthropic Messages use `https://api.hostlinku.com`. Feature support depends on the model and protocol. See [Integrations](/en/integrations/index).
 
-## How does billing work?
+<a id="bagaimana-sistem-billing-nya"></a>
 
-Top up your organization balance and pay for usage at the model and Service Mode rates. Input, output, and cache have separate rates. Payments use iPaymu Direct for QRIS/VA and Heleket for crypto. See [Billing & Balance](/en/billing).
+<a id="how-does-billing-work"></a>
 
-## Are my prompts stored?
+## How does the billing system work?
 
-Request and response bodies are not stored by default. Token, cost, status, and latency metadata is recorded. If an admin enables body logging, default body retention is 14 days; secrets written in prompt text are not automatically redacted. See [Privacy](/en/legals/privacy-policy).
+Top up your organization’s balance, then pay for usage based on the pricing model and Service Mode. Input, output, and cache each have their own rates. Payments are available via iPaymu Direct for QRIS/VA and Heleket for crypto. See [Billing & Balance](/en/billing).
 
-## What happens if a model has an outage?
+<a id="apakah-prompt-saya-disimpan"></a>
 
-The gateway can try another route according to its available routing configuration. If the request still fails, your application receives an error such as `503`; use backoff and check [Status](https://status.hostlinku.com). Automatic switching to another model in the same family is not guaranteed.
+<a id="are-my-prompts-stored"></a>
+
+## Is my prompt saved?
+
+Request and response bodies are not stored by default. Token metadata, costs, status, and latency are still logged. If an admin enables body logging, the default retention period for bodies is 14 days; secrets in the prompt text are not automatically filtered out. See [Privacy](/en/legals/privacy-policy).
+
+<a id="apa-yang-terjadi-jika-sebuah-model-mengalami-gangguan"></a>
+
+<a id="what-happens-if-a-model-has-an-outage"></a>
+
+## What happens if a model experiences an outage?
+
+The gateway may attempt alternative routes based on the available routing configuration. If the request still fails, the application receives an error such as `503`; use backoff and check [Status](https://status.hostlinku.com). Automatic switching to another model within the same family is not guaranteed.
+
+<a id="apakah-hostlinku-gratis-dicoba"></a>
 
 ## Is there a free trial for Hostlinku?
 
-Registration is free and does not require a credit card. Trial credits are not available; top up before making paid Playground or API requests.
+Sign up for free—no credit card required. Trial credits are not available; top up your balance before making paid requests in the Playground or via the API.
+
+<a id="topik"></a>
 
 ## Topics
 
 - [Stream Mode](/en/faqs/stream-mode): how to use SSE with the OpenAI SDK, Python `requests`, and curl.
-- [Common errors](/en/faqs/errors): causes and fixes for common errors.
-- [Rate limit](/en/faqs/rate-limits): quota, `Retry-After` header, and backoff.
+- [Common Errors](/en/faqs/errors): causes and solutions for common errors.
+- [Rate limit](/en/faqs/rate-limits): quota, the `Retry-After` header, and backoff.
 - [Billing & Top-Up](/en/faqs/billing): balance, key limit, and error 402.
-- [Model not available](/en/faqs/model-unavailable): 404 vs. 503, deprecated, and Service Mode.
-- [Account, billing & policies](/en/faqs/account-billing): accounts, API keys, balance, top-ups, errors, privacy, and legal.
+- [Model Not Available](/en/faqs/model-unavailable): 404 vs. 503, deprecated, and Service Mode.
+- [Account, Billing & Policies](/en/faqs/account-billing): account, API key, balance, top-up, error, privacy, and legal.
+
+<a id="apakah-sdk-resmi-openai-bisa-dipakai"></a>
 
 ## Can the official OpenAI SDK be used?
 
-Yes. Set `base_url`/`baseURL` to `https://api.hostlinku.com/v1` and use your Hostlinku API key starting with `sk-…` as the `api_key`. A complete example is available at [Chat Completions](/en/chat-completions#contoh-python-sdk-resmi-openai).
+Yes. Set `base_url`/`baseURL` to `https://api.hostlinku.com/v1` and
+use the Hostlinku API key `sk-…` as `api_key`. A complete example is available at
+[Chat Completions](/en/chat-completions#contoh-python-sdk-resmi-openai).
+
+<a id="endpoint-apa-saja-yang-tersedia"></a>
 
 ## What endpoints are available?
 
-Gateway endpoints accept an API key:
+The gateway endpoint accepts an API key:
 
 - `POST /v1/chat/completions`: [Chat Completions](/en/chat-completions).
 - `POST /v1/messages`: [Anthropic Messages](/en/anthropic-messages).
-- `POST /v1/messages/count_tokens`: Anthropic-format token counting.
-- `POST /v1/responses`: stateless [Responses API](/en/responses).
-- `GET /v1/models`: [catalog for the key’s Service Mode](/en/models).
+- `POST /v1/messages/count_tokens`: counts tokens in the Anthropic format.
+- `POST /v1/responses`: [Responses API](/en/responses), stateless.
+- `GET /v1/models`: [catalog based on the Service Mode key](/en/models).
 
-The site catalog uses `GET /api/public/models-v2`. Console account endpoints under `/api/*` use a login session. Embeddings are not available on the public gateway.
+The site catalog uses `GET /api/public/models-v2`. Console account endpoints at `/api/*` use a login session. Embeddings are not yet available on the public gateway.
+
+<a id="model-apa-saja-yang-bisa-saya-pakai"></a>
 
 ## What models can I use?
 
-See the [model catalog](/en/models) or **Models** in Console. `GET /v1/models` returns models and rates available for the Service Mode of the API key you use.
+See the [model catalog](/en/models) or the **Models** menu in the Console. `GET /v1/models` displays the models and prices available for the Service Mode API key you are using.
+
+<a id="kenapa-request-saya-ditolak-401"></a>
 
 ## Why was my request rejected with a 401 error?
 
-Check the API key and authentication header. Gateway endpoints accept `Authorization: Bearer sk-...` or `x-api-key`; the key must be correct, active, and unexpired. See [Authentication](/en/authentication).
+Check the API key and authentication headers. The gateway accepts `Authorization: Bearer sk-...` or `x-api-key`; the key must be valid, active, and not expired. See [Authentication](/en/authentication).
+
+<a id="kenapa-muncul-402-padahal-saya-punya-saldo"></a>
 
 ## Why am I getting a 402 error even though I have a balance?
 
-Check the error message. A 402 error has two possible causes: insufficient **organization balance** (`available` is less than the estimated cost of the request), or the **API key credit limit** has been reached. If the message mentions "API key credit limit," wait for the reset window (daily/weekly/monthly) or change the limit in the console. For more details, see [Billing & Balance](/en/billing).
+Check the error message. A 402 error has two causes: **insufficient organization balance** (`available` is less than
+the estimated cost of the request), or the **API key credit limit** has been reached. If the message mentions "API key
+credit limit," wait for the reset window (daily/weekly/monthly) or adjust the limit in the console.
+See [Billing & Balance](/en/billing) for more details.
+
+<a id="berapa-biaya-satu-request"></a>
 
 ## How much does a single request cost?
 
-Rates depend on the model, Service Mode, and token/cache dimensions used. Non-streaming chat responses include `hostlinku.cost`; streaming costs are available after completion in Logs/Billing and can use estimates when upstream usage is unavailable. See [Billing & Balance](/en/billing).
+Pricing depends on the model, Service Mode, and the token/cache dimensions used. Non-streaming chat responses include `hostlinku.cost`; streaming costs can be viewed after completion in Logs/Billing and may use estimates if upstream usage is unavailable. See [Billing & Balance](/en/billing).
+
+<a id="apakah-ada-rate-limit"></a>
 
 ## Is there a rate limit?
 
-Each Service Mode has a quota of **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached. See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
+The quota for each Service Mode is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All API keys and organization members are affected when the quota is reached. Quota details and how to handle a 429 error can be found in [Usage & Limits](/en/usage-and-limits).
+
+<a id="bagaimana-cara-mengirim-pesan-gambar--multimodal"></a>
 
 ## How do I send an image or multimodal message?
 
-Populate `messages[].content` with an array of content in the OpenAI format (e.g., one object of type `image_url` followed by one object of type `text`) and select a model with `vision`/`image-input` capabilities from the catalog. The level of support depends on the model provider.
+Populate `messages[].content` with an array of content in the OpenAI format (e.g., one object of type `image_url`
+followed by one object of type `text`) and select a model with `vision`/`image-input` capabilities from
+the catalog. The level of support depends on the model provider.
 
-## How can I stop the use of a leaked API key?
+<a id="bagaimana-cara-menghentikan-pemakaian-api-key-yang-bocor"></a>
 
-Disable the key in Console → **API Keys** to reject subsequent requests. Create a replacement, update your application, and delete the old key when no longer needed. Usage history is retained.
+<a id="how-can-i-stop-the-use-of-a-leaked-api-key"></a>
+
+## How do I stop using a leaked API key?
+
+Disable the key in the Console → **API Keys** so that subsequent requests are rejected. Create a replacement key, update the application, and then delete the old key when it is no longer needed. Usage history remains recorded.
+
+<a id="apakah-log-request-menyimpan-isi-percakapan-saya"></a>
 
 ## Do request logs store the content of my conversations?
 
-See [the prompt storage answer](#are-my-prompts-stored).
+See [the answer about prompt storage](#apakah-prompt-saya-disimpan).
 
-## How should I read latency, TTFT, and TPS?
+<a id="bagaimana-membaca-latensi-ttft-dan-tps"></a>
 
-Latency runs from gateway receipt of the request to response completion. TTFT is time to the first observed streaming token. TPS is the output token rate during generation after the first token, from qualifying stream samples. See [API Reference](/en/api-reference#metrics-and-example-figures).
+<a id="how-should-i-read-latency-ttft-and-tps"></a>
 
-## Are animations and model charts direct measurements?
+## How do you interpret latency, TTFT, and TPS?
 
-Landing speed animations use fixed example figures. The 60 bars on model detail pages are generated from average/P95 latency and failure-count aggregates; bar positions do not represent the last 60 requests in sequence. Aggregate figures and Console usage charts come from request data. Check the period and sample population before comparing performance.
+Latency is the time from when the gateway receives a request until the response is complete. TTFT is the time until the first token is observed in the stream. TPS is the token output rate during the generation phase after the first token, from a sample of eligible streams. These three have different meanings; see [API Reference](/en/api-reference#arti-metrik-dan-contoh-angka).
 
-## Does the green footer badge show live status?
+<a id="apakah-animasi-dan-grafik-model-adalah-hasil-pengukuran-langsung"></a>
 
-The landing footer badge currently uses a fixed status value. Check the [Status page](https://status.hostlinku.com) for monitoring results and incidents.
+<a id="are-animations-and-model-charts-direct-measurements"></a>
 
-## What does “reachable” mean?
+## Are the animations and model graphics the result of direct measurements?
 
-The endpoint returns an HTTP response below 500, including `401`, `403`, or `404`. This indicates server reachability; successful login or inference requires a check of the relevant function.
+The landing speed animation uses fixed example numbers. The 60-bar chart in the model details is based on aggregates of average latency, P95, and the number of failures; the position of each bar does not represent the order of the last 60 requests. Aggregate figures and Console usage charts are derived from request data. Check the time period and sample size before comparing performance.
 
-## Why can historical cost breakdowns differ?
+<a id="apakah-indikator-hijau-di-footer-menunjukkan-status-live"></a>
 
-The charged total is stored in transaction logs. Some input/output/cache breakdowns in analytics are recalculated at current rates and may differ from the historical total. This does not charge old requests again. See [Billing & Balance](/en/billing).
+<a id="does-the-green-footer-badge-show-live-status"></a>
 
-## How long are probe records kept?
+## Does the green indicator in the footer indicate live status?
 
-Raw health probe records have a default retention of 30 days and are cleaned up periodically. This is separate from 14-day request body retention and usage/transaction metadata. See [Usage & Limits](/en/usage-and-limits).
+The landing page footer badge currently displays a static status value. Use the [Status page](https://status.hostlinku.com) to check service monitoring and incidents.
+
+<a id="apa-arti-status-reachable"></a>
+
+<a id="what-does-reachable-mean"></a>
+
+## What does the status “reachable” mean?
+
+An endpoint returns an HTTP response below 500, including `401`, `403`, or `404`. This indicates that the server is reachable; login success or inferences require the results of related function checks.
+
+<a id="mengapa-rincian-biaya-historis-dapat-berbeda"></a>
+
+<a id="why-can-historical-cost-breakdowns-differ"></a>
+
+## Why might historical cost details differ?
+
+The total billed amount is stored in the transaction log. Some input/output/cache details in analytics are recalculated using current rates, so the detailed amounts may differ from historical totals. This does not re-bill old requests. See [Billing & Balance](/en/billing).
+
+<a id="berapa-lama-data-probe-disimpan"></a>
+
+<a id="how-long-are-probe-records-kept"></a>
+
+## How long is probe data stored?
+
+Raw health probe data is stored for 30 days by default and then periodically purged. Request content has a separate retention period of 14 days. Usage and transaction metadata is retained. See [Usage & Limits](/en/usage-and-limits).
+
+<a id="bagaimana-cara-menghubungi-dukungan"></a>
 
 ## How do I contact support?
 
-See [Support](/en/support): email **halo@hostlinku.com**; please include the `x-request-id` from the problematic response.
+See [Support](/en/support): email **halo@hostlinku.com**; please include
+the `x-request-id` from the problematic response.

@@ -1,26 +1,32 @@
 ---
-title: Prompt Caching
-description: Mark repeated prompts, understand cache tokens, and check costs in the Console.
+title: "Prompt Caching"
+description: "Mark recurring prompts, understand cache tokens, and check costs in the Console."
 icon: database
 ---
 
-Prompt caching can reduce the cost of processing repeated prefixes. Support, token thresholds, lifetime, and cache prices depend on the model and provider. Resending a prompt does not guarantee a cache hit.
+Prompt caching can reduce the processing cost of repetitive prefixes. Support, token thresholds, lifetime, and cache rates depend on the model and provider. A cache hit is not guaranteed simply because a prompt is resubmitted.
+
+<a id="harga-dan-penggunaan"></a>
 
 ## Pricing and usage
 
-Check `pricing.cache_read` and `pricing.cache_write` in [`GET /v1/models`](/en/models) using the intended API key. Prices follow the key's Service Mode and are per 1M tokens; unavailable rates may be omitted. Cache writes can cost more than ordinary input, so savings depend on token counts and subsequent hits.
+Check `pricing.cache_read` and `pricing.cache_write` on [`GET /v1/models`](/en/models) using the API key you plan to use. Pricing follows the Service Mode key and is calculated per 1M tokens; rates that are not available may be omitted. Cache writes may be more expensive than regular requests, so cost savings depend on the number of tokens and subsequent cache hits.
 
-Console **Logs** shows Input, Output, Cache Read, Cache Write, and final cost. Cache Write 5m/1h details are populated only when upstream reports them; `-` means unavailable detail, not zero. Some historical cost breakdowns use current rates while the historical total remains stored. See [Billing](/en/billing).
+Console **Logs** display Input, Output, Cache Read, Cache Write, and the final cost. Cache Write details for 5m/1h are only populated if the upstream reports them; `-` means the details are unavailable, not zero. In older history records, some cost details use current rates; historical totals are still retained. See [Billing](/en/billing).
 
-## Arrange the prompt
+<a id="menyusun-prompt"></a>
 
-Put static content first: tool definitions, system prompt/documents, then older messages. Place the latest user message and changing values afterwards. Prefix changes, including timestamps or tool order, can cause cache misses.
+<a id="arrange-the-prompt"></a>
 
-For Claude on supported routes, add `cache_control` to the static block. The marker does not force a hit: the block must still meet model and upstream requirements.
+## Compose the prompt
+
+Place static content first: tool definitions, system prompts/documentation, then older messages. Place the most recent user messages and values that have changed afterward. Changes to prefixes, including timestamps or tool order, can cause cache misses.
+
+For Claude on supported channels, include `cache_control` in static blocks. The marker does not force a cache hit: the block must still comply with the model and upstream requirements.
 
 ## Anthropic Messages
 
-This example places `cache_control` on the `system` block:
+The following example uses `cache_control` in the `system` block:
 
 ```bash
 curl https://api.hostlinku.com/v1/messages \
@@ -32,14 +38,14 @@ curl https://api.hostlinku.com/v1/messages \
     "max_tokens": 1024,
     "system": [{
       "type": "text",
-      "text": "<long, unchanged instructions and reference documents>",
+      "text": "<instruksi panjang dan dokumen referensi yang tidak berubah>",
       "cache_control": {"type": "ephemeral"}
     }],
-    "messages": [{"role": "user", "content": "Summarize section 3."}]
+    "messages": [{"role": "user", "content": "Ringkas bagian 3."}]
   }'
 ```
 
-Example `usage` during a cache write:
+Example of `usage` during a cache write:
 
 ```json
 {
@@ -52,11 +58,11 @@ Example `usage` during a cache write:
 }
 ```
 
-`cache_creation_input_tokens` counts cache writes; `cache_read_input_tokens` counts cache reads. A read value greater than zero indicates upstream-reported cache usage. Both can be zero if a request is ineligible for caching or cache information is unavailable.
+`cache_creation_input_tokens` counts cache writes; `cache_read_input_tokens` counts cache reads. A read value greater than zero indicates cache usage reported by the upstream. Both can be zero if the request does not meet cache criteria or cache information is unavailable.
 
 ## OpenAI Chat Completions
 
-For Claude models, the bridge forwards `cache_control` from a content part to an Anthropic block:
+For the Claude model, the bridge passes `cache_control` from the content part to the Anthropic block:
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -67,26 +73,34 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [
       {"role": "system", "content": [{
         "type": "text",
-        "text": "<long, unchanged instructions and reference documents>",
+        "text": "<instruksi panjang dan dokumen referensi yang tidak berubah>",
         "cache_control": {"type": "ephemeral"}
       }]},
-      {"role": "user", "content": "Summarize section 3."}
+      {"role": "user", "content": "Ringkas bagian 3."}
     ]
   }'
 ```
 
-In Chat Completions, `usage.prompt_tokens` already includes cache tokens. `usage.prompt_tokens_details.cached_tokens` counts cache reads and `cache_write_tokens` counts cache writes when available. Do not add cache tokens to `prompt_tokens` again.
+In the Chat Completions format, `usage.prompt_tokens` already includes cache tokens. `usage.prompt_tokens_details.cached_tokens` counts read cache tokens, and `cache_write_tokens` counts write cache tokens when available. Do not add cache tokens to `prompt_tokens` again.
 
-## Agents and other protocols
+<a id="agent-dan-protokol-lain"></a>
 
-Apps that already set `cache_control` can use it when pointed at Hostlinku; behavior depends on app version and model. See [IDE & Agent Integrations](/en/integrations). Other models may use automatic upstream caching without that marker, but hits and reporting vary by model.
+<a id="agents-and-other-protocols"></a>
 
-`/v1/responses` does not currently provide an explicit `cache_control` marker through the Chat Completions bridge. Automatic caching and tokens reported by native/upstream routes remain model-dependent. For the Claude markers shown above, use `/v1/messages` or `/v1/chat/completions`.
+## Agent and other protocols
 
-## Check cache hits
+Applications that have already implemented `cache_control` can use it when redirected to Hostlinku; behavior depends on the application version and model. See [IDE & Agent Integration](/integrations). Other models can use automatic upstream caching without that marker, but hits and reporting vary by model.
 
-1. Send a prompt that meets the model's requirements, then inspect Cache Write/Read in **Logs**.
-2. Resend the same prefix within the upstream cache lifetime and check for Cache Read.
-3. Compare requests with the same model, Service Mode, and output length. Output tokens also affect the cost difference.
+`/v1/responses` does not yet provide an explicit `cache_control` header in the Chat Completions bridge. Automatic caching and cache tokens reported by native/upstream systems still follow the model. For the Claude header in the example above, use `/v1/messages` or `/v1/chat/completions`.
 
-If Cache Read stays zero, check the prefix, block size, model support, and cache lifetime. See [Support](/en/support) if the usage information is unexpected.
+<a id="memeriksa-cache-hit"></a>
+
+<a id="check-cache-hits"></a>
+
+## Checking cache hits
+
+1. Submit a prompt that meets the model’s requirements, then check the Write/Read Cache in **Logs**.
+2. Send the same prefix within the upstream cache period and check if the Cache Read field is populated.
+3. Compare "request" with "model," "Service Mode," and the same output length. Cost differences are also influenced by the output token, not just the cache.
+
+If Cache Read remains at zero, check the prefix, block size, model support, and cache lifetime. See [Help](/en/support) if usage information is incorrect.

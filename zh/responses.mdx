@@ -1,15 +1,18 @@
 ---
 title: "Responses API"
-description: "POST /v1/responses 端点参考（兼容 OpenAI Responses API）-使用 Codex CLI、OpenAI Agents SDK 或 client.responses.create() 并配合 Hostlinku API 密钥"
+description: "POST /v1/responses 端点参考（兼容 OpenAI Responses API）——使用 Codex CLI、OpenAI Agents SDK 或 client.responses.create() 并配合 Hostlinku 的 API 密钥"
 icon: workflow
 ---
-
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku 提供了与 [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) 兼容的端点-这是 **Codex CLI** 采用的格式， **OpenAI Agents SDK** 以及 OpenAI SDK 中的 `client.responses.create()` 方法所采用的格式。 只需替换基础 URL；API 密钥、余额、Service Mode、速率限制和请求日志与 `/v1/chat/completions` 和 `/v1/messages` 相同。
+Hostlinku 提供与
+[OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses)——该格式
+被 **Codex CLI**、**OpenAI Agents SDK** 以及 OpenAI SDK 中的 `client.responses.create()` 方法所采用。
+只需替换基础 URL；API 密钥、余额、服务模式、速率限制和请求日志与
+`/v1/chat/completions` 和 `/v1/messages` 相同。
 
 ```http
 POST https://api.hostlinku.com/v1/responses
@@ -17,17 +20,20 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-成功响应包含 `x-request-id`；成功的非流式响应还包含 `x-model`（公开模型 slug）。
+成功响应包含 `x-request-id`；非流式传输的成功响应还包含 `x-model`（模型的公共 slug）。
 
-<Callout type="note" title="模型与工具兼容性">
-  `model` 使用[模型目录](/zh/models)中的公开 slug。网关根据模型 deployment 使用原生 Responses 或 Chat Completions 桥接。响应格式兼容不代表每个模型都支持所有 Responses 功能或 Codex 工具。
+<Callout type="note" title="模型和工具的兼容性">
+  `model` 使用 [模型目录](/zh/models) 中的公开 slug。网关根据部署模型，提供原生 Responses 路径以及连接到 Chat Completions 的桥接路径。支持响应格式并不意味着每个模型都支持 Responses 的全部功能或 Codex 工具。
 </Callout>
 
-请选择 API 密钥 Service Mode 中可用的模型。vision、reasoning、缓存、JSON schema 和 tool calling 取决于模型。原生 Responses 转发 upstream 功能；Chat Completions 桥接支持消息、模型支持的图片和 `type: "function"` 工具。hosted/custom tools 和加密 reasoning 需要原生支持。
+为“服务模式 API 密钥”选择可用的模型。“Vision”、“reasoning”、“caching”、“JSON schema”和“tool calling”功能应遵循模型的能力。“Responses native”传递上游功能；“bridge Chat Completions”支持消息、模型支持的图片以及 `type: "function"` 类型的工具。托管/自定义工具和加密推理功能需要原生支持。
+
+<a id="konfigurasi-cepat"></a>
 
 ## 快速配置
 
-各工具的完整指南请参见 [Codex CLI](/zh/integrations/codex-cli) 和 [OpenAI Agents SDK](/zh/integrations/agents-sdk)。
+各工具的完整指南请参见 [Codex CLI](/zh/integrations/codex-cli) 和
+[OpenAI Agents SDK](/zh/integrations/agents-sdk)。
 
 **Codex CLI** (`~/.codex/config.toml`)
 
@@ -47,7 +53,7 @@ export HOSTLINKU_API_KEY=sk-your-api-key
 codex
 ```
 
-**Python（OpenAI官方SDK）**
+**Python（OpenAI 官方 SDK）**
 
 ```python
 from openai import OpenAI
@@ -78,41 +84,47 @@ const response = await client.responses.create({
 console.log(response.output_text);
 ```
 
-**OpenAI 代理 SDK（Python）**
+**OpenAI Agents SDK（Python）**
 
 ```python
 from agents import Agent, Runner, set_default_openai_client, set_tracing_disabled
 from openai import AsyncOpenAI
 
 set_default_openai_client(AsyncOpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v1"))
-set_tracing_disabled(True)  # OpenAI 跟踪无法通过网关使用
+set_tracing_disabled(True)  # tracing OpenAI tidak tersedia lewat gateway
 
 agent = Agent(name="Asisten", instructions="Jawab singkat.", model="gpt-5-5")
 result = Runner.run_sync(agent, "Sebutkan 3 bahasa pemrograman.")
 print(result.final_output)
 ```
 
-## body 参数
+<a id="parameter-body"></a>
+
+<a id="body-参数"></a>
+
+## 请求体参数
 
 | 参数 | 类型 | 说明 |
 |---|---|---|
-| `model` | `string` | **必选。** 模型为Hostlinku的弹头。 |
-| `input` | `string` \| `array` | **必填。** 单个文本或数组项：`message`（`role` + `content` 包含 `input_text`/`input_image`/…）， `function_call`、`function_call_output`、`reasoning`。 |
+| `model` | `string` | **必填。** Hostlinku 模型的 Slug。 |
+| `input` | `string` \| `array` | **必填。** 单个文本或数组项：`message`（`role` + `content` 包含 `input_text`/`input_image`/…）、`function_call`、`function_call_output`、`reasoning`。 |
 | `instructions` | `string` | 系统提示（开发者消息）。 |
-| `max_output_tokens` | `integer` | 输出Token限制。若超过模型输出限制，则拒绝 `400`。 |
-| `stream` | `boolean` | `true` 适用于 SSE（见下文）。 |
-| `tools`, `tool_choice`, `parallel_tool_calls` | - | 函数调用格式 Responses (`{ "type": "function", "name", "parameters" }`)。 |
+| `max_output_tokens` | `integer` | 输出令牌限制。若超过模型输出限制，将返回 `400` 错误。 |
+| `stream` | `boolean` | SSE 情况请使用 `true`（见下文）。 |
+| `tools`、`tool_choice`、`parallel_tool_calls` | - | 函数调用格式响应（`{ "type": "function", "name", "parameters" }`）。 |
 | `reasoning` | `object` | 例如：`{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`。 |
-| `include` | `string[]` | 例如 `["reasoning.encrypted_content"]`；加密项目取决于 upstream 原生 Responses 支持。chat 桥接不保留加密 reasoning 项目。 |
-| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | 符合OpenAI规格；已转至该模型。 |
-| `store` | `boolean` | 始终被视为 `false`（参见 *无状态*）。 |
-| `previous_response_id`, `conversation`, `background` | - | 非 null 的 `previous_response_id` 和 `conversation` 返回 `400 invalid_request_error`；拒绝 `background: true`。可省略这些字段；接受 `background: false`。 |
+| `include` | `string[]` | 例如：`["reasoning.encrypted_content"]`；加密项的可用性取决于上游对响应的原生支持。Bridge Chat 不保留加密的推理项。 |
+| `text`、`truncation`、`temperature`、`top_p`、`metadata`、`user`、`prompt_cache_key`、`safety_identifier` | - | 符合 OpenAI 规范；已传递给模型。 |
+| `store` | `boolean` | 始终视为 `false`（参见 *Stateless*）。 |
+| `previous_response_id`、`conversation`、`background` | - | `previous_response_id` 和 `conversation` 若非空值，将被拒绝并返回 `400 invalid_request_error`；`background: true` 被拒绝。该字段可省略；`background: false` 被接受。 |
 
-Responses 请求体的其他字段会转发。参数可能因协议路径和 upstream 支持情况被转发、忽略或拒绝；通过 schema 验证不保证模型功能。无效请求体返回 `400 invalid_request_error`，详细信息见 `error.details.issues`。
+响应正文中的其他字段将被转发。参数可根据路径和上游支持情况被转发、忽略或拒绝；接受该方案并不保证模型具备相应功能。无效的正文将被拒绝，返回 `400 invalid_request_error`，详细信息见 `error.details.issues`。
 
 <Callout type="important" title="Stateless - 在 `input` 中发送完整历史记录">
-  在 `input` 中发送完整历史并使用 `store: false`。拒绝非 null 的 `previous_response_id` / `conversation` 及 `background: true`。不提供 `GET`/`DELETE /v1/responses/{id}`。reasoning 项目可在原生路径复用；chat 桥接会跳过这些项目。
+  请在 `input` 中通过 `store: false` 发送完整历史记录。`previous_response_id` 和 `conversation` 不能为空，且 `background: true` 将被拒绝。`GET`/`DELETE /v1/responses/{id}` 不可用。 推理项可在原生路径中重复使用；桥接聊天会跳过该项。
 </Callout>
+
+<a id="respons-non-streaming"></a>
 
 ## 非流式响应
 
@@ -133,7 +145,7 @@ Responses 请求体的其他字段会转发。参数可能因协议路径和 ups
       "type": "message",
       "status": "completed",
       "role": "assistant",
-      "content": [{ "type": "output_text", "text": "API 网关是 …", "annotations": [] }]
+      "content": [{ "type": "output_text", "text": "API gateway adalah …", "annotations": [] }]
     }
   ],
   "usage": {
@@ -149,19 +161,32 @@ Responses 请求体的其他字段会转发。参数可能因协议路径和 ups
 }
 ```
 
-`id` 和 `model` 始终是 Hostlinku 的公共标识符。 `hostlinku` 区块为扩展区块（OpenAI SDK 会忽略它），其中包含 <CreditIcon />、Service Mode API key 的费用以及延迟信息。 `status: "incomplete"` 与 `incomplete_details.reason = "max_output_tokens"` 表示输出被 `max_output_tokens` 截断-仍按实际Token数量计费。
+`id` 和 `model` 始终是 Hostlinku 的公共标识符。`hostlinku` 块是扩展部分（OpenAI SDK
+会忽略它），其中包含费用 <CreditIcon />、服务模式 API 密钥和延迟。`status: "incomplete"` 配合
+`incomplete_details.reason = "max_output_tokens"` 表示输出因 `max_output_tokens` 而被截断
+- 仍按实际令牌计费。
 
-<Callout type="warning" title="推理模型 + `max_output_tokens`（小号）">
-在推理模型中（例如 DeepSeek V4、GPT-6、带“thinking”功能的 Claude），“thinking”这个Token会被计入 `max_output_tokens`。 较小的数值（例如 `16`）通常仅用于 `reasoning` 项 → `status: "incomplete"` 和 `output` 仅包含 `reasoning` 项，而不包含 `message`。 请使用 `max_output_tokens` ≥ 256，或将 `reasoning.effort` 降级为 `"low"`。
+<Callout type="warning" title="推理模型 + `max_output_tokens` 较小">
+  在推理模型（例如 DeepSeek V4、GPT-6、带“thinking”功能的 Claude）中，思考令牌也会
+  计入 `max_output_tokens`。较小的数值（例如 `16`）通常仅用于 `reasoning`
+  → `status: "incomplete"`，且 `output` 仅包含 `reasoning` 项而无 `message`。
+  请将 `max_output_tokens` 设为 ≥ 256，或将 `reasoning.effort` 降至 `"low"`。
 </Callout>
 
-<Callout type="note" title="Responses API 使用规范">
-与Chat Completions一样，`input_tokens` **已包含**缓存Token；详细信息见`input_tokens_details.cached_tokens`。`output_tokens`包含`reasoning_tokens`。 Hostlinku的账单是根据这些组件及其各自的价格计算得出的（参见[计费](/zh/billing)）。
+<Callout type="note" title="API 响应用法规范">
+  与“Chat Completions”一样，`input_tokens` **已包含**缓存令牌；详细信息请参见
+  `input_tokens_details.cached_tokens`。`output_tokens` 包含 `reasoning_tokens`。Hostlinku 的账单
+  是根据这些组件及其各自的价格计算得出的（参见 [计费](/zh/billing)）。
 </Callout>
 
-## 流式传输 (`stream: true`)
+<a id="streaming-stream-true"></a>
 
-网关以 Responses API 帧格式（`event:` + `data:`）转发 SSE 事件，其中包括来自上游的 `sequence_number`：
+<a id="流式传输-stream-true"></a>
+
+## 流式传输（`stream: true`）
+
+网关通过 API 响应帧（`event:` + `data:`）传输 SSE 事件，其中包括
+来自上游的 `sequence_number`：
 
 ```text
 event: response.created
@@ -180,7 +205,7 @@ event: response.output_text.delta
 data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"API gateway"}
 
 event: response.output_text.done
-data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"API 网关是 …"}
+data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"API gateway adalah …"}
 
 event: response.content_part.done
 data: {"type":"response.content_part.done","sequence_number":6,…}
@@ -194,10 +219,16 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 
 注：
 
-- upstream 提供最终 usage 时，它位于 `response.completed` 或 `response.incomplete`。费用依据该 usage；usage 缺失或为零时，网关可能使用预留估算值。`hostlinku.cost` 扩展用于成功的非流式响应，不保证出现在每个 SSE 事件中。
-- 工具调用通过 `response.output_item.added`（`type: "function_call"`）、`response.function_call_arguments.delta` 和 `response.function_call_arguments.done` 进行。
-- 如果流在传输过程中失败，网关将发送 `event: error` 和 `{"type":"error","code":…,"message":…}`，但**不会**发送虚假的 `response.completed`。
-- 在返回第一个字节之前出现的错误（余额不足、模型不存在、速率限制）将作为带有正确 HTTP 状态码的常规 JSON 响应返回-OpenAI SDK 将其映射为异常（`AuthenticationError`、`NotFoundError`、 `RateLimitError`，……）。
+- 最终使用量（Usage final），如果上游提供，则位于 `response.completed` 或 `response.incomplete` 中。费用基于该使用量计算；如果使用量为空或为零，网关可使用预留估计值。扩展 `hostlinku.cost` 仅在非流式成功响应中提供；请勿期望在每个 SSE 事件中都能获得该值。
+- 工具调用通过 `response.output_item.added`（`type: "function_call"`）、
+  `response.function_call_arguments.delta` 以及 `response.function_call_arguments.done` 进行传递。
+- 如果流在中间失败，网关会发送 `event: error`，格式为
+  `{"type":"error","code":…,"message":…}`，并且**不会**发送虚假的 `response.completed`。
+- 在返回第一个字节之前出现的错误（余额不足、模型不存在、速率限制）应作为
+  带有正确 HTTP 状态码的常规 JSON 响应返回——OpenAI SDK 会将其映射为异常
+  （`AuthenticationError`、`NotFoundError`、`RateLimitError` 等）。
+
+<a id="tool-calling-function-calling"></a>
 
 ## 工具调用（函数调用）
 
@@ -226,7 +257,11 @@ r2 = client.responses.create(
 print(r2.output_text)
 ```
 
-## 格式错误
+<a id="format-error"></a>
+
+<a id="格式错误"></a>
+
+## 错误格式
 
 ```json
 { "error": { "message": "The API key is invalid or has been revoked.", "type": "authentication_error", "param": null, "code": "invalid_api_key" } }
@@ -234,14 +269,14 @@ print(r2.output_text)
 
 | HTTP | `error.type` | `error.code` | 常见原因 |
 |---|---|---|---|
-| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | 正文无效，`max_output_tokens`超出模型限制，已发送`previous_response_id`，Service Mode密钥中不存在该模型。 |
-| 401 | `authentication_error` | `invalid_api_key` | API密钥错误/已被撤销/已过期，或者请求中未提供API密钥。 |
-| 402 | `insufficient_quota` | `insufficient_quota` | 余额不足或API密钥的额度已用尽。 |
+| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | 正文无效，`max_output_tokens` 超出了模型限制，已发送 `previous_response_id`，该模型在服务模式密钥中不可用。 |
+| 401 | `authentication_error` | `invalid_api_key` | API密钥错误/被撤销/过期，或未提供API密钥的请求。 |
+| 402 | `insufficient_quota` | `insufficient_quota` | 余额不足或API密钥的信用额度已用尽。 |
 | 403 | `permission_error` | - | 账户已被暂停/访问被拒绝。 |
-| 404 | `not_found_error` | `model_not_found` / `not_found` | 未找到模型标识符；或 `GET /v1/responses/{id}`（无状态）。 |
-| 429 | `rate_limit_error` | `rate_limit_exceeded` | 已达到需求上限（参见标题 `Retry-After`）。 |
-| 503 | `server_error` | `model_unavailable` / `server_error` | 模型／上游不可用。请检查目录及替代模型；暂时故障可延迟重试。 |
+| 404 | `not_found_error` | `model_not_found` / `not_found` | 模型的 Slug 不存在；或 `GET /v1/responses/{id}`（无状态）。 |
+| 429 | `rate_limit_error` | `rate_limit_exceeded` | 请求限制已达到（参见 `Retry-After` 标头）。 |
+| 503 | `server_error` | `model_unavailable` / `server_error` | 模型/上游不可用。请检查目录和替代模型；若为临时故障，请间隔一段时间后重试。 |
 
-表格列出协议处理器处理的错误。处理器之前的请求限流或正文解析可能使用通用Hostlinku格式；请参阅 [错误](/zh/errors)。
+表格列出了协议处理的错误。在处理程序之前对请求或请求正文进行限制或解析时，可采用 Hostlinku 的通用格式；请参阅 [错误](/zh/errors)。
 
-错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。
+错误消息已进行处理以隐藏内部标识；部分上游拒绝原因仍可能显示。

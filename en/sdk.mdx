@@ -1,12 +1,12 @@
 ---
-title: "SDK & Sample Code"
-description: "Python and Node.js examples for the three Hostlinku API dialects-Anthropic Messages, OpenAI Chat Completions, and OpenAI Responses."
+title: "SDK & Code Examples"
+description: "Python and Node.js examples for the three Hostlinku API dialects—Anthropic Messages, OpenAI Chat Completions, and OpenAI Responses."
 icon: terminal
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-A single API key works for all three dialects. The only differences are the **base URL** and **auth header**:
+A single API key works across all three dialects. The only differences are the **base URL** and **auth header**:
 
 | Dialect | Base URL | Header |
 |---|---|---|
@@ -14,10 +14,11 @@ A single API key works for all three dialects. The only differences are the **ba
 | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
 | OpenAI Responses | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
 
-Replace the model name with the slug from the [catalog](/en/models) - the example below uses a model available in Service Mode Performance.
+Rename models using the slugs from the [catalog](/en/models)—the examples below use models
+available in Service Mode Performance.
 
 <Callout type="note" title="Model and tool compatibility">
-  Choose a model available in the API key Service Mode. Vision, JSON schema, reasoning, and tool calling depend on the model and protocol path. See [compatibility limits](/en/responses).
+  Select the available model for the Service Mode API key. Support for vision, JSON schema, reasoning, and tool calling follows the model and its protocol path. See [compatibility limits](/en/responses).
 </Callout>
 
 ## Python
@@ -71,7 +72,7 @@ client = OpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v
 response = client.chat.completions.create(
     model="gpt-6-astra",
     messages=[
-        {"role": "system", "content": "You are a concise assistant."},
+        {"role": "system", "content": "Kamu asisten yang ringkas."},
         {"role": "user", "content": "Halo dari SDK OpenAI!"},
     ],
 )
@@ -215,15 +216,24 @@ for await (const event of stream) {
 }
 ```
 
+<a id="catatan"></a>
+
 ## Notes
 
 <Callout type="note" title="Other languages">
-Java, Go, and PHP use the same pattern: replace `base_url` with Hostlinku, then use the official Anthropic (Messages) or OpenAI (Chat/Responses) SDK. There is no dedicated Hostlinku library.
+  Java, Go, and PHP follow the same pattern: replace `base_url` with Hostlinku, then use the official SDK
+  from Anthropic (Messages) or OpenAI (Chat/Responses). There is no Hostlinku-specific library.
 </Callout>
 
-<Callout type="warning" title="Limit per client">
-**The Codex CLI is for OpenAI models only** (`gpt-*`) - Claude models and other non-OpenAI models are rejected upstream due to differences in tool types. **Claude Code** can use non-Claude models, but it displays an `unrecognized_model` warning and assumes a 200k-token context. Details are available on the [Codex CLI](/en/integrations/codex-cli) and [Claude Code](/en/integrations/claude-code) pages.
+<Callout type="warning" title="Limits per client">
+  **Codex CLI is for OpenAI models only** (`gpt-*`) — Claude models and other non-OpenAI models
+  are rejected by the upstream due to differences in tool types. **Claude Code** can use non-Claude models,
+  but displays an `unrecognized_model` warning and assumes a 200k-token context.
+  Details are available on the [Codex CLI](/en/integrations/codex-cli) page and
+  [Claude Code](/en/integrations/claude-code).
 </Callout>
+
+<a id="sumber-daya-terkait"></a>
 
 ## Related Resources
 

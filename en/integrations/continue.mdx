@@ -1,20 +1,31 @@
 ---
 title: "Continue"
-description: "Add the Hostlinku model to the config.yaml file in Continue (VS Code & JetBrains) with the OpenAI provider and a custom apiBase"
+description: "Add the Hostlinku model to the config.yaml file in Continue (VS Code & JetBrains) with the OpenAI provider and a custom apiBase."
 icon: code-xml
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Continue](https://docs.continue.dev) is configured via `config.yaml`. Each model has a `provider`, `apiBase`, `apiKey`, and a list of `roles` (chat, edit, apply, …). For Hostlinku, use the `openai` provider with the `apiBase` set to gateway.
+[Continue](https://docs.continue.dev) is configured via `config.yaml`. Each model
+has a `provider`, `apiBase`, `apiKey`, and a list of `roles` (chat, edit, apply, …). For
+Hostlinku uses the `openai` provider with the `apiBase` gateway.
 
 <Steps>
 
-### Open the configuration
+<a id="buka-konfigurasi"></a>
 
-In the Continue panel, click the gear icon → **Open config file**, or edit `~/.continue/config.yaml` (global) or `.continue/config.yaml` (per project) directly.
+<a id="open-the-configuration"></a>
 
-### Add a Hostlinku model
+### Open configuration
+
+In the Continue panel, click the gear icon → **Open config file**, or edit directly
+`~/.continue/config.yaml` (global) / `.continue/config.yaml` (per project).
+
+<a id="tambahkan-model-hostlinku"></a>
+
+<a id="add-a-hostlinku-model"></a>
+
+### Add the Hostlinku model
 
 ```yaml
 name: Hostlinku
@@ -47,21 +58,32 @@ models:
     roles: [chat, edit, apply, summarize]
 ```
 
-### Save the API key as a secret
+<a id="simpan-api-key-sebagai-secret"></a>
 
-Create a file named `~/.continue/.env` (do not commit it) containing the following:
+<a id="save-the-api-key-as-a-secret"></a>
+
+### Store the API key as a secret
+
+Create a file named `~/.continue/.env` (do not commit it) containing:
 
 ```bash
 HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
-Or replace `${{ secrets.HOSTLINKU_API_KEY }}` with the actual key value if your configuration file is private.
+Or replace `${{ secrets.HOSTLINKU_API_KEY }}` with the actual key value if your configuration file
+is indeed private.
+
+<a id="muat-ulang-dan-uji"></a>
 
 ### Reload and test
 
-Click **Reload config** in the Continue panel (or save the file-Continue monitors changes). Select the *Claude Sonnet 4.6 (Hostlinku)* model from the dropdown, send a message, then check the console → **Request Log**.
+Click **Reload config** in the Continue panel (or save the file—Continue monitors changes). Select the
+*Claude Sonnet 4.6 (Hostlinku)* model from the dropdown, send a message, then check the console → **Request
+Log**.
 
 </Steps>
+
+<a id="peran-roles-yang-didukung"></a>
 
 ## Supported roles
 
@@ -70,19 +92,20 @@ Click **Reload config** in the Continue panel (or save the file-Continue monitor
 | `chat` | Yes | All catalog models. |
 | `edit`, `apply` | Yes | Use the model with the calling tool; `claude-sonnet-4-6` works very well for *apply*. |
 | `summarize` | Yes | Low-cost models such as `deepseek-v4-flash` / `claude-haiku-4-5`. |
-| `autocomplete` | No | Requires a FIM model via `/v1/completions`. Leave this role to another provider (e.g., a local model). |
+| `autocomplete` | No | Requires the FIM model via `/v1/completions`. Leave this role to other providers (e.g., local models). |
 | `embed`, `rerank` | No | Hostlinku does not yet provide embeddings/rerank endpoints. |
 
-If `edit`/`apply` is not given a specific model, Continue uses the active `chat` model.
+If `edit`/`apply` are not assigned a specific model, continue using the active `chat` model.
 
-<Callout type="tip" title="YAML anchors to reduce repetition">
-Define `apiBase` and `apiKey` once as an anchor (`&hostlinku`), then use `<<: *hostlinku` in each model. See the `config.yaml` reference. Continue.
+<Callout type="tip" title="YAML anchor to reduce repetition">
+  Define `apiBase` and `apiKey` once as an anchor (`&hostlinku`) and then use
+  `<<: *hostlinku` in each model. See the `config.yaml` reference in Continue.
 </Callout>
 
 ## Troubleshooting
 
-- **The model does not appear in the dropdown** - the YAML indentation is incorrect or `roles` does not include `chat`.
-Look for *Output → Continue* in VS Code.
-- **`401`** - `~/.continue/.env` was not read; reload the configuration or restart the IDE.
+- **Model does not appear in the dropdown** - incorrect YAML indentation or `roles` does not include `chat`.
+  See *Output → Continue* in VS Code.
+- **`401`** - `~/.continue/.env` has not been read; reload the config or restart the IDE.
 - **`404 model_not_found`** - `model:` must be the exact slug from `GET /v1/models`.
-- **Streaming is choppy** - make sure there are no corporate proxies buffering `text/event-stream`.
+- **Streaming is stuttering**—make sure no corporate proxy is buffering `text/event-stream`.

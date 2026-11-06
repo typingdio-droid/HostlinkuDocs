@@ -1,6 +1,6 @@
 ---
 title: "GPT-5.5"
-description: "OpenAIのGPT-5.5。カタログのコンテキストは1,000,000トークンです。"
+description: "OpenAIのGPT-5.5、カタログのコンテキストは1,000,000トークン。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -8,44 +8,56 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | プロパティ | 値 |
 |---|---|
 | プロバイダー | OpenAI |
-| slug | `gpt-5-5` |
-| 入力 | テキスト、画像 |
+| Slug | `gpt-5-5` |
+| 入力 | text, image |
 | 出力 | text |
 | リリース | 2026-04-27 |
-| タグ | 本番 |
-| カタログのコンテキスト | 1,000,000 トークン |
+| タグ | production |
+| カタログの文脈 | 1,000,000 トークン |
 | カタログの最大出力 | 128,000 トークン |
-| Service Mode | Performance, Low-Cost |
+| Service Mode | Performance、Low-Cost |
+
+<a id="kapabilitas"></a>
 
 ## 機能
 
-`text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
+`text`、`vision`、`image-input`、`file-input`、`pdf-input`、`tool-calling`、`function-calling`、`structured-outputs`、`json-mode`、`streaming`、`reasoning`、`extended-thinking`、`code-execution`、 `web-search`、`code-generation`、`long-context`、`multilingual`、`multimodal`。
+
+<a id="harga"></a>
 
 ## 価格
 
-**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/gpt-5-5)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+**2026年11月6日**更新。 [最新価格](https://hostlinku.com/models/gpt-5-5)は、Service Mode APIキーに基づきます。**1 <CreditIcon /> = \$1**。`—`は、料金が未設定であることを意味します。ティアはプロンプトトークンの数に基づきます。
 
-| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+| 項目 | 単位 | Tier | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
 |---|---|---|---|---|
-| 入力（プロンプト） | 100万トークンあたり | 基本 | 4.2 | 0.2675 |
-| 出力 | 100万トークンあたり | 基本 | 25.2 | 1.605 |
-| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.42 | 0.02675 |
-| Web検索 | 1,000回あたり | 基本 | 10.5 | 10.7 |
-| 入力（プロンプト） | 100万トークンあたり | プロンプト ≥ 272,000 トークン | 8.4 | 0.535 |
-| 出力 | 100万トークンあたり | プロンプト ≥ 272,000 トークン | 37.8 | 2.4075 |
-| キャッシュ読み取り | 100万トークンあたり | プロンプト ≥ 272,000 トークン | 0.84 | 0.0535 |
+| 入力（プロンプト） | 1Mトークンあたり | 基本 | 4.2 | 0.2675 |
+| 出力（完了） | 1Mトークンあたり | 基本 | 25.2 | 1.605 |
+| キャッシュ読み取り | 1Mトークンあたり | 基本 | 0.42 | 0.02675 |
+| Web検索 | 1,000コールあたり | 基本 | 10.5 | 10.7 |
+| 入力（プロンプト） | 1Mトークンあたり | プロンプト：272,000トークン以上 | 8.4 | 0.535 |
+| 出力（完了） | 1Mトークンあたり | プロンプト：272,000トークン以上 | 37.8 | 2.4075 |
+| キャッシュ読み取り | 1Mトークンあたり | プロンプト：272,000トークン以上 | 0.84 | 0.0535 |
 
-## 対応エンドポイント
+<a id="endpoint-yang-didukung"></a>
 
-| Endpoint | Format | 対応 |
+<a id="対応エンドポイント"></a>
+
+## サポートされているエンドポイント
+
+| エンドポイント | フォーマット | サポート |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
-| `POST /v1/responses` | OpenAI Responses | ネイティブ |
+| `POST /v1/chat/completions` | OpenAIチャット補完 | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAIの応答 | native |
 
-[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
+[互換性の制限](/ja/api-reference#kompatibilitas-model-dan-tool).
 
-## リクエストの例
+<a id="contoh-request"></a>
+
+<a id="リクエストの例"></a>
+
+## requestの例
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -57,6 +69,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
   }'
 ```
 
+<a id="model-terkait"></a>
+
 ## 関連モデル
 
 - [GPT 5.3 Codex](/ja/models/gpt-5-3-codex)
@@ -66,4 +80,4 @@ curl https://api.hostlinku.com/v1/chat/completions \
 - [GPT-6 Astra](/ja/models/gpt-6-astra)
 - [GPT-6 Luna](/ja/models/gpt-6-luna)
 
-[← モデル一覧に戻る](/ja/models)
+[← モデルカタログに戻る](/ja/models)

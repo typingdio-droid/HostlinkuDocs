@@ -1,45 +1,53 @@
 ---
 title: "統合の概要"
-description: "ツールに合った連携ガイド、API形式、URLを選びます。"
+description: "お使いのツールに適した統合ガイド、API 形式、および URL を選択してください。"
 icon: panels-top-left
 ---
 
-APIキーと[カタログ](/ja/models)のモデルを使ってツールをHostlinkuに接続します。利用可能なモデルはキーのService Modeによって異なります。同じ組織内では残高とクォータを共有します。[使用状況と制限](/ja/usage-and-limits)を参照してください。
+APIキーと[カタログ](/ja/models)のモデルを使用して、ツールをHostlinkuに接続してください。利用可能なモデルは、サービスモードのキーに従います。残高とクォータは同一組織内で共有されます。[使用状況と制限](/ja/usage-and-limits)を参照してください。
 
-## ツールを選ぶ
+<a id="pilih-tool"></a>
 
-| ツール | 使用されているAPIのフォーマット | ベースURL | ガイド |
+<a id="ツールを選ぶ"></a>
+
+## ツールを選択してください
+
+| ツール | 使用されるAPIのフォーマット | Base URL | ガイド |
 |---|---|---|---|
 | Claude Code（CLI および VS Code/JetBrains 拡張機能） | Anthropic Messages | `https://api.hostlinku.com` | [Claude Code](/ja/integrations/claude-code) |
-| Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/ja/integrations/codex-cli) |
+| Codex CLI | OpenAIの応答 | `https://api.hostlinku.com/v1` | [Codex CLI](/ja/integrations/codex-cli) |
 | DeepSeek Harness (`dsh`) | Anthropic Messages | `https://api.hostlinku.com` | [DeepSeek Harness](/ja/integrations/deepseek-harness) |
-| CC Switch（Claude Code・Codex・OpenCode 用 GUI 管理） | Anthropic Messages / OpenAI Responses | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [CC Switch](/ja/integrations/cc-switch) |
-| Cursor | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Cursor](/ja/integrations/cursor) |
-| VS Code（チャット機能および標準搭載のエージェントモード） | OpenAI Chat Completions（または Anthropic／Responses） | `https://api.hostlinku.com/v1/chat/completions`（完全なエンドポイントURL） | [VS Code](/ja/integrations/vscode) |
+| CC Switch（GUIマネージャー：Claude Code、Codex、OpenCode） | Anthropicのメッセージ / OpenAIの応答 | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [CC Switch](/ja/integrations/cc-switch) |
+| Cursor | OpenAIチャット補完 | `https://api.hostlinku.com/v1` | [Cursor](/ja/integrations/cursor) |
+| VS Code（チャットおよび標準搭載のエージェントモード） | OpenAI Chat Completions（またはAnthropic/Responses） | `https://api.hostlinku.com/v1/chat/completions`（完全なエンドポイントURL） | [VS Code](/ja/integrations/vscode) |
 | GitHub Copilot CLI および Copilot アプリ | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [GitHub Copilot](/ja/integrations/copilot) |
-| Zed（エージェントパネル） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/ja/integrations/zed) |
+| Zed（エージェントパネル） | OpenAIチャット補完 | `https://api.hostlinku.com/v1` | [Zed](/ja/integrations/zed) |
 | Cline、Roo Code | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/ja/integrations/cline) |
 | Kilo Code | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [Kilo Code](/ja/integrations/kilo-code) |
-| Continue (VS Code および JetBrains) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Continue](/ja/integrations/continue) |
-| JetBrains AI Assistant（IntelliJ IDEA、PyCharm、WebStorm、…） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [JetBrains](/ja/integrations/jetbrains) |
+| 続行 (VS Code & JetBrains) | OpenAIチャット補完 | `https://api.hostlinku.com/v1` | [続行](/ja/integrations/continue) |
+| JetBrains AI Assistant（IntelliJ IDEA、PyCharm、WebStorm、…） | OpenAIチャット補完 | `https://api.hostlinku.com/v1` | [JetBrains](/ja/integrations/jetbrains) |
 | Junie CLI (JetBrains) | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1/chat/completions`（完全なエンドポイントURL） | [Junie](/ja/integrations/junie) |
-| Factory Droid（CLI およびデスクトップ版） | Anthropic Messages または OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [Factory Droid](/ja/integrations/factory) |
-| OpenCode | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [OpenCode](/ja/integrations/opencode) |
+| Factory Droid（CLI およびデスクトップ版） | Anthropic Messages または OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [Factory](/ja/integrations/factory) |
+| OpenCode | OpenAIチャット補完 | `https://api.hostlinku.com/v1` | [OpenCode](/ja/integrations/opencode) |
 | Xum（並列エージェント） | OpenAI Chat Completions（またはAnthropic） | `https://api.hostlinku.com/v1` | [Xum](/ja/integrations/xum) |
-| Aider | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Aider](/ja/integrations/aider) |
-| OpenAI エージェント SDK（Python および TypeScript） | OpenAI Responses | `https://api.hostlinku.com/v1` | [Agents SDK](/ja/integrations/agents-sdk) |
+| Aider | OpenAIチャット補完 | `https://api.hostlinku.com/v1` | [Aider](/ja/integrations/aider) |
+| OpenAI Agents SDK (Python & TypeScript) | OpenAIの応答 | `https://api.hostlinku.com/v1` | [Agents SDK](/ja/integrations/agents-sdk) |
 
 <a id="compatibility-limits"></a>
 
+<a id="batas-kompatibilitas"></a>
+
 ## 互換性の制限
 
-- **URL形式はツールによって異なります。** Anthropic SDKでは通常`https://api.hostlinku.com`、OpenAIツールでは`https://api.hostlinku.com/v1`を使用します。VS CodeとJunieでは完全なエンドポイントURLが必要な場合があります。表のガイドに従ってください。
-- **Codex CLIにはネイティブのResponsesツールが必要です。** shellや`apply_patch`を含み、テキスト/function callingのブリッジだけでは十分ではありません。[Codex CLI](/ja/integrations/codex-cli)を参照してください。
-- **機能はモデルとプロトコルによって異なります。** vision、reasoning、JSON schema、tool callingの対応状況はモデルページと[APIリファレンス](/ja/api-reference)で確認してください。
-- **FIM/インライン補完とembeddingsは提供していません。** これらの連携ではChat Completions、Responses、Messagesを通じてチャット、エージェント、編集を使用します。
+- **URLの形式はツールごとに異なります。** AnthropicのSDKでは通常`https://api.hostlinku.com`を使用しますが、OpenAIのツールでは`https://api.hostlinku.com/v1`を使用します。VS CodeやJunieでは、完全なエンドポイントURLを要求する場合があります。表に記載されている各ツールのガイドラインに従ってください。
+- **Codex CLI には、シェルや `apply_patch` を含むネイティブの Responses ツールのサポートが必要です**。テキストや関数呼び出しのブリッジだけでは不十分です。[Codex CLI](/ja/integrations/codex-cli) を参照してください。
+- **機能はモデルとプロトコルに従います。** モデルページおよび[APIリファレンス](/ja/api-reference)で、ビジョン、推論、JSONスキーマ、およびツール呼び出しのサポートを確認してください。
+- **FIM/インラインオートコンプリートおよびエンベディングは、まだ対応されていません。** この統合では、Chat Completions、Responses、およびMessagesを通じて、チャット、エージェント、または編集機能を利用します。
+
+<a id="api-key-dan-bantuan"></a>
 
 ## APIキーとヘルプ
 
-個別に無効化できるよう、ツールごとにクレジット上限付きのAPIキーを作成します。環境変数またはツールのシークレットストアに保存し、値をコミットしたり表示したりしないでください。キーの設定は[認証](/ja/authentication)を参照してください。
+各ツールごとに、クレジット制限付きの個別のAPIキーを作成し、簡単に無効化できるようにしてください。キーは環境変数またはツールのシークレットストアに保存し、その値をコミットしたり出力したりしないでください。キーの設定については、[認証](/ja/authentication)で説明されています。
 
-リクエストが失敗した場合は[エラーコード一覧](/ja/faqs/errors)を確認してください。ツール固有の設定と制限は表の各ガイドに記載しています。
+リクエストの失敗については、[エラーコード一覧](/ja/faqs/errors)を参照してください。各ツールの具体的な設定や制限の詳細については、表内のガイドを参照してください。

@@ -1,27 +1,36 @@
 ---
 title: "Junie CLI"
-description: "Connect JetBrains' Junie CLI to Hostlinku using a custom model profile (Chat Completions or Anthropic Messages)"
+description: "Connect the Junie CLI from JetBrains to Hostlinku via a custom model profile (Chat Completions or Anthropic Messages)"
 icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrains’ terminal-based coding agent - supports **custom model profiles** in the form of JSON files. A single profile contains endpoints, API formats, API keys, as well as the main model and a *faster model* for light tasks.
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - a coding agent from JetBrains
+for the terminal—supports **custom model profiles** in the form of JSON files. A single profile contains endpoints,
+API formats, API keys, as well as the main model and a *faster model* for light tasks.
 
-For the AI Assistant in JetBrains IDEs, see [JetBrains AI Assistant](/en/integrations/jetbrains).
+For the AI Assistant within the JetBrains IDE, see [JetBrains AI Assistant](/en/integrations/jetbrains).
 
 <Steps>
 
-### Install the Junie CLI and save your API key
+<a id="instal-junie-cli-dan-simpan-api-key"></a>
+
+<a id="install-the-junie-cli-and-save-your-api-key"></a>
+
+### Install the Junie CLI and save the API key
 
 ```bash
 curl -fsSL https://junie.jetbrains.com/install.sh | bash
 export HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
-### Create a Hostlinku Profile
+<a id="buat-profil-hostlinku"></a>
 
-Junie searches for profiles in `~/.junie/models/*.json` (user level) and `.junie/models/*.json` (project level). The filename without the `.json` extension becomes the profile ID. Create `~/.junie/models/hostlinku.json`:
+### Create a Hostlinku profile
+
+Junie searches for profiles in `~/.junie/models/*.json` (user level) and `.junie/models/*.json` (project
+level). The filename without `.json` becomes the profile ID. Create `~/.junie/models/hostlinku.json`:
 
 ```json
 {
@@ -39,22 +48,31 @@ Junie searches for profiles in `~/.junie/models/*.json` (user level) and `.junie
 ```
 
 <Callout type="important" title="baseUrl is the full endpoint URL">
-Junie **does not** add any path to `baseUrl`. For `OpenAICompletion`, write up to `/v1/chat/completions`; for `Anthropic`, up to `/v1/messages`.
+  Junie **does not** add any path to `baseUrl`. For `OpenAICompletion`, write up to
+  `/v1/chat/completions`; for `Anthropic`, up to `/v1/messages`.
 </Callout>
 
-### Run with a profile
+<a id="jalankan-dengan-profil"></a>
+
+<a id="run-with-a-profile"></a>
+
+### Run with profile
 
 ```bash
 junie --model custom:hostlinku
 ```
 
-The profile also appears in the **Custom** tab of the model list in TUI and via the `/model` command. The first request appears in the console → **Request Log**.
+Profiles also appear in the **Custom** tab in the model list in the TUI and via the `/model` command. The first
+request appears in the console → **Request Log**.
 
 </Steps>
 
+<a id="varian-format-anthropic"></a>
+
 ## Variant: Anthropic format
 
-For the Claude model with the Messages API (full prompt caching), create a second profile, e.g., `~/.junie/models/hostlinku-claude.json`:
+For the Claude model with the Messages API (full prompt caching), create a second profile, e.g.,
+`~/.junie/models/hostlinku-claude.json`:
 
 ```json
 {
@@ -69,20 +87,25 @@ For the Claude model with the Messages API (full prompt caching), create a secon
 
 Then run `junie --model custom:hostlinku-claude`.
 
+<a id="yang-perlu-diketahui"></a>
+
 ## What You Need to Know
 
-- **`${HOSTLINKU_API_KEY}`** is read from the environment when the profile is loaded. If the variable has not yet been
-When set, the profile fails to load and Junie reports the missing variable name-it's safe to commit the profile to the repo (`.junie/models/`).
-- **Main model vs. faster model.** Choose a model with robust *tool calling* for the main model
-(`claude-sonnet-4-6`, `gpt-5-5`); more affordable models like `claude-haiku-4-5` or `deepseek-v4-flash` are sufficient for faster tasks (summarization and classification).
-- **Responses API (`OpenAIResponses`)** is also available at `https://api.hostlinku.com/v1/responses`,
-but it is *stateless* ([details](/en/responses)). `OpenAICompletion` is the safest option.
+- **`${HOSTLINKU_API_KEY}`** is read from the environment when the profile is loaded. If the variable has not
+  set, the profile fails to load and Junie reports the missing variable name—this is safe for profiles
+  committed to the repo (`.junie/models/`).
+- **Main model vs. faster model.** Choose a model with strong *tool calling* capabilities for the main model
+  (`claude-sonnet-4-6`, `gpt-5-5`); cost-effective models like `claude-haiku-4-5` or `deepseek-v4-flash`
+  are sufficient for the faster model (summarization & classification).
+- **API Responses (`OpenAIResponses`)** are also available at `https://api.hostlinku.com/v1/responses`,
+  but are *stateless* ([details](/en/responses)). `OpenAICompletion` is the safest
+  secure option.
 
 ## Troubleshooting
 
-| Symptoms | Solutions |
+| Symptoms | Solution |
 |---|---|
-| `404` | `baseUrl` is incomplete - it must end with `/v1/chat/completions` or `/v1/messages`. |
-| Profile not found | Incorrect file name or location, or invalid JSON. Profile = filename without `.json`. |
-| Environment variable error | Export `HOSTLINKU_API_KEY` in the shell running `junie`. |
-| Tool call failed / agent is stuck in a loop | Check tool calling support and model limits in the [catalog](/en/models). Inspect request logs before switching models. |
+| `404` | `baseUrl` is incomplete—it must end with `/v1/chat/completions` or `/v1/messages`. |
+| Profile does not appear | Incorrect file name or location, or invalid JSON. Profile = file name without `.json`. |
+| Error environment variable | Export `HOSTLINKU_API_KEY` in the shell running `junie`. |
+| Tool call failed / agent is looping | Check tool calling support and model limits in the [catalog](/en/models). Check request logs before replacing a model. |

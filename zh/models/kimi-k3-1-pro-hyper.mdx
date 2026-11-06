@@ -1,6 +1,6 @@
 ---
 title: "Kimi K3.1 Pro Hyper"
-description: "Moonshot的Kimi K3.1 Pro Hyper，目录上下文为1,048,576个Token。"
+description: "Moonshot 的 Kimi K3.1 Pro Hyper，基于包含 1,048,576 个令牌的目录。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -9,33 +9,43 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 |---|---|
 | 提供商 | Moonshot |
 | Slug | `kimi-k3-1-pro-hyper` |
-| 目录上下文 | 1,048,576 个Token |
-| 目录最大输出 | 64,000 个Token |
+| 目录背景 | 1,048,576 个令牌 |
+| 目录最大输出 | 64,000 个令牌 |
 | Service Mode | Dedicated |
 
-## 能力
+<a id="kapabilitas"></a>
 
-`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+<a id="能力"></a>
+
+## 功能
+
+`text`、`tool-calling`、`function-calling`、`structured-outputs`、`json-mode`、`streaming`、`reasoning`、`code-generation`、`long-context`、`multilingual`、`vision`、`image-input`、`multimodal`。
+
+<a id="harga"></a>
 
 ## 价格
 
-**2026年11月6日更新**。[当前价格](https://hostlinku.com/zh/models/kimi-k3-1-pro-hyper)由API密钥的Service Mode决定。**1 <CreditIcon /> = \$1**。`—` 表示未列出费率。价格档位取决于提示词Token数。
+更新于 **2026年11月6日**。 [最新价格](https://hostlinku.com/models/kimi-k3-1-pro-hyper) 依据服务模式 API 密钥而定。**1 <CreditIcon /> = 1 美元**。`—` 表示未列出价格。价格档位根据提示令牌数量而定。
 
-| 项目 | 单位 | 价格档位 | Dedicated (<CreditIcon />) |
+| 项目 | 单位 | 层级 | 专用 (<CreditIcon />) |
 |---|---|---|---|
-| 输入（提示词） | 每100万个Token | 基础 | 6.9 |
-| 输出 | 每100万个Token | 基础 | 34.5 |
-| 缓存读取 | 每100万个Token | 基础 | 0.345 |
+| 输入（提示） | 每 100 万个令牌 | 基础 | 6.9 |
+| 输出（完成） | 每 100 万个令牌 | 基础 | 34.5 |
+| 缓存读取 | 每 100 万个令牌 | 基础 | 0.345 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## 支持的端点
 
-| Endpoint | Format | 支持情况 |
+| 端点 | 格式 | 支持 |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
-| `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
-| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+| `POST /v1/chat/completions` | OpenAI 聊天补全 | 可用 |
+| `POST /v1/messages` | Anthropic 消息 | 改编版（桥接版） |
+| `POST /v1/responses` | OpenAI 响应 | 改编版（桥接版） |
 
-[兼容性限制](/zh/api-reference#模型与工具兼容性)。
+[兼容性限制](/zh/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="model-terkait"></a>
 
 ## 相关模型
 

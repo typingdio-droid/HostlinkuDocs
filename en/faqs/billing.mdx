@@ -1,6 +1,6 @@
 ---
-title: Billing & top-up
-description: Common questions about balance, top-ups, API key credit limits, and 402 errors.
+title: "Billing & Top-Up"
+description: "Frequently asked questions about balances, top-ups, API key credit limits, and error 402."
 icon: credit-card
 ---
 
@@ -8,27 +8,41 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku uses prepaid credit in US dollars (1 <CreditIcon label="credit" /> = $1). There is no monthly subscription; charges use upstream token usage, or estimates when usage is unavailable. See [Billing & Balance](/en/billing).
+Hostlinku uses a prepaid balance in U.S. dollars (1 <CreditIcon /> = $1). There are no monthly subscriptions; charges are based on upstream token usage, or an estimate if usage data is unavailable. See [Billing & Balance](/en/billing).
 
-## Why do I get 402 with a balance?
+<a id="kenapa-muncul-402-padahal-saldo-ada"></a>
+
+<a id="why-do-i-get-402-with-a-balance"></a>
+
+## Why am I getting a 402 error even though I have a balance?
 
 Check two things:
 
-1. **Available balance** - reserved credit cannot be reused. Check the running balance in Console → **Billing**.
-2. **API key credit limit** - a key can have a daily, weekly, monthly, or total limit. When it is reached, requests fail even if the account balance is positive. Raise the limit or wait for the reset window.
+1. **Available balance**—balances that have already been used or reserved cannot be used again. Check your current balance in the Console → **Billing**.
+2. **API key credit limit**—a key may have a daily, weekly, monthly, or total limit. If the limit is reached, requests are rejected even if there is still a balance in the account. Adjust the limit or wait for the reset window.
+
+<a id="bagaimana-cara-top-up"></a>
 
 ## How do I top up?
 
-Open Console → **Billing**. Available methods are shown on the top-up page (currently QRIS/virtual account and crypto). Minimum/maximum amounts and exchange rates follow checkout.
+Go to Console → **Billing**. Available methods are displayed on the top-up page (currently QRIS/virtual accounts and cryptocurrency). Minimum/maximum amounts and exchange rates follow those displayed at checkout.
 
-## Does payment arrive instantly?
+<a id="apakah-pembayaran-langsung-masuk"></a>
 
-Credit is added after the payment is verified. If the status is still pending, check the transaction history in Console before topping up again. Include the transaction ID when contacting support.
+<a id="does-payment-arrive-instantly"></a>
 
-## Can I get a refund?
+## Do payments go through immediately?
 
-Unused prepaid credit can be requested under the [Refund Policy](/en/legals/refund-policy). Promotional credit has no cash value.
+The balance is credited after payment is verified. If the status is still pending, check your transaction history in the Console before attempting to top up again. Include the transaction ID when contacting support.
+
+<a id="apakah-saldo-bisa-dikembalikan"></a>
+
+<a id="can-i-get-a-refund"></a>
+
+## Can the balance be refunded?
+
+Unused top-up balances can be refunded in accordance with the [Refund Policy](/en/legals/refund-policy). Bonuses and promotions have no cash value.
 
 <Callout type="note" title="Need help?">
-  Email [halo@hostlinku.com](mailto:halo@hostlinku.com) with your account email and transaction ID. See [Billing & Balance](/en/billing).
+  Send an email to [halo@hostlinku.com](mailto:halo@hostlinku.com) with your account email and transaction ID. Full details are available under [Billing & Balance](/en/billing).
 </Callout>

@@ -1,18 +1,16 @@
 ---
-title: "安全"
-description: "Hostlinku 安全实践：加密、身份验证、API 密钥管理、数据隔离、审计日志、事件响应以及漏洞报告方法。"
+title: "安全性"
+description: "Hostlinku 的安全实践：加密、身份验证、API 密钥管理、数据隔离、审计日志、事件响应以及漏洞报告方式。"
 icon: lock
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
+<Callout type="note" title="翻译">
 
-<Callout type="note" title="机器翻译说明">
+本翻译仅供参考。印尼语版本为有效版本。
 
-本页面为机器翻译。以印度尼西亚语版本为准。
-
-[阅读印度尼西亚语版本](/legals/security)
+[阅读印尼语版本](/legals/security).
 
 </Callout>
 
@@ -20,66 +18,103 @@ import { Callout } from "/snippets/mdx.jsx";
 
 <a id="transport"></a>
 
+<a id="1-enkripsi-dan-penyimpanan-rahasia"></a>
+
 ## 1. 加密与机密存储
 
-- 所有访问网站、控制台和API的流量均通过HTTPS（TLS）进行传输。
-- Keycloak管理账户登录，不以明文保存密码。
-- 客户的API密钥以SHA-256哈希值的形式存储。
-- 集成凭据（如上游提供商的密钥和SSO密钥）在应用程序层级使用AES-256-GCM进行加密，所用的密钥与数据库分开存储。
+与网站、Console 以及 Hostlinku API 之间的通信受 **HTTPS (TLS)** 保护。凭据根据其类型受到相应保护：
+
+- **账户密码**不会以原始形式（*明文*）存储。
+- **客户 API 密钥** 以 **SHA-256** 哈希值形式存储用于验证，而非可还原的密钥。
+- **集成凭据**，包括上游提供商的密钥和 SSO 密钥，在应用程序层使用 **AES-256-GCM** 进行加密。加密密钥来自应用程序环境配置，与数据库中的加密值分离。
 
 <a id="autentikasi"></a>
 
+<a id="2-autentikasi-akun"></a>
+
 ## 2. 账户认证
 
-- Keycloak管理邮箱验证和账户登录。
-- 如果启用了通过SSO（例如Google、GitHub、Discord）登录的选项。
-- Console服务器会话使用 `hl_sid`；部分流程的JWT Cookie为 `hl_session`。会话Cookie使用 `HttpOnly`、`SameSite=Lax`，生产环境设置 `Secure`。
-- 组织共享配额和按IP的请求限制见[用量与限额](/zh/usage-and-limits)。
-- 被暂停的账户无法登录，也无法使用API。
+Hostlinku 身份认证服务可通过 `auth2.hostlinku.com` 访问，采用行业标准的身份联合协议 **OpenID Connect (OIDC)** 和 **OAuth 2.0**。授权流程使用 **PKCE S256**。 登录、电子邮件验证以及已启用的 SSO 选项均通过该服务进行管理。
 
-Console → **Settings → Security** 提供Keycloak的WebAuthn通行密钥、TOTP验证器和恢复码。
+<a id="passkey-dan-multi-factor-authentication-mfa"></a>
+
+<a id="通行key与多因素认证mfa"></a>
+
+### Passkey 和 多因素身份验证 (MFA)
+
+除电子邮件和密码外，还提供以下身份验证方法：
+
+- **Passkey（FIDO2/WebAuthn）：**基于公钥密码学的无密码（*passwordless*）身份验证。私钥由身份验证器或 Passkey 提供商管理，在身份验证过程中不会发送至服务器。
+- **身份验证器 (TOTP)：**由身份验证器应用程序生成的基于时间的一次性代码。
+- **恢复码 (*recovery codes*)：** 当主要身份验证因素不可用时，用于恢复访问权限的一次性备用代码。
+
+所有身份验证方法均可通过 **Console → 设置 → 安全** 进行管理。选择 **添加密钥** 来注册密钥，然后在登录页面上点击按钮使用密钥登录。请将恢复码保存在安全且在需要时可随时访问的地方。
+
+<a id="sesi-console"></a>
+
+### Console 会话
+
+Console 通过存储在服务器上的会话（使用 cookie **`hl_sid`**）来验证访问权限。 登录时，后端还会发布 JWT cookie **`hl_session`**。这两个 cookie 均配置了 **`HttpOnly`** 和 **`SameSite=Lax`**；当后端在生产环境中运行时，将启用 **`Secure`**。
+
+`HttpOnly` 限制页面 JavaScript 对 Cookie 的访问，`Secure` 确保 Cookie 仅通过 HTTPS 发送，而 `SameSite=Lax` 限制跨站请求中 Cookie 的包含。
+
+被暂停的账户无法登录，也无法使用 API。
 
 <a id="api-key"></a>
 
-## 3. API密钥的管理
+<a id="3-penanganan-api-key"></a>
 
-- 密钥在生成时会完整显示一次，此后无法再次查看。
-- 密钥具有Service Mode、有效期、额度上限，可在Console停用。当前表单没有端点作用域选择。
-- 开启Body logging时，保存前遮蔽凭据字段；提示词文本中的秘密不自动遮蔽。
-- 上游提供商的身份信息和凭据绝不会发送给客户。
+<a id="3-api密钥的管理"></a>
+
+## 3. API密钥的处理
+
+- 密钥在创建时仅完整显示一次，之后无法再次查看。
+- 密钥具有服务模式、有效期和信用额度限制；可通过控制台禁用。当前表单不提供作用域端点。
+- 当日志正文功能启用时，凭据字段会在存储前被过滤。提示文本中的机密信息不会被自动过滤。
+- 上游提供商的身份和上游凭据绝不会发送给客户。
 
 <a id="akses"></a>
 
+<a id="4-isolasi-dan-kontrol-akses"></a>
+
 ## 4. 隔离与访问控制
 
-- 根据获授权用户、组织和角色检查请求、日志、余额和API密钥访问。
+- 对请求、日志、余额和 API 密钥的访问权限，将根据用户、组织和授权角色的不同进行核查。
 - 管理员功能仅限于管理员角色，且任何敏感设置的更改（包括启用正文日志记录和调整余额）都会记录在审计日志中。
 - 请求和响应的内容默认不会被保存；如果启用了正文日志记录，内容将根据保留期限自动删除。请参阅[隐私政策](/zh/legals/privacy-policy)。
 
 <a id="perlindungan"></a>
 
-## 5. 服务保障
+<a id="5-perlindungan-layanan"></a>
 
-- 公共流量会经过Cloudflare，以缓解机器人攻击和流量型攻击。
-- 组织共享配额和按IP的请求限制见[用量与限额](/zh/usage-and-limits)。
+<a id="5-服务保障"></a>
+
+## 5. 服务保护
+
+- 公共流量通过 Cloudflare 进行传输，以缓解机器人攻击和流量型攻击。
+- 每个组织的共享配额和每个 IP 的请求限制在 [使用与限制](/zh/usage-and-limits) 中进行了说明。
 - 在请求转发前预留余额，可防止使用量过度超出可用余额。
-- 模型和上游的健康监测结果已发布在[状态](https://status.hostlinku.com)页面上。
+- 模型和上游的健康状况监控信息发布在 [状态](https://status.hostlinku.com) 页面上。
 
 <a id="audit"></a>
 
+<a id="6-audit-log"></a>
+
 ## 6. 审计日志
 
-我们会记录登录、注销、注册、API密钥的创建和撤销以及设置更改等安全事件，并记录相关的时间、IP地址和用户代理信息。机密信息绝不会被记录下来。
+我们会记录登录、注销、注册、API密钥的创建和撤销以及设置变更等安全事件，并附带时间、IP地址和用户代理信息。机密值绝不会被记录。
 
 <a id="tanggung-jawab"></a>
 
+<a id="7-tanggung-jawab-bersama"></a>
+
 ## 7. 共同责任
 
-<Callout type="note">
+<Callout title="注释" type="note">
 
 账户安全也取决于你：
 
-- 使用强密码且密码要独特；
+- 请使用强密码且密码必须唯一；
 - 将 API 密钥保存在服务器端，不要保存在前端代码或代码库中；
 - 为每个应用程序或环境使用独立的密钥，设置信用额度，并撤销未使用的密钥；
 - 在控制台中监控日志和交易记录，以检测异常使用情况。
@@ -88,21 +123,25 @@ Console → **Settings → Security** 提供Keycloak的WebAuthn通行密钥、TO
 
 <a id="insiden"></a>
 
+<a id="8-respons-insiden"></a>
+
 ## 8. 事件响应
 
-当发生安全事件时，我们会进行识别、遏制、恢复和评估。如果事件导致个人数据保护出现漏洞，我们将根据《个人数据保护法》的规定，通知受影响的用户和相关主管部门。如果我们检测到API密钥泄露，我们会停用该密钥，并通知其所有者。
+发生安全事件时，我们将进行识别、遏制、恢复和评估。若事件导致个人数据保护失败，我们将根据《个人数据保护法》的规定通知受影响的用户和主管部门。若我们检测到 API 密钥泄露，我们将停用该密钥并通知其所有者。
 
 <a id="laporan"></a>
 
+<a id="9-melaporkan-kerentanan"></a>
+
 ## 9. 报告漏洞
 
-请将报告发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)，其中应包含问题描述、重现步骤以及您发现的影响。我们将在5个工作日内确认收到。
+请将报告发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)，并附上问题描述、重现步骤以及您发现的影响。我们将在 5 个工作日内确认收到。
 
 为确保测试安全：
 
 - 请仅使用您自己的账户和数据进行测试；
 - 请勿访问、修改或删除其他用户的数据；
-- 请勿对工作人员或用户实施拒绝服务攻击、发送垃圾信息或进行社会工程学攻击；
-- 在公布调查结果之前，请给予我们合理的时间进行整改。
+- 请勿对员工或用户实施拒绝服务攻击、发送垃圾信息或进行社会工程学攻击；
+- 在发布发现结果前，请给予我们合理的时间进行修正。
 
-对于本着善意并遵循本指南进行举报的研究人员，我们不会对其采取法律行动。
+对于本着善意并遵循本指南进行报告的研究人员，我们不会采取法律行动。

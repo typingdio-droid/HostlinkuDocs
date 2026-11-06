@@ -6,21 +6,30 @@ icon: terminal
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[OpenCode](https://opencode.ai/docs/providers/) uses an AI SDK, so any OpenAI-compatible provider can be added via `opencode.json`. Credentials are stored separately using the `/connect` command.
+[OpenCode](https://opencode.ai/docs/providers/) uses an AI SDK, so any provider that is
+OpenAI-compatible can be added via `opencode.json`. Credentials are stored separately via the
+`/connect` command.
 
 <Steps>
 
+<a id="simpan-kredensial"></a>
+
 ### Save credentials
 
-In OpenCode, run `/connect`, scroll to **Other**, enter the provider ID `hostlinku`, and then paste the API key `sk-…`. The key is stored in `~/.local/share/opencode/auth.json`.
+In OpenCode, run `/connect`, scroll to **Other**, enter the provider ID `hostlinku`, then paste
+the API key `sk-…`. The key is stored in `~/.local/share/opencode/auth.json`.
 
 ```text
 /connect  →  Other  →  provider id: hostlinku  →  API key: sk-…
 ```
 
-### Define a provider
+<a id="definisikan-provider"></a>
 
-Create or edit `opencode.json` in the project root (or `~/.config/opencode/opencode.json` for global settings):
+<a id="define-a-provider"></a>
+
+### Define provider
+
+Create or modify `opencode.json` in the project root (or `~/.config/opencode/opencode.json` for global settings):
 
 ```json
 {
@@ -53,15 +62,21 @@ Create or edit `opencode.json` in the project root (or `~/.config/opencode/openc
 }
 ```
 
-The provider ID in `opencode.json` **must match** the one entered during `/connect`. The key in `models` is your Hostlinku slug; `limit` helps OpenCode calculate the remaining contexts.
+The provider ID in `opencode.json` **must match** the one entered during `/connect`. The key in
+`models` is the Hostlinku slug; `limit` helps OpenCode calculate the remaining context.
+
+<a id="pilih-model"></a>
 
 ### Select a model
 
-Run `/models` - the **Hostlinku** group will appear with the models you’ve registered. `small_model` is used for light tasks (session titles, summaries), making longer sessions more efficient.
+Run `/models`—the **Hostlinku** group appears with the models you’ve registered. `small_model`
+is used for light tasks (session titles, summaries) so that longer sessions are more cost-effective.
 
 </Steps>
 
-## Configuration Variations
+<a id="variasi-konfigurasi"></a>
+
+## Configuration variations
 
 **API key from the environment variable** (without `/connect`):
 
@@ -80,15 +95,19 @@ Run `/models` - the **Hostlinku** group will appear with the models you’ve reg
 }
 ```
 
-**Via the Responses API** - replace `npm` with `@ai-sdk/openai`; OpenCode will use [`/v1/responses`](/en/responses). Useful for GPT-5.x models when you want a *reasoning summary*. For most users, `@ai-sdk/openai-compatible` (Chat Completions) is sufficient.
+**Via the Responses API** - replace `npm` with `@ai-sdk/openai`; OpenCode will use
+[`/v1/responses`](/en/responses). Useful for GPT-5.x models when you want a *reasoning summary*.
+For most users, `@ai-sdk/openai-compatible` (Chat Completions) is sufficient.
 
 <Callout type="note" title="Model with interleaved reasoning">
-Models that return `reasoning_content` (e.g., DeepSeek V4, GLM 5) can be configured with the options `"reasoning": true` and `"interleaved": { "field": "reasoning_content" }` in their model definitions so that OpenCode displays their reasoning paths.
+  Models that return `reasoning_content` (e.g., DeepSeek V4, GLM 5) can be given the options
+  `"reasoning": true` and `"interleaved": { "field": "reasoning_content" }` in their model definitions
+  so that OpenCode displays the reasoning path.
 </Callout>
 
 ## Troubleshooting
 
 - **The provider does not appear in `/models`** - The IDs in `/connect` and `opencode.json` are different, or the JSON
-Invalid. Check `opencode auth list`.
+  is invalid. Check `opencode auth list`.
 - **`401`** - No key has been saved for that ID; repeat `/connect`.
-- **`404 model_not_found`** - The `models` key must match the exact slug from `GET /v1/models`.
+- **`404 model_not_found`** - the `models` key must be the exact slug from `GET /v1/models`.

@@ -12,22 +12,35 @@ import { Callout } from "/snippets/mdx.jsx";
 
 ## 1. Enkripsi dan penyimpanan rahasia
 
-- Seluruh lalu lintas ke situs, console, dan API dilayani melalui HTTPS (TLS).
-- Login akun dikelola Keycloak; kata sandi tidak disimpan dalam bentuk asli.
-- API key pelanggan disimpan sebagai hash SHA-256.
-- Kredensial integrasi seperti kunci upstream provider dan rahasia SSO dienkripsi di level aplikasi dengan AES-256-GCM, menggunakan kunci yang disimpan terpisah dari database.
+Komunikasi dengan situs, Console, dan API Hostlinku dilindungi oleh **HTTPS (TLS)**. Kredensial dilindungi sesuai jenisnya:
+
+- **Kata sandi akun** tidak disimpan dalam bentuk asli (*plaintext*).
+- **API key pelanggan** disimpan sebagai hash **SHA-256** untuk verifikasi, bukan sebagai key yang dapat ditampilkan kembali.
+- **Kredensial integrasi**, termasuk kunci upstream provider dan rahasia SSO, dienkripsi menggunakan **AES-256-GCM** pada level aplikasi. Kunci enkripsi berasal dari konfigurasi lingkungan aplikasi, terpisah dari nilai terenkripsi di database.
 
 <a id="autentikasi"></a>
 
 ## 2. Autentikasi akun
 
-- Verifikasi email dan alur login dikelola melalui Keycloak.
-- Opsi masuk melalui SSO (misalnya Google, GitHub, Discord) bila diaktifkan.
-- Sesi server Console memakai `hl_sid`; `hl_session` adalah cookie JWT untuk sebagian alur. Cookie sesi memakai `HttpOnly` dan `SameSite=Lax`, serta `Secure` pada produksi.
-- Kuota penggunaan bersama per organisasi dan batas request per IP dijelaskan di [Pemakaian & Limit](/usage-and-limits).
-- Akun yang ditangguhkan tidak dapat login maupun memakai API.
+Layanan identitas Hostlinku tersedia melalui `auth2.hostlinku.com`, dengan protokol federasi identitas standar industri **OpenID Connect (OIDC)** dan **OAuth 2.0**. Alur otorisasi menggunakan **PKCE S256**. Login, verifikasi email, dan pilihan SSO yang diaktifkan dikelola melalui layanan ini.
 
-Passkey WebAuthn, authenticator TOTP, dan recovery codes tersedia di Console → **Settings → Security** melalui Keycloak.
+### Passkey dan Multi-Factor Authentication (MFA)
+
+Selain email dan kata sandi, tersedia metode autentikasi berikut:
+
+- **Passkey (FIDO2/WebAuthn):** autentikasi tanpa kata sandi (*passwordless*) berbasis kriptografi kunci publik. Kunci privat dikelola oleh authenticator atau penyedia passkey dan tidak dikirim ke server saat autentikasi.
+- **Authenticator (TOTP):** kode sekali pakai berbasis waktu yang dihasilkan oleh aplikasi authenticator.
+- **Kode pemulihan (*recovery codes*):** kode cadangan sekali pakai untuk memulihkan akses saat faktor autentikasi utama tidak tersedia.
+
+Seluruh metode autentikasi dapat dikelola melalui **Console → Settings → Security**. Pilih **Add passkey** untuk mendaftarkan passkey, lalu pilih tombol untuk masuk menggunakan passkey pada halaman login. Simpan kode pemulihan di tempat aman yang tetap dapat diakses saat diperlukan.
+
+### Sesi Console
+
+Console memvalidasi akses melalui sesi yang disimpan di server, dengan cookie **`hl_sid`**. Saat login, backend juga menerbitkan cookie JWT **`hl_session`**. Keduanya dikonfigurasi dengan **`HttpOnly`** dan **`SameSite=Lax`**; **`Secure`** diaktifkan ketika backend berjalan dalam mode produksi.
+
+`HttpOnly` membatasi akses JavaScript halaman ke cookie, `Secure` memastikan cookie hanya dikirim melalui HTTPS, dan `SameSite=Lax` membatasi penyertaan cookie pada request lintas situs.
+
+Akun yang ditangguhkan tidak dapat login maupun memakai API.
 
 <a id="api-key"></a>
 

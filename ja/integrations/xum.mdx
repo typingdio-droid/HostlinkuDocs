@@ -1,17 +1,23 @@
 ---
 title: "Xum"
-description: "Xum（旧Mux）でHostlinkuをカスタムプロバイダーとして登録し、1つのAPIキーで複数のコーディングエージェントを並行して実行する"
+description: "Xum（旧Mux）にHostlinkuをカスタムプロバイダーとして登録し、1つのAPIキーで複数のコーディングエージェントを並行して実行できるようにしてください"
 icon: workflow
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Xum](https://xum.cdr.dev/config/providers)（旧称 **Mux**）は、デスクトップまたはブラウザから、それぞれ隔離されたワークスペースを持つ複数のコーディングエージェントを並行して実行します。 Xumは、任意のAPI形式による**カスタムプロバイダー**をサポートしています。これは、組み込みのプロバイダーOpenAI/Anthropicを変更することなく、Hostlinkuを追加するための最も洗練された方法です。
+[Xum](https://xum.cdr.dev/config/providers)（旧称 **Mux**）は、デスクトップまたはブラウザから、
+それぞれが隔離されたワークスペースを持つ複数のコーディングエージェントを並行して実行します。Xumは
+**カスタムプロバイダー**を任意のAPI形式でサポートしています。これは、デフォルトのOpenAI/Anthropicプロバイダーを変更することなく
+Hostlinkuを追加するための最も洗練された方法です。
 
 <Steps>
 
-### APIキーをファイルに保存する
+<a id="simpan-api-key-di-file"></a>
+
+<a id="apiキーをファイルに保存する"></a>
+
+### APIキーをファイルに保存してください
 
 ```bash
 mkdir -p ~/.config/hostlinku
@@ -19,7 +25,11 @@ printf '%s' 'sk-your-api-key' > ~/.config/hostlinku/api-key
 chmod 600 ~/.config/hostlinku/api-key
 ```
 
-### プロバイダー Hostlinku を追加する
+<a id="tambahkan-provider-hostlinku"></a>
+
+<a id="プロバイダー-hostlinku-を追加する"></a>
+
+### Hostlinkuプロバイダーを追加してください
 
 `~/.xum/providers.jsonc` を編集し、新しいプロバイダーを追加してください：
 
@@ -44,17 +54,28 @@ chmod 600 ~/.config/hostlinku/api-key
 }
 ```
 
-`anthropic-messages`については、Xumが独自に`/v1`を追加したため、ベースURLには`/v1`を**含めない**で記述します。 プロバイダーID（`hostlinku`、`hostlinku-claude`）は小文字で記述し、デフォルトのプロバイダー名と重複してはなりません。
+`anthropic-messages`については、Xumが独自に`/v1`を追加するため、ベースURLは`/v1`を**含めずに**記述してください。
+プロバイダーID（`hostlinku`、`hostlinku-claude`）は小文字とし、デフォルトのプロバイダー名と
+同一にしてはなりません。
+
+<a id="pilih-model"></a>
 
 ### モデルを選択
 
-モデルピッカー（または`/model`）を開き、**Hostlinku**グループからモデルを選択してください。`models`はあくまで候補リストです。[カタログ](/ja/models)にある他のslugについては、引き続き直接入力することができます。 リクエストはコンソールの → **リクエストログ** に表示されます。
+モデルピッカー（または `/model`）を開き、**Hostlinku** グループからモデルを選択してください。`models` はあくまで
+推奨リストです。[カタログ](/ja/models) の他のスラグは、引き続き直接入力可能です。リクエストは
+コンソール → **リクエストログ** に表示されます。
 
 </Steps>
 
-## 代替案：標準搭載のプロバイダー OpenAI
+<a id="alternatif-provider-openai-bawaan"></a>
 
-1つのプロバイダーのみを使用したい場合は、デフォルトのプロバイダー**OpenAI**を、ワイヤー形式Chat Completionsを使用してHostlinkuにリダイレクトしてください （**設定 → プロバイダー → OpenAI**、または `providers.jsonc`）：
+<a id="代替案標準搭載のプロバイダー-openai"></a>
+
+## 代替案：組み込みのOpenAIプロバイダー
+
+1つのプロバイダーのみを使用したい場合は、デフォルトの**OpenAI**プロバイダーを、Chat Completions形式でHostlinkuにワイヤ接続するように設定してください
+（**設定 → プロバイダー → OpenAI**、または`providers.jsonc`内）：
 
 ```jsonc
 {
@@ -66,15 +87,19 @@ chmod 600 ~/.config/hostlinku/api-key
 }
 ```
 
-<Callout type="note" title="なぜchatCompletionsなのか？">
-OpenAI のデフォルトのワイヤ形式プロバイダーは Responses API ですが、Responses および Hostlinku は *ステートレス* です ([詳細](/ja/responses))。 Chat Completionsは、その制限なしに、Claudeを含むすべてのカタログモデルを受け入れます。
+<Callout type="note" title="なぜ「chatCompletions」なのか？">
+  OpenAIプロバイダーのデフォルトのワイヤ形式はResponses APIですが、HostlinkuのResponsesは
+  *ステートレス*です（[詳細](/ja/responses)）。Chat Completionsは、その制限なしに、
+  Claudeを含むすべてのカタログモデルを受け入れます。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-| 症状 | Solusi |
+| 症状 | 解決策 |
 |---|---|
-| `401` | ファイル `apiKeyFile` の内容が不正です（改行やスペースが含まれている）、またはキーが取り外されています。 |
-| `404` | `anthropic-messages` と `/v1` が重複しています - ベース URL として `https://api.hostlinku.com` を指定してください。 |
-| プロバイダーが表示されない | プロバイダーIDに大文字やピリオドが含まれているか、またはデフォルトのプロバイダー名と重複しています。 |
-| `404 model_not_found` | slugの入力ミス - `GET /v1/models`からコピーしました。 |
+| `401` | `apiKeyFile`ファイルの内容が不正です（改行やスペースが含まれている）、またはキーが無効化されています。 |
+| `404` | `anthropic-messages` に `/v1` が二重に付いている場合は、ベースURLを `https://api.hostlinku.com` と記述してください。 |
+| 「Provider」は登場しません | プロバイダーIDは、大文字やピリオドを使用している場合、または組み込みのプロバイダー名と重複する場合は、そのまま使用してください。 |
+| `404 model_not_found` | Slugのスペルミス - `GET /v1/models`からコピーしてください。 |

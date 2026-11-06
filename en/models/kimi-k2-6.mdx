@@ -1,11 +1,11 @@
 ---
 title: "Kimi K2.6"
-description: "Kimi K2.6 by Moonshot, with a catalog context window of 256,000 tokens."
+description: "Kimi K2.6 from Moonshot, with a catalog context of 256,000 tokens."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-| Property | Value |
+| Properties | Value |
 |---|---|
 | Provider | Moonshot |
 | Slug | `kimi-k2-6` |
@@ -13,23 +13,31 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | Output | text |
 | Release | 2026-07-13 |
 | Catalog context | 256,000 tokens |
-| Catalog max output | 32,000 tokens |
+| Max catalog output | 32,000 tokens |
 | Service Mode | Performance |
+
+<a id="kapabilitas"></a>
 
 ## Capabilities
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
 
-## Pricing
+<a id="harga"></a>
 
-Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/kimi-k2-6) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+<a id="pricing"></a>
+
+## Price
+
+Updated **November 6, 2026**. [Current pricing](https://hostlinku.com/models/kimi-k2-6) follows the Service Mode API key. **1 <CreditIcon /> = $1**. `—` means the rate is not listed. Tiers are based on the number of prompt tokens.
 
 | Item | Unit | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| Input (prompt) | per 1M tokens | Base | 0.80304 |
-| Output (completion) | per 1M tokens | Base | 3.33564 |
-| Cache read | per 1M tokens | Base | 0.13608 |
-| Web search | per 1K calls | Base | 4.6326 |
+| Input (prompt) | per 1M tokens | Basics | 0.80304 |
+| Output (completion) | per 1M tokens | Basics | 3.33564 |
+| Cache read | per 1M tokens | Basics | 0.13608 |
+| Web search | per 1K calls | Basics | 4.6326 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## Supported endpoints
 
@@ -39,7 +47,9 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/ki
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
+[Compatibility limits](/en/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## Example request
 
@@ -52,6 +62,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [{ "role": "user", "content": "Hello!" }]
   }'
 ```
+
+<a id="model-terkait"></a>
 
 ## Related models
 

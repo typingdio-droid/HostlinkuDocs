@@ -1,12 +1,14 @@
 ---
 title: "Chat Completions"
-description: "Reference for the POST endpoint /v1/chat/completions, including parameters, SSE streaming, and examples using curl and Python"
+description: "Reference for the POST /v1/chat/completions endpoint, including parameters, SSE streaming, and curl + Python examples"
 icon: messages-square
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku's main endpoint. The request and response formats are compatible with the [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat), so you can use the official OpenAI SDK simply by changing `base_url` to `https://api.hostlinku.com/v1`.
+Hostlinku’s main endpoint. The request and response formats are compatible with
+[OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat), so the
+official OpenAI SDK can be used simply by replacing `base_url` with `https://api.hostlinku.com/v1`.
 
 ```http
 POST https://api.hostlinku.com/v1/chat/completions
@@ -14,36 +16,40 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-Successful responses include `x-request-id`; successful non-streaming responses also include `x-model` (the public model slug).
+A successful response includes `x-request-id`; a non-streaming successful response also includes `x-model` (the model’s public slug).
 
-Choose a model available in the API key Service Mode. Vision, JSON schema, reasoning, and tool calling depend on the model and protocol path. See [compatibility limits](/en/responses).
+Select the available model for the Service Mode API key. Support for vision, JSON schema, reasoning, and tool calling follows the model and its protocol path. See [compatibility limits](/en/responses).
 
-## Body Parameters
+<a id="parameter-body"></a>
 
-| Parameter | Type | Default | Description |
+## Body parameters
+
+| Parameter | Type | Default | Notes |
 |---|---|---|---|
-| `model` | `string` | none | **Required.** Model slug, e.g., `gpt-5-5`. See [Model](/en/models). |
-| `messages` | `array` | none | **Required.** At least 1 message. Each item: `{ role, content, name? }`, where `role` is one of `system`, `developer`, `user`, `assistant`, or `tool`. |
-| `temperature` | `number` | provider default | Range `0`–`2`. The higher the value, the more random it is. |
-| `top_p` | `number` | provider default | Range `0`–`1`. An alternative to _nucleus sampling_ based on `temperature`. |
-| `n` | `integer` | `1` | Number of answer choices, `1`–`8`. |
+| `model` | `string` | none | **Required.** Model slug, e.g., `gpt-5-5`. See [Models](/en/models). |
+| `messages` | `array` | none | **Required.** At least 1 message. Each item: `{ role, content, name? }` where `role` is one of `system`, `developer`, `user`, `assistant`, or `tool`. |
+| `temperature` | `number` | provider-specific | Range `0`–`2`. The higher the value, the more random it is. |
+| `top_p` | `number` | provider-specific | Range `0`–`1`. Alternative _nucleus sampling_ of `temperature`. |
+| `n` | `integer` | `1` | Number of answer options: `1`–`8`. |
 | `stream` | `boolean` | `false` | `true` for SSE streaming responses (see below). |
 | `stop` | `string` \| `string[]` | none | One or more text sequences that halt generation. |
-| `max_tokens` | `integer` | model default | Output token limit (positive). |
-| `max_completion_tokens` | `integer` | none | Modern alternative to `max_tokens` (used by some providers). |
+| `max_tokens` | `integer` | model properties | Output token limit (positive). |
+| `max_completion_tokens` | `integer` | none | Modern alternative: `max_tokens` (used by some providers). |
 | `presence_penalty` | `number` | `0` | Range `-2`–`2`. |
 | `frequency_penalty` | `number` | `0` | Range `-2`–`2`. |
-| `user` | `string` | none | End-user identifier for abuse tracking. |
-| `tools` | `array` | none | Definition of tool/function calls (OpenAI format). |
-| `tool_choice` | `any` | none | Tool selection control (`"auto"`, `"none"`, `{...}`). |
+| `user` | `string` | none | End-user identifier for tracking misuse. |
+| `tools` | `array` | none | Definitions of tool/function calls (OpenAI format). |
+| `tool_choice` | `any` | none | Tool selection controls (`"auto"`, `"none"`, `{...}`). |
 | `response_format` | `any` | none | E.g., `{ "type": "json_object" }` for JSON output (depending on model support). |
 | `seed` | `integer` | none | Seed determinism (best-effort, provider-dependent). |
 
 <Callout type="note" title="Parameter validation">
-  The table lists the main parameters. The schema also accepts `top_k`, `web_search_options`, `reasoning_effort`, `parallel_tool_calls`, `logprobs`, `top_logprobs`, `logit_bias`, `stream_options`, `metadata`, `thinking`, `verbosity`, `service_tier`, `store`, `prompt_cache_key`, `safety_identifier`, and `truncation`. Unknown top-level fields are removed. Additional `messages[]` fields, including `tool_calls`, `tool_call_id`, `function_call`, and `reasoning_content`, are preserved. Parameter and multimodal support depend on the model/protocol. Invalid bodies return `422 VALIDATION_FAILED` with field details.
+  The list above contains the main parameters. The schema also accepts `top_k`, `web_search_options`, `reasoning_effort`, `parallel_tool_calls`, `logprobs`, `top_logprobs`, `logit_bias`, `stream_options`, `metadata`, `thinking`, `verbosity`, `service_tier`, `store`, `prompt_cache_key`, `safety_identifier`, and `truncation`. Unknown top-level fields are discarded. Additional fields in `messages[]`, including `tool_calls`, `tool_call_id`, `function_call`, and `reasoning_content`, are preserved. Support for multimodal parameters and content remains model/protocol-dependent. Invalid bodies are rejected with a `422 VALIDATION_FAILED` response, along with details on the fields.
 </Callout>
 
-## Example: Non-streaming request (curl)
+<a id="contoh-request-non-streaming-curl"></a>
+
+## Example: non-streaming request (curl)
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -52,15 +58,15 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -d '{
     "model": "gpt-5-5",
     "messages": [
-      { "role": "system", "content": "You are a concise assistant." },
-      { "role": "user", "content": "Explain what an API gateway is in two sentences." }
+      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
+      { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
     ],
     "temperature": 0.7,
     "max_tokens": 256
   }'
 ```
 
-Response (abridged):
+Response (truncated):
 
 ```json
 {
@@ -71,7 +77,7 @@ Response (abridged):
   "choices": [
     {
       "index": 0,
-      "message": { "role": "assistant", "content": "An API gateway is …" },
+      "message": { "role": "assistant", "content": "API gateway adalah …" },
       "finish_reason": "stop"
     }
   ],
@@ -83,16 +89,18 @@ Response (abridged):
 }
 ```
 
-`model` contains the public Hostlinku slug. The `hostlinku` block in successful non-streaming responses includes cost, Service Mode, and latency. It is not guaranteed in each SSE chunk:
+`model` contains the Hostlinku public slug. The `hostlinku` block in non-streaming success responses contains cost, Service Mode, and latency. This block is not a guaranteed part of every SSE chunk:
 
 | Field | Meaning |
 |---|---|
-| `cost` | Cost in 🪙 credits; 1 credit = \$1. |
-| `latencyMs` | Total request latency from when the gateway receives the request until it is completed, in milliseconds. |
+| `cost` | Cost in credits 🪙; 1 credit = $1. |
+| `latencyMs` | Total request latency from gateway reception to completion, in milliseconds. |
 
 ## Streaming (`stream: true`)
 
-With `stream: true`, the gateway responds with `Content-Type: text/event-stream` (SSE), streams chunks in an OpenAI-compatible format (each chunk uses a public Hostlinku `id` and the same model slug), and then closes the stream with `data: [DONE]`:
+With `stream: true`, the gateway responds with `Content-Type: text/event-stream` (SSE),
+streaming chunks in an OpenAI-compatible format (each chunk uses the same public Hostlinku `id`
+and model slug), then closes the stream with `data: [DONE]`:
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -100,7 +108,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{ "role": "user", "content": "Count from 1 to 5." }],
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
     "stream": true
   }'
 ```
@@ -117,16 +125,18 @@ data: [DONE]
 
 Important note:
 
-- Handle error events and unexpected disconnections as stream failures. A `[DONE]` marker alone does not prove success; inspect errors and Request Logs using `x-request-id`.
-- Final billing uses upstream usage/cost; missing or zero values can fall back to the reserved estimate.
-- The `x-request-id` header is also sent in streaming responses to correlate with logs in
-console.
+- If a stream fails, handle the error event and treat the connection termination as a failure. The `[DONE]` marker alone does not prove a successful request; check for errors and review the Request Log using the `x-request-id`.
+- The final cost uses usage/upstream cost; if empty or zero, the gateway may use a reservation estimate.
+- The `x-request-id` header is also sent in streaming responses to link to logs in
+  the console.
 
 <a id="contoh-python-sdk-resmi-openai"></a>
 
-## Example: Python (Official OpenAI SDK)
+<a id="example-python-official-openai-sdk"></a>
 
-There are no code changes other than `base_url`. The OpenAI SDK is ready to use:
+## Example: Python (OpenAI’s official SDK)
+
+No code changes are required other than `base_url`. The OpenAI SDK can be used as-is:
 
 ```python
 from openai import OpenAI
@@ -140,8 +150,8 @@ client = OpenAI(
 response = client.chat.completions.create(
     model="gpt-5-5",
     messages=[
-        {"role": "system", "content": "You are a concise assistant."},
-        {"role": "user", "content": "Hello from the OpenAI SDK!"},
+        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
+        {"role": "user", "content": "Halo dari SDK OpenAI!"},
     ],
 )
 print(response.choices[0].message.content)
@@ -149,7 +159,7 @@ print(response.choices[0].message.content)
 # Streaming
 stream = client.chat.completions.create(
     model="gpt-5-5",
-    messages=[{"role": "user", "content": "Write one short paragraph."}],
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
     stream=True,
 )
 for chunk in stream:
@@ -158,21 +168,27 @@ for chunk in stream:
         print(delta, end="", flush=True)
 ```
 
-<Callout type="tip" title="Change the base_url in other libraries">
-The same pattern applies to `openai-node` (`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`), LangChain (`baseURL`/`openai_api_base`), and other tools that support OpenAI-compatible endpoints.
+<Callout type="tip" title="Replace `base_url` in other libraries">
+  The same pattern applies to `openai-node` (`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`),
+  LangChain (`baseURL`/`openai_api_base`), and other tools that support
+  OpenAI-compatible endpoints.
 </Callout>
 
-## Common errors on this endpoint
+<a id="error-yang-umum-di-endpoint-ini"></a>
 
-| Case | HTTP | `error.code` |
+<a id="common-errors-on-this-endpoint"></a>
+
+## Common errors at this endpoint
+
+| Cases | HTTP | `error.code` |
 |---|---|---|
-| Body failed validation (invalid field/invalid type/empty `messages`) | 422 | `VALIDATION_FAILED` |
-| Invalid or expired API key | 401 | `UNAUTHORIZED` |
-| Insufficient API key balance or limit | 402 | `PAYMENT_REQUIRED` |
-| Model slug not found in the catalog | 404 | `MODEL_NOT_FOUND` |
-| `max_tokens` exceeds the model's output limit | 400 | `BAD_REQUEST` |
+| Body failed validation (invalid field/wrong type/empty `messages`) | 422 | `VALIDATION_FAILED` |
+| The API key is invalid or has expired | 401 | `UNAUTHORIZED` |
+| API key balance or limit is insufficient | 402 | `PAYMENT_REQUIRED` |
+| The model slug is not in the catalog | 404 | `MODEL_NOT_FOUND` |
+| `max_tokens` exceeds the model’s output limit | 400 | `BAD_REQUEST` |
 | Deprecated / currently unavailable model | 503 | `MODEL_UNAVAILABLE` |
-| Shared organization quota exceeded | 429 | `RATE_LIMITED` |
-| Upstream unavailable / temporary outage (retryable) | 503 | `UPSTREAM_ERROR` |
+| The organization-wide quota has been exceeded | 429 | `RATE_LIMITED` |
+| Upstream is unavailable / temporary outage (retryable) | 503 | `UPSTREAM_ERROR` |
 
-The complete format of the error envelope is available at [Error](/en/errors).
+The complete error envelope format is available at [Error](/en/errors).

@@ -8,11 +8,15 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku 提供了一个集中式的模型目录。 每个模型都有一个唯一的**slug**，该**slug**用于 [Chat Completions](/zh/chat-completions) 中的 `model` 参数，并附有上下文大小、功能和每Token价格等信息。
+Hostlinku 提供了一个集中式的模型目录。每个模型都有一个唯一的 **slug**，用于
+[Chat Completions](/zh/chat-completions) 中的 `model` 参数，并附有
+上下文大小、功能和每令牌价格。
 
 ## `GET /v1/models`
 
-返回所有状态为 `available`、尚未被废弃且可用于所选 **Service Mode API key**（Performance、Low-Cost或Dedicated）的模型，以及该模式下 <CreditIcon /> 每 100 万Token的价格。
+返回所有状态为 `available`、尚未弃用且可用于
+所用 **服务模式 API 密钥**（性能型、低成本型或专用型）的模型，并附上该模式下每 1M 令牌的 <CreditIcon /> 价格
+。
 
 ```http
 GET https://api.hostlinku.com/v1/models
@@ -26,7 +30,7 @@ curl https://api.hostlinku.com/v1/models \
   -H "Authorization: Bearer sk-your-api-key"
 ```
 
-响应（示例已截取；您账户的具体数值可从该端点获取）：
+响应（示例已截取；您账户的具体值可从该端点获取）：
 
 ```json
 {
@@ -65,93 +69,110 @@ curl https://api.hostlinku.com/v1/models \
 }
 ```
 
-| Field | 含义 |
+| 字段 | 含义 |
 |---|---|
-| `service_mode`（级别列表及项目） | 所使用的Service Mode API key模型：`performance`、`low_cost` 或 `dedicated`。不同模式下的模型列表各不相同。 |
-| `id` | 模型标识符，即在字段`model`中使用的值，该字段出现在字段`/v1/chat/completions`、`/v1/messages`和`/v1/responses`中。 |
+| `service_mode`（列表级和项目级） | 所使用的服务模式 API 密钥：`performance`、`low_cost` 或 `dedicated`。不同模式对应的模型列表各不相同。 |
+| `id` | 模型别名（Slug），即在 `/v1/chat/completions`、`/v1/messages` 和 `/v1/responses` 的 `model` 字段中使用的值。 |
 | `created` | 模型添加到目录的时间（Unix 纪元，秒）。 |
-| `owned_by` | 始终为 `"hostlinku"` - 这表示该模型由目录 Hostlinku 管理。 |
-| `context_window` | Token（输入+输出）中的最大上下文长度。 |
-| `capabilities` | 能力列表，例如：`vision`、`tool-calling`、`json-mode`、`reasoning`、`long-context`。 |
-| `pricing` | Service Mode中的价格对象；若该模型在该模式下尚未设定价格，则为`null`。 `pricing.unit`始终为`"1M_tokens"`，而`pricing.currency`包含信用符号（1 <CreditIcon /> = \$1）。 |
-| `pricing.input` / `pricing.output` | 提示Token/回答Token的价格按**100万个Token**为单位计算（而非按1个Token或1000个Token为单位）。 |
-| `pricing.cache_read` / `pricing.cache_write` | 缓存读取／5分钟缓存写入的每100万个Token价格。未设置的费率可能省略；请参见[提示词缓存](/zh/prompt-caching)。 |
+| `owned_by` | 始终使用 `"hostlinku"`——这表示该模型由 Hostlinku 目录管理。 |
+| `context_window` | 令牌中的最大上下文长度（输入 + 输出）。 |
+| `capabilities` | 功能列表，例如 `vision`、`tool-calling`、`json-mode`、`reasoning`、`long-context`。 |
+| `pricing` | 该服务模式下的定价对象；如果模型在该模式下尚未设定价格，则为 `null`。`pricing.unit` 始终为 `"1M_tokens"`，而 `pricing.currency` 包含信用符号（1 <CreditIcon /> = \$1）。 |
+| `pricing.input` / `pricing.output` | 提示令牌/回答令牌的价格按**1M令牌**计（而非按1个令牌或1K令牌计）。 |
+| `pricing.cache_read` / `pricing.cache_write` | 每 1M 令牌的缓存读取/缓存写入 5 分钟价格。未提供的费率可不列出；请参阅 [提示缓存](/zh/prompt-caching)。 |
 
-<Callout type="note" title="Pricing为客户价格">
-`pricing` 是密钥所属Service Mode的客户价格，已包含平台利润。非流式响应包含 `hostlinku.cost`；使用量和费用也可在控制台日志中查看。
+<Callout type="note" title="Pricing 指客户价格">
+`pricing` 指客户针对“服务模式”密钥的定价，包含利润。在非流式响应中，费用可在 `hostlinku.cost` 中查看；使用情况和费用也可在 Console 日志中查看。
 </Callout>
 
-## 公共目录（无需认证）
+<a id="katalog-publik-tanpa-autentikasi"></a>
 
-无需API密钥即可通过以下端点比较模型和Service Mode：
+<a id="公共目录无需认证"></a>
+
+## 公共目录（无需身份验证）
+
+如果没有 API 密钥，请使用以下端点来比较模型和服务模式：
 
 ```http
 GET https://api.hostlinku.com/api/public/models-v2
 GET https://api.hostlinku.com/api/public/service-modes
 ```
 
-`models-v2` 返回 `{status, currency, models}`。每个模型包含 `slug`、`displayName`、`contextTokens`、已列出的 `maxOutputTokens`、`capabilities`、`serviceModes`，以及 `modes` 中的各模式价格。`service-modes` 返回 `{status, data}`，包含模式概要及其模型列表。
+`models-v2` 返回 `{status, currency, models}`。 每个模型包含 `slug`、`displayName`、`contextTokens`、`maxOutputTokens`（如有）、`capabilities`、`serviceModes`，以及 `modes` 中各模式的价格。`service-modes` 返回 `{status, data}`，其中包含模式及其模型的摘要。
 
-要查看特定API密钥可用的模型和价格，请调用 `GET /v1/models`。
+要查看特定 API 密钥适用的列表和价格，请使用 `GET /v1/models`。
+
+<a id="daftar-model"></a>
 
 ## 模型列表
 
-**2026年11月6日更新**。请查看[当前目录](https://hostlinku.com/zh/models)，或使用API密钥调用 `GET /v1/models`。
+更新于 **2026年11月6日**。请参阅 [最新目录](https://hostlinku.com/models) 或使用您的 API 密钥调用 `GET /v1/models`。
 
-| 模型 | 提供商 | 目录上下文 | 目录最大输出 | Service Mode |
+| 模型 | 提供商 | 目录背景 | 目录最大输出 | Service Mode |
 |---|---|---|---|---|
-| [Claude Haiku 5.5](/zh/models/claude-haiku-5-5) | Anthropic | 1,000,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [Claude Opus 5.5](/zh/models/claude-opus-5-5) | Anthropic | 1,000,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [Claude Opus 5](/zh/models/claude-opus-5) | Anthropic | 1,000,000 个Token | 64,000 个Token | Performance, Low-Cost |
-| [Claude Sonnet 5](/zh/models/claude-sonnet-5) | Anthropic | 1,000,000 个Token | 64,000 个Token | Performance, Low-Cost |
-| [Claude Fable 5](/zh/models/claude-fable-5) | Anthropic | 1,000,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [Claude Opus 4.8](/zh/models/claude-opus-4-8) | Anthropic | 1,000,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [Claude Opus 4.7](/zh/models/claude-opus-4-7) | Anthropic | 1,000,000 个Token | 32,000 个Token | Performance, Low-Cost |
-| [Claude Haiku 4.5](/zh/models/claude-haiku-4-5) | Anthropic | 200,000 个Token | 64,000 个Token | Performance, Low-Cost |
-| [Claude Opus 4.6](/zh/models/claude-opus-4-6) | Anthropic | 1,000,000 个Token | 32,000 个Token | Performance, Low-Cost |
-| [Claude Sonnet 4.6](/zh/models/claude-sonnet-4-6) | Anthropic | 1,000,000 个Token | 64,000 个Token | Performance, Low-Cost |
-| [Claude Sonnet 5.5](/zh/models/claude-sonnet-5-5) | Anthropic | 1,000,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [GPT-6.1 Sol](/zh/models/gpt-6-1-sol) | OpenAI | 1,050,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [GPT-6 Luna](/zh/models/gpt-6-luna) | OpenAI | 1,050,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [GPT-6 Sol](/zh/models/gpt-6-sol) | OpenAI | 1,050,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [GPT-6 Astra](/zh/models/gpt-6-astra) | OpenAI | 1,050,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [GPT-5.6 Luna](/zh/models/gpt-5-6-luna) | OpenAI | 1,050,000 个Token | 64,000 个Token | Performance, Low-Cost |
-| [GPT-5.6 Sol](/zh/models/gpt-5-6-sol) | OpenAI | 1,050,000 个Token | 64,000 个Token | Performance, Low-Cost |
-| [GPT-5.6 Terra](/zh/models/gpt-5-6-terra) | OpenAI | 1,050,000 个Token | 64,000 个Token | Performance, Low-Cost |
-| [GPT 5.3 Codex](/zh/models/gpt-5-3-codex) | OpenAI | 400,000 个Token | 128,000 个Token | Performance |
-| [GPT-5.5](/zh/models/gpt-5-5) | OpenAI | 1,000,000 个Token | 128,000 个Token | Performance, Low-Cost |
-| [DeepSeek-V4.1-Flash](/zh/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 个Token | 384,000 个Token | Performance, Dedicated |
-| [DeepSeek-V4.1-Flash Fast](/zh/models/deepseek-v4-1-flash-fast) | DeepSeek | 1,000,000 个Token | 384,000 个Token | Dedicated |
-| [DeepSeek-V4.1-Flash Hyper](/zh/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 个Token | 384,000 个Token | Dedicated |
-| [DeepSeek V4 Pro](/zh/models/deepseek-v4-pro) | DeepSeek | 1,000,000 个Token | 64,000 个Token | Performance |
-| [DeepSeek V4 Flash](/zh/models/deepseek-v4-flash) | DeepSeek | 1,000,000 个Token | 未列出 | Performance |
-| [GLM 5.3](/zh/models/glm-5-3) | Zhipu | 1,000,000 个Token | 64,000 个Token | Performance, Dedicated |
-| [GLM-5.3 Flash](/zh/models/glm-5-3-flash) | Zhipu | 1,000,000 个Token | 64,000 个Token | Dedicated |
-| [GLM-5.3 Flash Hyper](/zh/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 个Token | 64,000 个Token | Dedicated |
-| [GLM 5.2](/zh/models/glm-5-2) | Zhipu | 1,000,000 个Token | 64,000 个Token | Performance |
-| [GLM 5.1](/zh/models/glm-5-1) | Zhipu | 200,000 个Token | 128,000 个Token | Performance |
-| [Qwen 3.6 Plus](/zh/models/qwen3-6-plus) | Alibaba | 1,000,000 个Token | 未列出 | Performance |
-| [Qwen 3.7 Max](/zh/models/qwen3-7-max) | Alibaba | 1,000,000 个Token | 未列出 | Performance |
-| [Kimi K3.1 Pro Hyper](/zh/models/kimi-k3-1-pro-hyper) | Moonshot | 1,048,576 个Token | 64,000 个Token | Dedicated |
-| [Kimi K3](/zh/models/kimi-k3) | Moonshot | 1,000,000 个Token | 64,000 个Token | Performance |
-| [Kimi K2.6](/zh/models/kimi-k2-6) | Moonshot | 256,000 个Token | 32,000 个Token | Performance |
-| [Kimi K2.7 Code](/zh/models/kimi-k2-7-code) | Moonshot | 256,000 个Token | 未列出 | Performance |
-| [MiniMax M3](/zh/models/minimax-m3) | MiniMax | 1,000,000 个Token | 64,000 个Token | Performance |
-| [Muse Wonder](/zh/models/muse-wonder-1-0) | Meta | 1,048,576 个Token | 未列出 | Performance |
-| [Model Baize](/zh/models/model-baize) | Anonymous | 1,000,000 个Token | 未列出 | Low-Cost |
+| [Claude Haiku 5.5](/zh/models/claude-haiku-5-5) | Anthropic | 1,000,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [Claude Opus 5.5](/zh/models/claude-opus-5-5) | Anthropic | 1,000,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [Claude Opus 5](/zh/models/claude-opus-5) | Anthropic | 1,000,000 个令牌 | 64,000 个令牌 | 性能、低成本 |
+| [Claude Sonnet 5](/zh/models/claude-sonnet-5) | Anthropic | 1,000,000 个令牌 | 64,000 个令牌 | 性能、低成本 |
+| [Claude Fable 5](/zh/models/claude-fable-5) | Anthropic | 1,000,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [Claude Opus 4.8](/zh/models/claude-opus-4-8) | Anthropic | 1,000,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [Claude Opus 4.7](/zh/models/claude-opus-4-7) | Anthropic | 1,000,000 个令牌 | 32,000 个令牌 | 性能、低成本 |
+| [Claude Haiku 4.5](/zh/models/claude-haiku-4-5) | Anthropic | 200,000 个令牌 | 64,000 个令牌 | 性能、低成本 |
+| [Claude Opus 4.6](/zh/models/claude-opus-4-6) | Anthropic | 1,000,000 个令牌 | 32,000 个令牌 | 性能、低成本 |
+| [Claude Sonnet 4.6](/zh/models/claude-sonnet-4-6) | Anthropic | 1,000,000 个令牌 | 64,000 个令牌 | 性能、低成本 |
+| [Claude Sonnet 5.5](/zh/models/claude-sonnet-5-5) | Anthropic | 1,000,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [GPT-6.1 Sol](/zh/models/gpt-6-1-sol) | OpenAI | 1,050,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [GPT-6 Luna](/zh/models/gpt-6-luna) | OpenAI | 1,050,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [GPT-6 Sol](/zh/models/gpt-6-sol) | OpenAI | 1,050,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [GPT-6 Astra](/zh/models/gpt-6-astra) | OpenAI | 1,050,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [GPT-5.6 Luna](/zh/models/gpt-5-6-luna) | OpenAI | 1,050,000 个令牌 | 64,000 个令牌 | 性能、低成本 |
+| [GPT-5.6 Sol](/zh/models/gpt-5-6-sol) | OpenAI | 1,050,000 个令牌 | 64,000 个令牌 | 性能、低成本 |
+| [GPT-5.6 Terra](/zh/models/gpt-5-6-terra) | OpenAI | 1,050,000 个令牌 | 64,000 个令牌 | 性能、低成本 |
+| [GPT 5.3 Codex](/zh/models/gpt-5-3-codex) | OpenAI | 400,000 个令牌 | 128,000 个令牌 | Performance |
+| [GPT-5.5](/zh/models/gpt-5-5) | OpenAI | 1,000,000 个令牌 | 128,000 个令牌 | 性能、低成本 |
+| [DeepSeek-V4.1-Flash](/zh/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 个令牌 | 384,000 个令牌 | Performance, Dedicated |
+| [DeepSeek-V4.1-Flash Fast](/zh/models/deepseek-v4-1-flash-fast) | DeepSeek | 1,000,000 个令牌 | 384,000 个令牌 | Dedicated |
+| [DeepSeek-V4.1-Flash Hyper](/zh/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 个令牌 | 384,000 个令牌 | Dedicated |
+| [DeepSeek V4 Pro](/zh/models/deepseek-v4-pro) | DeepSeek | 1,000,000 个令牌 | 64,000 个令牌 | Performance |
+| [DeepSeek V4 Flash](/zh/models/deepseek-v4-flash) | DeepSeek | 1,000,000 个令牌 | 尚未列出 | Performance |
+| [GLM 5.3](/zh/models/glm-5-3) | Zhipu | 1,000,000 个令牌 | 64,000 个令牌 | Performance, Dedicated |
+| [GLM-5.3 Flash](/zh/models/glm-5-3-flash) | Zhipu | 1,000,000 个令牌 | 64,000 个令牌 | Dedicated |
+| [GLM-5.3 Flash Hyper](/zh/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 个令牌 | 64,000 个令牌 | Dedicated |
+| [GLM 5.2](/zh/models/glm-5-2) | Zhipu | 1,000,000 个令牌 | 64,000 个令牌 | Performance |
+| [GLM 5.1](/zh/models/glm-5-1) | Zhipu | 200,000 个令牌 | 128,000 个令牌 | Performance |
+| [Qwen 3.6 Plus](/zh/models/qwen3-6-plus) | Alibaba | 1,000,000 个令牌 | 尚未列出 | Performance |
+| [Qwen 3.7 Max](/zh/models/qwen3-7-max) | Alibaba | 1,000,000 个令牌 | 尚未列出 | Performance |
+| [Kimi K3.1 Pro Hyper](/zh/models/kimi-k3-1-pro-hyper) | Moonshot | 1,048,576 个令牌 | 64,000 个令牌 | Dedicated |
+| [Kimi K3](/zh/models/kimi-k3) | Moonshot | 1,000,000 个令牌 | 64,000 个令牌 | Performance |
+| [Kimi K2.6](/zh/models/kimi-k2-6) | Moonshot | 256,000 个令牌 | 32,000 个令牌 | Performance |
+| [Kimi K2.7 Code](/zh/models/kimi-k2-7-code) | Moonshot | 256,000 个令牌 | 尚未列出 | Performance |
+| [MiniMax M3](/zh/models/minimax-m3) | MiniMax | 1,000,000 个令牌 | 64,000 个令牌 | Performance |
+| [Muse Wonder](/zh/models/muse-wonder-1-0) | 元数据 | 1,048,576 个令牌 | 尚未列出 | Performance |
+| [Baize 模型](/zh/models/model-baize) | 匿名 | 1,000,000 个令牌 | 尚未列出 | Low-Cost |
+
+<a id="cara-memilih-model"></a>
 
 ## 如何选择模型
 
-1. **确定需求**：普通聊天、推理（_reasoning_）、视觉/多模态、工具调用，还是结构化JSON输出。请查看字段`capabilities`。
-2. **请注意上下文长度**：请确保 `context_window` 足以容纳您的提示词和输出内容。
-3. **价格对比**：`pricing.input` 用于提示Token，`pricing.output` 用于回答Token；推理模型的输出通常价格更高。
-4. **从低端模型开始**：在开发阶段，低端模型（例如 `gpt-6-luna`、`deepseek-v4-1-flash`、`qwen3-6-plus`）价格要便宜得多；只有在质量不达标时，才应升级模型。
-5. **查看控制台**：[console.hostlinku.com](https://console.hostlinku.com) 上的 **模型** 菜单显示了包含相同价格和功能的目录，以及各模型的详细信息页面。
+1. **确定需求**：普通聊天、推理（_reasoning_）、视觉/多模态、工具调用，
+   或结构化 JSON 输出。请检查 `capabilities` 字段。
+2. **注意上下文范围**：请确保 `context_window` 足以容纳您的提示词和输出内容。
+3. **比较价格**：`pricing.input` 用于提示令牌，`pricing.output` 用于
+   回答令牌；推理模型的输出通常价格更高。
+4. **从小模型开始**：在开发阶段，轻量级模型（例如 `gpt-6-luna`、
+   `deepseek-v4-1-flash`、`qwen3-6-plus`）成本要低得多；仅当
+   质量不足时才升级模型。
+5. **查看控制台**：[console.hostlinku.com](https://console.hostlinku.com) 中的 **模型** 菜单
+   显示了具有相同价格和功能的目录，以及每个模型的详细信息页面。
 
-<Callout type="tip" title="模型ID">
-请将 `GET /v1/models` 返回的完整slug复制到 `model` 字段。未知slug可能返回 `MODEL_NOT_FOUND`；密钥无法使用的模型可能返回 `MODEL_NOT_IN_SERVICE_MODE` 或 `MODEL_UNAVAILABLE`。
+<Callout type="tip" title="模型 ID">
+将 `GET /v1/models` 中的 slug 原样复制到 `model` 字段中。未知 slug 可能会导致 `MODEL_NOT_FOUND` 错误；若该键下不存在模型，可能会导致 `MODEL_NOT_IN_SERVICE_MODE` 或 `MODEL_UNAVAILABLE` 错误。
 </Callout>
 
-## 路由与故障转移
+<a id="routing-dan-failover"></a>
 
-网关根据模型和密钥所属Service Mode选择服务路径。重试或故障转移取决于可用路径及故障类型，并非所有模型都有备用路径。请求中的模型ID保持不变。
+<a id="路由与故障转移"></a>
+
+## 路由和故障转移
+
+网关根据模型和服务模式键选择服务路径。重试或故障转移取决于可用路径和故障类型；并非所有模型都有备用路径。请求中的模型 ID 保持不变。

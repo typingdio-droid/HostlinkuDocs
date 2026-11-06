@@ -1,49 +1,61 @@
 ---
-title: DeepSeek Harness
-description: DeepSeek のオープンソースコーディングエージェント DeepSeek Harness (dsh) を DEEPSEEK_BASE_URL 経由で Hostlinku に接続する。検証済みのインストール手順、cordis.patch.yml 設定、トラブルシューティングガイド。
+title: "DeepSeek Harness"
+description: "DeepSeekのオープンソースエージェントであるDeepSeek Harness（dsh）を、DEEPSEEK_BASE_URLを介してHostlinkuに接続してください。インストール手順、cordis.patch.ymlの設定、および検証済みのトラブルシューティングガイドが用意されています。"
 icon: terminal
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) は、DeepSeek が開発した
-オープンソースの AI コーディングエージェントです。選択したローカルワークスペース内で、ファイルの読み取り、
-コードの編集、シェルコマンドの実行、複数ステップのタスク完遂を、Web UI・ヘッドレスモード・SDK・ACP 経由で
-行えます。
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) は、DeepSeekが提供する
+オープンソースのコーディングエージェントです。 選択した作業フォルダ内で、`dsh`はファイルの読み取り、コードの編集、
+シェルコマンドの実行、および多段階のタスクの実行が可能です。これらは、Webインターフェース、
+ヘッドレスモード、SDK、またはACPを通じて行われます。
 
-`dsh` は **Anthropic Messages** プロトコルを使用します。Hostlinku は
-[`POST /v1/messages`](/ja/anthropic-messages) でネイティブ対応しているため、追加のプロキシやプラグインなしで
-2 つの環境変数を設定するだけで `dsh` を Hostlinku に接続できます。
+`dsh`は**Anthropic Messages**プロトコルを使用します。Hostlinkuはこれを
+[`POST /v1/messages`](/ja/anthropic-messages)で提供しているため、`dsh`は
+2つの環境変数だけでHostlinkuにリダイレクトできます。プロキシも追加のプラグインも不要です。
 
-<Callout type="note" title="検証済みバージョン">
-  本ガイドは `@deepseek-ai/dsh` **0.2.1-rc.5** でエンドツーエンド検証済みです（ヘッドレスモードでエージェントが
-  ツール経由でファイルを読み取り回答を返す動作を確認）。DeepSeek Harness は現在 *development preview* であり、
-  将来のリリースで設定ファイルパスやパラメータの挙動が変更される可能性があります。
+<Callout type="note" title="テスト済みバージョン">
+  このガイドは、`@deepseek-ai/dsh` **0.2.1-rc.5** を使用してエンドツーエンドで検証されています（エージェントがツールを通じてファイルを読み込み
+  、応答するヘッドレスモード）。DeepSeek Harness はまだ *開発プレビュー* 段階であり、ファイル名
+  やパラメータの挙動は、次のバージョンで変更される可能性があります。
 </Callout>
 
-## 始める前に
+<a id="sebelum-mulai"></a>
 
-- **最新の Node.js LTS** (`node --version`)。`dsh` パッケージは数百個の依存関係を取得するため、初回の
-  インストールには 1〜3 分かかる場合があります。
-- **Hostlinku API キー** (`sk-…`) — [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** で発行。
-- **十分なクレジット残高**または利用上限。
-- **安全なテスト用フォルダ。** `dsh` を起動したディレクトリがデフォルトのワークスペースになります。ホーム
-  ディレクトリや重要なデータが含まれるフォルダで直接起動しないでください。
+<a id="始める前に"></a>
+
+## 開始する前に
+
+- **最新のNode.js LTS** (`node --version`)。`dsh` パッケージは数百もの依存関係を呼び出すため、
+  初回インストールには1～3分かかる場合があります。
+- **HostlinkuのAPIキー** [console.hostlinku.com](https://console.hostlinku.com) の `sk-…` → **API Keys**。
+- **残高**、またはそのキーに対して十分なクレジット限度額。
+- **安全なテスト用フォルダ。** `dsh` を実行するフォルダがデフォルトのワークスペースとなります。
+  ホームディレクトリや重要なデータが含まれるフォルダから直接実行しないでください。
 
 <Steps>
 
-### DeepSeek Harness をインストールする
+<a id="instal-deepseek-harness"></a>
+
+<a id="deepseek-harness-をインストールする"></a>
+
+### DeepSeek Harnessをインストールする
 
 ```bash
 npm install -g @deepseek-ai/dsh
 dsh --version
 ```
 
-グローバルインストールせずに実行する場合は `npx @deepseek-ai/dsh web` を使用します。
+または、グローバルインストールを行わずに実行してください：`npx @deepseek-ai/dsh web`。
 
-### Hostlinku に接続する
+<a id="arahkan-ke-hostlinku"></a>
 
-`dsh` は `DEEPSEEK_BASE_URL` からエンドポイントを、`DEEPSEEK_API_KEY` から API キーを読み取ります。
+<a id="hostlinku-に接続する"></a>
+
+### Hostlinkuへ誘導してください
+
+`dsh`は、エンドポイントを`DEEPSEEK_BASE_URL`から、APIキーを`DEEPSEEK_API_KEY`から読み取ります。
 
 **macOS / Linux / WSL**（`~/.zshrc` または `~/.bashrc` に保存）：
 
@@ -59,14 +71,18 @@ $env:DEEPSEEK_BASE_URL = "https://api.hostlinku.com"
 $env:DEEPSEEK_API_KEY  = "sk-your-api-key"
 ```
 
-`dsh` は自動的に `/v1/messages` を付与します。ベース URL として `https://api.hostlinku.com/v1` も指定可能です
-（末尾の `/v1` は再利用され、重複しません）。
+`dsh`は独自に`/v1/messages`を追加します。ベースURL `https://api.hostlinku.com/v1`も受け入れられます
+（接尾辞`/v1`は再利用され、重複しません）。
 
-### モデルと最大出力トークンを設定する
+<a id="pilih-model-dan-batas-output"></a>
 
-`dsh` のデフォルトモデル（`deepseek-flash`）は Hostlinku のカタログスラッグではなく、また `dsh` はデフォルトで
-`max_tokens: 256000` を送信するため、ほとんどのモデルの出力上限を超過します。ホームディレクトリのパッチファイル
-`~/.dsh/cordis.patch.yml`（`DSH_HOME` を設定している場合は `$DSH_HOME/cordis.patch.yml`）で両方を設定します。
+<a id="モデルと最大出力トークンを設定する"></a>
+
+### 出力形式と制限を選択してください
+
+組み込みモデル `dsh` (`deepseek-flash`) は Hostlinku のスラッグではなく、`dsh` はデフォルトで `max_tokens: 256000`
+を送信します。これは、ほとんどのモデルの出力制限を超えています。 これらはいずれも、ホームディレクトリのパッチファイル
+`~/.dsh/cordis.patch.yml`（または、`DSH_HOME`が設定されている場合は`$DSH_HOME/cordis.patch.yml`）で設定されます。
 
 ```yaml
 - id: agent-default-model
@@ -79,15 +95,19 @@ $env:DEEPSEEK_API_KEY  = "sk-your-api-key"
     maxTokens: 32000
 ```
 
-<Callout type="important" title="パッチは config ブロック全体を置き換えます">
-  Cordis のパッチは個別のフィールドをマージするのではなく、デフォルトの `config` ブロック全体を**置き換え**ます。
-  そのため `provider: deepseek-official` と `apiKeyEnv` も必ず記述してください。省略すると
-  `$.provider missing required value` で起動に失敗します。
+<Callout type="important" title="Patchは設定ブロック全体を置き換えます">
+  Patchではフィールドを一つずつ結合しません。Patch内の`config`ブロックは、
+  を置き換えます。そのため、`provider: deepseek-official` および `apiKeyEnv` は記述したままにする必要があります。そうしないと、`dsh`
+  は `$.provider missing required value` というエラーで起動に失敗します。
 </Callout>
 
-### 実行する
+<a id="jalankan"></a>
 
-ヘッドレスモードで素早く動作を確認します（1 つのタスクを実行し、最終回答を出力して終了します）：
+<a id="実行する"></a>
+
+### 実行
+
+ヘッドレスモードによるクイックテスト（1つのタスクを実行し、最終的な回答を出力してから終了）：
 
 ```bash
 mkdir dsh-test && cd dsh-test
@@ -95,57 +115,69 @@ echo "the secret word is PINEAPPLE" > hello.txt
 dsh --profile headless "Read hello.txt and reply with only the secret word."
 ```
 
-期待される出力：`PINEAPPLE`。これでエージェントが Hostlinku 経由でファイル読み取りツールを呼び出し、回答したことが
-確認できます。ブラウザでフル UI を起動するには：
+正しい出力：`PINEAPPLE`。これは、エージェントがHostlinkuを介してファイル読み取りツールを正常に呼び出し、
+応答したことを意味します。ブラウザでの完全なインターフェースについては：
 
 ```bash
 dsh web
 ```
 
-### 確認する
+<a id="verifikasi"></a>
 
-コンソール → **リクエストログ** を開きます。`dsh` からのリクエストが、選択したモデル、トークン数、コスト、使用した
-API キーとともに記録されます。
+<a id="確認する"></a>
+
+### 検証
+
+コンソールを開き、**リクエストログ**を選択してください。`dsh`からのリクエストは、選択したモデル、トークン数
+、コスト、および使用されたAPIキーとともに表示されます。
 
 </Steps>
 
-## おすすめのモデル
+<a id="model-yang-direkomendasikan"></a>
 
-`model` フィールドには、ツール呼び出しをサポートする[カタログ](/ja/models)内の任意のスラッグを指定できます。
-お使いのキーで利用可能な一覧は `GET /v1/models` で確認できます。
+<a id="おすすめのモデル"></a>
 
-| 用途 | スラッグ | 備考 |
+## 推奨されるモデル
+
+`model`フィールドには、ツール呼び出しをサポートする[カタログ](/ja/models)内の任意のスラグを入力できます。
+あなたのキーに対して有効なリストは、`GET /v1/models`にあります。
+
+| 要件 | Slug | 注記 |
 |---|---|---|
-| 日常のデフォルト（高速・低コスト） | `deepseek-v4-flash` | 1M コンテキスト、推論、ツール呼び出し対応。 |
-| 画像入力が必要な場合（スクリーンショット、図表） | `deepseek-v4-1-flash` | ビジョン（画像認識）対応。 |
-| 重いタスク / 大規模リファクタリング | `deepseek-v4-pro` | 1M コンテキスト、より深い推論。 |
-| オープンウェイトの代替モデル | `kimi-k2-7-code`, `glm-5-3` | ツール呼び出しと推論に対応。 |
+| デフォルトは日次、高速かつ低コスト | `deepseek-v4-flash` | コンテキスト：1M、推論、ツール呼び出し。 |
+| 画像（スクリーンショット、図）の提供が必要です | `deepseek-v4-1-flash` | ビジョンを支持する。 |
+| 大規模な作業／大規模なリファクタリング | `deepseek-v4-pro` | コンテキスト1M、より深い考察。 |
+| open-weightの代替案 | `kimi-k2-7-code`、`glm-5-3` | ツール呼び出しと推論。 |
 
-<Callout type="tip" title="モデルに合わせて maxTokens を調整する">
-  `maxTokens`はリクエストごとの出力上限であり、コンテキストサイズではありません。例の`32000`は初期設定で、モデルの最大値ではありません。[カタログ](/ja/models)で出力上限を確認し、記載がない場合はリクエストが拒否されたときに値を下げてください。
+<Callout type="tip" title="maxTokensはモデルに合わせて調整してください">
+  `maxTokens`はリクエストごとの出力制限であり、コンテキストのサイズではありません。例中の値`32000`は初期設定であり、モデルの最大値ではありません。モデルの出力制限については[カタログ](/ja/models)で確認してください。制限が記載されていない場合は、リクエストが拒否された際にその値を小さくしてください。
 </Callout>
+
+<a id="keamanan"></a>
 
 ## セキュリティ
 
-- タスク実行中、プロンプト、コードの抜粋、ファイル内容、ツールの実行結果が推論のために Hostlinku へ送信されます。
-  許可なく営業秘密や個人情報を含むプロジェクトで `dsh` を実行しないでください。
-- 万が一漏洩した場合にすぐ失効できるよう、クレジット上限を設定した **`dsh` 専用の API キー**を使用してください。
-  詳細は[認証](/ja/authentication)を参照してください。
-- `cordis.patch.yml` に API キーの文字列を直接書き込まないでください。`apiKeyEnv` には環境変数の**名前**のみを
-  指定し、実際のキーの値はシェル環境から読み取らせます。
+- タスクの実行中、プロンプト、コードスニペット、ファイルの内容、およびツールの結果は、推論のためにHostlinkuに送信されます。
+  営業秘密や個人データを含むプロジェクトでは、許可なく`dsh`を実行しないでください。
+- 漏洩時に簡単に無効化できるよう、クレジット制限付きの`dsh`専用の**個別のAPIキー**を使用してください。
+  [認証](/ja/authentication)を参照してください。
+- `cordis.patch.yml` に API キーを直接記述しないでください。`apiKeyEnv` には変数の**名前**のみを保存します。
+  キーの値は引き続き環境変数から読み込まれます。
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
 | 症状 | 原因と解決策 |
 |---|---|
-| `INVALID_REQUEST: max_tokens (256000) exceeds the output limit of model …` | `maxTokens` が未設定です。`llm-deepseek` ブロックに `maxTokens: 32000` を追加してください。 |
-| `startup failed … $.provider missing required value` | パッチの `agent-default-model` ブロックに `provider` が含まれていません。上記の例の通りブロック全体を記述してください。 |
-| `MISSING_CREDENTIAL` | `dsh` を実行しているシェルで `DEEPSEEK_API_KEY` がエクスポートされていません。 |
-| `401` / *invalid API key* | キーが誤っているか、失効または期限切れです。コンソールで新しいキーを発行してください。 |
-| `404 model not found` | スラッグの誤記、またはデフォルトの `deepseek-flash` のままになっています。`GET /v1/models` から正確なスラッグをコピーしてください。 |
-| 画像添付が失敗する | `dsh` は最初に `/v1/files` でのアップロードを試み、その後自動的にインラインの base64 画像送信へフォールバックします。選択したモデルがビジョンに対応していること（例：`deepseek-v4-1-flash`）を確認してください。 |
+| `INVALID_REQUEST: max_tokens (256000) exceeds the output limit of model …` | `maxTokens` はまだ設定されていません。`llm-deepseek` ブロックに `maxTokens: 32000` を追加してください。 |
+| `startup failed … $.provider missing required value` | パッチ内の `agent-default-model` ブロックには `provider` が含まれていません。上記の例のように完全に書き直してください。 |
+| `MISSING_CREDENTIAL` | `DEEPSEEK_API_KEY`は、`dsh`が実行されているシェルではまだエクスポートされていません。 |
+| `401` / *無効なAPIキー* | キーが不正、無効化、または期限切れです。コンソールで新しいキーを作成してください。 |
+| `404 model not found` | スラグが間違っているか、依然として `deepseek-flash` となっています。`GET /v1/models` からスラグをコピーしてください。 |
+| 画像の添付に失敗しました | `dsh`は、まず`/v1/files`経由で画像をアップロードしようと試み、その後自動的に画像をインラインで再送信します。選択したモデルがビジョンに対応していることを確認してください（例：`deepseek-v4-1-flash`）。 |
 
-プラグインオプションの詳細は
-[DeepSeek Harness リポジトリ](https://github.com/deepseek-ai/deepseek-harness)を参照してください。関連ガイド：
+プラグインオプションの詳細は、
+[DeepSeek Harness リポジトリ](https://github.com/deepseek-ai/deepseek-harness) をご覧ください。関連ガイド：
 [Claude Code](/ja/integrations/claude-code) · [CC Switch](/ja/integrations/cc-switch) ·
 [Anthropic Messages](/ja/anthropic-messages)。

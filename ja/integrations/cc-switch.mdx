@@ -1,20 +1,24 @@
 ---
-title: CC Switch
-description: デスクトップアプリ CC Switch（macOS、Windows、Linux）を使って、Claude Code、Codex CLI、OpenCode 向けの Hostlinku プロバイダー・モデル・API キーを GUI で一括管理・切り替えする。
+title: "CC Switch"
+description: "CC Switchデスクトップアプリ（macOS、Windows、Linux）を使用して、Claude Code、Codex CLI、およびOpenCode向けのHostlinkuのプロバイダー、モデル、APIキーを視覚的に管理・変更できます。"
 icon: arrow-left-right
 ---
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[CC Switch](https://github.com/farion1231/cc-switch) は、**Claude Code**、**Codex CLI**、**OpenCode**
-の設定を 1 つのグラフィカルインターフェースから管理できるクロスプラットフォーム対応（macOS、Windows、Linux）の
-オープンソースデスクトップアプリです。`~/.claude/settings.json` や `~/.codex/config.toml` を手動で編集する
-代わりに、Hostlinku のプロバイダープロファイルを保存し、`/v1/models` から利用可能なモデル一覧を自動取得して、
-ワンクリック（またはシステムトレイ）でモデルや API キーを切り替えられます。
+[CC Switch](https://github.com/farion1231/cc-switch)は、**Claude Code**、**Codex CLI**、および
+**OpenCode**の設定を単一のグラフィカルインターフェースから管理するためのアプリケーションです。`~/.claude/settings.json`や
+`~/.codex/config.toml`を手動で編集する代わりに、Hostlinkuプロバイダーのプロフィールを保存したり、
+`/v1/models`からモデルリストを自動的に取得したり、ワンクリック（または
+*システムトレイ*のアイコンから）でモデルやキーを切り替えたりすることができます。
 
-## CC Switch をインストールする
+<a id="instal-cc-switch"></a>
 
-お使いの OS に合わせてインストール方法を選択してください：
+<a id="cc-switch-をインストールする"></a>
+
+## CC Switchをインストールする
+
+お使いのオペレーティングシステムに応じて、インストール方法を選択してください：
 
 **macOS (Homebrew):**
 
@@ -23,13 +27,13 @@ brew tap farion1231/ccswitch
 brew install --cask cc-switch
 ```
 
-または [GitHub Releases](https://github.com/farion1231/cc-switch/releases) から `.dmg` / `.tar.gz`
-をダウンロードします。
+または、
+[GitHub Releases](https://github.com/farion1231/cc-switch/releases) から `.dmg` / `.tar.gz` ファイルをダウンロードしてください。
 
 **Windows:**
 
-[GitHub Releases](https://github.com/farion1231/cc-switch/releases) からインストーラー
-`CC-Switch-v*-Windows.msi` またはポータブル版 `.zip` をダウンロードします。
+インストーラー `CC-Switch-v*-Windows.msi` またはポータブル版 `.zip` を
+[GitHub Releases](https://github.com/farion1231/cc-switch/releases) からダウンロードしてください。
 
 **Linux:**
 
@@ -38,26 +42,29 @@ brew install --cask cc-switch
 paru -S cc-switch-bin
 ```
 
-Ubuntu / Debian / Fedora などのディストリビューションでは、
-[GitHub Releases](https://github.com/farion1231/cc-switch/releases) から `.deb`、`.rpm`、または
-`.AppImage` パッケージをダウンロードしてください。
+Ubuntu/Debian/Fedoraおよびその他のディストリビューションについては、
+[GitHub Releases](https://github.com/farion1231/cc-switch/releases) から `.deb`、`.rpm`、または `.AppImage` パッケージをダウンロードしてください。
 
 ---
 
-## ワンクリック・ディープリンクインポート
+<a id="impor-cepat-satu-klik-deep-link"></a>
 
-CC Switch は `ccswitch://v1/import` プロトコルに対応しています。インストール後、以下のコマンドをターミナルで
-実行（またはブラウザで URL を開く）すると、Hostlinku プロバイダーの設定フォームが自動入力されます。確認ダイアログで
-API キー `sk-…` を貼り付けるだけで完了します。
+<a id="ワンクリックディープリンクインポート"></a>
 
-**Claude Code 用の Hostlinku プリセットをインポート：**
+## ワンクリックでのクイックインポート（ディープリンク）
+
+CC Switchは`ccswitch://v1/import`プロトコルをサポートしています。CC Switchのインストール後、ターミナルで
+以下のコマンドを実行するか（またはブラウザでURLを開く）、Hostlinkuのプロバイダーフォームに
+自動的に入力されます。確認ダイアログにAPIキー`sk-…`を貼り付けるだけで完了です。
+
+**Claude Code用のHostlinkuプリセットをインポート：**
 
 ```bash
 # macOS: open "ccswitch://..." | Linux: xdg-open "ccswitch://..." | Windows: start "" "ccswitch://..."
 open "ccswitch://v1/import?resource=provider&app=claude&name=Hostlinku&homepage=https%3A%2F%2Fhostlinku.com&endpoint=https%3A%2F%2Fapi.hostlinku.com&model=claude-sonnet-4-6&haikuModel=deepseek-v4-flash&sonnetModel=claude-sonnet-4-6&opusModel=claude-opus-4-6"
 ```
 
-**Codex CLI 用の Hostlinku プリセットをインポート：**
+**Codex CLI用のHostlinkuプリセットをインポート：**
 
 ```bash
 open "ccswitch://v1/import?resource=provider&app=codex&name=Hostlinku&homepage=https%3A%2F%2Fhostlinku.com&endpoint=https%3A%2F%2Fapi.hostlinku.com%2Fv1&model=gpt-5-3-codex"
@@ -65,73 +72,101 @@ open "ccswitch://v1/import?resource=provider&app=codex&name=Hostlinku&homepage=h
 
 ---
 
-## CC Switch で Claude Code を接続する
+<a id="hubungkan-claude-code-lewat-cc-switch"></a>
+
+<a id="cc-switch-で-claude-code-を接続する"></a>
+
+## CC Switchを介してClaude Codeを接続する
 
 <Steps>
 
-### コンソールで API キーを発行する
+<a id="buat-api-key-di-console"></a>
+
+<a id="コンソールで-api-キーを発行する"></a>
+
+### ConsoleでAPIキーを作成する
 
 [console.hostlinku.com](https://console.hostlinku.com) → **API Keys** を開き、新しいキー（例：
-`cc-switch-claude`）を作成して `sk-…` の値をコピーします。
+`cc-switch-claude`）を作成し、`sk-…` の値をコピーしてください。
 
-### Claude タブにプロバイダーを追加する
+<a id="tambahkan-provider-di-tab-claude"></a>
 
-1. **CC Switch** を開き、上部バーで **Claude** を選択します。
-2. 右上の **+**（*Add Provider*）をクリックし、**Custom Configuration** を選択します。
-3. 以下の基本項目を入力します：
+<a id="claude-タブにプロバイダーを追加する"></a>
 
-| 項目 | 値 |
+### 「Claude」タブにプロバイダーを追加してください
+
+1. **CC Switch** を開き、上部のバーから **Claude** アプリを選択してください。
+2. 右上の**+**ボタン（*Add Provider*）をクリックし、**Custom Configuration**を選択してください。
+3. 以下の主要なフィールドに入力してください：
+
+| フィールド | 値 |
 |---|---|
-| **Provider Name** | `Hostlinku` |
-| **Website URL** | `https://hostlinku.com` |
-| **API Key** | `sk-your-api-key` |
-| **Request URL (Base URL)** | `https://api.hostlinku.com` |
-| **API Format** | `Anthropic Messages (Native)` |
+| **プロバイダー名** | `Hostlinku` |
+| **ウェブサイトのURL** | `https://hostlinku.com` |
+| **APIキー** | `sk-your-api-key` |
+| **リクエストURL（ベースURL）** | `https://api.hostlinku.com` |
+| **API フォーマット** | `Anthropic Messages (Native)` |
 
-### モデル一覧を自動取得または手動入力する
+<a id="isi-atau-tarik-daftar-model-otomatis"></a>
 
-モデル設定セクションの **Auto-Fetch Models** ボタンをクリックします。CC Switch が API キーを使って
-`GET https://api.hostlinku.com/v1/models` を呼び出し、そのキーの Service Mode で利用可能なすべてのモデルを
-取得します。
+<a id="モデル一覧を自動取得または手動入力する"></a>
 
-または、以下の推奨スラッグを手動で入力します：
+### モデルリストを自動生成または取得する
 
-| Claude Code のモデル枠 | 推奨する Hostlinku スラッグ | 備考 |
+モデル設定セクションの**Auto-Fetch Models**ボタンをクリックしてください。CC Switchは、
+`GET https://api.hostlinku.com/v1/models`をあなたのAPIキーを使用して呼び出し、そのService Modeキーで利用可能なすべてのモデルを
+表示します。
+
+あるいは、マニュアルには推奨される組み合わせで記述してください：
+
+| Slot Model Claude Code | Hostlinkuのスラグに関する推奨事項 | 注記 |
 |---|---|---|
-| **Default Model** | `claude-sonnet-4-6` | コーディングセッションのメインモデル。 |
-| **Opus Model** | `claude-opus-4-6` | プランモードや大規模リファクタリング用。 |
-| **Sonnet Model** | `claude-sonnet-4-6` | 日常のコード実装用。 |
-| **Haiku (Fast) Model** | `deepseek-v4-flash` または `claude-haiku-4-5` | バックグラウンドのサブエージェント・要約用（低コスト）。 |
+| **デフォルトモデル** | `claude-sonnet-4-6` | コーディングセッションの主要なモデル。 |
+| **Opusモデル** | `claude-opus-4-6` | 計画（*plan mode*）および大規模なリファクタリングについて。 |
+| **Sonnetモデル** | `claude-sonnet-4-6` | 毎日のコード実行。 |
+| **Haiku (Fast) モデル** | `deepseek-v4-flash` または `claude-haiku-4-5` | バックグラウンドのサブエージェントとコスト削減の概要。 |
 
-### プロバイダーを有効化する
+<a id="aktifkan-provider"></a>
 
-**Add** をクリックした後、**Hostlinku** カードの **Enable** をクリックします（システムトレイメニューからも
-選択可能）。CC Switch が `~/.claude/settings.json` の `env` ブロックを自動的に更新します。新しいターミナルを開いて
-`claude` を実行し、`/status` と入力して `ANTHROPIC_BASE_URL` が `https://api.hostlinku.com` になっていることを
-確認してください。
+<a id="プロバイダーを有効化する"></a>
+
+### プロバイダーを有効にする
+
+**Add**をクリックし、**Hostlinku**カードで**Enable**をクリックします（または*システムトレイ*のメニューから選択します）。
+CC Switchは自動的に`env`ブロックを`~/.claude/settings.json`に書き込みます。新しいターミナルを開き、
+`claude`を実行し、`/status`と入力して、`ANTHROPIC_BASE_URL`が
+`https://api.hostlinku.com`を指していることを確認してください。
 
 </Steps>
 
 ---
 
-## CC Switch で Codex CLI を接続する
+<a id="hubungkan-codex-cli-lewat-cc-switch"></a>
+
+<a id="cc-switch-で-codex-cli-を接続する"></a>
+
+## CC Switchを介してCodex CLIを接続する
 
 <Steps>
 
-### Codex タブを選択してプロバイダーを追加する
+<a id="pilih-tab-codex-dan-tambah-provider"></a>
 
-1. CC Switch の上部バーで **Codex** を選択します。
+<a id="codex-タブを選択してプロバイダーを追加する"></a>
+
+### 「Codex」タブを選択し、プロバイダーを追加してください
+
+1. CC Switchで、上部バーから**Codex**アプリを選択してください。
 2. **+**（*Add Provider*）→ **Custom Configuration** をクリックします。
-3. 以下の項目を入力します：
+3. 以下の設定内容：
 
-| 項目 | 値 |
+| フィールド | 値 |
 |---|---|
-| **Provider Name** | `Hostlinku` |
-| **API Key** | `sk-your-api-key` |
-| **Endpoint (Base URL)** | `https://api.hostlinku.com/v1` |
-| **Model** | `gpt-5-3-codex`（または `gpt-5-5`, `gpt-6-astra`） |
+| **プロバイダー名** | `Hostlinku` |
+| **APIキー** | `sk-your-api-key` |
+| **エンドポイント（ベースURL）** | `https://api.hostlinku.com/v1` |
+| **モデル** | `gpt-5-3-codex`（または `gpt-5-5`、`gpt-6-astra`） |
 
-下部の `config.toml` プレビューで、`wire_api` が `"responses"` に設定されていることを確認します：
+下部の `config.toml` のプレビューで、`wire_api` フィールドの値が `"responses"` になっていることを確認してください：
 
 ```toml
 model = "gpt-5-3-codex"
@@ -143,34 +178,42 @@ base_url = "https://api.hostlinku.com/v1"
 wire_api = "responses"
 ```
 
-### 有効化して Codex を実行する
+<a id="aktifkan-dan-jalankan-codex"></a>
 
-**Add** をクリックし、**Hostlinku** カードの **Enable** をクリックします。CC Switch が自動的に
-`~/.codex/config.toml` を更新し、API キーを `~/.codex/auth.json` に保存します。ターミナルで `codex` を
-実行して利用を開始してください。
+<a id="有効化して-codex-を実行する"></a>
+
+### Codexを有効にして実行する
+
+**Hostlinku**カードで**Add**をクリックし、次に**Enable**をクリックしてください。CC Switchは自動的に
+`~/.codex/config.toml`を更新し、APIキーを`~/.codex/auth.json`に保存します。ターミナルで`codex`を実行して
+作業を開始してください。
 
 </Steps>
 
-<Callout type="tip" title="Service Mode ごとにプロファイルを分ける">
-  CC Switch 内で **Hostlinku (Performance)**、**Hostlinku (Low-Cost)**、**Hostlinku (Dedicated)** のように
-  3 つのプロバイダーカードを作成し、それぞれに対応する API キーを設定しておくと、ターミナルを触ることなく
-  ワンクリックで低コストモードと高速モードを切り替えられます。
+<Callout type="tip" title="サービスモードごとにプロファイルを分けてください">
+  CC Switchでは、3つの異なるプロバイダーカードを作成できます。例えば、**Hostlinku (Performance)**、
+  **Hostlinku (Low-Cost)**、および**Hostlinku (Dedicated)**などです。それぞれに対応するAPIキーが割り当てられます。
+  エコモードから高速モードに切り替えたい場合は、CC Switch上で目的のカードをクリックするだけで、
+  端末に触れる必要はありません。
 </Callout>
 
 <Callout type="warning" title="環境変数の競合検出">
-  以前に `~/.zshrc` や `~/.bashrc` に `export ANTHROPIC_BASE_URL` や `export OPENAI_API_KEY` を記述していた
-  場合、シェルの環境変数が GUI の設定と競合する可能性があるため、CC Switch に黄色の警告バナーが表示されます。
-  シェル設定ファイルから古い export を削除し、ターミナルを再起動してください。
+  以前に `~/.zshrc` / `~/.bashrc` に `export ANTHROPIC_BASE_URL` や `export OPENAI_API_KEY` を記述したことがある場合、
+  CC Switch は、シェル変数が
+  GUIの設定を上書きしたり、競合したりする可能性があるため、黄色い警告バナーが表示されます。シェルプロファイルファイルから古いexportを削除し、
+  ターミナルを再起動して、CC Switchの設定を完全に適用してください。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
 | 症状 | 原因と解決策 |
 |---|---|
-| CC Switch の設定が Claude Code に反映されない | Anthropic の OAuth ログインセッション、または `~/.zshrc` 内の `ANTHROPIC_*` 環境変数が優先されています。`claude` 内で `/logout` を実行し、シェルの古い export を削除してください。 |
-| *Auto-Fetch Models* ボタンが失敗する | **Request URL** に `https://api.hostlinku.com` が正しく入力されており、**API Key** が設定されていることを確認してください。 |
-| 有効化後に Codex がシェルツールを拒否する | Codex タブで選択するモデルは *Responses-native* な `gpt-*` モデル（`gpt-5-3-codex`、`gpt-5-5`、`gpt-6-astra` など）である必要があります。OpenAI 以外のモデルや `gpt-5-6-terra` は選択しないでください。 |
-| `400 not available in Service Mode` | 選択したモデルがその API キーの Service Mode で有効になっていません。**Auto-Fetch Models** を使用して、キーに対応したモデルのみを表示・選択してください。 |
+| CC Switchの設定は、Claude Codeには影響しません | `~/.zshrc` に Anthropic の OAuth ログインセッションや `ANTHROPIC_*` 変数が残っている場合があります。`claude` 内で `/logout` を実行し、シェル内の古いエクスポートを削除してください。 |
+| *Auto-Fetch Models* ボタンが機能しない | **Request URL**には `https://api.hostlinku.com`（二重スラッシュなし）が入力され、**API Key**が正しく入力されていることを確認してください。 |
+| Codexは、有効化後にシェルツールの使用を拒否します | 「Codex」タブで選択するモデルは、*Responses-native* な `gpt-*` モデル（`gpt-5-3-codex`、`gpt-5-5`、`gpt-6-astra` など）でなければなりません。 Codexでは、OpenAI以外のモデルや`gpt-5-6-terra`を選択しないでください。 |
+| `400 not available in Service Mode` | 選択したモデルは、そのAPIキーのサービスモードでは有効ではありません。**Auto-Fetch Models**ボタンを使用すると、そのキーに一致するモデルのみが表示されます。 |
 
 関連ガイド：[Claude Code](/ja/integrations/claude-code) · [Codex CLI](/ja/integrations/codex-cli) ·
 [DeepSeek Harness](/ja/integrations/deepseek-harness) · [OpenCode](/ja/integrations/opencode)。

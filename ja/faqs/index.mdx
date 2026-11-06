@@ -1,117 +1,202 @@
 ---
-title: "よくある質問"
-description: "Hostlinkuゲートウェイに関して最もよく寄せられる質問"
+title: "FAQ"
+description: "Hostlinkuゲートウェイに関するよくある質問"
 icon: circle-help
 ---
 
+<a id="apa-itu-hostlinku-playground"></a>
 
 ## Hostlinku Playgroundとは何ですか？
 
-Playgroundは、利用可能なモデルを試し、Service Modeを選べる[Console](https://console.hostlinku.com/playground)の画面です。ログインセッションとAPIと共通の組織残高を使うため、APIキーの入力は不要です。
+Playgroundは、[Console](https://console.hostlinku.com/playground)上のインターフェースであり、利用可能なモデルを試したり、サービスモードを選択したりできます。PlaygroundはAPIと同じログインセッションと組織の残高を使用するため、APIキーを入力する必要はありません。
 
-## 連携はどのように動作しますか？
+<a id="bagaimana-cara-kerja-integrasinya"></a>
 
-SDKやアプリの接続先をHostlinkuに設定し、APIキーとモデルのslugを指定します。OpenAI Chat CompletionsとResponsesのbase URLは`https://api.hostlinku.com/v1`、Anthropic Messagesは`https://api.hostlinku.com`です。機能はモデルとプロトコルに依存します。[連携ガイド](/ja/integrations/index)を参照してください。
+<a id="連携はどのように動作しますか"></a>
 
-## 課金はどのように行われますか？
+## 統合はどのように機能しますか？
 
-組織残高をチャージし、モデルとService Modeの料金で使用量に応じて支払います。入力・出力・キャッシュの料金はそれぞれ異なります。QRIS/VAはiPaymu Direct、暗号資産はHeleketで決済します。[課金と残高](/ja/billing)を参照してください。
+SDKまたはアプリケーションをHostlinkuに接続し、APIキーを使用してから、モデルのスラッグを選択してください。 OpenAIのChat CompletionsおよびResponsesはベースURL `https://api.hostlinku.com/v1` を使用し、Anthropic Messagesは `https://api.hostlinku.com` を使用します。機能のサポートはモデルおよびプロトコルによって異なります。[統合](/ja/integrations/index)を参照してください。
 
-<a id="prompt-storage"></a>
+<a id="bagaimana-sistem-billing-nya"></a>
 
-## プロンプトは保存されますか？
+<a id="課金はどのように行われますか"></a>
 
-リクエストと応答のbodyはデフォルトでは保存されません。token数・料金・状態・レイテンシのメタデータは記録されます。管理者がbody loggingを有効にした場合、bodyの保持期間はデフォルト14日です。プロンプト本文の秘密情報は自動では伏せられません。[プライバシー](/ja/legals/privacy-policy)を参照してください。
+## 課金システムはどのように機能していますか？
 
-## モデルに障害が発生するとどうなりますか？
+組織の残高を補充し、モデルおよびサービスモードの価格に基づいて利用料金を支払います。入力、出力、キャッシュにはそれぞれ独自の料金が設定されています。お支払いは、QRIS/VAの場合はiPaymu Direct、暗号資産の場合はHeleketを通じて可能です。[請求・残高](/ja/billing)をご覧ください。
 
-ゲートウェイは利用可能なルーティング設定に従って別の経路を試すことがあります。それでも失敗すると`503`などのエラーが返されます。バックオフを使い、[Status](https://status.hostlinku.com)を確認してください。同じモデル系統の別モデルへの自動切り替えは保証されません。
+<a id="apakah-prompt-saya-disimpan"></a>
+
+<a id="プロンプトは保存されますか"></a>
+
+## 私のプロンプトは保存されますか？
+
+リクエストおよびレスポンスのボディは、デフォルトでは保存されません。トークン、費用、ステータス、レイテンシのメタデータは引き続き記録されます。管理者がボディのロギングを有効にした場合、ボディのデフォルトの保存期間は14日間です。プロンプト内の機密情報は自動的にフィルタリングされません。[プライバシー](/ja/legals/privacy-policy)を参照してください。
+
+<a id="apa-yang-terjadi-jika-sebuah-model-mengalami-gangguan"></a>
+
+<a id="モデルに障害が発生するとどうなりますか"></a>
+
+## モデルに障害が発生した場合はどうなりますか？
+
+Gatewayは、利用可能なルーティング設定に従って別の経路を試すことがあります。リクエストが依然として失敗する場合、アプリケーションは`503`などのエラーを受け取ります。バックオフを行い、[ステータス](https://status.hostlinku.com)を確認してください。同じファミリー内の別のモデルへの自動切り替えは保証されません。
+
+<a id="apakah-hostlinku-gratis-dicoba"></a>
 
 ## Hostlinkuは無料で試せますか？
 
-登録は無料で、クレジットカードは不要です。試用クレジットはありません。PlaygroundやAPIで有料リクエストを実行する前に残高をチャージしてください。
+登録は無料で、クレジットカードは不要です。トライアルクレジットは利用できません。PlaygroundまたはAPIで有料のリクエストを実行する前に、残高をチャージしてください。
+
+<a id="topik"></a>
 
 ## トピック
 
-- [ストリームモード](/ja/faqs/stream-mode)：OpenAI SDK、Python `requests`、およびcurlを使用してSSEを利用する方法。
-- [よく発生するエラー](/ja/faqs/errors)：一般的なエラーの原因と対処方法。
-- [レート制限](/ja/faqs/rate-limits)：クォータ、`Retry-After`ヘッダー、およびバックオフ。
-- [請求・チャージ](/ja/faqs/billing)：残高、キーの利用上限、およびエラー402。
-- [モデルを利用できない場合](/ja/faqs/model-unavailable)：404 対 503、非推奨、および Service Mode。
-- [アカウント・請求・ポリシー](/ja/faqs/account-billing)：アカウント、API キー、残高、チャージ、エラー、プライバシー、法務。
+- [Stream Mode](/ja/faqs/stream-mode)：OpenAI SDK、Pythonの`requests`、およびcurlを使用してSSEを利用する方法。
+- [よくあるエラー](/ja/faqs/errors)：一般的なエラーの原因と対処法。
+- [Rate limit](/ja/faqs/rate-limits)：クォータ、`Retry-After`ヘッダー、およびバックオフ。
+- [Billing & top-up](/ja/faqs/billing)：残高、リミットキー、およびエラー402。
+- [モデルが利用不可](/ja/faqs/model-unavailable)：404 対 503、非推奨、およびサービスモード。
+- [アカウント、課金、およびポリシー](/ja/faqs/account-billing)：アカウント、APIキー、残高、チャージ、エラー、プライバシー、および法的事項。
+
+<a id="apakah-sdk-resmi-openai-bisa-dipakai"></a>
 
 ## OpenAIの公式SDKは使用できますか？
 
-はい。`base_url`/`baseURL`を`https://api.hostlinku.com/v1`に設定し、`sk-…`で始まるHostlinkuのAPIキーを`api_key`として使用してください。完全な例は[Chat Completions](/ja/chat-completions)にあります。
+可能です。`base_url`/`baseURL`を`https://api.hostlinku.com/v1`に設定し、
+HostlinkuのAPIキー`sk-…`を`api_key`として使用してください。完全な例は
+[Chat Completions](/ja/chat-completions#contoh-python-sdk-resmi-openai) にあります。
 
-## どのようなエンドポイントが利用可能ですか？
+<a id="endpoint-apa-saja-yang-tersedia"></a>
 
-ゲートウェイのエンドポイントはAPIキーを使います：
+<a id="どのようなエンドポイントが利用可能ですか"></a>
 
-- `POST /v1/chat/completions`：[Chat Completions](/ja/chat-completions)。
-- `POST /v1/messages`：[Anthropic Messages](/ja/anthropic-messages)。
-- `POST /v1/messages/count_tokens`：Anthropic形式のtoken数計算。
-- `POST /v1/responses`：ステートレスな[Responses API](/ja/responses)。
-- `GET /v1/models`：[キーのService Modeに対応するカタログ](/ja/models)。
+## 利用可能なエンドポイントはどれですか？
 
-サイトのカタログは`GET /api/public/models-v2`を使います。Consoleのアカウント用`/api/*`はログインセッションを使います。公開ゲートウェイではembeddingsは利用できません。
+ゲートウェイのエンドポイントはAPIキーを受け付けます：
 
-## どのようなモデルが使用できますか？
+- `POST /v1/chat/completions`: [Chat Completions](/ja/chat-completions)。
+- `POST /v1/messages`: [Anthropic Messages](/ja/anthropic-messages)。
+- `POST /v1/messages/count_tokens`：Anthropic形式のトークンをカウントします。
+- `POST /v1/responses`: [Responses API](/ja/responses)、ステートレス。
+- `GET /v1/models`: [サービスモードのキーに応じたカタログ](/ja/models)。
 
-[モデルカタログ](/ja/models)またはConsoleの**Models**を確認してください。`GET /v1/models`は、使用するAPIキーのService Modeで利用可能なモデルと料金を返します。
+サイトカタログは `GET /api/public/models-v2` を使用します。`/api/*` にある Console アカウントのエンドポイントは、ログインセッションを使用します。Embeddings はパブリックゲートウェイではまだ利用できません。
 
-## なぜ私のリクエストが401で拒否されたのですか？
+<a id="model-apa-saja-yang-bisa-saya-pakai"></a>
 
-APIキーと認証ヘッダーを確認してください。ゲートウェイは`Authorization: Bearer sk-...`または`x-api-key`を受け付けます。キーは正しく、有効で、期限内である必要があります。[認証](/ja/authentication)を参照してください。
+<a id="どのようなモデルが使用できますか"></a>
+
+## どのようなモデルを使用できますか？
+
+[モデルカタログ](/ja/models) または Console の **Models** メニューを参照してください。`GET /v1/models` を実行すると、使用中のサービスモード API キーで利用可能なモデルと価格が表示されます。
+
+<a id="kenapa-request-saya-ditolak-401"></a>
+
+<a id="なぜ私のリクエストが401で拒否されたのですか"></a>
+
+## なぜ私のリクエストは401で拒否されたのですか？
+
+APIキーと認証ヘッダーを確認してください。ゲートウェイは`Authorization: Bearer sk-...`または`x-api-key`を受け付けます。キーは正しく、有効で、有効期限が切れていない必要があります。[認証](/ja/authentication)を参照してください。
+
+<a id="kenapa-muncul-402-padahal-saya-punya-saldo"></a>
 
 ## 残高があるのに、なぜ402エラーが表示されるのですか？
 
-エラーメッセージを確認してください。402エラーには2つの原因があります：**組織の残高**が不足している（`available`：リクエストの推定費用を下回っている）、または**APIキーのクレジット制限**に達している場合です。 メッセージに「APIキーのクレジット制限」と表示されている場合は、リセット期間（毎日／毎週／毎月）を待つか、コンソールで制限を変更してください。詳細は[課金と残高](/ja/billing)をご覧ください。
+エラーメッセージを確認してください。402には2つの原因があります：**組織の残高**が不足している（`available`が
+リクエストの推定費用を下回っている）、または**APIキーのクレジット制限**に達している場合です。 メッセージに「APIキーの
+クレジット制限」と表示されている場合は、リセット期間（毎日／毎週／毎月）を待つか、コンソールで制限を変更してください。
+詳細は[課金と残高](/ja/billing)をご覧ください。
+
+<a id="berapa-biaya-satu-request"></a>
 
 ## 1回のリクエストにかかる費用はいくらですか？
 
-料金はモデル、Service Mode、入力・出力・キャッシュの使用量に依存します。非ストリーミングのchat応答には`hostlinku.cost`が含まれます。streamの料金は完了後にLogs/Billingで確認でき、upstreamのusageがない場合は推定値を使うことがあります。[課金と残高](/ja/billing)を参照してください。
+料金は、使用されるモデル、サービスモード、およびトークン/キャッシュのディメンションに基づいて決定されます。非ストリーミングのチャットレスポンスには `hostlinku.cost` が含まれます。ストリーミングの料金は、処理完了後に「Logs/Billing」で確認でき、アップストリームの使用量が利用できない場合は見積もりが使用される場合があります。[Billing & Saldo](/ja/billing) をご覧ください。
+
+<a id="apakah-ada-rate-limit"></a>
 
 ## レート制限はありますか？
 
-各Service Modeの利用枠は **毎分 600 リクエスト、6,500,000 入力 token、200,000 出力 token** で、同じ組織内で共有します。上限に達すると、その組織のすべての API キーとメンバーが影響を受けます。 利用枠と 429 の対応は[使用状況と制限](/ja/usage-and-limits)を参照してください。
+各サービスモードのクォータは、**1分あたり600リクエスト、6,500,000トークンの入力、および200,000トークンの出力**であり、同一組織内で共有されます。クォータに達すると、すべてのAPIキーおよび組織のメンバーに影響が及びます。 クォータの詳細および429エラーへの対処方法については、[使用状況と制限](/ja/usage-and-limits)をご覧ください。
 
-## 画像やマルチメディアメッセージを送信するにはどうすればよいですか？
+<a id="bagaimana-cara-mengirim-pesan-gambar--multimodal"></a>
 
-`messages[].content`に、OpenAI形式のコンテンツ配列を格納します （例：`image_url` 型のオブジェクト 1 つと、`text` 型のオブジェクト 1 つ）し、カタログから `vision`/`image-input` の機能を備えたモデルを選択してください。サポートの程度はモデルプロバイダーによって異なります。
+<a id="画像やマルチメディアメッセージを送信するにはどうすればよいですか"></a>
+
+## 画像やマルチモーダルメッセージを送信するにはどうすればよいですか？
+
+`messages[].content` に OpenAI 形式のコンテンツ配列（例：`image_url` 型のオブジェクト 1 つ、
+続いて `text` 型のオブジェクト 1 つ）を指定し、カタログ内で `vision`/`image-input` 機能を備えた
+モデルを選択してください。サポートレベルはモデルプロバイダーによって異なります。
+
+<a id="bagaimana-cara-menghentikan-pemakaian-api-key-yang-bocor"></a>
 
 ## 漏洩したAPIキーの使用を停止するにはどうすればよいですか？
 
-Console → **API Keys**でキーを無効にすると、以降のリクエストは拒否されます。代替キーを作成してアプリを更新し、不要になった古いキーを削除してください。使用履歴は保持されます。
+Consoleの**API Keys**でキーを無効化すると、それ以降のリクエストは拒否されます。代替キーを作成し、アプリケーションを更新した後、不要な場合は古いキーを削除してください。利用履歴は引き続き記録されます。
 
-## リクエストログには、私の会話の内容が記録されていますか？
+<a id="apakah-log-request-menyimpan-isi-percakapan-saya"></a>
 
-[プロンプト保存の回答](#prompt-storage)を参照してください。
+<a id="リクエストログには私の会話の内容が記録されていますか"></a>
 
-## レイテンシ、TTFT、TPSは何を表しますか？
+## リクエストログには私の会話内容が記録されますか？
 
-レイテンシはゲートウェイがリクエストを受信してから応答完了までの時間です。TTFTはstreamの最初のtokenを観測するまでの時間、TPSは最初のtoken以降の生成区間における出力token/秒です。TPSには条件を満たすstreamサンプルを使います。[API Reference](/ja/api-reference#メトリクスと表示例の意味)を参照してください。
+[プロンプトの保存に関する回答](#apakah-prompt-saya-disimpan)を参照してください。
 
-## アニメーションやモデルのグラフは実測値ですか？
+<a id="bagaimana-membaca-latensi-ttft-dan-tps"></a>
 
-landingの速度アニメーションは固定の例示値を使います。モデル詳細の60本の棒は平均・P95レイテンシと失敗数の集計から生成され、直近60リクエストの順序を表しません。集計値とConsoleの使用量グラフはリクエストデータに基づきます。比較時には期間とサンプルを確認してください。
+<a id="レイテンシttfttpsは何を表しますか"></a>
 
-## フッターの緑の表示はlive状態ですか？
+## レイテンシ、TTFT、TPSはどのように読みますか？
 
-landingのフッターバッジは現在、固定の状態値を使っています。監視結果と障害は[Statusページ](https://status.hostlinku.com)で確認してください。
+「Latensi」は、ゲートウェイがリクエストを受信してからレスポンスが完了するまでの時間を指します。「TTFT」は、ストリーム上で最初のトークンが観測されるまでの時間を指します。「TPS」は、最初のトークン以降の生成フェーズにおいて、条件を満たすストリームサンプルから出力されるトークンのレートを指します。 これら3つはそれぞれ異なる意味を持ちます。[APIリファレンス](/ja/api-reference#arti-metrik-dan-contoh-angka)を参照してください。
 
-## “reachable”は何を意味しますか？
+<a id="apakah-animasi-dan-grafik-model-adalah-hasil-pengukuran-langsung"></a>
 
-エンドポイントが500未満のHTTP応答を返したことを意味し、`401`・`403`・`404`も含みます。サーバーへの到達性を示すもので、ログインや推論の成功は対応する機能の検査で確認します。
+<a id="アニメーションやモデルのグラフは実測値ですか"></a>
 
-## 過去の料金内訳が異なるのはなぜですか？
+## アニメーションやモデルのグラフは、直接測定された結果ですか？
 
-請求済み合計は取引ログに保存されます。analyticsの入力・出力・キャッシュの一部内訳は現在の料金で再計算されるため、過去の合計と異なる場合があります。過去のリクエストが再課金されることはありません。[課金と残高](/ja/billing)を参照してください。
+ランディング速度のアニメーションには、固定の例示数値を使用しています。 モデル詳細の60本の棒グラフは、平均レイテンシ、P95、および障害件数の集計値から構成されています。各棒の位置は、直近の60件のリクエストの順序を表すものではありません。Consoleの使用状況に関する集計値およびグラフは、リクエストデータに基づいています。パフォーマンスを比較する前に、期間とサンプルを確認してください。
 
-## probeデータは何日間保存されますか？
+<a id="apakah-indikator-hijau-di-footer-menunjukkan-status-live"></a>
 
-health probeの生データはデフォルト30日間保持され、定期的に削除されます。これはbodyの14日間保持および使用量・取引メタデータとは別です。[使用状況と制限](/ja/usage-and-limits)を参照してください。
+<a id="フッターの緑の表示はlive状態ですか"></a>
 
-## サポートにはどのように連絡すればよいですか？
+## フッターの緑色のインジケーターは、稼働中（live）の状態を示していますか？
 
-[サポート](/ja/support)をご覧ください：**halo@hostlinku.com** 宛てにメールをお送りください。問題のある返信に含まれる「`x-request-id`」を必ず記載してください。
+ランディングページのフッターにあるバッジは、現在固定のステータス値を使用しています。サービスの監視状況やインシデントを確認するには、[ステータスページ](https://status.hostlinku.com)をご利用ください。
+
+<a id="apa-arti-status-reachable"></a>
+
+<a id="reachableは何を意味しますか"></a>
+
+## 「reachable」というステータスの意味は何ですか？
+
+エンドポイントは、`401`、`403`、または`404`を含む500未満のHTTPレスポンスを返します。これはサーバーに到達できることを示しており、ログインの成功や推論には、関連する関数のチェック結果が必要です。
+
+<a id="mengapa-rincian-biaya-historis-dapat-berbeda"></a>
+
+<a id="過去の料金内訳が異なるのはなぜですか"></a>
+
+## 過去の費用明細が異なるのはなぜですか？
+
+請求済みの総費用はトランザクションログに保存されます。アナリティクスにおける入力/出力/キャッシュの詳細の一部は、現在の料金に基づいて再計算されるため、詳細の合計が過去の合計と異なる場合があります。これにより、過去のリクエストに対して再請求が行われることはありません。[請求と残高](/ja/billing)をご覧ください。
+
+<a id="berapa-lama-data-probe-disimpan"></a>
+
+<a id="probeデータは何日間保存されますか"></a>
+
+## プローブデータはどのくらいの期間保存されますか？
+
+ヘルスプローブの生データは、デフォルトで30日間保存され、その後定期的に削除されます。リクエストの内容については、別途14日間の保存期間が設けられています。利用状況およびトランザクションのメタデータは引き続き保存されます。[利用状況と制限](/ja/usage-and-limits)を参照してください。
+
+<a id="bagaimana-cara-menghubungi-dukungan"></a>
+
+<a id="サポートにはどのように連絡すればよいですか"></a>
+
+## サポートへのお問い合わせ方法は？
+
+[サポート](/ja/support)をご覧ください：メール **halo@hostlinku.com** 宛てに、問題のあるレスポンスに含まれる
+`x-request-id` を必ず記載してください。

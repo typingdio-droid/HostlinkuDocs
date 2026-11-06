@@ -1,11 +1,11 @@
 ---
 title: "Qwen 3.7 Max"
-description: "Qwen 3.7 Max by Alibaba, with a catalog context window of 1,000,000 tokens."
+description: "Qwen 3.7 Max from Alibaba, with a catalog context of 1,000,000 tokens."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-| Property | Value |
+| Properties | Value |
 |---|---|
 | Provider | Alibaba |
 | Slug | `qwen3-7-max` |
@@ -13,25 +13,33 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | Output | text |
 | Release | 2026-06-14 |
 | Catalog context | 1,000,000 tokens |
-| Catalog max output | Not listed |
+| Max catalog output | Not yet listed |
 | Service Mode | Performance |
+
+<a id="kapabilitas"></a>
 
 ## Capabilities
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `agentic`, `long-context`.
 
-## Pricing
+<a id="harga"></a>
 
-Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/qwen3-7-max) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+<a id="pricing"></a>
+
+## Price
+
+Updated **November 6, 2026**. [Current pricing](https://hostlinku.com/models/qwen3-7-max) follows the Service Mode API key. **1 <CreditIcon /> = $1**. `—` means the rate is not listed. Tiers are based on the number of prompt tokens.
 
 | Item | Unit | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| Input (prompt) | per 1M tokens | Base | 1.4826 |
-| Output (completion) | per 1M tokens | Base | 4.44696 |
-| Cache read | per 1M tokens | Base | 0.14784 |
-| Cache write (5 minutes) | per 1M tokens | Base | 1.85304 |
-| Cache write (1 hour) | per 1M tokens | Base | 1.85304 |
-| Web search | per 1K calls | Base | 0.6174 |
+| Input (prompt) | per 1M tokens | Basics | 1.4826 |
+| Output (completion) | per 1M tokens | Basics | 4.44696 |
+| Cache read | per 1M tokens | Basics | 0.14784 |
+| Cache write (5 minutes) | per 1M tokens | Basics | 1.85304 |
+| Cache write (1 hour) | per 1M tokens | Basics | 1.85304 |
+| Web search | per 1K calls | Basics | 0.6174 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## Supported endpoints
 
@@ -41,7 +49,9 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/qw
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
+[Compatibility limits](/en/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## Example request
 
@@ -54,6 +64,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [{ "role": "user", "content": "Hello!" }]
   }'
 ```
+
+<a id="model-terkait"></a>
 
 ## Related models
 

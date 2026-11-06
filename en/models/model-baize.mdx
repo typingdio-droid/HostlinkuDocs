@@ -1,11 +1,11 @@
 ---
 title: "Model Baize"
-description: "Model Baize by Anonymous, with a catalog context window of 1,000,000 tokens."
+description: "The Baize model from Anonymous, with a catalog context of 1,000,000 tokens."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-| Property | Value |
+| Properties | Value |
 |---|---|
 | Provider | Anonymous |
 | Slug | `model-baize` |
@@ -13,22 +13,30 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | Output | text |
 | Release | 2026-08-13 |
 | Catalog context | 1,000,000 tokens |
-| Catalog max output | Not listed |
+| Max catalog output | Not yet listed |
 | Service Mode | Low-Cost |
+
+<a id="kapabilitas"></a>
 
 ## Capabilities
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `long-context`.
 
-## Pricing
+<a id="harga"></a>
 
-Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/model-baize) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+<a id="pricing"></a>
+
+## Price
+
+Updated **November 6, 2026**. [Current pricing](https://hostlinku.com/models/model-baize) follows the Service Mode API key. **1 <CreditIcon /> = $1**. `—` means the rate is not listed. Tiers are based on the number of prompt tokens.
 
 | Item | Unit | Tier | Low-Cost (<CreditIcon />) |
 |---|---|---|---|
-| Input (prompt) | per 1M tokens | Base | 0.629695 |
-| Output (completion) | per 1M tokens | Base | 2.20313 |
-| Cache read | per 1M tokens | Base | 0.15729 |
+| Input (prompt) | per 1M tokens | Basics | 0.629695 |
+| Output (completion) | per 1M tokens | Basics | 2.20313 |
+| Cache read | per 1M tokens | Basics | 0.15729 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## Supported endpoints
 
@@ -38,7 +46,9 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/mo
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
+[Compatibility limits](/en/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## Example request
 

@@ -1,9 +1,9 @@
 (function () {
   var TEXT = {
     id: "Satu gateway untuk model AI, pemakaian, dan billing organisasi.",
-    en: "One gateway for AI models, usage, and organization billing.",
-    ja: "AIモデル、使用量、組織の課金を一元管理するゲートウェイ。",
-    zh: "统一管理AI模型、用量和组织计费的网关。"
+    en: "A single gateway for AI models, usage, and organizational billing.",
+    ja: "AIモデル、利用状況、および組織の課金に関する単一のゲートウェイ。",
+    zh: "一个统一的入口，用于管理组织的 AI 模型、使用情况和计费。"
   };
 
   function textForLanguage() {

@@ -1,6 +1,6 @@
 ---
-title: "API Responses"
-description: "POST endpoint reference: /v1/responses (OpenAI Responses API-compatible) - use the Codex CLI, OpenAI Agents SDK, or client.responses.create() with your Hostlink API key"
+title: "Responses API"
+description: "Reference endpoint POST /v1/responses (OpenAI Responses API-compatible) — use the Codex CLI, OpenAI Agents SDK, or client.responses.create() with the Hostlinku API key"
 icon: workflow
 ---
 
@@ -8,7 +8,11 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku provides an endpoint compatible with the [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses)-the format used by the **Codex CLI**, **OpenAI Agents SDK**, and the `client.responses.create()` method in the OpenAI SDK. Simply replace the base URL; the API key, balance, Service Mode, rate limit, and Request Logs are the same as for `/v1/chat/completions` and `/v1/messages`.
+Hostlinku provides endpoints compatible with
+[OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses)—the format
+used by **Codex CLI**, **OpenAI Agents SDK**, and the `client.responses.create()` method in the OpenAI SDK.
+Simply replace the base URL; the API key, balance, Service Mode, rate limit, and Request Logs are the same as
+`/v1/chat/completions` and `/v1/messages`.
 
 ```http
 POST https://api.hostlinku.com/v1/responses
@@ -16,17 +20,20 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-Successful responses include `x-request-id`; successful non-streaming responses also include `x-model` (the public model slug).
+A successful response includes `x-request-id`; a non-streaming successful response also includes `x-model` (the model’s public slug).
 
 <Callout type="note" title="Model and tool compatibility">
-  `model` uses a public slug from the [model catalog](/en/models). The gateway offers native Responses and a Chat Completions bridge according to the model deployment. Response-format compatibility does not mean every model supports all Responses features or Codex tools.
+  `model` uses the public slug from the [model catalog](/en/models). The Gateway provides native Responses paths and a bridge to Chat Completions depending on the deployment model. Support for response formats does not mean that every model supports all Responses features or the Codex tool.
 </Callout>
 
-Choose a model available in the API key Service Mode. Vision, reasoning, caching, JSON schema, and tool calling depend on the model. Native Responses passes upstream features through; the Chat Completions bridge supports messages, model-supported images, and `type: "function"` tools. Hosted/custom tools and encrypted reasoning require native support.
+Select an available model for the Service Mode API key. Vision, reasoning, caching, JSON schema, and tool calls follow the model’s capabilities. Native responses pass through upstream features; the Chat Completions bridge supports messages, model-supported images, and the `type: "function"` tool. Hosted/custom tools and encrypted reasoning require native support.
+
+<a id="konfigurasi-cepat"></a>
 
 ## Quick Setup
 
-Complete guides for each tool are available in the [Codex CLI](/en/integrations/codex-cli) and the [OpenAI Agents SDK](/en/integrations/agents-sdk).
+Complete guides for each tool are available in the [Codex CLI](/en/integrations/codex-cli) and
+[OpenAI Agents SDK](/en/integrations/agents-sdk).
 
 **Codex CLI** (`~/.codex/config.toml`)
 
@@ -84,34 +91,38 @@ from agents import Agent, Runner, set_default_openai_client, set_tracing_disable
 from openai import AsyncOpenAI
 
 set_default_openai_client(AsyncOpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v1"))
-set_tracing_disabled(True)  # OpenAI tracing is not available through the gateway
+set_tracing_disabled(True)  # tracing OpenAI tidak tersedia lewat gateway
 
 agent = Agent(name="Asisten", instructions="Jawab singkat.", model="gpt-5-5")
 result = Runner.run_sync(agent, "Sebutkan 3 bahasa pemrograman.")
 print(result.final_output)
 ```
 
-## Body Parameters
+<a id="parameter-body"></a>
 
-| Parameter | Type | Description |
+## Body parameters
+
+| Parameter | Type | Notes |
 |---|---|---|
 | `model` | `string` | **Required.** Hostlinku model slug. |
-| `input` | `string` \| `array` | **Required.** A single text string or an array of items: `message` (`role` + `content` containing `input_text`/`input_image`/…), `function_call`, `function_call_output`, `reasoning`. |
-| `instructions` | `string` | System prompt (developer message). |
-| `max_output_tokens` | `integer` | Output token limit. Returns a `400` error if the model's output limit is exceeded. |
+| `input` | `string` | `array` | **Required.** Single text or array items: `message` (`role` + `content` containing `input_text`/`input_image`/…), `function_call`, `function_call_output`, `reasoning`. |
+| `instructions` | `string` | System prompts (developer messages). |
+| `max_output_tokens` | `integer` | Token output limit. A `400` error is returned if the model’s output limit is exceeded. |
 | `stream` | `boolean` | `true` for SSE (see below). |
 | `tools`, `tool_choice`, `parallel_tool_calls` | - | Function calling format Responses (`{ "type": "function", "name", "parameters" }`). |
 | `reasoning` | `object` | E.g., `{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`. |
-| `include` | `string[]` | E.g., `["reasoning.encrypted_content"]`; encrypted items depend on upstream native Responses support. The chat bridge does not preserve encrypted reasoning items. |
-| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | As specified by OpenAI; passed to the model. |
+| `include` | `string[]` | E.g., `["reasoning.encrypted_content"]`; the availability of encrypted items depends on native upstream support for Responses. Bridge chat does not retain encrypted reasoning items. |
+| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | As per OpenAI specifications; passed on to the model. |
 | `store` | `boolean` | Always treated as `false` (see *Stateless*). |
-| `previous_response_id`, `conversation`, `background` | - | Non-null `previous_response_id` and `conversation` return `400 invalid_request_error`; `background: true` is rejected. Omit these fields; `background: false` is accepted. |
+| `previous_response_id`, `conversation`, `background` | - | Non-null `previous_response_id` and `conversation` are rejected with a `400 invalid_request_error`; `background: true` is rejected. The field may be omitted; `background: false` is accepted. |
 
-Other Responses body fields are passed through. Parameters may be forwarded, ignored, or rejected depending on the protocol path and upstream support; schema acceptance does not guarantee model support. Invalid bodies return `400 invalid_request_error` with details in `error.details.issues`.
+Other fields in the Response body are passed through. Parameters may be passed through, ignored, or rejected depending on the route and upstream support; schema acceptance does not guarantee model features. Invalid bodies are rejected with a `400 invalid_request_error` response, with details provided in `error.details.issues`.
 
 <Callout type="important" title="Stateless - send the full history in `input`">
-  Send the full history in `input` with `store: false`. Non-null `previous_response_id` and `conversation`, and `background: true`, are rejected. `GET`/`DELETE /v1/responses/{id}` is unavailable. Reasoning items can be reused on native paths; the chat bridge skips them.
+  Send the full history in `input` with `store: false`. Non-null `previous_response_id` and `conversation`, as well as `background: true`, are rejected. `GET`/`DELETE /v1/responses/{id}` is not available. Reasoning items can be reused on native paths; the bridge chat bypasses them.
 </Callout>
+
+<a id="respons-non-streaming"></a>
 
 ## Non-streaming response
 
@@ -132,7 +143,7 @@ Other Responses body fields are passed through. Parameters may be forwarded, ign
       "type": "message",
       "status": "completed",
       "role": "assistant",
-      "content": [{ "type": "output_text", "text": "An API gateway is …", "annotations": [] }]
+      "content": [{ "type": "output_text", "text": "API gateway adalah …", "annotations": [] }]
     }
   ],
   "usage": {
@@ -148,19 +159,28 @@ Other Responses body fields are passed through. Parameters may be forwarded, ign
 }
 ```
 
-`id` and `model` are always Hostlinku’s public identifiers. The `hostlinku` block is an extension (the OpenAI SDK ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency. `status: "incomplete"` with `incomplete_details.reason = "max_output_tokens"` means the output was truncated by `max_output_tokens`-you’ll still be billed based on the actual number of tokens.
+`id` and `model` are always Hostlinku public identifiers. The `hostlinku` block is an extension (the OpenAI SDK
+ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency. `status: "incomplete"` with
+`incomplete_details.reason = "max_output_tokens"` means the output was truncated by `max_output_tokens`
+- Billing remains based on actual tokens.
 
-<Callout type="warning" title="Reasoning model + small `max_output_tokens`">
-In reasoning models (e.g., DeepSeek V4, GPT-6, Claude with "thinking"), "thinking" tokens are included in the `max_output_tokens` count. A small value (e.g., `16`) is usually exhausted by the `reasoning` items alone → `status: "incomplete"` and `output` contains only the `reasoning` items without a `message`. Use `max_output_tokens` ≥ 256 or set `reasoning.effort` to `"low"`.
+<Callout type="warning" title="Model reasoning + small `max_output_tokens`">
+  In reasoning models (e.g., DeepSeek V4, GPT-6, Claude with "thinking"), thinking tokens are
+  counted toward `max_output_tokens`. Small values (e.g., `16`) are typically exhausted by the `reasoning`
+  alone → `status: "incomplete"` and `output` contains only the `reasoning` item without a `message`.
+  Use `max_output_tokens` ≥ 256 or lower `reasoning.effort` to `"low"`.
 </Callout>
 
-<Callout type="note" title="Responses API Usage Conventions">
-Just like Chat Completions, `input_tokens` **already contains** cached tokens; the details are in `input_tokens_details.cached_tokens`. `output_tokens` contains `reasoning_tokens`. Your Hostlinku bill is calculated based on these components at their respective prices (see [Billing](/en/billing)).
+<Callout type="note" title="Usage Conventions for API Responses">
+  Just like Chat Completions, `input_tokens` **already contains** cached tokens; details are in
+  `input_tokens_details.cached_tokens`. `output_tokens` contains `reasoning_tokens`. Hostlinku billing
+  is calculated based on these components at their respective prices (see [Billing](/en/billing)).
 </Callout>
 
 ## Streaming (`stream: true`)
 
-The gateway forwards SSE events using the Responses API framing (`event:` + `data:`), including the `sequence_number` from the upstream:
+The gateway streams SSE events using the API response framing (`event:` + `data:`), including
+the `sequence_number` from the upstream:
 
 ```text
 event: response.created
@@ -179,7 +199,7 @@ event: response.output_text.delta
 data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"API gateway"}
 
 event: response.output_text.done
-data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"An API gateway is …"}
+data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"API gateway adalah …"}
 
 event: response.content_part.done
 data: {"type":"response.content_part.done","sequence_number":6,…}
@@ -193,13 +213,14 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 
 Note:
 
-- Final usage is in the `response` object at `response.completed` or `response.incomplete`. Costs use upstream usage; if usage is empty or zero, the gateway may use the reservation estimate. Read final costs in Logs / Analytics / Billing; `hostlinku.cost` is not guaranteed on every SSE chunk.
-- The tool call is passed via `response.output_item.added` (`type: "function_call"`),
-`response.function_call_arguments.delta`, and `response.function_call_arguments.done`.
-- If the stream fails midway, the gateway sends an `event: error` with
-`{"type":"error","code":…,"message":…}` and **do not** send a fake `response.completed`.
-- Errors occurring before the first byte (insufficient balance, model not found, rate limit) are returned as
-A standard JSON response with the correct HTTP status code - the OpenAI SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+- Final usage, if provided by the upstream, is found in `response.completed` or `response.incomplete`. Cost uses this usage; if usage is empty or zero, the gateway may use a reservation estimate. The `hostlinku.cost` extension is available in non-streaming success responses; do not expect it in every SSE event.
+- Tool calls are routed through `response.output_item.added` (`type: "function_call"`),
+  `response.function_call_arguments.delta`, and `response.function_call_arguments.done`.
+- If a stream fails midway, the gateway sends `event: error` with
+  `{"type":"error","code":…,"message":…}` and **does not** send a fake `response.completed`.
+- Errors occurring before the first byte (out of balance, model not found, rate limit) are returned as
+  standard JSON responses with the correct HTTP status—the OpenAI SDK maps these to exceptions
+  (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
 
 ## Tool calling (function calling)
 
@@ -228,7 +249,9 @@ r2 = client.responses.create(
 print(r2.output_text)
 ```
 
-## Format error
+<a id="format-error"></a>
+
+## Error format
 
 ```json
 { "error": { "message": "The API key is invalid or has been revoked.", "type": "authentication_error", "param": null, "code": "invalid_api_key" } }
@@ -236,14 +259,14 @@ print(r2.output_text)
 
 | HTTP | `error.type` | `error.code` | Common causes |
 |---|---|---|---|
-| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | Invalid body, `max_output_tokens` exceeds the model limit, `previous_response_id` was sent, model not available in Service Mode key. |
-| 401 | `authentication_error` | `invalid_api_key` | Invalid, revoked, or expired API key, or request made without an API key. |
+| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | The body is invalid; `max_output_tokens` exceeds the model limit; `previous_response_id` was sent; the model is not available in Service Mode key. |
+| 401 | `authentication_error` | `invalid_api_key` | API key is incorrect/revoked/expired, or a request without an API key. |
 | 402 | `insufficient_quota` | `insufficient_quota` | Insufficient balance or API key credit limit reached. |
 | 403 | `permission_error` | - | Account suspended / access denied. |
-| 404 | `not_found_error` | `model_not_found` / `not_found` | The model slug does not exist; or `GET /v1/responses/{id}` (stateless). |
+| 404 | `not_found_error` | `model_not_found` / `not_found` | There is no model slug; or `GET /v1/responses/{id}` (stateless). |
 | 429 | `rate_limit_error` | `rate_limit_exceeded` | The request limit has been reached (see the `Retry-After` header). |
-| 503 | `server_error` | `model_unavailable` / `server_error` | Model/upstream unavailable. Check the catalog and replacements; retry with a delay for temporary outages. |
+| 503 | `server_error` | `model_unavailable` / `server_error` | Model/upstream is unavailable. Check the catalog for alternative models; retry with a delay if there is a temporary outage. |
 
-The table shows protocol-handled errors. Request rate limiting or body parsing before the handler can use the general Hostlinku format; see [Errors](/en/errors).
+The table lists errors handled by the protocol. Restrictions on requests or parsing the body before the handler can use the standard Hostlinku format; see [Error](/en/errors).
 
-Errors are sanitized to mask internal identities; some upstream rejection reasons can still appear.
+Error messages are sanitized to obscure internal identifiers; some reasons for upstream rejection may still appear.

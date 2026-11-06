@@ -1,24 +1,30 @@
 ---
 title: "Aider"
-description: "通过 Hostlinku 运行 Aider，并使用 OPENAI_API_BASE 和模型前缀 openai/ - 此外还需提供模型元数据，以确保上下文和费用计算正确"
+description: "通过 Hostlinku 运行 Aider，使用 OPENAI_API_BASE 和模型前缀 openai/，并添加模型元数据，以确保上下文和费用计算正确"
 icon: terminal
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Aider](https://aider.chat/docs/llms/openai-compat.html) 内部使用了 LiteLLM；对于与 OpenAI 兼容的端点，只需指定 `OPENAI_API_BASE`，且模型名称以 `openai/` 开头即可。
+[Aider](https://aider.chat/docs/llms/openai-compat.html) 内部使用了 LiteLLM；对于
+OpenAI 兼容的端点，只需设置 `OPENAI_API_BASE`，且模型名称以 `openai/` 开头即可。
 
 <Steps>
+
+<a id="instal-aider"></a>
 
 ### 安装 Aider
 
 ```bash
 python -m pip install -U aider-chat
-# 或者: pipx install aider-chat
+# atau: pipx install aider-chat
 ```
 
-### 请转至 Hostlinku
+<a id="arahkan-ke-hostlinku"></a>
+
+<a id="请转至-hostlinku"></a>
+
+### 跳转至 Hostlinku
 
 ```bash
 export OPENAI_API_BASE=https://api.hostlinku.com/v1
@@ -27,11 +33,14 @@ export OPENAI_API_KEY=sk-your-api-key   # API key Hostlinku
 aider --model openai/claude-sonnet-4-6
 ```
 
-前缀 `openai/` 是必填项-它会指示 Aider 使用与 `OPENAI_API_BASE` 兼容的 OpenAI 路径。前缀后的部分是 Hostlinku 的 slug。
+前缀 `openai/` 是必需的——它会指示 Aider 使用与
+`OPENAI_API_BASE` 兼容的 OpenAI 路径。前缀后的部分是 Hostlinku 的 slug。
+
+<a id="disarankan-simpan-di-berkas-konfigurasi"></a>
 
 ### （建议）保存在配置文件中
 
-`.aider.conf.yml` 位于主仓库或根仓库中：
+位于主目录或仓库根目录下的 `.aider.conf.yml`：
 
 ```yaml
 openai-api-base: https://api.hostlinku.com/v1
@@ -40,15 +49,20 @@ weak-model: openai/claude-haiku-4-5      # commit message & ringkasan
 editor-model: openai/deepseek-v4-flash   # mode architect (opsional)
 ```
 
-将 API 密钥保存在 `.env` 中（加入 .gitignore），以免被提交：
+将 API 密钥保存在 `.env` 文件中（加入 `.gitignore`），以免被提交：
 
 ```bash
 OPENAI_API_KEY=sk-your-api-key
 ```
 
-### 请告知Aider上下文的规模和价格
+<a id="beri-tahu-aider-ukuran-konteks--harga"></a>
 
-Aider 不认识 slug Hostlinku，因此它提示 *“模型未知”* 并推测其上下文。对于 `.aider.model.metadata.json`（home / root 仓库）：
+<a id="请告知aider上下文的规模和价格"></a>
+
+### 请告知 Aider 上下文规模及价格
+
+Aider 不认识 Hostlinku 的 slug，因此会提示 *“model is unknown”* 并推测
+其上下文。创建 `.aider.model.metadata.json`（位于 home / 仓库根目录）：
 
 ```json
 {
@@ -71,13 +85,20 @@ Aider 不认识 slug Hostlinku，因此它提示 *“模型未知”* 并推测�
 }
 ```
 
-上方的`max_input_tokens`和`max_output_tokens`是Aider的本地限制示例。请按[目录](/zh/models)中的模型上限调整；较低的值会限制工具内的使用量。
+上文中的 `max_input_tokens` 和 `max_output_tokens` 值是 Aider 的本地限制示例。请根据 [目录](/zh/models) 中的模型限制进行调整；较小的数值会限制工具中的使用。
 
-上述价格是Performance模式的示例。请从[目录](/zh/models)的`pricing`复制当前价格，并将**每100万个Token**的价格**除以1,000,000**，因为Aider使用每个Token的价格（例如`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`），以获得更接近实际金额的费用估算。
+上述价格数字仅为示例（Performance 模式）——摘自 [目录](/zh/models) 中的 `pricing`，
+该价格以 **100 万个令牌** 为单位，需 **除以 1,000,000**，因为 Aider 采用的是每 1 个令牌的价格
+（例如：`pricing.input: 2.4` → `input_cost_per_token: 0.0000024`）。
+Aider 的费用估算值将接近控制台中的实际账单金额。
 
 </Steps>
 
-## 建筑师模式（包含两个模型）
+<a id="mode-architect-dengan-dua-model"></a>
+
+<a id="建筑师模式包含两个模型"></a>
+
+## 采用双模型的架构模式
 
 ```bash
 aider --architect \
@@ -85,15 +106,22 @@ aider --architect \
   --editor-model openai/claude-sonnet-4-6
 ```
 
-*architect* 模型负责设计变更，*editor* 模型负责编写差异报告。两者的费用均从同一账户中扣除，并在 **请求日志** 中分别记录。
+*architect* 模型负责设计变更，*editor* 模型负责编写差异报告。两者均从同一余额中扣款，
+并在 **请求日志** 中分别记录。
 
-<Callout type="tip" title="各模型的附加配置">
-若要将额外参数（例如 `reasoning_effort`、`temperature`）传递给特定模型，请使用 `.aider.model.settings.yml` 并配合 `extra_params` 作为键。请参阅 Aider 的 *高级模型设置* 文档。
+<Callout type="tip" title="各模型的附加设置">
+  若要将额外参数（例如 `reasoning_effort`、`temperature`）传递给特定模型，
+  请使用 `.aider.model.settings.yml` 并设置 `extra_params` 键。请参阅 Aider 的 *高级
+  模型设置* 文档。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-- **`AuthenticationError`** - `OPENAI_API_KEY` 未导出，或 `.env` 无法读取（Aider 无法从工作目录/git 根目录读取 `.env`）。
-- **`NotFoundError` 模型** - 忘记了前缀 `openai/` 或 slug 错误。
-- **“未知上下文窗口”警告*** - 尚未存在 `.aider.model.metadata.json`；请参阅第 4 步。
-- **答案被截断** - 请在元数据中提高 `max_output_tokens` 的值，或选择输出限制更大的模型。
+- **`AuthenticationError`** - `OPENAI_API_KEY` 未导出或无法读取 `.env` 文件（Aider
+  从工作目录/Git 根目录读取 `.env`）。
+- **`NotFoundError` 模型** - 遗漏了前缀 `openai/` 或 slug 错误。
+- **警告 *unknown context window*** - 尚未找到 `.aider.model.metadata.json`；请参阅第 4 步。
+- **答案被截断** - 在元数据中提高 `max_output_tokens` 值，或选择输出限制
+  更大的模型。

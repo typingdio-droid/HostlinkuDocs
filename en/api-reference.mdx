@@ -1,54 +1,70 @@
 ---
-title: API Reference
-description: Hostlinku endpoints, authentication, and metrics at a glance
+title: "API Reference"
+description: "Overview of Hostlinku endpoints, authentication, and metrics"
 icon: code
 ---
 
-Gateway endpoints use an API key. Console account endpoints under `/api/*` use a login session. Parameter, vision, reasoning, caching, and tool support depend on the model and protocol route.
+Use the API key for the gateway endpoint. The Console account endpoint at `/api/*` uses a login session. Support for parameters, vision, reasoning, cache, and tool calls follows the model and protocol path.
 
-| Endpoint | Purpose | Guide |
+| Endpoint | Usage | Guidelines |
 |---|---|---|
-| `GET /v1/models` | Catalog for the key’s Service Mode | [Models](/en/models) |
+| `GET /v1/models` | Catalog for Service Mode key | [Models](/en/models) |
 | `POST /v1/chat/completions` | Chat and SSE streaming | [Chat Completions](/en/chat-completions) |
-| `POST /v1/messages` | Anthropic-format messages | [Anthropic Messages](/en/anthropic-messages) |
-| `POST /v1/messages/count_tokens` | Unbilled Anthropic-format token counting | [Count tokens](/en/anthropic-messages) |
-| `POST /v1/responses` | Stateless Responses | [Responses API](/en/responses) |
+| `POST /v1/messages` | Anthropic message format | [Anthropic Messages](/en/anthropic-messages) |
+| `POST /v1/messages/count_tokens` | Calculate Anthropic-format tokens at no cost | [Count tokens](/en/anthropic-messages) |
+| `POST /v1/responses` | Stateless responses | [API Responses](/en/responses) |
+
+<a id="base-url-dan-autentikasi"></a>
 
 ## Base URL and authentication
 
 The OpenAI SDK uses `https://api.hostlinku.com/v1`; the Anthropic SDK uses `https://api.hostlinku.com`. The gateway accepts `Authorization: Bearer sk-your-api-key` or `x-api-key`. See [Authentication](/en/authentication).
 
+<a id="kompatibilitas-model-dan-tool"></a>
+
 ## Model and tool compatibility
 
-Use catalog slugs on supported endpoints. Format compatibility does not guarantee every client feature. Check [Responses limits](/en/responses) and [your integration](/en/integrations).
+The slug appearing in the key catalog can be used for supported endpoints. Format compatibility does not guarantee all features for every client. Check the limits [Responses](/en/responses) and [supported integrations](/integrations).
 
-## Shared organization quota
+<a id="kuota-bersama-organisasi"></a>
 
-Each Service Mode has **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared by all organization members and API keys. Login, Console, and checkout have separate per-IP limits. See [Usage & Limits](/en/usage-and-limits).
+<a id="shared-organization-quota"></a>
+
+## Organization-wide quota
+
+Each Service Mode has a quota of **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared among all API keys and organization members. Login, Console, and checkout have their own per-IP limits. [Usage & Limits](/en/usage-and-limits).
 
 ## Error Codes
 
-Error formats follow the endpoint; errors before its handler can use the common Hostlinku envelope. See [Errors](/en/errors) for codes and handling, and [Anthropic Messages](/en/anthropic-messages#format-error) or [Responses](/en/responses#format-error) for protocol-specific formats.
+Error formats follow the endpoint; failures before the handler may use the general Hostlinku envelope. A list of codes and how to handle failures is available at [Error](/en/errors). Specific formats are described in [Anthropic Messages](/en/anthropic-messages#format-error) and [Responses](/en/responses#format-error).
 
 ## Query Available Models
 
-`GET /v1/models` returns models and rates for the key’s Service Mode. The site catalog uses `GET /api/public/models-v2`. See [Models](/en/models) for capabilities and rate details.
+`GET /v1/models` returns the model and price for the Service Mode key. The site catalog uses `GET /api/public/models-v2`. See [Models](/en/models) for a list, capabilities, and how to read pricing.
 
-## Costs and streaming
+<a id="biaya-dan-streaming"></a>
 
-Non-streaming chat responses include `hostlinku.cost` and `hostlinku.latencyMs`. After streaming completes, read costs in Logs / Analytics / Billing; do not expect costs in every chunk. Record `x-request-id` when available. See [Billing & Balance](/en/billing).
+<a id="costs-and-streaming"></a>
 
-## Metrics and example figures
+## Cost and streaming
 
-| Metric | Meaning |
+Non-streaming chat responses contain `hostlinku.cost` and `hostlinku.latencyMs`. Once streaming is complete, check the costs in Logs / Analytics / Billing; do not expect charges for every chunk. Record the `x-request-id` if available. [Billing & Balance](/en/billing).
+
+<a id="arti-metrik-dan-contoh-angka"></a>
+
+<a id="metrics-and-example-figures"></a>
+
+## Meaning of metrics and numerical examples
+
+| Metrics | Meaning |
 |---|---|
-| `hostlinku.latencyMs` | Time from gateway request receipt to response completion. |
-| TTFT | Time to the first observed streaming token; can be absent for non-streaming. |
-| TPS | Output tokens per second after the first token, from qualifying stream samples. |
+| `hostlinku.latencyMs` | The time from when the request is received by the gateway until the response is complete. |
+| TTFT | The time until the first token is observed in the stream; may be empty for non-streaming. |
+| TPS | Tokens output per second after the first token, from a sample stream that meets the criteria. |
 
-- **Landing animations** use fixed example figures rather than measurements from an inference request while the animation runs.
-- **The 60-bar model detail chart** is generated from average/P95 latency and failure aggregates. Each bar is synthetic, rather than a request or probe in sequence. Console usage charts use aggregated request data.
-- **The landing footer badge** uses a fixed status; check [Status](https://status.hostlinku.com) for monitoring results and incidents.
-- **Reachable** means an HTTP response below 500, including 401/403/404. It indicates endpoint reachability; login and inference success are checked through their respective functions.
+- **Landing animation** uses fixed example numbers; the numbers in the animation are not derived from inferred requests during playback.
+- **The 60-bar chart in the model details** is based on aggregates of average/P95 latency and the number of failures. Each bar is a synthetic visualization, not a single request or sequential probe. The Console usage chart uses aggregated request data.
+- **Landing page footer badge** uses a fixed status; check [Status](https://status.hostlinku.com) for monitoring results and incidents.
+- **Reachable** means an HTTP response below 500, including 401/403/404. This check indicates endpoint reachability; login success and inferences are verified through their respective functions.
 
-Compare metrics for the same period, Service Mode, and sample population. Animations, capacity specifications, traffic aggregates, and benchmarks have different sources.
+Compare metrics from the same period, Service Mode, and sample. Animation results, capacity specifications, traffic aggregates, and benchmarks come from different sources.

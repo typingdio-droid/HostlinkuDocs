@@ -1,19 +1,23 @@
 ---
 title: "Claude Code"
-description: "Hostlinku 経由で Claude Code（CLI、VS Code、JetBrains）を実行し、ANTHROPIC_BASE_URL を指定 - Claude や他のモデルを利用でき、1つの残高ですべてに対応"
+description: "Hostlinku経由でANTHROPIC_BASE_URLを使用してClaude Code（CLI、VS Code、JetBrains）を実行してください。Claudeまたは他のモデルを使用でき、1つの残高ですべてに対応します。"
 icon: terminal
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Claude Code](https://code.claude.com/docs) は Anthropic Messages プロトコルに対応しています。Hostlinku は [`POST /v1/messages`](/ja/anthropic-messages)（`/v1/messages/count_tokens`を含む）に互換性のあるエンドポイントを提供しているため、Claude Codeは環境変数を設定するだけでHostlinkuにリダイレクトでき、追加のプロキシは不要です。
+[Claude Code](https://code.claude.com/docs)はAnthropic Messagesプロトコルに対応しています。Hostlinku
+は[`POST /v1/messages`](/ja/anthropic-messages) （
+`/v1/messages/count_tokens` を含む）を提供しているため、Claude Code は環境変数を設定するだけで Hostlinku にリダイレクトでき、
+追加のプロキシは不要です。
 
 <Steps>
 
+<a id="instal-claude-code"></a>
+
 ### Claude Codeをインストールする
 
-お使いの OS に合わせたインストール方法を選択してください：
+お使いのオペレーティングシステムに応じて、インストール方法を選択してください：
 
 **macOS / Linux / WSL:**
 
@@ -27,23 +31,28 @@ curl -fsSL https://claude.ai/install.sh | bash
 irm https://claude.ai/install.ps1 | iex
 ```
 
-**npm（Node.js 18+ が必要）：**
+**npm（Node.js 18以上が必要）：**
 
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
-以前にAnthropic/Claudeというアカウントでログインしたことがある場合は、`claude`を実行してから`/logout`と入力し、保存されているOAuthの認証情報がゲートウェイの設定に優先されないようにしてください。
+以前にAnthropic/Claudeアカウントでログインしたことがある場合は、`claude`を実行し、
+`/logout`と入力して、保存されているOAuth認証情報がゲートウェイの設定に優先されないようにしてください。
 
-### Hostlinku へ移動してください
+<a id="arahkan-ke-hostlinku"></a>
 
-最も手っ取り早い方法 - シェルでのエクスポート (`~/.zshrc` / `~/.bashrc`)：
+<a id="hostlinku-へ移動してください"></a>
+
+### Hostlinkuへ誘導してください
+
+最も手っ取り早い方法 - シェルでのエクスポート（`~/.zshrc` / `~/.bashrc`）：
 
 ```bash
 export ANTHROPIC_BASE_URL=https://api.hostlinku.com
 export ANTHROPIC_AUTH_TOKEN=sk-your-api-key
 
-# Claude Code のエイリアスに使うモデルをピン留め
+# Pin model untuk alias yang dipakai Claude Code
 export ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6
 export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
@@ -51,7 +60,8 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
 claude
 ```
 
-永続化の方法 - `~/.claude/settings.json`内の`env`ブロック（すべてのプロジェクトに適用）またはプロジェクトルート内の`.claude/settings.local.json`（そのプロジェクトのみ。このファイルは通常、gitignoreの対象となります）：
+永続化方法 - `~/.claude/settings.json` 内の `env` ブロック（すべてのプロジェクトに適用）または
+プロジェクトルートにある `.claude/settings.local.json`（そのプロジェクトのみ；このファイルは通常 gitignore に追加されます）：
 
 ```json
 {
@@ -65,39 +75,58 @@ claude
 }
 ```
 
-`settings.json`の値は、export shellを**上書きします**。
+`settings.json`内の値は、export shellの値に**優先**されます。
 
-<Callout type="tip" title="JSON を編集せずに GUI で管理したい場合">
-  デスクトップアプリ [CC Switch](/ja/integrations/cc-switch) を使用すると、`/v1/models` からモデル一覧を自動取得し、ワンクリックで Claude Code のプロファイルやモデルを切り替えられます。
+<Callout type="tip" title="JSONを編集せずにGUIで管理したいですか？">
+  デスクトップアプリ [CC Switch](/ja/integrations/cc-switch) を使用して、`/v1/models` からモデルのリストを自動的に取得し、
+  ワンクリックで Claude Code のプロファイルやモデルを切り替えることができます。
 </Callout>
 
-### 確認
+<a id="verifikasi"></a>
 
-Claude Codeのセッションで「`/status`」と入力してください：*API*セクションには、ベースURL「`https://api.hostlinku.com`」と認証方法「*auth token*」が表示される必要があります。簡単なプロンプトを1つ送信し、コンソールの「**リクエストログ**」に、使用しているAPIキーを含むリクエストが表示されているか確認してください。
+<a id="確認"></a>
 
-### （オプション）セッション内でモデルを切り替える
+### 検証
 
-`/model`には、上記でピン留めした`sonnet` / `opus` / `haiku`のエイリアスが表示されます。一度だけ別のslugを使用するには：
+Claude Codeのセッション内で `/status` と入力してください：*API* セクションには、ベースURL
+`https://api.hostlinku.com` および認証方法 *auth token* が表示される必要があります。簡単なプロンプトを1つ送信し、
+使用しているAPIキーで、コンソールの → **リクエストログ** にそのリクエストが表示されるか確認してください。
+
+<a id="opsional-ganti-model-dari-dalam-sesi"></a>
+
+<a id="オプションセッション内でモデルを切り替える"></a>
+
+### （オプション）セッション内のモデルを置き換える
+
+`/model` には、上記でピン留めしたエイリアス `sonnet` / `opus` / `haiku` が表示されます。
+他のスラグを一度だけ使用するには：
 
 ```bash
 claude --model deepseek-v4-flash
-# または env でデフォルトをピン留め: export ANTHROPIC_MODEL=gpt-5-5
+# atau pin default lewat env: export ANTHROPIC_MODEL=gpt-5-5
 ```
 
 </Steps>
 
-## 認証：`AUTH_TOKEN` それとも `API_KEY`？
+<a id="autentikasi-auth_token-atau-api_key"></a>
 
-| 変数 | 送信されたヘッダー | Hostlinkuによる支援 |
+<a id="認証auth_token-それとも-api_key"></a>
+
+## 認証：`AUTH_TOKEN` または `API_KEY`？
+
+| 変数 | 送信されるヘッダー | Hostlinkuによるサポート |
 |---|---|---|
 | `ANTHROPIC_AUTH_TOKEN` | `Authorization: Bearer sk-…` | はい（推奨） |
 | `ANTHROPIC_API_KEY` | `x-api-key: sk-…` | はい |
 
-どちらもゲートウェイで受け入れられます。どちらか一方を選択してください。異なる値を両方とも入力しないでください。
+「Keduanya」はゲートウェイで受け入れられます。どちらか一方を選択し、異なる値を両方とも入力しないでください。
+
+<a id="ekstensi-vs-code--jetbrains"></a>
 
 ## VS Code および JetBrains の拡張機能
 
-Claude Code 拡張機能はログイン情報を独自に確認するため、拡張機能の設定でも同じ変数を指定する必要があります - VS Code: `claudeCode.environmentVariables` および `settings.json`:
+Claude Code拡張機能はログイン情報を自身で検証するため、設定でも同じ変数を指定する必要があります
+拡張機能 - VS Code: `settings.json`内の`claudeCode.environmentVariables`:
 
 ```json
 {
@@ -110,34 +139,53 @@ Claude Code 拡張機能はログイン情報を独自に確認するため、�
 }
 ```
 
-JetBrainsでは、*[設定] → [ツール] → [Claude Code] → [環境変数]* で同じ変数を設定してください（または、その変数がエクスポートされているシェルからIDEが実行されていることを確認してください）。
+JetBrainsでは、*設定 → ツール → Claude Code → 環境変数*で同じ変数を設定してください
+（または、その変数がエクスポートされているシェルからIDEが実行されていることを確認してください）。
 
-## 非Claudeモデルを使用する
+<a id="pakai-model-non-claude"></a>
 
-ゲートウェイがプロトコルを変換するため、`sonnet`/`haiku` には、[カタログ](/ja/models) から任意のslugを指定できます：
+<a id="非claudeモデルを使用する"></a>
+
+## 非Claudeモデルを使用してください
+
+ゲートウェイはプロトコルを翻訳するため、`sonnet`/`haiku`というエイリアスには、
+[カタログ](/ja/models) から任意のスラグを指定できます：
 
 ```bash
 export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 ```
 
-モデルの能力に依存する機能（道具の使用、*拡張思考*、視覚）は、対象モデルの機能に準じます。カタログのフィールド `capabilities` をご確認ください。
+モデルの機能に依存する機能（ツールの使用、*extended thinking*、ビジョン）は、
+対象モデルの機能に従う — カタログの `capabilities` フィールドを確認してください。
 
-<Callout type="note" title="Claude Codeは、Claude以外のモデルの名前を認識しません">
-`gpt-5-5` や `deepseek-v4-flash` のようなslugを使用すると、Claude Code は警告 `unrecognized_model` を表示し、200k トークンのコンテキストを想定します。 リクエストは正常に実行されます（検証済み）が、対象のモデルのウィンドウサイズがこれより大きい場合は、クライアント側でコンテキストを調整してください。
+<Callout type="note" title="Claude Codeは、Claude以外のモデル名は認識しません">
+  `gpt-5-5` や `deepseek-v4-flash` のようなスラッグを使用する場合、Claude Code は
+  `unrecognized_model`という警告を表示し、200kトークンのコンテキストを想定します。リクエストは正常に実行されます
+  （検証済み）が、対象モデルのウィンドウがそれより大きい場合は、クライアント側でコンテキストを調整してください。
 </Callout>
 
 <Callout type="tip" title="サブエージェントの残高を節約する">
-Claude Codeは、簡単なタスク（要約、セッションのタイトル、簡易サブエージェントなど）には*haiku*という別名を使用しています。これに`claude-haiku-4-5`または`deepseek-v4-flash`を設定することで、メインモデルの品質を損なうことなく、長時間のセッションにかかるコストを大幅に削減できます。
+  Claude Codeは、軽微なタスク（要約、セッションタイトル、簡易サブエージェント）に*haiku*というエイリアスを使用します。
+  `claude-haiku-4-5` や `deepseek-v4-flash` を指定することで、メインモデルの品質を損なうことなく、
+  長時間のセッションにかかるコストを大幅に削減できます。
 </Callout>
 
-<Callout type="note" title="大枠のコンテキストとキャッシュ">
-Hostlinkuは`cache_control`（プロンプトキャッシュ）を引き継ぎ、`usage`で`cache_read_input_tokens` / `cache_creation_input_tokens`を報告します。Claude Codeはこれを自動的に活用します。 請求は、該当するモデルのキャッシュ価格に基づいて行われます（[Billing](/ja/billing)を参照）。
+<Callout type="note" title="大枠の文脈とキャッシュ">
+  Hostlinkuは`cache_control`（プロンプトキャッシュ）を転送し、`usage`内で`cache_read_input_tokens` /
+  `cache_creation_input_tokens`を報告します。Claude Codeはこれを自動的に活用します。 請求は、
+  該当するキャッシュモデルの価格に基づきます（[Billing](/ja/billing)を参照）。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-- **`401 authentication_error` キーは正しいはずなのに** - 古いOAuth認証情報がまだ使用されています。`/logout`を実行し、セッションを終了してから、`ANTHROPIC_BASE_URL`が読み取れることを確認してください（`/status`）。
-- **モデルが見つかりません (`404`)** - エイリアスがまだピン留めされていないため、Claude Code はデフォルトのモデル名を送信しています。`ANTHROPIC_DEFAULT_*_MODEL` にカタログのslugを入力してください。
-- **`400 max_tokens melebihi batas`** - 目標モデルの出力上限が小さい場合は、`max_tokens`を`CLAUDE_CODE_MAX_OUTPUT_TOKENS`（例：`32000`）経由で下げる。
-- **レート制限 (`429`)** - Claude Code では、複数のサブエージェントを並行して実行できます。制限については、[利用状況と制限](/ja/usage-and-limits) をご覧ください。
+- **`401 authentication_error` なのにキーは正しい** - 古いOAuth認証情報がまだ使用されています。
+  `/logout` を実行し、セッションを終了させて、`ANTHROPIC_BASE_URL` が読み取れることを確認してください（`/status`）。
+- **モデルが見つかりません（`404`）** - エイリアスがまだピン留めされていないため、Claude Codeはデフォルトのモデル名を送信しています。
+  `ANTHROPIC_DEFAULT_*_MODEL` をカタログのスラグで置き換えてください。
+- **`400 max_tokens melebihi batas`** - ターゲットモデルの出力上限がこれより小さい場合は、`CLAUDE_CODE_MAX_OUTPUT_TOKENS` を通じて `max_tokens` を下げてください
+  （例：`32000`）。
+- **レート制限 (`429`)** - Claude Codeは複数のサブエージェントを並行して実行できます。制限については
+  [使用状況と制限](/ja/usage-and-limits)をご覧ください。

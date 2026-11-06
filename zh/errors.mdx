@@ -1,14 +1,16 @@
 ---
-title: 错误
-description: 各协议的错误格式、Hostlinku代码及处理方法。
+title: "错误"
+description: "按协议格式化的错误信息、Hostlinku 代码以及相应的处理措施。"
 icon: circle-alert
 ---
 
+<a id="format-respons"></a>
+
 ## 响应格式
 
-错误格式取决于端点。`error.message` 说明问题；自动处理应使用HTTP状态和错误代码／类型。消息语言可能因服务而异。
+错误格式应遵循端点规范。`error.message` 消息用于说明问题；请使用 HTTP 状态码和错误代码/类型以实现自动处理。消息用语可能因服务而异。
 
-**Chat Completions和通用端点**使用Hostlinku代码：
+**聊天补全和通用端点**使用 Hostlinku 代码：
 
 ```json
 {
@@ -23,71 +25,83 @@ icon: circle-alert
 }
 ```
 
-**Anthropic Messages**使用 `error.type`，不在 `error.code` 中包含Hostlinku代码：
+**Anthropic Messages** 使用 `error.type`，`error.code` 中不包含 Hostlinku 代码：
 
 ```json
 {"type":"error","error":{"type":"invalid_request_error","message":"The request body is invalid."}}
 ```
 
-**OpenAI Responses**使用OpenAI格式和映射后的代码：
+**OpenAI 响应**采用 OpenAI 格式和映射的代码：
 
 ```json
 {"error":{"message":"The request body is invalid.","type":"invalid_request_error","param":null,"code":"invalid_request"}}
 ```
 
-Responses映射示例：`UNAUTHORIZED` → `invalid_api_key`、`MODEL_NOT_FOUND` → `model_not_found`、429错误 → `rate_limit_exceeded`。Messages将这些错误归为 `authentication_error`、`not_found_error`、`rate_limit_error` 等类型。
+响应映射示例：`UNAUTHORIZED` → `invalid_api_key`，`MODEL_NOT_FOUND` → `model_not_found`，以及错误代码 429 → `rate_limit_exceeded`。 消息按类型进行分组，例如 `authentication_error`、`not_found_error` 和 `rate_limit_error`。
 
-Schema验证失败在Chat Completions中返回 **422**，在Messages/Responses中返回 **400**。`error.details` 是可选字段；`error.details.issues` 指出无效字段。协议处理器之前的错误，例如正文解析、请求限流或未知路径，可能使用通用Hostlinku格式。
+在聊天补全中，模式验证使用 **422**，但在消息/响应中使用 **400**。`error.details` 为可选字段；`error.details.issues` 指明无效字段。 在协议处理程序之前的错误（例如解析正文、请求限制或未知路径），可采用Hostlinku的通用格式。
 
-## Hostlinku代码
+<a id="kode-hostlinku"></a>
 
-下表列出网关和通用端点的Hostlinku代码。Messages/Responses使用上述映射；账户或支付端点还可能返回其他专用代码。
+<a id="hostlinku代码"></a>
 
-| HTTP | 代码 | 含义与处理 |
+## Hostlinku 代码
+
+本表列出了 Hostlinku 在网关和通用端点中的代码。消息/响应采用上述映射规则；其他与账户或支付相关的特定代码可能会出现在相应的端点中。
+
+| HTTP | 代码 | 含义与操作 |
 |---|---|---|
-| 400 | `BAD_REQUEST` | JSON／参数无法处理，包括模型输出上限。请修正请求。 |
-| 400 | `MODEL_NOT_IN_SERVICE_MODE` | 模型不可用于密钥的Service Mode。请使用同一密钥从 `GET /v1/models` 选择模型。 |
-| 400 | `UPSTREAM_REJECTED` | 提供商拒绝请求。请阅读经过清理的原因并修正输入。 |
-| 401 | `UNAUTHORIZED` | 缺少身份验证，或密钥无效、已撤销、已过期。请检查密钥。 |
-| 402 | `PAYMENT_REQUIRED` | 可用余额不足或达到密钥支出限额。请查看 [Billing](/zh/billing)。 |
+| 400 | `BAD_REQUEST` | JSON/参数无法处理，包括模型输出限制。请修正请求。 |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | “Model”在“Service Mode”键下不可用。请从 `GET /v1/models` 中选择具有相同键的模型。 |
+| 400 | `UPSTREAM_REJECTED` | 提供商拒绝了该请求。请阅读经过处理的拒绝原因并修正输入内容。 |
+| 401 | `UNAUTHORIZED` | 身份验证不存在、错误、已被撤销或已过期。请检查密钥。 |
+| 402 | `PAYMENT_REQUIRED` | 可用余额不足或密钥信用额度已达上限。请查看 [计费](/zh/billing)。 |
 | 403 | `FORBIDDEN` | 访问被拒绝。请检查账户权限。 |
-| 404 | `NOT_FOUND` | 路径或资源不可用。请检查URL和ID。 |
-| 404 | `MODEL_NOT_FOUND` | 模型slug不存在。请检查目录。 |
-| 405 | `METHOD_NOT_ALLOWED` | HTTP方法错误。请使用 `Allow` 响应头中的方法。 |
-| 413 | `BAD_REQUEST` | 正文过大。请减小正文。 |
-| 415 | `BAD_REQUEST` | 正文编码／字符集不受支持。请检查格式。 |
-| 422 | `VALIDATION_FAILED` | 正文／查询验证失败。请修正 `error.details.issues` 中的字段。 |
-| 429 | `RATE_LIMITED` | 达到每个Service Mode的组织共享配额或端点／IP限制；上游也可能返回限流。请等待并降低并发。 |
-| 429 | `MODEL_AT_CAPACITY` | 提供商的模型容量已满。请遵循重试建议。 |
-| 429 | `MODEL_COOLDOWN` | 模型部署在失败后恢复中。请遵循重试建议。 |
-| 500 | `INTERNAL` | 内部错误。请保存请求信息，反复出现时报告。 |
-| 503 | `MODEL_UNAVAILABLE` | 模型不可用或已弃用。请检查目录及替代模型；暂时故障可重试。 |
-| 503 | `PROVIDER_UNAVAILABLE` | 提供商路由不可用。请延迟重试并限制尝试次数。 |
-| 503 | `UPSTREAM_ERROR` | 上游故障。请延迟重试并限制尝试次数。 |
-| 503 | `UPSTREAM_TIMEOUT` | 上游超时。请延迟重试并限制尝试次数。 |
-| 503 | `UPSTREAM_UNREACHABLE` | 无法连接上游。请延迟重试并限制尝试次数。 |
+| 404 | `NOT_FOUND` | 路径或资源不可用。请检查 URL 和 ID。 |
+| 404 | `MODEL_NOT_FOUND` | 模型的 Slug 不存在。请检查目录。 |
+| 405 | `METHOD_NOT_ALLOWED` | HTTP 方法有误。请使用 `Allow` 标头中的方法。 |
+| 413 | `BAD_REQUEST` | 有效载荷过大。请缩小正文大小。 |
+| 415 | `BAD_REQUEST` | 不支持正文的编码/字符集。请检查正文格式。 |
+| 422 | `VALIDATION_FAILED` | Body/query 验证失败。请修正 `error.details.issues` 中的字段。 |
+| 429 | `RATE_LIMITED` | 按服务模式计算的组织配额或端点/IP限制已达到；上游也可能返回限制。请等待并降低并发量。 |
+| 429 | `MODEL_AT_CAPACITY` | 提供商处的模型容量已满。请等待重试建议。 |
+| 429 | `MODEL_COOLDOWN` | 部署模型正在从故障中恢复。请等待重试提示。 |
+| 500 | `INTERNAL` | 内部错误。请保留请求信息，若问题反复出现请上报。 |
+| 503 | `MODEL_UNAVAILABLE` | 该模型不可用或已弃用。请检查目录和替代模型；如果故障确实是暂时的，请重试。 |
+| 503 | `PROVIDER_UNAVAILABLE` | 提供商路径不可用。请稍后重试。 |
+| 503 | `UPSTREAM_ERROR` | 上游故障。请稍作等待后重试。 |
+| 503 | `UPSTREAM_TIMEOUT` | 上游超时。请稍作等待后重试。 |
+| 503 | `UPSTREAM_UNREACHABLE` | 无法连接上游。请稍后重试。 |
 
-### Console和结账
+<a id="console-dan-checkout"></a>
 
-以下代码用于账户／结账，与 `/v1/*` 推理错误契约分开：
+<a id="console和结账"></a>
 
-| HTTP | 代码 | 含义与处理 |
+### Console 和 checkout
+
+以下代码与账户/结账相关，而非 `/v1/*` 的错误推断合同：
+
+| HTTP | 代码 | 含义与操作 |
 |---|---|---|
-| 403 | `API_KEY_NOT_ALLOWED` | 在Console账户端点使用了API密钥。请使用Console登录会话。 |
-| 409 | `CONFLICT` | 操作与当前状态冲突。请重新获取状态后再试。 |
-| 424 | `CHECKOUT_FAILED` | 支付提供商未能创建账单。请阅读消息并检查交易后再创建。 |
-| 424 | `BANK_BUSY` | iPaymu银行／通道繁忙。请选择结账页面提供的其他银行。 |
+| 403 | `API_KEY_NOT_ALLOWED` | API密钥用于Console账户的端点。请使用Console的登录会话。 |
+| 409 | `CONFLICT` | 该操作与当前状态冲突。请在重试前重新加载状态。 |
+| 424 | `CHECKOUT_FAILED` | 提供商无法生成账单。请阅读错误信息并检查交易记录，然后再尝试重试。 |
+| 424 | `BANK_BUSY` | 您的 iPaymu 银行/渠道目前繁忙。请选择结账页面提供的其他银行。 |
 
-## 重试与流式传输
+<a id="retry-dan-streaming"></a>
 
-`Retry-After` 表示等待秒数，`retry-after-ms` 表示毫秒。没有响应头时，请采用带抖动的指数退避，并限制尝试次数。同一组织内增加密钥或成员账户不会增加共享配额；请参阅[用量与限制](/zh/usage-and-limits)。
+<a id="重试与流式传输"></a>
 
-SSE开始后，故障以流内错误事件发送；初始HTTP状态不会改变。Chat Completions示例：
+## 重试和流式传输
+
+如果存在，`Retry-After` 表示以秒为单位的等待时间，`retry-after-ms` 表示以毫秒为单位的等待时间。如果不存在，请使用带抖动和尝试次数限制的指数退避算法。 对于共享配额，在同一组织中添加密钥或成员账户不会增加配额；请参阅 [使用情况与限制](/zh/usage-and-limits)。
+
+SSE 启动后，失败情况将作为错误事件发送到流中；初始 HTTP 状态保持不变。聊天补全示例：
 
 ```text
 data: {"error":{"code":"MODEL_AT_CAPACITY","message":"The model is at capacity right now. Please retry shortly.","type":"upstream_error","retry_after_ms":4000}}
 ```
 
-网关处理流式故障后不会添加 `[DONE]`。连接也可能在没有错误事件的情况下断开。`[DONE]` 或连接结束本身不能证明成功；请检查错误事件及请求日志。各事件格式请参阅 [Messages](/zh/anthropic-messages) 和 [Responses](/zh/responses)。
+网关在处理流失败后不会添加 `[DONE]`。连接也可能在没有错误事件的情况下断开。 仅凭 `[DONE]` 标记或连接结束并不能证明操作成功；请检查错误事件和请求日志。事件 Messages/Responses 的格式在 [Messages](/zh/anthropic-messages) 和 [Responses](/zh/responses) 中有详细说明。
 
-报告时请附上可用的 `x-request-id`、时间、端点、模型、HTTP状态以及去除密钥的错误正文。请参阅[支持](/zh/support)。
+提交报告时，如有，请包含 `x-request-id`、事件发生时间、端点、模型、HTTP 状态码以及不含密钥的错误正文。请参阅 [支持](/zh/support)。

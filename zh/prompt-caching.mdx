@@ -1,26 +1,36 @@
 ---
-title: Prompt Caching
-description: 标记重复提示词、理解缓存Token，并在Console查看费用。
+title: "提示缓存"
+description: "标记重复提示、理解令牌缓存，并在 Console 中查看费用。"
 icon: database
 ---
 
-Prompt caching可以降低重复prefix的处理成本。支持情况、最低Token数、有效期和价格取决于模型及提供商。再次发送相同提示词不保证缓存命中。
+提示缓存可减少重复前缀的处理成本。支持、令牌阈值、有效期和缓存速率因模型和提供商而异。仅因重新发送提示，并不保证能命中缓存。
 
-## 价格与用量
+<a id="harga-dan-penggunaan"></a>
 
-使用准备调用的API密钥，查看 [`GET /v1/models`](/zh/models) 中的 `pricing.cache_read` 和 `pricing.cache_write`。价格遵循密钥的Service Mode，单位为每100万Token；未提供的价格可能省略。缓存写入可能比普通输入更贵，节省金额取决于Token数和后续命中。
+<a id="价格与用量"></a>
 
-Console的 **Logs** 显示Input、Output、Cache Read、Cache Write及最终费用。Cache Write 5m/1h明细仅在上游报告时填写；`-` 表示没有明细，而不是零。部分历史费用明细按当前价格计算，但历史总额仍保留。请参阅 [Billing](/zh/billing)。
+## 价格和使用情况
 
-## 提示词顺序
+使用将要使用的 API 密钥，在 [`GET /v1/models`](/zh/models) 上检查 `pricing.cache_read` 和 `pricing.cache_write`。价格遵循服务模式密钥，按 1M 令牌计算；未提供的费率可不列出。 缓存写入可能比普通输入更昂贵，因此节省的成本取决于令牌数量和后续的缓存命中情况。
 
-先放静态内容：工具定义、system prompt／文档、旧消息。最新用户消息和变化的值放在后面。时间戳或工具顺序等prefix变化可能导致未命中。
+Console **日志** 显示输入、输出、缓存读取、缓存写入和最终费用。5 分钟/1 小时的缓存写入详细信息仅在上游报告时才会显示；`-` 表示详细信息不可用，而非零值。 在历史记录中，部分费用明细采用当前费率计算；历史总费用仍予以保留。请参阅 [计费](/zh/billing)。
 
-在支持的Claude路由上，为静态块添加 `cache_control`。标记不会强制命中：内容仍须满足模型和上游要求。
+<a id="menyusun-prompt"></a>
 
-## Anthropic Messages
+<a id="提示词顺序"></a>
 
-在 `system` 块中添加 `cache_control` 的示例：
+## 编写提示词
+
+先放置静态内容：工具定义、系统提示/文档，然后是旧消息。最新的用户消息和发生变化的值放在后面。前缀的变化（包括时间戳或工具顺序）可能会导致缓存未命中。
+
+对于支持该功能的 Claude 版本，请在静态块中添加 `cache_control`。该标记不会强制缓存命中：静态块仍需符合模型和上游的规范。
+
+<a id="anthropic-messages"></a>
+
+## Anthropic 消息
+
+以下示例在 `system` 代码块中使用了 `cache_control`：
 
 ```bash
 curl https://api.hostlinku.com/v1/messages \
@@ -32,10 +42,10 @@ curl https://api.hostlinku.com/v1/messages \
     "max_tokens": 1024,
     "system": [{
       "type": "text",
-      "text": "<保持不变的长指令及参考文档>",
+      "text": "<instruksi panjang dan dokumen referensi yang tidak berubah>",
       "cache_control": {"type": "ephemeral"}
     }],
-    "messages": [{"role": "user", "content": "总结第3节。"}]
+    "messages": [{"role": "user", "content": "Ringkas bagian 3."}]
   }'
 ```
 
@@ -52,11 +62,13 @@ curl https://api.hostlinku.com/v1/messages \
 }
 ```
 
-`cache_creation_input_tokens` 统计写入，`cache_read_input_tokens` 统计读取。读取值大于零表示上游报告了缓存使用。请求不满足条件或没有缓存信息时，两者可能为零。
+`cache_creation_input_tokens` 统计缓存写入；`cache_read_input_tokens` 统计缓存读取。大于零的读取值表示上游报告的缓存使用情况。如果请求不符合缓存条件或缓存信息不可用，这两个值均可为零。
 
-## OpenAI Chat Completions
+<a id="openai-chat-completions"></a>
 
-对Claude模型，bridge会把content part中的 `cache_control` 转发至Anthropic内容块：
+## OpenAI 聊天补全
+
+对于 Claude 模型，桥接器会将内容部分中的 `cache_control` 传递给 Anthropic 模块：
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -67,26 +79,34 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [
       {"role": "system", "content": [{
         "type": "text",
-        "text": "<保持不变的长指令及参考文档>",
+        "text": "<instruksi panjang dan dokumen referensi yang tidak berubah>",
         "cache_control": {"type": "ephemeral"}
       }]},
-      {"role": "user", "content": "总结第3节。"}
+      {"role": "user", "content": "Ringkas bagian 3."}
     ]
   }'
 ```
 
-Chat Completions的 `usage.prompt_tokens` 已包含缓存Token。`usage.prompt_tokens_details.cached_tokens` 统计读取；有数据时，`cache_write_tokens` 统计写入。不要再将缓存Token加入 `prompt_tokens`。
+在“Chat Completions”格式中，`usage.prompt_tokens` 已包含缓存令牌。`usage.prompt_tokens_details.cached_tokens` 统计缓存读取量，`cache_write_tokens` 统计缓存写入量（如有）。请勿将缓存令牌再次计入 `prompt_tokens`。
 
-## Agent及其他协议
+<a id="agent-dan-protokol-lain"></a>
 
-已设置 `cache_control` 的应用可在指向Hostlinku后使用，但行为取决于应用版本和模型。请参阅 [IDE与Agent集成](/zh/integrations)。其他模型可能无需此标记就使用上游自动缓存，但命中和报告方式因模型而异。
+<a id="agent及其他协议"></a>
 
-`/v1/responses` 的Chat Completions bridge目前不提供显式 `cache_control` 标记。native／上游路由的自动缓存及所报告的Token仍取决于模型。要使用上述Claude标记，请选择 `/v1/messages` 或 `/v1/chat/completions`。
+## 代理和其他协议
 
-## 检查命中
+已安装 `cache_control` 的应用程序在被重定向到 Hostlinku 时可以使用它；具体行为取决于应用程序版本和模型。请参阅 [IDE 与代理集成](/integrations)。其他模型可以在没有该标记的情况下使用上游自动缓存，但各模型的命中率和报告方式各不相同。
 
-1. 发送满足模型要求的提示词，然后查看 **Logs** 的Cache Write/Read。
-2. 在上游缓存有效期内再次发送相同prefix，并检查Cache Read。
-3. 比较相同模型、Service Mode及输出长度的请求。输出Token也会影响费用差异。
+`/v1/responses` 在 Chat Completions 桥接中尚未提供显式的 `cache_control` 标记。自动缓存以及由原生/上游报告的缓存令牌仍遵循该模型。对于上例中的 Claude 标记，请使用 `/v1/messages` 或 `/v1/chat/completions`。
 
-Cache Read仍为零时，请检查prefix、内容块大小、模型支持和有效期。用量信息与预期不符时，请参阅[支持](/zh/support)。
+<a id="memeriksa-cache-hit"></a>
+
+<a id="检查命中"></a>
+
+## 检查缓存命中
+
+1. 发送符合模型要求的提示，然后在**日志**中检查写入/读取缓存。
+2. 在上游缓存期间发送相同的前缀，并检查“缓存读取”字段是否已填充。
+3. 将“request”与模型、服务模式以及相同的输出长度进行对比。成本差异也受输出令牌的影响，而不仅仅是缓存。
+
+如果“Cache Read”仍为零，请检查前缀、块大小、模型支持情况和缓存生命周期。如果使用信息不符，请参阅[帮助](/zh/support)。

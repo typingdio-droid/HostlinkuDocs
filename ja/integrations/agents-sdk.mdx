@@ -1,21 +1,25 @@
 ---
-title: "OpenAI エージェント SDK"
-description: "Hostlinku の OpenAI Agents SDK 例：client、tracing、function tools、ローカル履歴。"
+title: "OpenAI Agents SDK"
+description: "Hostlinkuを使用したOpenAI Agents SDKの例：client、tracing、function tools、およびローカル履歴。"
 icon: workflow
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) は、デフォルトで [`POST /v1/responses`](/ja/responses) の Hostlinku によって提供される **Responses API** を使用します。 OpenAIクライアントに`base_url` Hostlinkuを指定し、トレースを無効にしてください（トレースはゲートウェイを経由せず、OpenAIプラットフォームにエクスポートされます）。
+[OpenAI Agents SDK](https://openai.github.io/openai-agents-python/)はデフォルトで
+**Responses API**を使用しており、これはHostlinkuが[`POST /v1/responses`](/ja/responses)で提供しています。
+OpenAIクライアントにHostlinkuの`base_url`を指定し、トレース機能を無効にしてください（トレースは
+ゲートウェイを経由せず、OpenAIプラットフォームにエクスポートされます）。
 
-<Callout type="note" title="モデルとツールの互換性">
-  API キーの Service Mode で利用可能なモデルを選択してください。vision、JSON schema、reasoning、tool calling はモデルと経路に依存します。[互換性の制限](/ja/responses)を参照してください。
+<Callout type="note" title="モデルおよびツールの互換性">
+  Service Mode APIキーで利用可能なモデルを選択してください。Vision、JSONスキーマ、推論、およびツール呼び出しのサポートは、モデルおよびそのプロトコルパスに従います。[互換性の制限](/ja/responses)を参照してください。
 </Callout>
 
 <Steps>
 
 
+
+<a id="instal"></a>
 
 ### インストール
 
@@ -86,21 +90,30 @@ const result = await run(agent, "Bagaimana cuaca di Jakarta hari ini?");
 console.log(result.finalOutput);
 ```
 
-### 確認
+<a id="verifikasi"></a>
 
-モデルがツールを呼ぶ場合、この例は通常ツール呼び出しと回答の 2 件を**リクエストログ**に記録します。
+<a id="確認"></a>
+
+### 検証
+
+モデルがツールを呼び出す場合、この例では通常、**リクエストログ**に2つのリクエストが記録されます：ツール呼び出しのリクエストと、その応答です。
 
 </Steps>
 
+<a id="cara-kerja-agent-loop"></a>
+
 ## エージェントループの仕組み
 
-agent は gateway に prompt を送ります。モデルがツールを要求すると SDK が実行し、結果を送り返して回答まで続けます。各モデル呼び出しは**リクエストログ**で個別の request になります。
+エージェントはゲートウェイにプロンプトを送信します。モデルがツールを要求した場合、SDKはそれを実行し、回答が完了するまで結果を返します。各モデル呼び出しには、**リクエストログ**に個別のリクエストが記録されます。
 
-![エージェントループの図：Hostlinku：IDE／コーディングエージェント、Hostlinku：ゲートウェイ、アップストリームモデル、Hostlinku：コンソール、およびローカルワークスペース](/images/integrations/agent-loop-detailed.webp "Hostlinku 経由のエージェントループ：エージェントがゲートウェイにプロンプトを送信し、ゲートウェイがそれをアップストリームモデルにルーティングし、ツールがローカルで実行され、各リクエストがコンソールに記録される。")
+![Hostlinkuのエージェントループ図：IDE/コーディングエージェント、Hostlinku Gateway、アップストリームモデル、Hostlinku Console、およびローカルワークスペース](/images/integrations/agent-loop-detailed.webp "Hostlinkuを経由するエージェントループ：エージェントがゲートウェイにプロンプトを送信し、ゲートウェイがアップストリームモデルへルーティングし、ツールがローカルで実行され、各リクエストがコンソールに記録される。")
+
+<a id="tanpa-mengubah-kode-environment-variable"></a>
 
 ## コードを変更せずに：環境変数
 
-SDK OpenAI は `OPENAI_BASE_URL` および `OPENAI_API_KEY` を読み取るため、コードを変更することなく Agents SDK を Hostlinku にリダイレクトできます。環境変数でトレースを無効にするだけで済みます：
+OpenAI SDKは`OPENAI_BASE_URL`と`OPENAI_API_KEY`を読み取るため、コードを変更することなくAgents SDKを
+Hostlinkuにリダイレクトできます。また、env経由でトレースを無効にするだけで済みます：
 
 ```bash
 export OPENAI_BASE_URL=https://api.hostlinku.com/v1
@@ -109,9 +122,13 @@ export OPENAI_AGENTS_DISABLE_TRACING=1
 python agent.py
 ```
 
-## Responses API か、それとも Chat Completions か？
+<a id="responses-api-atau-chat-completions"></a>
 
-SDK のデフォルトは Responses API (`/v1/responses`) です。reasoning とツールの対応はモデルと native/bridge 経路に依存します。Chat Completions (`/v1/chat/completions`) を使用する場合：
+<a id="responses-api-かそれとも-chat-completions-か"></a>
+
+## 「Responses API」か「Chat Completions」か？
+
+デフォルトのSDKはResponses API (`/v1/responses`) を使用します。推論およびツールのサポートは、モデルおよびネイティブ/ブリッジのパスに従います。Chat Completions (`/v1/chat/completions`) を使用するには：
 
 ```python
 from agents import set_default_openai_api
@@ -123,26 +140,36 @@ import { setOpenAIAPI } from "@openai/agents";
 setOpenAIAPI("chat_completions");
 ```
 
-両者とも、同じAPIキー、残高、およびリクエストログを使用しています。
+両者とも、同じAPIキー、残高、およびリクエストログを使用します。
 
 <Callout type="important" title="Stateless：previous_response_id / conversation を使用しないでください">
-Hostlinkuはレスポンスを保存しません。履歴の管理は`Runner`/`run`に任せてください（デフォルトのSDKでは、各ターンごとに`input`に履歴全体を送信します）。 `previous_response_id`、`conversation_id`、または`OpenAIConversationsSession`を設定しないでください。ゲートウェイはこれらを`400 invalid_request_error`で拒否します。`SQLiteSession`のようなローカルセッションは、履歴がユーザー側で保存されるため、引き続き使用可能です。
+  Hostlinkuはレスポンスを保存しません。履歴の管理は`Runner`/`run`に任せてください（デフォルトのSDKは
+  各ターンで`input`に履歴全体を送信します）。`previous_response_id`、
+  `conversation_id`、または`OpenAIConversationsSession`を設定しないでください。ゲートウェイはこれらを
+  `400 invalid_request_error`で拒否します。`SQLiteSession`のようなローカルセッションは、
+  履歴がユーザー側で保存されるため、引き続き使用可能です。
 </Callout>
+
+<a id="yang-didukung-lewat-gateway"></a>
 
 ## ゲートウェイ経由でサポートされるもの
 
 | Agents SDKの機能 | ステータス |
 |---|---|
-| `function_tool` / `tool()`、並列ツール呼び出し | function calling 対応モデルで利用可能。並列呼び出しはモデルに依存します。 |
-| エージェント間のハンドオフ（エージェントごとに異なるモデルを含む） | はい-`claude-sonnet-4-6`と`gpt-5-5`を1つのフローで組み合わせてください |
-| 構造化出力 (`output_type` / Zod) | はい、JSONスキーマに対応しているモデルでは |
-| ストリーミング (`Runner.run_streamed`、`run(..., { stream: true })`) | はい |
-| `reasoning={"effort": …}` 経由 `ModelSettings` | 受理されます。値と結果はモデル・プロトコル経路に依存します。 |
-| ホスト型ツール OpenAI (`WebSearchTool`、`FileSearchTool`、`CodeInterpreterTool`) | upstream の Responses ネイティブ対応に依存します。chat ブリッジは `type: "function"` のみ変換します。利用できない hosted tool は自作 function tool で代替してください。 |
-| OpenAIプラットフォームへのトレース | ゲートウェイを経由しない - 無効にするか、サードパーティ製のトレースプロセッサを使用する |
+| `function_tool` / `tool()`、並列ツール呼び出し | モデルが関数呼び出しをサポートしている場合に利用可能。並列ツール呼び出しはモデルに従う。 |
+| エージェント間のハンドオフ（エージェントごとに異なるモデルを含む） | はい - `claude-sonnet-4-6` と `gpt-5-5` を1つのワークフローで組み合わせてください |
+| 構造化出力（`output_type` / Zod） | JSONスキーマをサポートするモデルについては「はい」 |
+| ストリーミング (`Runner.run_streamed`, `run(..., { stream: true })`) | はい |
+| `reasoning={"effort": …}` via `ModelSettings` | 承認済み。値と結果は、モデルおよびプロトコルパスに従います。 |
+| OpenAIのホスト型ツール（`WebSearchTool`、`FileSearchTool`、`CodeInterpreterTool`） | ネイティブのアップストリームレスポンスに依存します。ブリッジチャットでは、ツール `type: "function"` のみを翻訳します。ホスト型ツールが利用できない場合は、独自の関数ツールを使用してください。 |
+| OpenAIプラットフォームへのトレーシング | ゲートウェイを経由しない - 無効にするか、サードパーティのトレースプロセッサを使用してください |
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-- **エラーログ *tracing export 401* が満杯です*** - トレースがまだ無効化されていません。`set_tracing_disabled(True)` / `setTracingDisabled(true)` を呼び出すか、`OPENAI_AGENTS_DISABLE_TRACING=1` を設定してください。
-- **`400 previous_response_id はサポートされていません`** - `previous_response_id` / `conversation_id` の使用を削除してください。上記の注記を参照してください。
-- **`404 model_not_found`** - `model=`のslugはHostlinkuとするべきであり、元のモデル名であるOpenAI/Anthropicではない。
+- **エラーの完全なログ *tracing export 401*** - トレースがまだ無効化されていません。
+  `set_tracing_disabled(True)` / `setTracingDisabled(true)` を呼び出すか、`OPENAI_AGENTS_DISABLE_TRACING=1` を設定してください。
+- **`400 previous_response_id tidak didukung`** - `previous_response_id` /
+  `conversation_id` の使用を削除してください。上記の注釈を参照してください。
+- **`404 model_not_found`** - `model=` には、OpenAI/Anthropicの元のモデル名ではなく、Hostlinkuのスラグを指定する必要があります。

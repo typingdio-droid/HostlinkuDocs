@@ -1,42 +1,41 @@
 ---
 title: "常见错误"
-description: "最常见的Hostlinku错误代码的原因及解决方法。"
+description: "Hostlinku最常见的错误代码及其原因与解决方案。"
 icon: circle-alert
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-以下代码使用Chat Completions格式。Messages和Responses有各自的错误格式；完整参考见[错误](/zh/errors)。
+以下代码采用“聊天补全”格式。消息（Messages）和响应（Responses）有各自的错误格式；请参阅 [错误](/zh/errors) 以获取完整参考。
 
 ## 401 UNAUTHORIZED
 
-在Console → **API Keys**检查密钥值和状态。网关端点接受`Authorization: Bearer sk-...`或`x-api-key`。不要用无效、停用或过期的密钥重试。
+请在 Console → **API Keys** 中检查密钥的值和状态。网关端点接受 `Authorization: Bearer sk-...` 或 `x-api-key`。如果密钥错误、已停用或已过期，请勿使用相同的密钥重复发送请求。
 
 ## 402 PAYMENT_REQUIRED
 
-阅读错误消息：组织可用余额不足时充值；达到密钥额度时调整额度或等待重置。充值不会提高密钥额度。见[计费与余额](/zh/billing)。
+阅读错误信息：若余额不足，请为组织充值；若已达到限额，请调整密钥信用额度或等待重置。充值不会提高密钥限额。请参阅 [计费与余额](/zh/billing)。
 
 ## 404 MODEL_NOT_FOUND
 
-该模型的slug在目录中不存在。请直接从`GET /v1/models`或[模型](/zh/models)页面获取确切的slug。请勿根据显示名称猜测slug。
+模型的 slug 在目录中不存在。请直接从 `GET /v1/models` 或 [模型](/zh/models) 页面获取确切的 slug。请勿根据显示名称猜测 slug。
 
 ## 400 MODEL_NOT_IN_SERVICE_MODE
 
-虽然存在该模型，但不适用于当前使用的 Service Mode API key。例如：key“Low-Cost”调用了仅包含“Performance”路由的模型。请创建具有相应模式的 key，或选择其他模型。
+该模型虽然存在，但不适用于所使用的服务模式 API 密钥。示例：Low-Cost 密钥调用了仅具有 Performance 路由的模型。请创建具有相应模式的密钥，或选择其他模型。
 
 ## 422 VALIDATION_FAILED
 
-修正`details.issues`指出的字段，例如空`messages`或错误类型。Chat Completions验证失败返回422，Messages和Responses返回400。见[请求示例](/zh/chat-completions)。
+修正 `details.issues` 中提到的字段，例如 `messages` 为空或字段类型错误。状态码 422 适用于 Chat Completions 的验证；Messages 和 Responses 使用 400。请参阅 [请求示例](/zh/chat-completions)。
 
 ## 429 RATE_LIMITED
 
-每个Service Mode的配额由组织共享。遵循`Retry-After`等待，采用退避并减少突发请求。被限流器拒绝的请求不会扣除余额。见[用量与限额](/zh/usage-and-limits)。
+服务模式的配额在组织内共享。请根据 `Retry-After` 进行等待，使用退避策略，并减少突发流量。被限流器拒绝的请求不会扣除配额余额。详情请参阅 [使用与限制](/zh/usage-and-limits)。
 
 ## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
 
-该模型已弃用/不可用，或者上游服务暂时出现故障。对于 `UPSTREAM_ERROR`，请稍后再试。对于 `MODEL_UNAVAILABLE`，请检查错误信息中是否包含 `replacement_slug`。
+模型正在被弃用/不可用，或者上游服务暂时出现故障。对于 `UPSTREAM_ERROR`，请稍后重试。对于 `MODEL_UNAVAILABLE`，请检查错误信息中是否包含 `replacement_slug`。
 
-<Callout type="note" title="调试技巧">
-请保存响应头中的 `x-request-id`。联系支持团队时，可使用该 ID 将请求与控制台日志进行匹配。
+<Callout type="note" title="调试提示">
+  保留响应头中的 `x-request-id`。联系支持团队时，该 ID 可用于将请求与 Console 中的日志进行匹配。
 </Callout>

@@ -281,7 +281,7 @@
             "group": "Model & Fitur",
             "pages": [
               "models",
-              "dedicated",
+              "service-modes",
               "prompt-caching"
             ]
           },
@@ -340,6 +340,7 @@
             "hidden": true,
             "searchable": true,
             "pages": [
+              "dedicated",
               "models/claude-fable-5",
               "models/claude-haiku-4-5",
               "models/claude-haiku-5-5",
@@ -402,7 +403,7 @@
                   "href": "https://console.hostlinku.com"
                 },
                 {
-                  "label": "Pricing",
+                  "label": "Price",
                   "href": "https://hostlinku.com/pricing"
                 }
               ]
@@ -411,7 +412,7 @@
               "header": "DOCUMENTATION",
               "items": [
                 {
-                  "label": "Quickstart",
+                  "label": "Getting Started",
                   "href": "/en/getting-started"
                 },
                 {
@@ -423,7 +424,7 @@
                   "href": "/en/chat-completions"
                 },
                 {
-                  "label": "Models",
+                  "label": "Model",
                   "href": "/en/models"
                 }
               ]
@@ -453,7 +454,7 @@
               "header": "LEGAL",
               "items": [
                 {
-                  "label": "Terms of Service",
+                  "label": "Terms & Conditions",
                   "href": "/en/legals/terms-of-service"
                 },
                 {
@@ -461,11 +462,11 @@
                   "href": "/en/legals/privacy-policy"
                 },
                 {
-                  "label": "Refund Policy",
+                  "label": "Refunds",
                   "href": "/en/legals/refund-policy"
                 },
                 {
-                  "label": "Acceptable Use",
+                  "label": "Terms of Use",
                   "href": "/en/legals/acceptable-use-policy"
                 },
                 {
@@ -495,13 +496,13 @@
         },
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Start",
             "pages": [
               "en/index",
               "en/getting-started",
               "en/authentication",
               {
-                "group": "IDE & Agent Integrations",
+                "group": "IDE & Agent Integration",
                 "expanded": false,
                 "pages": [
                   "en/integrations/index",
@@ -532,7 +533,7 @@
             "group": "Models & Features",
             "pages": [
               "en/models",
-              "en/dedicated",
+              "en/service-modes",
               "en/prompt-caching"
             ]
           },
@@ -587,10 +588,11 @@
             ]
           },
           {
-            "group": "Model reference",
+            "group": "Model references",
             "hidden": true,
             "searchable": true,
             "pages": [
+              "en/dedicated",
               "en/models/claude-fable-5",
               "en/models/claude-haiku-4-5",
               "en/models/claude-haiku-5-5",
@@ -649,11 +651,11 @@
                   "href": "https://hostlinku.com"
                 },
                 {
-                  "label": "コンソール",
+                  "label": "Console",
                   "href": "https://console.hostlinku.com"
                 },
                 {
-                  "label": "料金",
+                  "label": "価格",
                   "href": "https://hostlinku.com/pricing"
                 }
               ]
@@ -662,7 +664,7 @@
               "header": "ドキュメント",
               "items": [
                 {
-                  "label": "クイックスタート",
+                  "label": "はじめに",
                   "href": "/ja/getting-started"
                 },
                 {
@@ -670,7 +672,7 @@
                   "href": "/ja/authentication"
                 },
                 {
-                  "label": "チャット補完",
+                  "label": "Chat Completions",
                   "href": "/ja/chat-completions"
                 },
                 {
@@ -701,7 +703,7 @@
               ]
             },
             {
-              "header": "法的情報",
+              "header": "LEGAL",
               "items": [
                 {
                   "label": "利用規約",
@@ -712,11 +714,11 @@
                   "href": "/ja/legals/privacy-policy"
                 },
                 {
-                  "label": "返金ポリシー",
+                  "label": "返金",
                   "href": "/ja/legals/refund-policy"
                 },
                 {
-                  "label": "利用ポリシー",
+                  "label": "利用規約",
                   "href": "/ja/legals/acceptable-use-policy"
                 },
                 {
@@ -740,19 +742,19 @@
           ],
           "primary": {
             "type": "button",
-            "label": "コンソール",
+            "label": "Console",
             "href": "https://console.hostlinku.com"
           }
         },
         "groups": [
           {
-            "group": "始める",
+            "group": "開始",
             "pages": [
               "ja/index",
               "ja/getting-started",
               "ja/authentication",
               {
-                "group": "IDE・エージェント連携",
+                "group": "IDEおよびエージェントの統合",
                 "expanded": false,
                 "pages": [
                   "ja/integrations/index",
@@ -783,7 +785,7 @@
             "group": "モデルと機能",
             "pages": [
               "ja/models",
-              "ja/dedicated",
+              "ja/service-modes",
               "ja/prompt-caching"
             ]
           },
@@ -824,7 +826,7 @@
               },
               "ja/support",
               {
-                "group": "法的情報",
+                "group": "法的事項",
                 "expanded": false,
                 "pages": [
                   "ja/legals/terms-of-service",
@@ -842,6 +844,7 @@
             "hidden": true,
             "searchable": true,
             "pages": [
+              "ja/dedicated",
               "ja/models/claude-fable-5",
               "ja/models/claude-haiku-4-5",
               "ja/models/claude-haiku-5-5",
@@ -900,7 +903,7 @@
                   "href": "https://hostlinku.com"
                 },
                 {
-                  "label": "控制台",
+                  "label": "Console",
                   "href": "https://console.hostlinku.com"
                 },
                 {
@@ -913,15 +916,15 @@
               "header": "文档",
               "items": [
                 {
-                  "label": "快速开始",
+                  "label": "入门",
                   "href": "/zh/getting-started"
                 },
                 {
-                  "label": "认证",
+                  "label": "身份验证",
                   "href": "/zh/authentication"
                 },
                 {
-                  "label": "聊天补全",
+                  "label": "Chat Completions",
                   "href": "/zh/chat-completions"
                 },
                 {
@@ -934,7 +937,7 @@
               "header": "帮助",
               "items": [
                 {
-                  "label": "常见问题",
+                  "label": "常见问题解答",
                   "href": "/zh/faqs"
                 },
                 {
@@ -952,10 +955,10 @@
               ]
             },
             {
-              "header": "法律",
+              "header": "法律条款",
               "items": [
                 {
-                  "label": "服务条款",
+                  "label": "条款与条件",
                   "href": "/zh/legals/terms-of-service"
                 },
                 {
@@ -963,15 +966,15 @@
                   "href": "/zh/legals/privacy-policy"
                 },
                 {
-                  "label": "退款政策",
+                  "label": "退款",
                   "href": "/zh/legals/refund-policy"
                 },
                 {
-                  "label": "可接受使用政策",
+                  "label": "使用政策",
                   "href": "/zh/legals/acceptable-use-policy"
                 },
                 {
-                  "label": "安全",
+                  "label": "安全性",
                   "href": "/zh/legals/security"
                 }
               ]
@@ -991,19 +994,19 @@
           ],
           "primary": {
             "type": "button",
-            "label": "控制台",
+            "label": "Console",
             "href": "https://console.hostlinku.com"
           }
         },
         "groups": [
           {
-            "group": "入门",
+            "group": "开始",
             "pages": [
               "zh/index",
               "zh/getting-started",
               "zh/authentication",
               {
-                "group": "IDE与Agent集成",
+                "group": "IDE 与代理的集成",
                 "expanded": false,
                 "pages": [
                   "zh/integrations/index",
@@ -1034,7 +1037,7 @@
             "group": "模型与功能",
             "pages": [
               "zh/models",
-              "zh/dedicated",
+              "zh/service-modes",
               "zh/prompt-caching"
             ]
           },
@@ -1060,7 +1063,7 @@
             "group": "帮助",
             "pages": [
               {
-                "group": "FAQ",
+                "group": "常见问题解答",
                 "expanded": false,
                 "pages": [
                   "zh/faqs/index",
@@ -1093,6 +1096,7 @@
             "hidden": true,
             "searchable": true,
             "pages": [
+              "zh/dedicated",
               "zh/models/claude-fable-5",
               "zh/models/claude-haiku-4-5",
               "zh/models/claude-haiku-5-5",

@@ -1,13 +1,14 @@
 ---
 title: "Chat Completions"
-description: "エンドポイント POST /v1/chat/completions のリファレンス。パラメータ、SSE ストリーミング、および curl と Python のサンプルを含みます。"
+description: "エンドポイントの参照：POST /v1/chat/completions。これには、パラメータ、SSEストリーミング、およびcurl + Pythonの例が含まれます。"
 icon: messages-square
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinkuのメインエンドポイント。 リクエストおよびレスポンスのフォーマットは[OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat)と互換性があるため、`base_url`を`https://api.hostlinku.com/v1`に置き換えるだけで、公式のOpenAI SDKを使用することができます。
+Hostlinkuの主要なエンドポイント。リクエストおよびレスポンスのフォーマットは
+[OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat)と互換性があるため、
+公式のOpenAI SDKを、`base_url`を`https://api.hostlinku.com/v1`に置き換えるだけで使用できます。
 
 ```http
 POST https://api.hostlinku.com/v1/chat/completions
@@ -15,34 +16,40 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-すべてのレスポンスには、ヘッダー `x-request-id`（リクエスト ID Hostlinku）が含まれており、非ストリーミングの成功レスポンスには、ヘッダー `x-model`（リクエストを処理したモデルのパブリックslug）も含まれます。
+成功レスポンスには `x-request-id` が含まれます。非ストリーミングの成功レスポンスには、`x-model`（モデルのパブリックスラグ）も含まれます。
 
-API キーの Service Mode で利用可能なモデルを選択してください。vision、JSON schema、reasoning、tool calling はモデルと経路に依存します。[互換性の制限](/ja/responses)を参照してください。
+Service Mode APIキーで利用可能なモデルを選択してください。Vision、JSONスキーマ、推論、およびツール呼び出しのサポートは、モデルおよびそのプロトコルパスに従います。[互換性の制限](/ja/responses)を参照してください。
 
-## bodyパラメータ
+<a id="parameter-body"></a>
 
-| パラメータ | タイプ | デフォルト | 説明 |
+<a id="bodyパラメータ"></a>
+
+## ボディパラメータ
+
+| パラメータ | タイプ | デフォルト | 備考 |
 |---|---|---|---|
-| `model` | `string` | ない | **必須。** slugモデル（例：`gpt-5-5`）。[モデル](/ja/models)を参照してください。 |
-| `messages` | `array` | ない | **必須。** 最低1件の注文が必要です。各項目：`{ role, content, name? }`および`role`に加え、`system`、`developer`、`user`、`assistant`、`tool`のいずれか1つ。 |
-| `temperature` | `number` | プロバイダーのデフォルト設定 | 範囲：`0`～`2`。数値が高いほどランダム性が高くなる。 |
-| `top_p` | `number` | プロバイダーのデフォルト設定 | 範囲 `0`–`1`。`temperature` からの _nucleus sampling_ の代替案。 |
-| `n` | `integer` | `1` | 回答選択肢の数、`1`～`8`。 |
-| `stream` | `boolean` | `false` | `true`：SSEストリーミング応答用（下記参照）。 |
-| `stop` | `string` \| `string[]` | ない | 生成を停止させる1つまたは複数のテキストシーケンス。 |
-| `max_tokens` | `integer` | モデルの仕様 | 出力トークンの上限（正）。 |
-| `max_completion_tokens` | `integer` | ない | `max_tokens`の現代的な代替案（一部のプロバイダーで使用されている）。 |
-| `presence_penalty` | `number` | `0` | 範囲：`-2`～`2`。 |
-| `frequency_penalty` | `number` | `0` | 範囲 `-2`～`2`。 |
-| `user` | `string` | ない | 不正利用の追跡のためのエンドユーザー識別子。 |
-| `tools` | `array` | ない | ツール／関数呼び出しの定義（形式 OpenAI）。 |
-| `tool_choice` | `any` | ない | ツールの選択制御（`"auto"`、`"none"`、`{...}`）。 |
-| `response_format` | `any` | ない | 例：`{ "type": "json_object" }`（JSON出力用、モデルの対応状況による）。 |
-| `seed` | `integer` | ない | シード決定論（ベストエフォート、プロバイダによる）。 |
+| `model` | `string` | なし | **必須。** モデルのスラグ（例：`gpt-5-5`）。[モデル](/ja/models)を参照してください。 |
+| `messages` | `array` | なし | **必須。** 最低1件のメッセージ。各項目：`{ role, content, name? }` であり、`role` は `system`、`developer`、`user`、`assistant`、`tool` のいずれかです。 |
+| `temperature` | `number` | プロバイダー固有 | 範囲は `0`–`2`。数値が大きいほどランダム性が高くなります。 |
+| `top_p` | `number` | プロバイダー固有 | 範囲は `0`–`1` です。`temperature` の代替として _nucleus sampling_ があります。 |
+| `n` | `integer` | `1` | 回答選択肢の数：`1`～`8`。 |
+| `stream` | `boolean` | `false` | SSEストリーミングレスポンスの場合は`true`（以下を参照）。 |
+| `stop` | `string` \| `string[]` | なし | 生成を停止させる1つまたは複数のテキストシーケンス。 |
+| `max_tokens` | `integer` | モデルのデフォルト | トークン出力の上限（正の値）。 |
+| `max_completion_tokens` | `integer` | なし | 現代的な代替表現として `max_tokens` があります（一部のプロバイダーで使用されています）。 |
+| `presence_penalty` | `number` | `0` | 範囲 `-2`–`2`。 |
+| `frequency_penalty` | `number` | `0` | 範囲 `-2`–`2`。 |
+| `user` | `string` | なし | 不正利用の追跡のためのエンドユーザー識別子。 |
+| `tools` | `array` | なし | ツール／関数呼び出しの定義（OpenAI形式）。 |
+| `tool_choice` | `any` | なし | ツール選択の制御（`"auto"`、`"none"`、`{...}`）。 |
+| `response_format` | `any` | なし | 例：JSON出力の場合、`{ "type": "json_object" }`（モデルのサポート状況による）。 |
+| `seed` | `integer` | なし | シードの決定性（ベストエフォート、プロバイダーによる）。 |
 
 <Callout type="note" title="パラメータの検証">
-  表は主なパラメータです。`top_k`、`web_search_options`、`reasoning_effort`、`parallel_tool_calls`、`logprobs`、`top_logprobs`、`logit_bias`、`stream_options`、`metadata`、`thinking`、`verbosity`、`service_tier`、`store`、`prompt_cache_key`、`safety_identifier`、`truncation` も受け付けます。未知のトップレベルフィールドは削除されます。`messages[]` の追加フィールド（`tool_calls`、`tool_call_id`、`function_call`、`reasoning_content` など）は保持します。パラメータと multimodal の対応はモデル・経路に依存します。無効な body は詳細付きの `422 VALIDATION_FAILED` です。
+  上記のリストは主要なパラメータです。スキーマでは、`top_k`、`web_search_options`、`reasoning_effort`、`parallel_tool_calls`、`logprobs`、 `top_logprobs`、`logit_bias`、`stream_options`、`metadata`、`thinking`、`verbosity`、`service_tier`、`store`、`prompt_cache_key`、`safety_identifier`、および`truncation`を受け入れます。未知のトップレベルフィールドは破棄されます。 `messages[]`内の追加フィールド（`tool_calls`、`tool_call_id`、`function_call`、および`reasoning_content`を含む）は保持されます。 マルチモーダルなパラメータおよびコンテンツのサポートは、引き続きモデル／プロトコルに依存します。無効なボディは、フィールドの詳細とともに `422 VALIDATION_FAILED` として拒否されます。
 </Callout>
+
+<a id="contoh-request-non-streaming-curl"></a>
 
 ## 例：非ストリーミングリクエスト（curl）
 
@@ -53,7 +60,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -d '{
     "model": "gpt-5-5",
     "messages": [
-      { "role": "system", "content": "あなたは簡潔なアシスタントです。" },
+      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
       { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
     ],
     "temperature": 0.7,
@@ -72,7 +79,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   "choices": [
     {
       "index": 0,
-      "message": { "role": "assistant", "content": "APIゲートウェイとは …" },
+      "message": { "role": "assistant", "content": "API gateway adalah …" },
       "finish_reason": "stop"
     }
   ],
@@ -84,16 +91,20 @@ curl https://api.hostlinku.com/v1/chat/completions \
 }
 ```
 
-`model` は Hostlinku の公開 slug です。成功した非ストリーミング応答の `hostlinku` には費用、Service Mode、レイテンシが含まれます。各 SSE chunk には保証されません：
+`model`にはHostlinkuのパブリックスラグが含まれます。非ストリーミングの成功レスポンスにおける`hostlinku`ブロックには、コスト、サービスモード、およびレイテンシが含まれます。このブロックは、すべてのSSEチャンクで保証される部分ではありません：
 
 | フィールド | 意味 |
 |---|---|
-| `cost` | 費用は 🪙 クレジット。1 クレジット = \$1。 |
-| `latencyMs` | ゲートウェイでの受信から完了までのリクエストの合計レイテンシ（ミリ秒）。 |
+| `cost` | クレジット単位の費用 🪙；1クレジット＝1ドル。 |
+| `latencyMs` | ゲートウェイでの受信から完了までのリクエストの総遅延時間（ミリ秒）。 |
+
+<a id="streaming-stream-true"></a>
 
 ## ストリーミング (`stream: true`)
 
-`stream: true` に対して、ゲートウェイは `Content-Type: text/event-stream` (SSE) で応答し、OpenAI 互換のフォーマットでチャンクをストリーミングします（各チャンクは、Hostlinku のパブリック `id` および同じモデルのslugを使用します）。 その後、`data: [DONE]`でストリームを閉じます：
+`stream: true`の場合、ゲートウェイは`Content-Type: text/event-stream` (SSE)で応答し、
+OpenAI互換のフォーマットでチャンクをストリーミングします （各チャンクはHostlinkuの公開`id`
+および同一のモデルスラッグを使用）でチャンクをストリーミングし、最後に`data: [DONE]`でストリームを終了します：
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -118,13 +129,16 @@ data: [DONE]
 
 重要な注意事項：
 
-- エラーイベントや予期しない切断はストリーム失敗として処理してください。`[DONE]` のみでは成功を証明できません。`x-request-id` を使いエラーとリクエストログを確認してください。
-- 最終料金は upstream の usage/費用に基づきます。値がない場合やゼロの場合は予約時の見積もりを使用することがあります。
-- ヘッダー `x-request-id` は、コンソールのログと関連付けるために、ストリーミング応答にも送信されます。
+- ストリームが失敗した場合は、エラーイベントを処理し、接続切断を失敗として扱ってください。`[DONE]`というマーカーだけではリクエストが成功したとは証明されません。エラーを確認し、`x-request-id`を含むリクエストログを確認してください。
+- 最終的な費用は「usage」または「upstreamの費用」を使用します。空またはゼロの場合、ゲートウェイは予約見積もりを使用できます。
+- ヘッダー `x-request-id` は、ストリーミングレスポンスでも送信され、
+  コンソールのログと関連付けられます。
+
+<a id="contoh-python-sdk-resmi-openai"></a>
 
 ## 例：Python（OpenAI公式SDK）
 
-`base_url`以外のコードに変更はありません。OpenAIのSDKはそのまま使用可能です：
+`base_url` 以外のコードの変更はありません。OpenAI SDK はそのまま使用可能です：
 
 ```python
 from openai import OpenAI
@@ -138,7 +152,7 @@ client = OpenAI(
 response = client.chat.completions.create(
     model="gpt-5-5",
     messages=[
-        {"role": "system", "content": "あなたは簡潔なアシスタントです。"},
+        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
         {"role": "user", "content": "Halo dari SDK OpenAI!"},
     ],
 )
@@ -156,21 +170,25 @@ for chunk in stream:
         print(delta, end="", flush=True)
 ```
 
-<Callout type="tip" title="他のライブラリで base_url を変更する">
-同様のパターンは、`openai-node`（`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`）、LangChain（`baseURL`/`openai_api_base`）、およびOpenAI互換のエンドポイントをサポートするその他のツールにも当てはまります。
+<Callout type="tip" title="他のライブラリ内の「base_url」を置き換えてください">
+  同様のルールは、`openai-node`（`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`）、
+  LangChain（`baseURL`/`openai_api_base`）、および
+  OpenAI互換のエンドポイントをサポートするその他のツールにも適用されます。
 </Callout>
+
+<a id="error-yang-umum-di-endpoint-ini"></a>
 
 ## このエンドポイントでよく発生するエラー
 
 | 事例 | HTTP | `error.code` |
 |---|---|---|
-| 本文が検証に合格しませんでした（フィールドエラー／型エラー／`messages`が空欄） | 422 | `VALIDATION_FAILED` |
-| APIキーが無効です／有効期限が切れています | 401 | `UNAUTHORIZED` |
-| APIキーの残高または利用限度額が不足しています | 402 | `PAYMENT_REQUIRED` |
-| カタログにこのモデルのslugがありません | 404 | `MODEL_NOT_FOUND` |
-| `max_tokens`はモデルの出力上限を超えています | 400 | `BAD_REQUEST` |
-| 非推奨モデル／現在利用不可 | 503 | `MODEL_UNAVAILABLE` |
-| 組織の共有利用枠を超過しました | 429 | `RATE_LIMITED` |
+| Bodyは検証に合格していません（フィールドが間違っている／型が間違っている／`messages`が空です） | 422 | `VALIDATION_FAILED` |
+| APIキーが無効か、有効期限が切れています | 401 | `UNAUTHORIZED` |
+| APIキーの残高または制限が不足しています | 402 | `PAYMENT_REQUIRED` |
+| モデルのスラグはカタログに存在しません | 404 | `MODEL_NOT_FOUND` |
+| `max_tokens`はモデルの出力制限を超えています | 400 | `BAD_REQUEST` |
+| モデルは非推奨／現在利用不可 | 503 | `MODEL_UNAVAILABLE` |
+| 組織全体のクォータを超過しました | 429 | `RATE_LIMITED` |
 | アップストリームが利用不可／一時的な障害（再試行可能） | 503 | `UPSTREAM_ERROR` |
 
-エラーエンベロープの完全な形式については、[エラー](/ja/errors)を参照してください。
+エラーエンベロープの完全なフォーマットは [Error](/ja/errors) に記載されています。

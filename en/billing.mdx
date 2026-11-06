@@ -1,58 +1,78 @@
 ---
 title: "Billing & Balance"
-description: "Top up, check usage costs, and download invoices."
+description: "Add to the organization’s balance. View usage costs. Download the invoice."
 icon: credit-card
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-Hostlinku uses prepaid credits. **1 <CreditIcon /> = $1**. Associated API keys share the organization's service-credit balance. Refunds follow the [Refund Policy](/en/legals/refund-policy).
+Hostlinku uses prepaid credits. **1 <CreditIcon /> = $1**. The organization’s balance is shared among associated API keys and constitutes service credits. Refunds are subject to the [Refund Policy](/en/legals/refund-policy).
 
-## Top up
+<a id="isi-saldo"></a>
 
-1. Open the [Console](https://console.hostlinku.com) → **Billing** → top-up.
-2. Choose an amount or preset and a payment method.
-3. Select a bank for VA or coin/network for crypto.
-4. Check the total, bonus, exchange rate, and fees, then pay as instructed. Credits arrive automatically after verification.
+<a id="tambah-saldo-organisasi"></a>
+
+<a id="top-up"></a>
+
+## Add to organization balance
+
+1. Open [Console](https://console.hostlinku.com) → **Billing** → top-up.
+2. Select an amount or preset, then a payment method.
+3. Select a bank for VA or a coin/network for crypto.
+4. Check the total, bonus, exchange rate, and fees, then pay according to the instructions. Credits are automatically added once payment is verified.
 
 | Method | Provider | Page |
 |---|---|---|
-| QRIS | iPaymu Direct | Hostlinku Pay, Rupiah QR |
-| Virtual Account | iPaymu Direct | Hostlinku Pay, bank VA number |
-| Crypto | Heleket | Heleket payment page |
+| QRIS | iPaymu Direct | Hostlinku Pay, Rupiah QR Code |
+| Virtual Account | iPaymu Direct | Hostlinku Pay, virtual account (VA) number |
+| Crypto | Heleket | Heleket Payment Page |
 
-Minimums, maximums, and available methods follow the payment summary. Crypto payment invoices default to **20 minutes**; the provider may extend this. Link lifetime differs from the payment deadline: follow the displayed deadline and reopen the transaction from Billing if the link expires.
+Minimum, maximum, and available methods follow the payment summary. The default crypto payment invoice is **20 minutes**; providers may extend this. The link validity period differs from the payment deadline: follow the displayed deadline, and reopen the transaction from Billing if the link is no longer valid.
 
-A Pay link grants access to one transaction without login. Keep it private. Historical transactions may still have NOWPayments/BlockBee links.
+The Pay link can be accessed without logging in for a single transaction. Keep the link private. The NOWPayments/BlockBee link may still appear on older transactions.
 
-## Usage costs
+<a id="biaya-penggunaan"></a>
 
-Prices depend on the model and **key Service Mode**. Check the [model catalog](/en/models), Console **Models**, or `GET /v1/models` with your intended key.
+<a id="usage-costs"></a>
 
-| Dimension | Price unit |
+## Usage fees
+
+Pricing depends on the model and the **Service Mode key**. Check the [model catalog](/en/models), **Models** in the Console, or `GET /v1/models` with the key you plan to use.
+
+| Dimensions | Price unit |
 |---|---|
-| Input, output, cache reads/writes | Per 1M tokens |
-| Web search, when available | Per 1K calls |
+| Input, output, read/write cache | Per 1M tokens |
+| Web search, if available | Per 1K calls |
 
-Cached tokens are part of input and are not also billed as regular input. Billing uses upstream usage; missing usage may be estimated.
+Token cache is included in the input and is no longer counted as a regular input. Billing uses upstream usage; if usage is unavailable, costs may be estimated.
 
-- **Non-streaming chat**: cost appears in `hostlinku.cost`.
-- **SSE streaming**: check the final charge in **Logs / Analytics / Billing** after completion.
+- **Non-streaming chat**: The cost is displayed at `hostlinku.cost`.
+- **SSE Streaming**: Check the final cost in **Logs / Analytics / Billing** after the stream is complete.
 
-## Available balance and key limits
+<a id="saldo-tersedia-dan-limit-key"></a>
 
-`available = balance − reserved`. Some balance is temporarily held for ongoing requests and settled afterward.
+<a id="available-balance-and-key-limits"></a>
 
-Top-ups add organization balance, not a key's **Monthly Spending Limit**. For `402 PAYMENT_REQUIRED`, read the message: top up if balance is insufficient, or wait for reset/change the key cap if reached. See [Authentication](/en/authentication).
+## Available balance and key limit
+
+`available = balance − reserved`. A portion of the balance is temporarily reserved for ongoing requests. Once the request is complete, usage charges are calculated and the remaining reservation is released.
+
+"Top-up" adds to the organization’s balance, not the **Monthly Spending Limit** key. If you receive a `402 PAYMENT_REQUIRED` response, check the message: top up the balance if it’s insufficient, or wait for the limit to reset or adjust the limit key if it has been reached. Details in [Authentication](/en/authentication).
+
+<a id="transaksi-dan-invoice"></a>
 
 ## Transactions and invoices
 
-Open **Billing** for transaction history and invoices for paid top-ups. Print or save PDF through your browser. Pay invoices require a valid link and a paid transaction.
+Go to **Billing** to view your transaction history and paid top-up invoices. Print or save a PDF via your browser. Invoices from the Pay link require a valid link and a paid transaction.
 
-The **Billing Profile** is stored in your browser and affects Console printouts. It is not synchronized to other devices or the server invoice; Pay invoices may show different details.
+**Billing Profile** is stored in the browser and affects the invoice output from the Console. The profile has not yet been synchronized to other devices or the invoice server; Pay invoices may display different details.
 
-Monitor your Console balance. Auto-recharge and low-balance email preferences are not available in the current Billing flow.
+Monitor your balance in the Console. Auto-recharge settings and low-balance emails are not yet available in the active Billing workflow.
 
-## Historical costs and analytics breakdowns
+<a id="biaya-historis-dan-rincian-analytics"></a>
 
-Charged request totals are stored in logs. Some input/output/cache breakdowns are recalculated at current rates and may differ from historical totals. Changes in displayed breakdowns do not charge old requests again.
+<a id="historical-costs-and-analytics-breakdowns"></a>
+
+## Historical costs and analytics details
+
+The total cost of billed requests is stored in the log. Some input/output/cache details are recalculated using current rates, so the details may differ from historical totals. Changes to the display of details do not result in the rebilling of old requests.

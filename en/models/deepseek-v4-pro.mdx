@@ -1,35 +1,43 @@
 ---
 title: "DeepSeek V4 Pro"
-description: "DeepSeek V4 Pro by DeepSeek, with a catalog context window of 1,000,000 tokens."
+description: "DeepSeek V4 Pro from DeepSeek, with a 1,000,000-token catalog context."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-| Property | Value |
+| Properties | Value |
 |---|---|
 | Provider | DeepSeek |
 | Slug | `deepseek-v4-pro` |
 | Input | text |
 | Output | text |
 | Release | 2026-08-12 |
-| Tags | flagship, reasoning |
+| Tag | flagship, reasoning |
 | Catalog context | 1,000,000 tokens |
-| Catalog max output | 64,000 tokens |
+| Max catalog output | 64,000 tokens |
 | Service Mode | Performance |
+
+<a id="kapabilitas"></a>
 
 ## Capabilities
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`.
 
-## Pricing
+<a id="harga"></a>
 
-Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/deepseek-v4-pro) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+<a id="pricing"></a>
+
+## Price
+
+Updated **November 6, 2026**. [Current pricing](https://hostlinku.com/models/deepseek-v4-pro) follows the Service Mode API key. **1 <CreditIcon /> = $1**. `—` means the rate is not listed. Tiers are based on the number of prompt tokens.
 
 | Item | Unit | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| Input (prompt) | per 1M tokens | Base | 0.55608 |
-| Output (completion) | per 1M tokens | Base | 1.6674 |
-| Cache read | per 1M tokens | Base | 0.01848 |
+| Input (prompt) | per 1M tokens | Basics | 0.55608 |
+| Output (completion) | per 1M tokens | Basics | 1.6674 |
+| Cache read | per 1M tokens | Basics | 0.01848 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## Supported endpoints
 
@@ -39,7 +47,9 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/de
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
+[Compatibility limits](/en/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## Example request
 
@@ -52,6 +62,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [{ "role": "user", "content": "Hello!" }]
   }'
 ```
+
+<a id="model-terkait"></a>
 
 ## Related models
 

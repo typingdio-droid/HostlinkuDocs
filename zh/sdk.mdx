@@ -1,29 +1,31 @@
 ---
 title: "SDK 与代码示例"
-description: "Hostlinku - Anthropic Messages、OpenAI、Chat Completions 和 OpenAI Responses 这三种 API 方言的 Python 和 Node.js 示例。"
+description: "Hostlinku 三个 API 方言（Anthropic Messages、OpenAI Chat Completions 和 OpenAI Responses）的 Python 和 Node.js 示例。"
 icon: terminal
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-一个 API 密钥适用于这三种方言。唯一的区别仅在于 **基础 URL** 和 **身份验证头**：
+一个 API 密钥在三种方言中均有效。唯一的区别仅在于 **基础 URL** 和 **身份验证头**：
 
-| 方言 | 基础 URL | 请求头 |
+| 方言 | 基础 URL | 标题 |
 |---|---|---|
-| Anthropic Messages | `https://api.hostlinku.com`（不含`/v1`） | `x-api-key: <API_KEY>` |
-| OpenAI Chat Completions | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
-| OpenAI Responses | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
+| Anthropic 消息 | `https://api.hostlinku.com`（不带 `/v1`） | `x-api-key: <API_KEY>` |
+| OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
+| OpenAI 响应 | `https://api.hostlinku.com/v1` | `Authorization: Bearer <API_KEY>` |
 
-将模型名称替换为[产品目录](/zh/models)中的别名-下文示例采用Service Mode Performance中提供的模型。
+请使用 [目录](/zh/models) 中的 slug 替换模型名称——下文示例中使用的模型
+可在“服务模式性能”中找到。
 
-<Callout type="note" title="模型与工具兼容性">
-  请选择 API 密钥 Service Mode 中可用的模型。vision、JSON schema、reasoning 和 tool calling 取决于模型及协议路径。见[兼容性限制](/zh/responses)。
+<Callout type="note" title="模型和工具的兼容性">
+  选择适用于服务模式 API 密钥的可用模型。对 Vision、JSON 模式、推理和工具调用的支持均遵循该模型及其协议路径。请参阅 [兼容性限制](/zh/responses)。
 </Callout>
 
 ## Python
 
-### Anthropic Messages
+<a id="anthropic-messages"></a>
+
+### Anthropic 消息
 
 ```bash
 pip install anthropic
@@ -46,7 +48,7 @@ print(message.content[0].text)
 print(message.usage.input_tokens, message.usage.output_tokens)
 ```
 
-流式传输：
+流媒体：
 
 ```python
 with client.messages.stream(
@@ -58,7 +60,9 @@ with client.messages.stream(
         print(text, end="", flush=True)
 ```
 
-### OpenAI Chat Completions
+<a id="openai-chat-completions"></a>
+
+### OpenAI 聊天补全
 
 ```bash
 pip install openai
@@ -72,14 +76,14 @@ client = OpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v
 response = client.chat.completions.create(
     model="gpt-6-astra",
     messages=[
-        {"role": "system", "content": "你是一个简洁的助手。"},
+        {"role": "system", "content": "Kamu asisten yang ringkas."},
         {"role": "user", "content": "Halo dari SDK OpenAI!"},
     ],
 )
 print(response.choices[0].message.content)
 ```
 
-流式传输：
+流媒体：
 
 ```python
 stream = client.chat.completions.create(
@@ -93,7 +97,9 @@ for chunk in stream:
         print(delta, end="", flush=True)
 ```
 
-### OpenAI Responses
+<a id="openai-responses"></a>
+
+### OpenAI 响应
 
 ```python
 response = client.responses.create(
@@ -105,7 +111,7 @@ response = client.responses.create(
 print(response.output_text)
 ```
 
-流式传输：
+流媒体：
 
 ```python
 with client.responses.stream(
@@ -119,7 +125,9 @@ with client.responses.stream(
 
 ## Node.js / TypeScript
 
-### Anthropic Messages
+<a id="anthropic-messages-1"></a>
+
+### Anthropic 消息
 
 ```bash
 npm install @anthropic-ai/sdk
@@ -141,7 +149,7 @@ const message = await client.messages.create({
 console.log(message.content[0].text);
 ```
 
-流式传输：
+流媒体：
 
 ```ts
 const stream = client.messages.stream({
@@ -154,7 +162,9 @@ stream.on("text", (text) => process.stdout.write(text));
 await stream.finalMessage();
 ```
 
-### OpenAI Chat Completions
+<a id="openai-chat-completions-1"></a>
+
+### OpenAI 聊天补全
 
 ```bash
 npm install openai
@@ -175,7 +185,7 @@ const response = await client.chat.completions.create({
 console.log(response.choices[0].message.content);
 ```
 
-流式传输：
+流媒体：
 
 ```ts
 const stream = await client.chat.completions.create({
@@ -189,7 +199,9 @@ for await (const chunk of stream) {
 }
 ```
 
-### OpenAI Responses
+<a id="openai-responses-1"></a>
+
+### OpenAI 响应
 
 ```ts
 const response = await client.responses.create({
@@ -200,7 +212,7 @@ const response = await client.responses.create({
 console.log(response.output_text);
 ```
 
-流式传输：
+流媒体：
 
 ```ts
 const stream = await client.responses.create({
@@ -216,19 +228,28 @@ for await (const event of stream) {
 }
 ```
 
+<a id="catatan"></a>
+
 ## 注释
 
 <Callout type="note" title="其他语言">
-Java、Go 和 PHP 采用相同的模式：将 `base_url` 替换为 Hostlinku， 然后使用官方 SDK Anthropic（Messages）或 OpenAI（Chat/Responses）。没有专门针对 Hostlinku 的库。
+  Java、Go 和 PHP 采用相同的模式：将 `base_url` 替换为 Hostlinku，然后使用官方的
+  Anthropic（消息）或 OpenAI（聊天/响应）SDK。没有专门针对 Hostlinku 的库。
 </Callout>
 
-<Callout type="warning" title="每位客户的限额">
-**Codex CLI 仅适用于 OpenAI 模型** (`gpt-*`) - 由于工具类型的差异，Claude 模型及其他非 OpenAI 模型被上游拒绝。 **Claude Code** 可以使用非 Claude 模型，但会显示 `unrecognized_model` 警告，并默认使用 200k Token的上下文。 详情请参阅 [Codex CLI](/zh/integrations/codex-cli) 和 [Claude Code](/zh/integrations/claude-code) 页面。
+<Callout type="warning" title="每个客户端的限制">
+  **Codex CLI 仅适用于 OpenAI 模型**（`gpt-*`）——Claude 模型及其他非 OpenAI 模型
+  因工具类型不同而被上游拒绝。 **Claude Code** 可以使用非 Claude 模型，
+  但会显示 `unrecognized_model` 警告，并默认上下文长度为 200k 个令牌。
+  详情请参阅 [Codex CLI](/zh/integrations/codex-cli) 页面以及
+  [Claude Code](/zh/integrations/claude-code) 页面中。
 </Callout>
+
+<a id="sumber-daya-terkait"></a>
 
 ## 相关资源
 
-- [API 参考](/zh/api-reference) — 参数规范、速率限制与重试建议。
-- [在 Claude Code 中使用 Hostlinku API](/zh/integrations/claude-code) · [Codex CLI](/zh/integrations/codex-cli) · [DeepSeek Harness](/zh/integrations/deepseek-harness) · [CC Switch](/zh/integrations/cc-switch)
+- [API 参考](/zh/api-reference) — 参数规范、速率限制和重试建议。
+- [Claude Code 与 Hostlinku API](/zh/integrations/claude-code) · [Codex CLI](/zh/integrations/codex-cli) · [DeepSeek Harness](/zh/integrations/deepseek-harness) · [CC Switch](/zh/integrations/cc-switch)
 - OpenAI SDK 官方文档：[https://developers.openai.com/](https://developers.openai.com/) · [OpenAI Codex](https://developers.openai.com/codex/)
 - Anthropic SDK 官方文档：[https://docs.anthropic.com/](https://docs.anthropic.com/)

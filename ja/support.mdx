@@ -1,36 +1,48 @@
 ---
-title: サポート
-description: 問い合わせ先と問題の調査に必要な情報。
+title: "サポート"
+description: "問題を調査するためのヘルプおよび情報チャネル。"
 icon: life-buoy
 ---
 
-## 問い合わせ先
+<a id="kanal-dukungan"></a>
 
-| 連絡先 | 用途 |
+<a id="問い合わせ先"></a>
+
+## サポートチャネル
+
+| チャネル | 用途 |
 |---|---|
-| [halo@hostlinku.com](mailto:halo@hostlinku.com) | 技術、アカウント、課金の質問 |
-| [Console](https://console.hostlinku.com) | 残高、APIキー、リクエストログ、監査 |
-| [Status](https://status.hostlinku.com) | 発生中の障害とインシデント |
+| [halo@hostlinku.com](mailto:halo@hostlinku.com) | 技術的な質問、アカウント、および請求 |
+| [Console](https://console.hostlinku.com) | 残高、APIキー、リクエストログ、および監査 |
+| [ステータス](https://status.hostlinku.com) | 現在発生中の障害およびインシデント |
 
-少人数のチームが平日にできるだけ早くメールに返信します（ベストエフォート）。インシデントの更新はStatusページに掲載されます。
+メールへの返信は、小規模なチームによって営業日中にできるだけ早く行われます（ベストエフォート）。インシデントの最新情報は「ステータス」ページで発表されます。
 
-## 報告に添える情報
+<a id="informasi-untuk-laporan"></a>
 
-1. レスポンスまたはConsoleログで取得できた場合の `x-request-id`。
-2. タイムゾーンを含む発生時刻、エンドポイント、モデルのslug。
-3. HTTPステータスとエラー本文。コード／タイプは [API形式](/ja/errors) によって異なります。
-4. APIキーや機密情報を除いた、再現可能な最小リクエスト。
+<a id="報告に添える情報"></a>
+
+## レポートに関する情報
+
+1. `x-request-id`は、Consoleのレスポンスまたはログに存在する場合に限る。
+2. 発生時刻（タイムゾーン付き）、エンドポイント、およびモデルのスラグ。
+3. HTTPステータスおよびエラー本文；コード／タイプは[APIフォーマット](/ja/errors)によって異なります。
+4. APIキーおよび機密データを削除した、再現可能な最小限のリクエスト例。
 
 ```text
-時刻: 2026-11-06 14:32 UTC+7
+Waktu: 2026-11-06 14:32 UTC+7
 Request ID: <x-request-id>
 Endpoint: /v1/chat/completions
 Model: gpt-5-5
 HTTP: 503
 Error: UPSTREAM_TIMEOUT ("The request timed out. Please retry.")
-補足: 直近10分で3回発生。
+Catatan: Terjadi 3 kali dalam 10 menit terakhir.
 ```
 
-## セキュリティの問題
+<a id="masalah-keamanan"></a>
 
-セキュリティの発見は、件名を `[SECURITY]` として [halo@hostlinku.com](mailto:halo@hostlinku.com) へ非公開で送ってください。対応前の詳細公開は控えてください。サポートはAPIキー、パスワード、OTPコードを求めません。報告にシークレットを含めないでください。
+<a id="セキュリティの問題"></a>
+
+## セキュリティ上の問題
+
+セキュリティ上の発見事項は、件名を `[SECURITY]` として、[halo@hostlinku.com](mailto:halo@hostlinku.com) へ非公開で送信してください。対応が完了するまでは、詳細を公開しないでください。サポートチームはAPIキー、パスワード、OTPコードを要求することはありません。レポートにシークレットを含めないでください。

@@ -1,23 +1,27 @@
 ---
-title: "Service Mode Dedicated"
-description: "Dedicatedモデル、APIキーの選択、モデル別の制限、料金、プロンプトキャッシュ。"
+title: "サービスモード：専用"
+description: "Dedicatedモデル、APIキーの選択、モデルごとの制限、価格、およびプロンプトのキャッシュ。"
 icon: server
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 import { Callout } from "/snippets/mdx.jsx";
 
-**Dedicated** は、対象モデルを利用するためのHostlinkuのService Modeです。[コンソール](https://console.hostlinku.com)でAPIキーを作成する際に **Dedicated** を選択します。モードはキーに紐づいており、リクエストにモード変更用の追加パラメータはありません。
+**Dedicated**は、Hostlinkuのサービスモードの一つであり、そのモードで利用可能なモデル群を指します。[Console](https://console.hostlinku.com)でAPIキーを作成する際は、**Dedicated**を選択してください。モードはキーに紐付けられており、リクエストでモードを変更するための追加パラメータは必要ありません。
 
-<Callout type="note" title="APIキー1つにつきService Modeは1つ">
-PerformanceやLow-Costも利用する場合は、別のAPIキーを作成してください。利用できるモデルと価格はキーのService Modeに従います。そのキーで `GET /v1/models` を確認してください。
+<Callout type="note" title="1つのAPIキー = 1つのサービスモード">
+「Performance」と「Low-Cost」を同時に使用するには、別々のAPIキーを作成してください。呼び出し可能なモデルと価格はサービスモードのキーに準じます。そのキーを使用して `GET /v1/models` を確認してください。
 </Callout>
+
+3つのモードの比較およびキーの選択方法については、[Service Mode](/ja/service-modes)をご覧ください。
+
+<a id="model-yang-tersedia"></a>
 
 ## 利用可能なモデル
 
-**2026年11月6日更新**。以下のDeepSeek、GLM、Kimiモデルを[Dedicatedカタログ](https://hostlinku.com/ja/models?mode=dedicated)で利用できます。
+**2026年11月6日**更新。以下のDeepSeek、GLM、Kimiモデルが[Dedicatedカタログ](https://hostlinku.com/models?mode=dedicated)で利用可能です。
 
-| モデル / API ID | 系列 | カタログのコンテキスト | カタログの最大出力 |
+| モデル / API ID | ファミリー | カタログの文脈 | カタログの最大出力 |
 |---|---|---|---|
 | [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash) · `deepseek-v4-1-flash` | DeepSeek | 1,000,000 トークン | 384,000 トークン |
 | [DeepSeek-V4.1-Flash Fast](/ja/models/deepseek-v4-1-flash-fast) · `deepseek-v4-1-flash-fast` | DeepSeek | 1,000,000 トークン | 384,000 トークン |
@@ -27,27 +31,39 @@ PerformanceやLow-Costも利用する場合は、別のAPIキーを作成して�
 | [GLM-5.3 Flash Hyper](/ja/models/glm-5-3-flash-hyper) · `glm-5-3-flash-hyper` | Zhipu | 1,000,000 トークン | 64,000 トークン |
 | [Kimi K3.1 Pro Hyper](/ja/models/kimi-k3-1-pro-hyper) · `kimi-k3-1-pro-hyper` | Moonshot | 1,048,576 トークン | 64,000 トークン |
 
-`deepseek-v4-1-flash-fast` を含め、カタログのAPI IDをそのままコピーしてください。コンテキスト、出力上限、機能はモデルによって異なります。
+API IDは、`deepseek-v4-1-flash-fast`を含め、カタログから正確に転記してください。コンテキスト、出力、および機能の制限はモデルごとに異なります。
+
+<a id="endpoint-dan-autentikasi"></a>
 
 ## エンドポイントと認証
 
-ベースURLは `https://api.hostlinku.com` のままです。以下のAPI形式を利用できますが、一部のモデルではブリッジによる形式変換が行われます。ベンダー固有の機能やアプリの組み込みツールへの対応は個別に確認してください。
+Base URLは `https://api.hostlinku.com` のままとします。以下のAPIフォーマットが利用可能です。一部のモデルでは、フォーマットを調整するためにブリッジを使用しています。ベンダーのすべての機能やアプリケーションに組み込まれたツールのサポートについては、個別に確認する必要があります。
 
-| 形式 | エンドポイント | 認証ヘッダー |
+| フォーマット | エンドポイント | 認証ヘッダー |
 |---|---|---|
 | OpenAI Chat | `POST /v1/chat/completions` | `Authorization: Bearer <API_KEY>` |
-| OpenAI Responses | `POST /v1/responses` | `Authorization: Bearer <API_KEY>` |
+| OpenAIの応答 | `POST /v1/responses` | `Authorization: Bearer <API_KEY>` |
 | Anthropic Messages | `POST /v1/messages` | `x-api-key: <API_KEY>` |
+
+<a id="harga"></a>
 
 ## 価格
 
-APIキーのService Mode料金で使用量に応じて請求されます。**1 <CreditIcon /> = \$1**。[Dedicatedの料金](https://hostlinku.com/ja/models?mode=dedicated)またはDedicatedキーによる `GET /v1/models` を確認してください。
+Service Mode APIキーの使用量に基づいて課金されます。**1 <CreditIcon /> = \$1**。[Dedicatedの料金](https://hostlinku.com/models?mode=dedicated)を確認するか、Dedicatedキーを使用して`GET /v1/models`を実行してください。
 
-## プロンプトキャッシュ
+<a id="prompt-caching"></a>
 
-自動キャッシュに対応したモデルでは、同じプレフィックスを `cache_control` なしで再利用できる場合があります。ヒットと有効期間は上流サービスに従います。使用量が返される場合、Chat Completionsの `cached_tokens` またはMessagesの `cache_read_input_tokens` に表示されます。[プロンプトキャッシュ](/ja/prompt-caching)を参照してください。
+<a id="プロンプトキャッシュ"></a>
 
-## 制限
+## プロンプトのキャッシュ
 
-- モデルはキーのService Modeで利用可能である必要があります。他のモードへの自動フォールバックはありません。
-- 機能と出力上限はモデルとプロトコルに従います。ブリッジはアプリの組み込みツールに対応していない場合があります。
+自動キャッシュをサポートするモデルでは、プレフィックスが繰り返されると、`cache_control` なしでキャッシュヒットが発生する可能性があります。ヒットおよびキャッシュの有効期間はアップストリームに従います。キャッシュの使用状況は、利用可能な場合、Chat Completions の `cached_tokens` または Messages の `cache_read_input_tokens` を通じて報告されます。 [プロンプトのキャッシュ](/ja/prompt-caching)を参照してください。
+
+<a id="batasan"></a>
+
+<a id="制限"></a>
+
+## 制限事項
+
+- サービスモードのキーにはモデルが用意されている必要があります。他のモードへの自動フォールバックはありません。
+- 機能および出力の制限は、モデルおよびプロトコルに従います。アプリケーションに組み込まれているツールは、必ずしもブリッジでサポートされるとは限りません。

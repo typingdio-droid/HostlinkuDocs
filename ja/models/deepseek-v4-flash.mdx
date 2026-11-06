@@ -1,6 +1,6 @@
 ---
 title: "DeepSeek V4 Flash"
-description: "DeepSeekのDeepSeek V4 Flash。カタログのコンテキストは1,000,000トークンです。"
+description: "DeepSeekのDeepSeek V4 Flash、1,000,000トークンのカタログコンテキスト付き。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -8,39 +8,51 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | プロパティ | 値 |
 |---|---|
 | プロバイダー | DeepSeek |
-| slug | `deepseek-v4-flash` |
+| Slug | `deepseek-v4-flash` |
 | 入力 | text |
 | 出力 | text |
 | リリース | 2026-07-30 |
-| カタログのコンテキスト | 1,000,000 トークン |
-| カタログの最大出力 | 記載なし |
+| カタログの文脈 | 1,000,000 トークン |
+| カタログの最大出力 | 未記載 |
 | Service Mode | Performance |
+
+<a id="kapabilitas"></a>
 
 ## 機能
 
-`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `long-context`.
+`text`、`streaming`、`tool-calling`、`function-calling`、`json-mode`、`reasoning`、`code-generation`、`multilingual`、`long-context`。
+
+<a id="harga"></a>
 
 ## 価格
 
-**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/deepseek-v4-flash)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+**2026年11月6日**更新。 [最新価格](https://hostlinku.com/models/deepseek-v4-flash)は、Service Mode APIキーに準じます。**1 <CreditIcon /> = \$1**。`—`は、料金が未設定であることを意味します。ティアはプロンプトトークンの数に基づきます。
 
-| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) |
+| 項目 | 単位 | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| 入力（プロンプト） | 100万トークンあたり | 基本 | 0.126 |
-| 出力 | 100万トークンあたり | 基本 | 0.504 |
-| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.00252 |
+| 入力（プロンプト） | 1Mトークンあたり | 基本 | 0.126 |
+| 出力（完了） | 1Mトークンあたり | 基本 | 0.504 |
+| キャッシュ読み取り | 1Mトークンあたり | 基本 | 0.00252 |
 
-## 対応エンドポイント
+<a id="endpoint-yang-didukung"></a>
 
-| Endpoint | Format | 対応 |
+<a id="対応エンドポイント"></a>
+
+## サポートされているエンドポイント
+
+| エンドポイント | フォーマット | サポート |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
-| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
+| `POST /v1/chat/completions` | OpenAIチャット補完 | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAIの応答 | adapted (bridge) |
 
-[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
+[互換性の制限](/ja/api-reference#kompatibilitas-model-dan-tool).
 
-## リクエストの例
+<a id="contoh-request"></a>
+
+<a id="リクエストの例"></a>
+
+## requestの例
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -52,10 +64,12 @@ curl https://api.hostlinku.com/v1/chat/completions \
   }'
 ```
 
+<a id="model-terkait"></a>
+
 ## 関連モデル
 
 - [DeepSeek V4 Pro](/ja/models/deepseek-v4-pro)
 - [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash)
 - [DeepSeek-V4.1-Flash Hyper](/ja/models/deepseek-v4-1-flash-hyper)
 
-[← モデル一覧に戻る](/ja/models)
+[← モデルカタログに戻る](/ja/models)

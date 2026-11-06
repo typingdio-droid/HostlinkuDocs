@@ -1,6 +1,6 @@
 ---
 title: "Muse Wonder"
-description: "MetaのMuse Wonder。カタログのコンテキストは1,048,576トークンです。"
+description: "Metaの「Muse Wonder」、カタログのコンテキストは1,048,576トークンです。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -8,33 +8,43 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | プロパティ | 値 |
 |---|---|
 | プロバイダー | Meta |
-| スラッグ | `muse-wonder-1-0` |
+| Slug | `muse-wonder-1-0` |
 | リリース | 2026-10-14 |
-| カタログのコンテキスト | 1,048,576 トークン |
-| カタログの最大出力 | 記載なし |
+| カタログの文脈 | 1,048,576 トークン |
+| カタログの最大出力 | 未記載 |
 | Service Mode | Performance |
+
+<a id="kapabilitas"></a>
 
 ## 機能
 
-`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
+`text`、`streaming`、`tool-calling`、`function-calling`、`json-mode`、`reasoning`、`code-generation`、`multilingual`、`vision`、`image-input`、`multimodal`、`long-context`。
 
-## 料金
+<a id="harga"></a>
 
-**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/muse-wonder-1-0)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+<a id="料金"></a>
 
-| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) |
+## 価格
+
+**2026年11月6日**更新。 [最新価格](https://hostlinku.com/models/muse-wonder-1-0)は、Service Mode APIキーに準じます。**1 <CreditIcon /> = \$1**。`—`は、料金が未設定であることを意味します。ティアはプロンプトトークンの数に基づきます。
+
+| 項目 | 単位 | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| 入力（プロンプト） | 100万トークンあたり | 基本 | 3.36 |
-| 出力 | 100万トークンあたり | 基本 | 16.8 |
-| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.168 |
-| Web検索 | 1,000回あたり | 基本 | 2.625 |
+| 入力（プロンプト） | 1Mトークンあたり | 基本 | 3.36 |
+| 出力（完了） | 1Mトークンあたり | 基本 | 16.8 |
+| キャッシュ読み取り | 1Mトークンあたり | 基本 | 0.168 |
+| Web検索 | 1,000コールあたり | 基本 | 2.625 |
 
-## 対応エンドポイント
+<a id="endpoint-yang-didukung"></a>
 
-| Endpoint | Format | 対応 |
+<a id="対応エンドポイント"></a>
+
+## サポートされているエンドポイント
+
+| エンドポイント | フォーマット | サポート |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
-| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
+| `POST /v1/chat/completions` | OpenAIチャット補完 | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAIの応答 | adapted (bridge) |
 
-[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
+[互換性の制限](/ja/api-reference#kompatibilitas-model-dan-tool).

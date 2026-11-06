@@ -1,6 +1,6 @@
 ---
 title: "Kimi K2.6"
-description: "MoonshotのKimi K2.6。カタログのコンテキストは256,000トークンです。"
+description: "MoonshotのKimi K2.6、256,000トークンのカタログを前提としています。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -8,40 +8,52 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | プロパティ | 値 |
 |---|---|
 | プロバイダー | Moonshot |
-| slug | `kimi-k2-6` |
-| 入力 | テキスト、画像 |
+| Slug | `kimi-k2-6` |
+| 入力 | text, image |
 | 出力 | text |
 | リリース | 2026-07-13 |
-| カタログのコンテキスト | 256,000 トークン |
+| カタログの文脈 | 256,000 トークン |
 | カタログの最大出力 | 32,000 トークン |
 | Service Mode | Performance |
 
+<a id="kapabilitas"></a>
+
 ## 機能
 
-`text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
+`text`、`tool-calling`、`function-calling`、`structured-outputs`、`json-mode`、`streaming`、`code-generation`、`long-context`、`multilingual`、`vision`、`image-input`、`multimodal`。
+
+<a id="harga"></a>
 
 ## 価格
 
-**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/kimi-k2-6)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+**2026年11月6日**更新。 [最新価格](https://hostlinku.com/models/kimi-k2-6)は、Service Mode APIキーに基づきます。**1 <CreditIcon /> = \$1**。`—`は、料金が未設定であることを意味します。ティアはプロンプトトークンの数に基づきます。
 
-| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) |
+| 項目 | 単位 | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| 入力（プロンプト） | 100万トークンあたり | 基本 | 0.80304 |
-| 出力 | 100万トークンあたり | 基本 | 3.33564 |
-| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.13608 |
-| Web検索 | 1,000回あたり | 基本 | 4.6326 |
+| 入力（プロンプト） | 1Mトークンあたり | 基本 | 0.80304 |
+| 出力（完了） | 1Mトークンあたり | 基本 | 3.33564 |
+| キャッシュ読み取り | 1Mトークンあたり | 基本 | 0.13608 |
+| Web検索 | 1,000コールあたり | 基本 | 4.6326 |
 
-## 対応エンドポイント
+<a id="endpoint-yang-didukung"></a>
 
-| Endpoint | Format | 対応 |
+<a id="対応エンドポイント"></a>
+
+## サポートされているエンドポイント
+
+| エンドポイント | フォーマット | サポート |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | 変換（ブリッジ） |
-| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
+| `POST /v1/chat/completions` | OpenAIチャット補完 | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
+| `POST /v1/responses` | OpenAIの応答 | adapted (bridge) |
 
-[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
+[互換性の制限](/ja/api-reference#kompatibilitas-model-dan-tool).
 
-## リクエストの例
+<a id="contoh-request"></a>
+
+<a id="リクエストの例"></a>
+
+## requestの例
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -53,6 +65,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
   }'
 ```
 
+<a id="model-terkait"></a>
+
 ## 関連モデル
 
 - [Kimi K2.7 Code](/ja/models/kimi-k2-7-code)
@@ -60,4 +74,4 @@ curl https://api.hostlinku.com/v1/chat/completions \
 
 - [Kimi K3.1 Pro Hyper](/ja/models/kimi-k3-1-pro-hyper)
 
-[← モデル一覧に戻る](/ja/models)
+[← モデルカタログに戻る](/ja/models)

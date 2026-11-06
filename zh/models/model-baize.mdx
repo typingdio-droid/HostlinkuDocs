@@ -1,44 +1,54 @@
 ---
 title: "Model Baize"
-description: "Anonymous的Model Baize，目录上下文为1,000,000个Token。"
+description: "来自 Anonymous 的 Baize 模型，上下文为包含 1,000,000 个令牌的词汇表。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 | 属性 | 值 |
 |---|---|
-| 提供商 | Anonymous |
+| 提供商 | 匿名 |
 | Slug | `model-baize` |
-| 输入 | 文本 |
-| 输出 | 文本 |
-| 发布日期 | 2026-08-13 |
-| 目录上下文 | 1,000,000 个Token |
-| 目录最大输出 | 未列出 |
+| 输入 | text |
+| 输出 | text |
+| 发布 | 2026-08-13 |
+| 目录背景 | 1,000,000 个令牌 |
+| 目录最大输出 | 尚未列出 |
 | Service Mode | Low-Cost |
 
-## 能力
+<a id="kapabilitas"></a>
 
-`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `long-context`.
+<a id="能力"></a>
+
+## 功能
+
+`text`、`streaming`、`tool-calling`、`function-calling`、`json-mode`、`reasoning`、`code-generation`、`multilingual`、`long-context`。
+
+<a id="harga"></a>
 
 ## 价格
 
-**2026年11月6日更新**。[当前价格](https://hostlinku.com/zh/models/model-baize)由API密钥的Service Mode决定。**1 <CreditIcon /> = \$1**。`—` 表示未列出费率。价格档位取决于提示词Token数。
+更新于 **2026年11月6日**。 [最新价格](https://hostlinku.com/models/model-baize) 依据服务模式 API 密钥而定。**1 <CreditIcon /> = 1 美元**。`—` 表示尚未列出价格。价格档位根据提示令牌数量而定。
 
-| 项目 | 单位 | 价格档位 | Low-Cost (<CreditIcon />) |
+| 项目 | 单位 | 层级 | Low-Cost (<CreditIcon />) |
 |---|---|---|---|
-| 输入（提示词） | 每100万个Token | 基础 | 0.629695 |
-| 输出 | 每100万个Token | 基础 | 2.20313 |
-| 缓存读取 | 每100万个Token | 基础 | 0.15729 |
+| 输入（提示） | 每 100 万个令牌 | 基础 | 0.629695 |
+| 输出（完成） | 每 100 万个令牌 | 基础 | 2.20313 |
+| 缓存读取 | 每 100 万个令牌 | 基础 | 0.15729 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## 支持的端点
 
-| Endpoint | Format | 支持情况 |
+| 端点 | 格式 | 支持 |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
-| `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
-| `POST /v1/responses` | OpenAI Responses | 适配（桥接） |
+| `POST /v1/chat/completions` | OpenAI 聊天补全 | 可用 |
+| `POST /v1/messages` | Anthropic 消息 | 改编版（桥接版） |
+| `POST /v1/responses` | OpenAI 响应 | 改编版（桥接版） |
 
-[兼容性限制](/zh/api-reference#模型与工具兼容性)。
+[兼容性限制](/zh/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## 请求示例
 

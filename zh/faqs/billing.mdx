@@ -1,35 +1,46 @@
 ---
 title: "计费与充值"
-description: "关于余额、充值、API密钥额度以及402错误的常见问题。"
+description: "关于余额、充值、API密钥信用额度限制以及402错误的常见问题。"
 icon: credit-card
 ---
-
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku使用以美元计的预付余额（1 <CreditIcon /> = 1美元）。无月费；费用按上游token用量计算，usage缺失时可能使用估算值。参见[计费与余额](/zh/billing)。
+Hostlinku 使用以美元计的预付余额（1 <CreditIcon /> = $1）。没有月费；费用根据上游令牌的使用量计算，若无使用量数据则按预估金额计费。请参阅 [计费与余额](/zh/billing)。
 
-## 明明有余额，为什么会显示402？
+<a id="kenapa-muncul-402-padahal-saldo-ada"></a>
+
+<a id="明明有余额为什么会显示402"></a>
+
+## 为什么余额充足却显示402错误？
 
 请检查以下两点：
 
-1. **可用余额** - 已使用/已预留的余额无法再次使用。请在控制台 → **Billing** 中查看当前余额。
-2. **API密钥的额度** - 密钥可能设有每日、每周、每月或总额度限制。一旦达到限额，即使账户余额尚有，请求也会被拒绝。请调整限额或等待重置周期。
+1. **可用余额**——已使用/已预留的余额无法再次使用。可在 Console → **计费** 中查看当前余额。
+2. **API密钥配额限制**——密钥可能设有每日、每周、每月或总配额限制。若达到配额上限，即使账户余额尚有，请求也将被拒绝。请调整配额或等待重置周期。
+
+<a id="bagaimana-cara-top-up"></a>
 
 ## 如何充值？
 
-打开控制台 → **Billing**。充值页面会显示可用的支付方式（目前支持QRIS/虚拟账户和加密货币）。最低/最高金额及汇率以结账时显示的为准。
+打开 Console → **计费**。充值页面上会显示可用的支付方式（目前为 QRIS/虚拟账户和加密货币）。最低/最高金额及汇率以结账时显示的为准。
 
-## 款项是否已到账？
+<a id="apakah-pembayaran-langsung-masuk"></a>
 
-付款经核实后，余额将自动到账。如果状态仍显示为“待处理”，请在再次充值前先在控制台查看交易记录。联系客服时，请提供交易ID。
+<a id="款项是否已到账"></a>
+
+## 款项是否已直接到账？
+
+付款验证通过后，余额将自动到账。如果状态仍显示为“待处理”，请在重新充值前在 Console 中查看交易记录。联系客服时，请提供交易 ID。
+
+<a id="apakah-saldo-bisa-dikembalikan"></a>
 
 ## 余额可以退还吗？
 
-未使用的充值余额可按照[退款政策](/zh/legals/refund-policy)申请退款。奖励/促销活动不具有现金价值。
+未使用的充值余额可按照[退款政策](/zh/legals/refund-policy)申请退款。奖励/促销不具有现金价值。
 
 <Callout type="note" title="需要帮助吗？">
-请将您的邮箱账号和交易ID发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)。详细信息请参见 [账单与余额](/zh/billing)。
+  请将您的账户邮箱和交易 ID 发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)。完整详情请参见 [计费与余额](/zh/billing)。
 </Callout>

@@ -1,26 +1,30 @@
 ---
 title: "GitHub Copilot"
-description: "GitHub Copilot CLI および GitHub Copilot アプリで、BYOK を通じて Hostlinku モデルを使用する方法、および IDE における Copilot の制限について"
+description: "GitHub Copilot CLIおよびGitHub CopilotアプリでBYOK経由のHostlinkuモデルを使用し、IDEにおけるCopilotの制限事項も適用してください"
 icon: bot
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[GitHub Copilot](https://docs.github.com/en/copilot) は、一部のインターフェースで **BYOK (Bring Your Own Key)** をサポートしています。 独自の *base URL* を受け付ける場所では、それを Hostlinku にリダイレクトし、Hostlinku の残高を持つカタログのモデルを使用することができます。
+[GitHub Copilot](https://docs.github.com/en/copilot)は、
+一部のインターフェースで**BYOK (Bring Your Own Key)**をサポートしています。独自の*base URL*を受け付ける場所では、それを
+Hostlinku へリダイレクトし、Hostlinku の残高を使用してカタログ内のモデルを利用できます。
 
-| コパイロットの画面 | Hostlinkuへ案内していただけますか？ | ガイド |
+| Copilotのインターフェース | Hostlinkuへのリンクを貼っていただいてもよろしいでしょうか？ | ガイド |
 |---|---|---|
-| **Copilot CLI** (`copilot`) | はい - 環境変数 `COPILOT_PROVIDER_*` | [下](#copilot-cli) |
-| **GitHub Copilot アプリ**（デスクトップ版） | はい - *設定 → モデルプロバイダー*（パブリックプレビュー） | [以下](#github-copilot-app) |
-| **VS CodeのCopilot Chat** | はい - *カスタムエンドポイント* プロバイダー | [VS Code](/ja/integrations/vscode) |
-| JetBrains、Visual Studio、Xcodeのコパイロット；インラインオートコンプリート | いいえ - ベースURLの設定はありません | [制限](#limitations) |
+| **Copilot CLI** (`copilot`) | はい - 環境変数 `COPILOT_PROVIDER_*` | [以下](#copilot-cli) |
+| **GitHub Copilot アプリ** (デスクトップ) | はい - *設定 → モデルプロバイダー* (パブリックプレビュー) | [以下](#github-copilot-app) |
+| **VS CodeのCopilot Chat** | はい - プロバイダー *カスタムエンドポイント* | [VS Code](/ja/integrations/vscode) |
+| JetBrains、Visual Studio、XcodeのCopilot；インラインオートコンプリート | いいえ - base URLの設定はありません | [制限事項](#batasan) |
 
 ## Copilot CLI
 
-BYOK変数が設定されている場合、Copilot CLIはすべてのモデルリクエストをあなたのプロバイダーに送信します。このモードでは、**GitHubへのログインは必須ではありません**。
+BYOK変数が設定されている場合、Copilot CLIはすべてのモデルリクエストをあなたのプロバイダーに送信します。**このモードでは、
+GitHubへのログインは必須ではありません**。
 
 <Steps>
+
+<a id="set-environment-variable"></a>
 
 ### 環境変数を設定する
 
@@ -31,38 +35,48 @@ export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
 export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
-`COPILOT_PROVIDER_TYPE`のデフォルトは`openai`（Chat Completions）であるため、設定する必要はありません。Copilotが自動的に`/chat/completions`を追加します。ベースURLは`/v1`までで十分です。
+`COPILOT_PROVIDER_TYPE`のデフォルトは`openai`（Chat Completions）であるため、設定する必要はありません。Copilotは
+`/chat/completions`を自動的に追加するため、ベースURLは`/v1`までで十分です。
 
-### （推奨）モデルのトークン制限を指定する
+<a id="disarankan-beri-tahu-batas-token-model"></a>
 
-Copilot CLI は「Hostlinku」というslugを認識しないため、コンテキストが正しく切り取られるよう、[カタログ](/ja/models) から制限値を入力してください：
+<a id="推奨モデルのトークン制限を指定する"></a>
+
+### （推奨）モデルトークンの制限について明記してください
+
+Copilot CLIは「Hostlinku」というスラッグを認識しないため、コンテキストが正しく切り出されるよう、[カタログ](/ja/models)から制限値を入力してください：
 
 ```bash
 export COPILOT_PROVIDER_MAX_PROMPT_TOKENS=1000000
 export COPILOT_PROVIDER_MAX_OUTPUT_TOKENS=64000
 ```
 
-`copilot`を実行する前に、同じシェルでキーが設定されているか、値を表示せずに確認します：
+`copilot`を実行する前に、同じシェルでkeyが入力されているか確認してください。その際、値は出力しないでください：
 
 ```bash
-test -n "$COPILOT_PROVIDER_API_KEY" && echo "APIキーは設定済みです" || echo "APIキーが未設定です"
+test -n "$COPILOT_PROVIDER_API_KEY" && echo "API key tersedia" || echo "API key belum diatur"
 ```
+
+<a id="jalankan"></a>
 
 ### 実行
 
 ```bash
 copilot
-# またはセッションごとにモデルを切り替え
+# atau ganti model per sesi
 copilot --model gpt-5-5
 ```
 
-最初のリクエストがコンソールに表示されます → **リクエストログ**。
+コンソールに最初に表示されるリクエスト → **リクエストログ**。
 
 </Steps>
 
+<a id="varian-format-anthropic"></a>
+
 ### バリエーション：Anthropic形式
 
-Messages API（フルプロンプトキャッシュ）経由のClaudeモデルの場合、`/v1`を含まない**ベースURL**を持つ`anthropic`プロバイダーを使用してください：
+Messages API（完全なプロンプトキャッシュ）経由のClaudeモデルの場合、`anthropic`プロバイダーを使用し、ベース
+URLには `/v1` を**含めない**でください：
 
 ```bash
 export COPILOT_PROVIDER_TYPE=anthropic
@@ -71,58 +85,84 @@ export COPILOT_PROVIDER_API_KEY="$HOSTLINKU_API_KEY"
 export COPILOT_MODEL=claude-sonnet-4-6
 ```
 
-<Callout type="note" title="モデルは、ツール呼び出しとストリーミングに対応している必要があります">
-  Copilot CLIには*tool calling*と*streaming*が必要で、128Kトークン以上のコンテキストを推奨しています。モデルを選ぶ前に[カタログ](/ja/models)で確認してください。
+<Callout type="note" title="モデルは、ツール呼び出しとストリーミングをサポートしている必要があります">
+  Copilot CLIには*tool calling*と*streaming*が必要であり、コンテキストは最低128Kトークンが推奨されます。モデルを選択する前に、[カタログ](/ja/models)でこれら3つを確認してください。
 </Callout>
 
-- **ツールとモデルに合ったAPI形式を使います。** `openai`プロバイダーの既定はChat Completionsです。Responsesの制限は[Responsesリファレンス](/ja/responses)を参照してください。
-- **GitHubにログインしていない場合**、GitHubサーバーに依存する機能（`/delegate`、GitHub MCPサーバー、コード検索）は利用できません。これらの機能が必要な場合は、`copilot login`でログインしてください。リクエストモデルは引き続きHostlinkuのままです。
-- **`COPILOT_OFFLINE=true`** は GitHub へのすべての接続（テレメトリを含む）を遮断します。プロンプトは引き続き `api.hostlinku.com` に送信されます。
+- **ツールやモデルに適したAPI形式を使用してください。** Chat Completionsのデフォルトプロバイダーは`openai`です。Responsesの制限については、[Responsesのリファレンス](/ja/responses)で説明されています。
+- **GitHubにログインしていない場合**、GitHubサーバーに依存する機能（`/delegate`、GitHub MCPサーバー、
+  コード検索）は利用できません。これらの機能が必要な場合は、`copilot login`でログインしてください。リクエストモデルは
+  Hostlinkuのままです。
+- **`COPILOT_OFFLINE=true`** は、GitHub へのすべての接続（テレメトリを含む）を無効にします。プロンプトは引き続き
+  `api.hostlinku.com` に送信されます。
 
 <a id="github-copilot-app"></a>
 
 ## GitHub Copilot アプリ
 
-GitHub Copilotのデスクトップアプリは、独自のモデルプロバイダーに対応しています（パブリックプレビュー）。GitHubへのログインは必要ですが、独自のプロバイダーのみを使用する場合は、**Copilotパッケージは必要ありません**。
+GitHub Copilotのデスクトップアプリは、独自のモデルプロバイダーをサポートしています（パブリックプレビュー）。GitHubへのログインは
+依然として必要ですが、独自のプロバイダーのみを使用する場合は**Copilotパッケージは必要ありません**。
 
 <Steps>
 
-### プロバイダーを追加する
+<a id="tambah-provider"></a>
 
-アプリの設定を開き、**プロバイダーのモデル** → **プロバイダーを追加** → **OpenAI-compatible** を選択します。
+<a id="プロバイダーを追加する"></a>
 
-### プロバイダーの詳細を入力してください
+### プロバイダーを追加
+
+アプリ設定 → **モデルプロバイダー** → **プロバイダーを追加** → **OpenAI互換**を選択してください。
+
+<a id="isi-detail-provider"></a>
+
+<a id="プロバイダーの詳細を入力してください"></a>
+
+### プロバイダーの詳細情報
 
 | フィールド | 値 |
 |---|---|
 | **表示名** | `Hostlinku` |
-| **ベースURL** | `https://api.hostlinku.com/v1` |
-| **APIキー** | `sk-…`（APIキー Hostlinku） |
+| **Base URL** | `https://api.hostlinku.com/v1` |
+| **APIキー** | `sk-…`（HostlinkuのAPIキー） |
 
-**「プロバイダーを追加」**をクリックします。キーはオペレーティングシステムの資格情報ストアに保存されます。
+**Add provider**をクリックします。キーはオペレーティングシステムの資格情報ストアに保存されます。
 
-### セッションごとのモデルを選択
+<a id="pilih-model-per-sesi"></a>
 
-モデル Hostlinku が、GitHub モデルの横にあるモデルピッカーに表示されます。エージェントセッションを開始する際に、いずれかを選択してください。
+<a id="セッションごとのモデルを選択"></a>
+
+### セッションごとのモデルを選択してください
+
+Hostlinkuモデルは、GitHubモデルの横にあるモデルピッカーに表示されます。エージェントセッションを開始する際に、いずれかを選択してください
+。
 
 </Steps>
 
-Claudeモデルの場合、プロバイダーとして**Anthropic**を選択し、ベースURLとして`https://api.hostlinku.com`（`/v1`は含めない）を入力することも可能です。これは、プロバイダーのフォームにベースURLの欄が表示されている場合に利用可能です。
+Claudeモデルの場合、プロバイダーとして**Anthropic**を選択し、ベースURLに
+`https://api.hostlinku.com`（`/v1`を除く）を入力することも可能です。これは、プロバイダーのフォームにベースURLの欄が表示されている場合に利用可能です。
 
-<a id="limitations"></a>
+<a id="batasan"></a>
 
-## 制限
+<a id="制限"></a>
 
-- **JetBrains、Visual Studio、およびXcodeのCopilot**には、ユーザーごとのベースURLやカスタムプロバイダーの設定はありません。 JetBrainsでは、モデルHostlinkuに対して[JetBrains AI Assistant](/ja/integrations/jetbrains)または[Junie CLI](/ja/integrations/junie)を使用してください。
-- すべてのエディタにおける**インラインオートコンプリート（ゴーストテキスト）**は、常にCopilotのインフラストラクチャを使用しています。BYOKはチャットとエージェントにのみ適用されます。
-- **Copilot Business/Enterprise：** 組織の管理者は、Copilot のポリシー設定で BYOK（および Copilot アプリ用の Copilot CLI）を有効にする必要があります。
+## 制限事項
+
+- **JetBrains、Visual Studio、およびXcodeのCopilot**には、ユーザーごとのベースURLやカスタムプロバイダーの設定はありません。
+  JetBrainsでは、[JetBrains AI Assistant](/ja/integrations/jetbrains)
+  または [Junie CLI](/ja/integrations/junie) を使用して、Hostlinku モデルを利用してください。
+- **インラインオートコンプリート（ゴーストテキスト）**は、すべてのエディタにおいて常にCopilotのインフラストラクチャを使用します。BYOK
+  はチャットおよびエージェントにのみ適用されます。
+- **Copilot Business/Enterprise：** 組織の管理者は、Copilotのポリシー設定でBYOK（およびCopilotアプリ用のCopilot CLI）を
+  許可する必要があります。
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-| 症状 | Solusi |
+| 症状 | 解決策 |
 |---|---|
-| `401` | `copilot`を実行するシェルの`COPILOT_PROVIDER_API_KEY`が空または不正です。上記の確認で設定の有無を確かめ、まだ拒否される場合はコンソールからコピーし直してください。 |
-| すべてのリクエストで`404` | `openai`のプロバイダーで`/v1`がない場合、または`anthropic`のプロバイダーで`/v1`がある場合。 |
-| `404 model_not_found` | `COPILOT_MODEL`のslugは、`GET /v1/models`のslugと完全に一致する必要があります。 |
-| エラー：このモデルはツールの呼び出しに対応していません | [カタログ](/ja/models)の「*ツール呼び出し*」対応モデルに変更してください。 |
-| まだGitHubのモデルを使用している | 変数が別のシェルにエクスポートされている - 同じシェルから`copilot`を実行するか、`~/.zshrc`に追加してください。 |
+| `401` | `copilot` を実行しているシェルで、`COPILOT_PROVIDER_API_KEY` が空または不正です。上記のチェックを行い、キーが入力されていることを確認してください。それでも拒否される場合は、コンソールから再度コピーしてください。 |
+| すべてのリクエストにおける `404` | `/v1`を含まないプロバイダー `openai`、または `/v1` を含むプロバイダー `anthropic`。 |
+| `404 model_not_found` | `COPILOT_MODEL`は、`GET /v1/models`のスラグと完全に一致させる必要があります。 |
+| Errorモデルはツール呼び出しをサポートしていません | [カタログ](/ja/models)の「*tool calling*」モデルに変更してください。 |
+| 引き続きGitHubのモデルを使用しています | 変数は他のシェルにエクスポートされます。同じシェルから `copilot` を実行するか、`~/.zshrc` に追加してください。 |

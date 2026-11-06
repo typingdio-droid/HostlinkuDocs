@@ -8,11 +8,15 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku は、一元化されたモデルカタログを提供します。 各モデルには、[Chat Completions](/ja/chat-completions)の`model`パラメータで使用される一意の**slug**があり、コンテキストサイズ、機能、トークンあたりの価格も記載されています。
+Hostlinkuは、一元化されたモデルカタログを提供しています。各モデルには一意の**slug**があり、
+[Chat Completions](/ja/chat-completions)の`model`パラメータで使用され、コンテキストサイズ、
+機能、およびトークンあたりの価格が記載されています。
 
 ## `GET /v1/models`
 
-ステータスが `available` で、まだ非推奨になっておらず、使用中の **Service Mode API key**（Performance、Low-Cost、Dedicated）で利用可能なすべてのモデル、およびそのモードにおける 1M トークンあたりの <CreditIcon /> の価格を一覧表示します。
+ステータスが `available` で、まだ非推奨になっておらず、使用中の
+**サービスモード API キー**（Performance、Low-Cost、または Dedicated）で利用可能なすべてのモデルを、そのモードにおける 1M トークンあたりの価格 <CreditIcon /> とともに
+返します。
 
 ```http
 GET https://api.hostlinku.com/v1/models
@@ -67,91 +71,104 @@ curl https://api.hostlinku.com/v1/models \
 
 | フィールド | 意味 |
 |---|---|
-| `service_mode`（レベル一覧および項目） | Service Mode API keyで使用されるモデル：`performance`、`low_cost`、`dedicated`。モデル一覧はモードごとに異なります。 |
-| `id` | slugモデル。`/v1/chat/completions`、`/v1/messages`、および`/v1/responses`の`model`フィールドで使用される値。 |
+| `service_mode`（リストレベルおよび項目レベル） | 使用されるサービスモードのAPIキー：`performance`、`low_cost`、または`dedicated`。モードごとにモデル一覧が異なります。 |
+| `id` | モデルのスラグは、`/v1/chat/completions`、`/v1/messages`、および`/v1/responses`の`model`フィールドで使用される値です。 |
 | `created` | モデルがカタログに追加された時刻（Unixエポック、秒）。 |
-| `owned_by` | 常に `"hostlinku"` - このモデルがカタログ Hostlinku によって管理されていることを示すマーカー。 |
-| `context_window` | トークン内の最大コンテキストサイズ（入力＋出力）。 |
+| `owned_by` | 常に `"hostlinku"` と表記すること。これは、モデルがHostlinkuカタログによって管理されていることを示すマーカーです。 |
+| `context_window` | トークン単位での最大コンテキストサイズ（入力＋出力）。 |
 | `capabilities` | 機能一覧（例：`vision`、`tool-calling`、`json-mode`、`reasoning`、`long-context`）。 |
-| `pricing` | Service Modeにおける価格の対象は、`null`（そのモードでモデルにまだ価格がない場合）。 `pricing.unit`は常に`"1M_tokens"`であり、`pricing.currency`にはクレジット記号が含まれます（1 <CreditIcon /> = \$1）。 |
-| `pricing.input` / `pricing.output` | プロンプトトークン／回答トークンの価格は、**1Mトークン**あたり（1トークンあたりや1Kあたりではありません）です。 |
-| `pricing.cache_read` / `pricing.cache_write` | キャッシュ読み取り／5分間のキャッシュ書き込みの100万トークンあたりの価格。設定のない料金は省略される場合があります。[プロンプトキャッシュ](/ja/prompt-caching)を参照してください。 |
+| `pricing` | 当該サービスモードにおける価格オブジェクト。モデルがそのモードでまだ価格を持っていない場合は `null` とする。`pricing.unit` は常に `"1M_tokens"` であり、`pricing.currency` にはクレジットのシンボルが含まれる（1 <CreditIcon /> = \$1）。 |
+| `pricing.input` / `pricing.output` | プロンプトトークン／回答トークンの価格は、**1Mトークン**あたり（1トークンあたりや1Kあたりではない）です。 |
+| `pricing.cache_read` / `pricing.cache_write` | 5分間のキャッシュ読み取り／キャッシュ書き込みあたりの1Mトークンあたりの価格。利用できない料金については記載しなくても構いません。[プロンプトキャッシュ](/ja/prompt-caching)を参照してください。 |
 
-<Callout type="note" title="Pricingは利用者向け価格です">
-`pricing` はマージンを含む、キーのService Modeにおける利用者向け価格です。非ストリーミングレスポンスには `hostlinku.cost` が含まれます。使用量と費用はコンソールのログでも確認できます。
+<Callout type="note" title="Pricingは顧客価格です">
+`pricing`は、マージンを含むサービスモードキーの顧客価格です。非ストリーミングのレスポンスでは、コストは`hostlinku.cost`で確認できます。使用状況とコストは、Consoleのログでも確認できます。
 </Callout>
+
+<a id="katalog-publik-tanpa-autentikasi"></a>
 
 ## 公開カタログ（認証不要）
 
-APIキーなしでモデルとService Modeを比較するには、次のエンドポイントを使用します。
+APIキーがない場合は、モデルとサービスモードを比較するために以下のエンドポイントを使用してください：
 
 ```http
 GET https://api.hostlinku.com/api/public/models-v2
 GET https://api.hostlinku.com/api/public/service-modes
 ```
 
-`models-v2` は `{status, currency, models}` を返します。各モデルには `slug`、`displayName`、`contextTokens`、記載がある場合の `maxOutputTokens`、`capabilities`、`serviceModes`、および `modes` 内のモード別価格が含まれます。`service-modes` はモードの概要とモデル一覧を含む `{status, data}` を返します。
+`models-v2`は`{status, currency, models}`を返します。 各モデルには、`slug`、`displayName`、`contextTokens`、利用可能な場合は`maxOutputTokens`、`capabilities`、`serviceModes`、および`modes`内のモードごとの価格が格納されています。`service-modes`は、モードとモデルの概要を含む`{status, data}`を返します。
 
-特定のAPIキーで利用できるモデルと価格は、`GET /v1/models` で確認してください。
+特定のAPIキーに適用されるリストや価格については、`GET /v1/models`を使用してください。
+
+<a id="daftar-model"></a>
 
 ## モデル一覧
 
-**2026年11月6日更新**。[最新カタログ](https://hostlinku.com/ja/models)またはAPIキーによる `GET /v1/models` で確認してください。
+**2026年11月6日**更新。[最新のカタログ](https://hostlinku.com/models) をご覧いただくか、ご自身のAPIキーを使用して `GET /v1/models` を実行してください。
 
-| モデル | プロバイダー | カタログのコンテキスト | カタログの最大出力 | Service Mode |
+| モデル | プロバイダー | カタログの文脈 | カタログの最大出力 | Service Mode |
 |---|---|---|---|---|
-| [Claude Haiku 5.5](/ja/models/claude-haiku-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [Claude Opus 5.5](/ja/models/claude-opus-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [Claude Opus 5](/ja/models/claude-opus-5) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance, Low-Cost |
-| [Claude Sonnet 5](/ja/models/claude-sonnet-5) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance, Low-Cost |
-| [Claude Fable 5](/ja/models/claude-fable-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [Claude Opus 4.8](/ja/models/claude-opus-4-8) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [Claude Opus 4.7](/ja/models/claude-opus-4-7) | Anthropic | 1,000,000 トークン | 32,000 トークン | Performance, Low-Cost |
-| [Claude Haiku 4.5](/ja/models/claude-haiku-4-5) | Anthropic | 200,000 トークン | 64,000 トークン | Performance, Low-Cost |
-| [Claude Opus 4.6](/ja/models/claude-opus-4-6) | Anthropic | 1,000,000 トークン | 32,000 トークン | Performance, Low-Cost |
-| [Claude Sonnet 4.6](/ja/models/claude-sonnet-4-6) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance, Low-Cost |
-| [Claude Sonnet 5.5](/ja/models/claude-sonnet-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [GPT-6.1 Sol](/ja/models/gpt-6-1-sol) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [GPT-6 Luna](/ja/models/gpt-6-luna) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [GPT-6 Sol](/ja/models/gpt-6-sol) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [GPT-6 Astra](/ja/models/gpt-6-astra) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [GPT-5.6 Luna](/ja/models/gpt-5-6-luna) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance, Low-Cost |
-| [GPT-5.6 Sol](/ja/models/gpt-5-6-sol) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance, Low-Cost |
-| [GPT-5.6 Terra](/ja/models/gpt-5-6-terra) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance, Low-Cost |
+| [Claude Haiku 5.5](/ja/models/claude-haiku-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [Claude Opus 5.5](/ja/models/claude-opus-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [Claude Opus 5](/ja/models/claude-opus-5) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance、Low-Cost |
+| [Claude Sonnet 5](/ja/models/claude-sonnet-5) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance、Low-Cost |
+| [Claude Fable 5](/ja/models/claude-fable-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [Claude Opus 4.8](/ja/models/claude-opus-4-8) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [Claude Opus 4.7](/ja/models/claude-opus-4-7) | Anthropic | 1,000,000 トークン | 32,000 トークン | Performance、Low-Cost |
+| [Claude Haiku 4.5](/ja/models/claude-haiku-4-5) | Anthropic | 200,000 トークン | 64,000 トークン | Performance、Low-Cost |
+| [Claude Opus 4.6](/ja/models/claude-opus-4-6) | Anthropic | 1,000,000 トークン | 32,000 トークン | Performance、Low-Cost |
+| [Claude Sonnet 4.6](/ja/models/claude-sonnet-4-6) | Anthropic | 1,000,000 トークン | 64,000 トークン | Performance、Low-Cost |
+| [Claude Sonnet 5.5](/ja/models/claude-sonnet-5-5) | Anthropic | 1,000,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [GPT-6.1 Sol](/ja/models/gpt-6-1-sol) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [GPT-6 Luna](/ja/models/gpt-6-luna) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [GPT-6 Sol](/ja/models/gpt-6-sol) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [GPT-6 Astra](/ja/models/gpt-6-astra) | OpenAI | 1,050,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [GPT-5.6 Luna](/ja/models/gpt-5-6-luna) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance、Low-Cost |
+| [GPT-5.6 Sol](/ja/models/gpt-5-6-sol) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance、Low-Cost |
+| [GPT-5.6 Terra](/ja/models/gpt-5-6-terra) | OpenAI | 1,050,000 トークン | 64,000 トークン | Performance、Low-Cost |
 | [GPT 5.3 Codex](/ja/models/gpt-5-3-codex) | OpenAI | 400,000 トークン | 128,000 トークン | Performance |
-| [GPT-5.5](/ja/models/gpt-5-5) | OpenAI | 1,000,000 トークン | 128,000 トークン | Performance, Low-Cost |
-| [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 トークン | 384,000 トークン | Performance, Dedicated |
+| [GPT-5.5](/ja/models/gpt-5-5) | OpenAI | 1,000,000 トークン | 128,000 トークン | Performance、Low-Cost |
+| [DeepSeek-V4.1-Flash](/ja/models/deepseek-v4-1-flash) | DeepSeek | 1,000,000 トークン | 384,000 トークン | Performance、Dedicated |
 | [DeepSeek-V4.1-Flash Fast](/ja/models/deepseek-v4-1-flash-fast) | DeepSeek | 1,000,000 トークン | 384,000 トークン | Dedicated |
 | [DeepSeek-V4.1-Flash Hyper](/ja/models/deepseek-v4-1-flash-hyper) | DeepSeek | 1,000,000 トークン | 384,000 トークン | Dedicated |
 | [DeepSeek V4 Pro](/ja/models/deepseek-v4-pro) | DeepSeek | 1,000,000 トークン | 64,000 トークン | Performance |
-| [DeepSeek V4 Flash](/ja/models/deepseek-v4-flash) | DeepSeek | 1,000,000 トークン | 記載なし | Performance |
-| [GLM 5.3](/ja/models/glm-5-3) | Zhipu | 1,000,000 トークン | 64,000 トークン | Performance, Dedicated |
+| [DeepSeek V4 Flash](/ja/models/deepseek-v4-flash) | DeepSeek | 1,000,000 トークン | 未記載 | Performance |
+| [GLM 5.3](/ja/models/glm-5-3) | Zhipu | 1,000,000 トークン | 64,000 トークン | Performance、Dedicated |
 | [GLM-5.3 Flash](/ja/models/glm-5-3-flash) | Zhipu | 1,000,000 トークン | 64,000 トークン | Dedicated |
 | [GLM-5.3 Flash Hyper](/ja/models/glm-5-3-flash-hyper) | Zhipu | 1,000,000 トークン | 64,000 トークン | Dedicated |
 | [GLM 5.2](/ja/models/glm-5-2) | Zhipu | 1,000,000 トークン | 64,000 トークン | Performance |
 | [GLM 5.1](/ja/models/glm-5-1) | Zhipu | 200,000 トークン | 128,000 トークン | Performance |
-| [Qwen 3.6 Plus](/ja/models/qwen3-6-plus) | Alibaba | 1,000,000 トークン | 記載なし | Performance |
-| [Qwen 3.7 Max](/ja/models/qwen3-7-max) | Alibaba | 1,000,000 トークン | 記載なし | Performance |
+| [Qwen 3.6 Plus](/ja/models/qwen3-6-plus) | Alibaba | 1,000,000 トークン | 未記載 | Performance |
+| [Qwen 3.7 Max](/ja/models/qwen3-7-max) | Alibaba | 1,000,000 トークン | 未記載 | Performance |
 | [Kimi K3.1 Pro Hyper](/ja/models/kimi-k3-1-pro-hyper) | Moonshot | 1,048,576 トークン | 64,000 トークン | Dedicated |
 | [Kimi K3](/ja/models/kimi-k3) | Moonshot | 1,000,000 トークン | 64,000 トークン | Performance |
 | [Kimi K2.6](/ja/models/kimi-k2-6) | Moonshot | 256,000 トークン | 32,000 トークン | Performance |
-| [Kimi K2.7 Code](/ja/models/kimi-k2-7-code) | Moonshot | 256,000 トークン | 記載なし | Performance |
+| [Kimi K2.7 Code](/ja/models/kimi-k2-7-code) | Moonshot | 256,000 トークン | 未記載 | Performance |
 | [MiniMax M3](/ja/models/minimax-m3) | MiniMax | 1,000,000 トークン | 64,000 トークン | Performance |
-| [Muse Wonder](/ja/models/muse-wonder-1-0) | Meta | 1,048,576 トークン | 記載なし | Performance |
-| [Model Baize](/ja/models/model-baize) | Anonymous | 1,000,000 トークン | 記載なし | Low-Cost |
+| [Muse Wonder](/ja/models/muse-wonder-1-0) | Meta | 1,048,576 トークン | 未記載 | Performance |
+| [Baizeモデル](/ja/models/model-baize) | Anonymous | 1,000,000 トークン | 未記載 | Low-Cost |
+
+<a id="cara-memilih-model"></a>
 
 ## モデルの選び方
 
-1. **要件を特定する**：通常のチャット、推論（_reasoning_）、ビジョン／マルチモーダル、ツール呼び出し、または構造化されたJSON出力。フィールド`capabilities`を確認してください。
-2. **コンテキストのサイズに注意**：`context_window`が、あなたのプロンプトと出力に対して十分な容量であることを確認してください。
-3. **価格の比較**：プロンプトトークンは`pricing.input`、回答トークンは`pricing.output`です。推論モデルは一般的に出力コストが高くなります。
-4. **小型モデルから始める**：開発段階では、軽量クラスのモデル（例：`gpt-6-luna`、`deepseek-v4-1-flash`、`qwen3-6-plus`）の方がはるかに安価です。品質に問題がある場合にのみ、上位モデルに切り替えてください。
-5. **コンソールを参照**：[console.hostlinku.com](https://console.hostlinku.com) の **モデル** メニューには、価格や仕様が同じカタログに加え、各モデルの詳細ページが表示されます。
+1. **要件を特定**：通常のチャット、推論（_reasoning_）、ビジョン／マルチモーダル、ツール呼び出し、
+   または構造化されたJSON出力。`capabilities`フィールドを確認してください。
+2. **コンテキストのサイズに注意**：`context_window`がプロンプトと出力に対して十分なサイズであることを確認してください。
+3. **価格の比較**：プロンプトトークンには `pricing.input`、回答トークンには `pricing.output` を使用します。
+   推論モデルの場合、出力側の価格が一般的に高くなります。
+4. **小規模なモデルから始める**：開発においては、軽量クラスのモデル（例：`gpt-6-luna`、
+   `deepseek-v4-1-flash`、`qwen3-6-plus`）の方がはるかに安価です。モデルのクラスを上げるのは、
+   品質が不十分な場合に限ってください。
+5. **コンソールを参照**：[console.hostlinku.com](https://console.hostlinku.com) の **モデル** メニュー
+   には、価格や機能が同じカタログに加え、モデルごとの詳細ページが表示されます。
 
 <Callout type="tip" title="モデルID">
-`GET /v1/models` のslugをそのまま `model` フィールドにコピーしてください。不明なslugは `MODEL_NOT_FOUND`、キーで利用できないモデルは `MODEL_NOT_IN_SERVICE_MODE` または `MODEL_UNAVAILABLE` を返す場合があります。
+`GET /v1/models` のスラグをそのまま `model` フィールドにコピーしてください。未知のスラグは `MODEL_NOT_FOUND` を、キーに存在しないモデルは `MODEL_NOT_IN_SERVICE_MODE` または `MODEL_UNAVAILABLE` を返す可能性があります。
 </Callout>
+
+<a id="routing-dan-failover"></a>
 
 ## ルーティングとフェイルオーバー
 
-ゲートウェイはモデルとキーのService Modeに応じたサービス経路を選択します。再試行やフェイルオーバーは利用可能な経路と障害の種類に依存し、すべてのモデルに予備経路があるわけではありません。リクエストのモデルIDは変更しません。
+Gatewayは、モデルとService Modeキーに基づいてサービス経路を選択します。リトライやフェイルオーバーは、利用可能な経路と障害の種類によって異なります。すべてのモデルに予備の経路があるわけではありません。リクエストにおけるモデルIDは変更されません。

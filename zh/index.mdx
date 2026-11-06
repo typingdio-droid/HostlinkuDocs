@@ -1,14 +1,18 @@
 ---
 title: "简介"
-description: 发送第一个请求并选择后续指南
+description: "发送第一个请求并选择后续指南"
 icon: house
 ---
 
-Hostlinku通过一个网关提供OpenAI Chat Completions、Anthropic Messages和Responses API。每个API密钥绑定**Performance**、**Low-Cost**或**Dedicated** Service Mode，模型和价格随该模式而定。
+Hostlinku 通过一个网关提供 OpenAI 聊天补全、Anthropic 消息和响应 API。API 密钥与 **Performance**、**Low-Cost** 或 **Dedicated** 服务模式绑定；模型和价格随该模式而定。
 
-## 第一个请求
+<a id="request-pertama"></a>
 
-在[Console](https://console.hostlinku.com)注册、为组织充值并创建API密钥。从密钥目录选择模型slug，必要时替换示例。[完整入门指南](/zh/getting-started)。
+<a id="第一个请求"></a>
+
+## 首次请求
+
+在 [Console](https://console.hostlinku.com) 注册，充值组织余额，然后创建 API 密钥。以下示例使用了密钥目录中的模型；如有必要，请替换 slug。[完整指南](/zh/getting-started)。
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -17,25 +21,27 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -d '{"model":"gpt-5-5","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
+<a id="langkah-berikutnya"></a>
+
 ## 下一步
 
 <CardGroup cols={2}>
-  <Card title="认证" icon="key" href="/zh/authentication">
-    管理密钥、Service Mode和信用额度。
+  <Card title="身份验证" icon="key" href="/zh/authentication">
+    管理密钥、服务模式和信用额度。
   </Card>
   <Card title="模型" icon="box" href="/zh/models">
-    查看slug、能力与价格。
+    选择 slug、功能和资费。
   </Card>
-  <Card title="集成" icon="terminal" href="/zh/integrations">
-    连接SDK、IDE或coding agent。
+  <Card title="集成" icon="terminal" href="/integrations">
+    连接 SDK、IDE 或编码代理。
   </Card>
-  <Card title="API Reference" icon="code" href="/zh/api-reference">
+  <Card title="API 参考" icon="code" href="/zh/api-reference">
     选择端点和请求格式。
   </Card>
   <Card title="计费与余额" icon="credit-card" href="/zh/billing">
-    充值并了解使用费用。
+    充值余额并查看使用费用。
   </Card>
-  <Card title="用量与限额" icon="gauge" href="/zh/usage-and-limits">
-    了解组织共享配额与429。
+  <Card title="使用与限制" icon="gauge" href="/zh/usage-and-limits">
+    理解共享配额和 429 错误的处理方式。
   </Card>
 </CardGroup>

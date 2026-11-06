@@ -1,61 +1,115 @@
 ---
 title: "账户、计费与政策"
-description: "账户、付款、费用和隐私的简短解答。"
+description: "关于账户、支付、费用和隐私的简要说明。"
 icon: users
 ---
 
-## 账户与API密钥
+<a id="akun-dan-api-key"></a>
+
+<a id="账户与api密钥"></a>
+
+## 账户和 API 密钥
+
+<a id="bagaimana-mulai"></a>
 
 ### 如何开始？
 
-[注册](https://api.hostlinku.com/api/auth2/register) 或 [登录](https://api.hostlinku.com/api/auth2/login)，打开 [Console](https://console.hostlinku.com)。在 **Billing** 充值，在 **API Keys** 创建密钥。参阅 [快速开始](/zh/getting-started)。
+[注册](https://api.hostlinku.com/api/auth2/register) 或 [登录](https://api.hostlinku.com/api/auth2/login)，然后打开 [Console](https://console.hostlinku.com)。 在**Billing**中充值，并在**API Keys**中创建密钥。请按照[快速入门](/zh/getting-started)操作。
 
-### 密钥有哪些设置？
+<a id="apa-pengaturan-key-yang-tersedia"></a>
 
-名称、Service Mode **Performance / Low-Cost / Dedicated**、有效期 **30/60/90天或永不过期**、可选每月限额。默认Performance和30天，没有作用域选择。密钥管理API的其他周期请参阅 [身份验证](/zh/authentication)。
+<a id="密钥有哪些设置"></a>
 
-### 密钥如何保存？
+### 有哪些可用的密钥设置？
 
-只显示一次，服务器保存SHA-256哈希。请保管在服务器环境变量中。可编辑、停用/启用、删除；丢失或泄露后更换。
+选择名称、服务模式 **Performance / Low-Cost / Dedicated**、过期时间 **30/60/90 天或永不过期**，以及可选的月度限额。默认值为 Performance 和 30 天。 无作用域。密钥管理 API 支持额外的时间段；请参阅 [身份验证](/zh/authentication)。
 
-### 有通行密钥和2FA吗？
+<a id="bagaimana-secret-disimpan"></a>
 
-有。**Settings → Security** 提供Keycloak的WebAuthn通行密钥、TOTP验证器和恢复码。
+<a id="密钥如何保存"></a>
 
-## 余额与付款
+### 密钥是如何存储的？
 
-### 信用额度是什么？
+Secret 仅出现一次；服务器存储 SHA-256 哈希值。将其保存在服务器环境中。Key 可以编辑、禁用/启用以及删除。如果 Secret 丢失或泄露，请更换 Key。
 
-服务单位为 **1信用额度 = $1**。关联密钥共享组织余额，它不是自由消费的法币。退款遵循 [退款政策](/zh/legals/refund-policy)。
+<a id="apakah-passkey-dan-2fa-tersedia"></a>
+
+<a id="有通行密钥和2fa吗"></a>
+
+### 是否支持密钥和双因素认证（2FA）？
+
+是的。**设置 → 安全** 通过 Keycloak 提供 WebAuthn 密钥、TOTP 验证器和恢复码。
+
+<a id="saldo-dan-pembayaran"></a>
+
+<a id="余额与付款"></a>
+
+## 余额和付款
+
+<a id="apa-arti-kredit"></a>
+
+<a id="信用额度是什么"></a>
+
+### “信用”是什么意思？
+
+**1 积分 = 1 美元**，作为预付费服务的计量单位。组织余额由相关密钥使用，并非可自由使用的法定货币。退款遵循 [退款政策](/zh/legals/refund-policy)。
+
+<a id="bagaimana-top-up"></a>
 
 ### 如何充值？
 
-在 **Billing** 选择金额和方式。新QRIS/VA使用 **iPaymu Direct**，加密货币使用 **Heleket托管付款**。付款前显示金额、奖励、汇率、费用、期限，验证后自动到账。参阅 [计费与余额](/zh/billing)。
+打开**Billing**，选择金额和支付方式。新的QRIS/VA使用**iPaymu Direct**，加密货币使用**Heleket hosted**。金额、奖励、汇率、费用和截止日期会在支付前显示。验证通过后，款项将自动到账。 查看 [账单与余额](/zh/billing)。
+
+<a id="di-mana-biaya-dan-invoice"></a>
 
 ### 费用和发票在哪里？
 
-**Logs** 展示请求费用，**Analytics** 展示用量汇总，**Billing** 展示交易和发票。非流式chat有 `hostlinku.cost`，SSE在结束后检查费用。usage缺失时可能估算。
+**日志**显示请求费用，**分析**显示使用情况摘要，**计费**显示交易和发票。非流式聊天包含 `hostlinku.cost`；对于 SSE，请在完成后查看最终费用。缺失的使用量可以进行估算。
 
-浏览器可打印/保存PDF。Billing Profile保存在Console浏览器，因此Console打印件可能与Pay发票或其他设备不同。
+发票可通过浏览器打印或导出为 PDF。计费配置文件保存在 Console 浏览器的本地，因此 Console 的打印件可能与 Pay 或其他设备的发票有所不同。
 
-### 有自动充值或低余额邮件吗？
+<a id="apakah-ada-auto-recharge-atau-email-saldo-rendah"></a>
 
-当前Billing没有这些设置。请在生产使用前监控并充值。增加余额不会提高密钥限额。
+<a id="有自动充值或低余额邮件吗"></a>
 
-## 错误与隐私
+### 是否有自动充值或余额不足提醒邮件？
 
-### 如何处理429和402？
+当前尚不支持活跃计费。在投入生产环境前请监控余额并充值。充值不会提高密钥限额。
 
-429时遵循`Retry-After`并采用退避，见[用量与限额](/zh/usage-and-limits)。402时检查可用余额和密钥额度，见[计费与余额](/zh/billing)。
+<a id="error-dan-privasi"></a>
 
-### 所有失败请求都免费吗？
+<a id="错误与隐私"></a>
 
-无可计费用量的失败会释放预留。中断流或部分使用请查看Logs中的最终费用。
+## 错误和隐私
 
-### 提示词和回答会保存吗？
+<a id="apa-tindakan-untuk-429-atau-402"></a>
 
-Body logging **默认关闭**，但费用、Token、状态、延迟元数据仍记录。管理员开启后限制正文大小、遮蔽凭据字段，默认保留14天。提示词文本中的秘密不自动遮蔽。参阅 [隐私政策](/zh/legals/privacy-policy)。
+<a id="如何处理429和402"></a>
 
-### 联系方式？
+### 遇到 429 或 402 错误时应采取什么措施？
 
-服务： [halo@hostlinku.com](mailto:halo@hostlinku.com)。个人数据： [privacy@hostlinku.com](mailto:privacy@hostlinku.com)。参阅 [安全](/zh/legals/security) 和 [支持](/zh/support)。
+对于 429 状态码，请按照 `Retry-After` 设置的间隔等待并采用退避策略；参见 [使用与限制](/zh/usage-and-limits)。对于 402 状态码，请检查可用余额和密钥信用额度；参见 [计费与余额](/zh/billing)。
+
+<a id="apakah-semua-request-gagal-bebas-biaya"></a>
+
+<a id="所有失败请求都免费吗"></a>
+
+### 所有请求失败是否均不收费？
+
+若未产生可计费的使用量，则会释放预留资源。对于流中断或部分使用的情况，请在日志中查看最终费用。
+
+<a id="apakah-prompt-dan-respons-disimpan"></a>
+
+<a id="提示词和回答会保存吗"></a>
+
+### 提示和响应是否会被保存？
+
+请求正文日志记录**默认处于禁用状态**；费用元数据、令牌、状态和延迟仍会被记录。若由管理员启用，请求正文将受大小限制，凭据字段会被过滤，默认保留期为 14 天。提示文本中的机密信息不会被自动过滤。 请参阅 [隐私政策](/zh/legals/privacy-policy)。
+
+<a id="bagaimana-menghubungi-dukungan"></a>
+
+<a id="联系方式"></a>
+
+### 如何联系支持团队？
+
+服务：[halo@hostlinku.com](mailto:halo@hostlinku.com)。个人数据请求：[privacy@hostlinku.com](mailto:privacy@hostlinku.com)。 请阅读 [安全](/zh/legals/security) 和 [支持](/zh/support)。

@@ -1,45 +1,53 @@
 ---
 title: "集成概述"
-description: "为你的工具选择集成指南、API格式和URL。"
+description: "请选择与您的工具相匹配的集成指南、API 格式和 URL。"
 icon: panels-top-left
 ---
 
-使用API密钥和[目录](/zh/models)中的模型，将工具连接到Hostlinku。可用模型取决于密钥的Service Mode。同一组织内共享余额和配额，详见[使用与限制](/zh/usage-and-limits)。
+使用 API 密钥和来自 [目录](/zh/models) 的模型将工具连接到 Hostlinku。可用的模型遵循服务模式密钥。余额和配额在同一组织内共享；请参阅 [使用情况与限制](/zh/usage-and-limits)。
+
+<a id="pilih-tool"></a>
 
 ## 选择工具
 
-| 工具 | 使用的API格式 | 基础 URL | 指南 |
+| 工具 | 使用的 API 格式 | 基础 URL | 指南 |
 |---|---|---|---|
-| Claude Code（CLI 及 VS Code/JetBrains 扩展） | Anthropic Messages | `https://api.hostlinku.com` | [Claude Code](/zh/integrations/claude-code) |
-| Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/zh/integrations/codex-cli) |
-| DeepSeek Harness (`dsh`) | Anthropic Messages | `https://api.hostlinku.com` | [DeepSeek Harness](/zh/integrations/deepseek-harness) |
-| CC Switch（Claude Code、Codex、OpenCode 可视化管理） | Anthropic Messages / OpenAI Responses | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [CC Switch](/zh/integrations/cc-switch) |
-| Cursor | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Cursor](/zh/integrations/cursor) |
-| VS Code（内置聊天与代理模式） | OpenAI Chat Completions（或 Anthropic/Responses） | `https://api.hostlinku.com/v1/chat/completions`（完整URL端点） | [VS Code](/zh/integrations/vscode) |
-| GitHub Copilot CLI 和 Copilot 应用 | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [GitHub Copilot](/zh/integrations/copilot) |
-| Zed（Agent Panel） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/zh/integrations/zed) |
-| Cline、Roo Code | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/zh/integrations/cline) |
-| Kilo Code | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Kilo Code](/zh/integrations/kilo-code) |
-| Continue（VS Code 和 JetBrains） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Continue](/zh/integrations/continue) |
-| JetBrains AI 助手（IntelliJ IDEA、PyCharm、WebStorm 等） | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [JetBrains](/zh/integrations/jetbrains) |
-| Junie CLI（JetBrains） | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1/chat/completions`（完整URL端点） | [Junie](/zh/integrations/junie) |
-| Factory Droid（命令行界面与桌面版） | Anthropic Messages 或 OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [Factory Droid](/zh/integrations/factory) |
-| OpenCode | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [OpenCode](/zh/integrations/opencode) |
-| Xum（并行代理） | OpenAI Chat Completions（或 Anthropic） | `https://api.hostlinku.com/v1` | [Xum](/zh/integrations/xum) |
-| Aider | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Aider](/zh/integrations/aider) |
-| OpenAI Agents SDK（Python 和 TypeScript） | OpenAI Responses | `https://api.hostlinku.com/v1` | [代理 SDK](/zh/integrations/agents-sdk) |
+| Claude Code（CLI 及 VS Code/JetBrains 扩展） | Anthropic 消息 | `https://api.hostlinku.com` | [Claude Code](/zh/integrations/claude-code) |
+| Codex CLI | OpenAI 响应 | `https://api.hostlinku.com/v1` | [Codex CLI](/zh/integrations/codex-cli) |
+| DeepSeek Harness (`dsh`) | Anthropic 消息 | `https://api.hostlinku.com` | [DeepSeek Harness](/zh/integrations/deepseek-harness) |
+| CC Switch（GUI 管理器 Claude Code、Codex、OpenCode） | Anthropic 消息 / OpenAI 响应 | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [CC Switch](/zh/integrations/cc-switch) |
+| Cursor | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | [Cursor](/zh/integrations/cursor) |
+| VS Code（内置聊天与代理模式） | OpenAI 聊天补全（或 Anthropic/Responses） | `https://api.hostlinku.com/v1/chat/completions`（完整端点 URL） | [VS Code](/zh/integrations/vscode) |
+| GitHub Copilot CLI 和 Copilot 应用 | OpenAI 聊天补全（或 Anthropic） | `https://api.hostlinku.com/v1` | [GitHub Copilot](/zh/integrations/copilot) |
+| Zed（代理面板） | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | [Zed](/zh/integrations/zed) |
+| Cline、Roo Code | OpenAI 聊天补全（或 Anthropic） | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/zh/integrations/cline) |
+| Kilo Code | OpenAI 聊天补全（或 Anthropic） | `https://api.hostlinku.com/v1` | [Kilo Code](/zh/integrations/kilo-code) |
+| 继续（VS Code 和 JetBrains） | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | [继续](/zh/integrations/continue) |
+| JetBrains AI Assistant（IntelliJ IDEA、PyCharm、WebStorm 等） | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | [JetBrains](/zh/integrations/jetbrains) |
+| Junie CLI（JetBrains） | OpenAI 聊天补全（或 Anthropic） | `https://api.hostlinku.com/v1/chat/completions`（完整端点 URL） | [Junie](/zh/integrations/junie) |
+| Factory Droid（CLI 和桌面版） | Anthropic Messages 或 OpenAI Chat Completions | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [Factory](/zh/integrations/factory) |
+| OpenCode | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | [OpenCode](/zh/integrations/opencode) |
+| Xum（并行代理） | OpenAI 聊天补全（或 Anthropic） | `https://api.hostlinku.com/v1` | [Xum](/zh/integrations/xum) |
+| Aider | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | [Aider](/zh/integrations/aider) |
+| OpenAI Agents SDK（Python 和 TypeScript） | OpenAI 响应 | `https://api.hostlinku.com/v1` | [Agents SDK](/zh/integrations/agents-sdk) |
 
 <a id="compatibility-limits"></a>
 
+<a id="batas-kompatibilitas"></a>
+
 ## 兼容性限制
 
-- **各工具的URL格式不同。** Anthropic SDK通常使用`https://api.hostlinku.com`，OpenAI工具使用`https://api.hostlinku.com/v1`。VS Code和Junie可能需要完整的端点URL，请按表中的指南配置。
-- **Codex CLI需要原生Responses工具支持**，包括shell和`apply_patch`。仅有文本/function calling桥接并不足够，详见[Codex CLI](/zh/integrations/codex-cli)。
-- **功能取决于模型和协议。** 请在模型页面和[API参考](/zh/api-reference)中检查vision、reasoning、JSON schema和tool calling支持。
-- **不提供FIM/内联自动完成和embeddings。** 这些集成通过Chat Completions、Responses和Messages提供聊天、agent或编辑功能。
+- **不同工具的 URL 格式各异。** Anthropic SDK 通常使用 `https://api.hostlinku.com`；OpenAI 工具使用 `https://api.hostlinku.com/v1`。VS Code 和 Junie 可能需要完整的端点 URL。请遵循表格中各工具的指南。
+- **Codex CLI 需要原生 Responses 工具的支持**，包括 shell 和 `apply_patch`。仅靠文本/函数调用桥接还不够；请参阅 [Codex CLI](/zh/integrations/codex-cli)。
+- **功能遵循模型和协议。**请在模型页面以及[API参考](/zh/api-reference)中查看对视觉、推理、JSON模式和工具调用的支持情况。
+- **FIM/内联自动补全和嵌入功能尚未支持。** 此集成通过“聊天补全”、“响应”和“消息”功能使用聊天、代理或编辑功能。
 
-## API密钥与帮助
+<a id="api-key-dan-bantuan"></a>
 
-为每个工具创建带有额度上限的独立API密钥，便于单独撤销。将密钥保存在环境变量或工具的密钥存储中，不要提交或打印密钥值。密钥设置详见[身份验证](/zh/authentication)。
+<a id="api密钥与帮助"></a>
 
-请求失败时，请查看[错误代码列表](/zh/faqs/errors)。表中的各指南包含对应工具的配置和特定限制。
+## API密钥和帮助
+
+为每个工具创建独立的 API 密钥并设置信用额度，以便于撤销。将密钥存储在环境变量或密钥存储工具中；切勿提交代码或打印其值。密钥配置详见 [身份验证](/zh/authentication)。
+
+关于请求失败，请参阅 [错误代码列表](/zh/faqs/errors)。各工具的具体配置和限制详情请参见表格中的指南。

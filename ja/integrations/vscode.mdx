@@ -1,34 +1,49 @@
 ---
-title: "VS Code (チャット)"
-description: "VS Codeに標準搭載のチャット＆エージェントで、カスタムエンドポイントプロバイダーを介してモデルHostlinkuを使用する - GitHubへのログインは不要、APIキーHostlinkuだけで十分"
+title: "VS Code (Chat)"
+description: "VS Codeに組み込まれたチャットおよびエージェントで、カスタムエンドポイントプロバイダーを介してHostlinkuモデルを使用してください。GitHubへのログインは不要で、HostlinkuのAPIキーのみで利用可能です。"
 icon: code-xml
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[VS Code](https://code.visualstudio.com/docs/agent-customization/language-models) の組み込みチャット（チャットパネル、エージェントモード、インラインチャット）では、**Custom Endpoint** プロバイダーを介して外部モデルを利用できます。 このプロバイダーは、Chat Completions、Responses、Anthropic、Messagesの3つのAPI形式をサポートしており、これら3つはすべてHostlinkuによって提供されています。 このようなBYOKモデルでは、**GitHubへのログインやCopilotパッケージは不要**です。
+[VS Code](https://code.visualstudio.com/docs/agent-customization/language-models)に組み込まれたチャット
+（チャットパネル、エージェントモード、インラインチャット）は、**Custom
+Endpoint**プロバイダーを通じて外部モデルを利用できます。このプロバイダーは、Chat Completions、Responses、Anthropic
+Messagesの3つのAPIフォーマットをサポートしており、これら3つすべてをHostlinkuが提供しています。このようなBYOKモデルでは、**GitHubへのログイン
+やCopilotパッケージは不要**です。
 
-**前提条件：** 最新バージョンの VS Code（カスタムエンドポイントは、すでに非推奨となっているプロバイダー *OpenAI Compatible* に代わるものです）および [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) 拡張機能。
+**前提条件：** 最新バージョンの VS Code（カスタムエンドポイントは、すでに非推奨となった *OpenAI Compatible*
+プロバイダーに代わるもの）および拡張機能
+[GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat)が必要です。
 
 <Steps>
 
+<a id="tambahkan-provider-custom-endpoint"></a>
+
 ### カスタムエンドポイントのプロバイダーを追加する
 
-コマンドパレット（⌘/Ctrl + Shift + P）を開き、**Chat: Manage Language Models** → **Add Models** → **Custom Endpoint** の順に選択します。次に、以下を入力します：
+コマンドパレット（⌘/Ctrl + Shift + P）を開き → **Chat: Manage Language Models** → **Add Models** →
+**Custom Endpoint** を選択します。次に、以下を入力してください：
 
 | プロンプト | 値 |
 |---|---|
 | **グループ名** | `Hostlinku` |
 | **表示名** | `Hostlinku` |
-| **APIキー** | `sk-…`（APIキー Hostlinku） |
-| **APIの種類** | **Chat Completions** |
+| **APIキー** | `sk-…`（HostlinkuのAPIキー） |
+| **APIタイプ** | **Chat Completions** |
 
-VS Code は API キーをシークレットストレージに保存し、その参照情報 (`${input:chat.lm.secret.…}`) を `chatLanguageModels.json` に書き込みます。**絶対に**、生のキーを JSON ファイルに貼り付けないでください。
+VS CodeはAPIキーをシークレットストレージに保存し、その参照
+(`${input:chat.lm.secret.…}`)を`chatLanguageModels.json`に記述します。**生のキーを**JSONファイルに貼り付けないでください
+。
 
-### モデル Hostlinku を登録する
+<a id="daftarkan-model-hostlinku"></a>
 
-VS Code が `chatLanguageModels.json` を開きます。[カタログ](/ja/models) のslugを `models` の配列に設定してください。VS Code が作成した `apiKey` の値はそのままにしておいてください：
+<a id="モデル-hostlinku-を登録する"></a>
+
+### Hostlinkuのモデルを登録する
+
+VS Codeで`chatLanguageModels.json`を開きます。`models`配列に、
+[カタログ](/ja/models) からのスラッグを入力し、VS Codeが自動的に生成した`apiKey`の値はそのままにしておきます：
 
 ```json
 [
@@ -70,36 +85,49 @@ VS Code が `chatLanguageModels.json` を開きます。[カタログ](/ja/model
 ]
 ```
 
-上記の`contextWindow`と`maxOutputTokens`はVS Code側の制限の例です。[カタログ](/ja/models)のモデルページに合わせてください。低い値を設定すると、ツール内の使用が制限されます。
+上記の `contextWindow` および `maxOutputTokens` は、VS Code のローカル制限の例です。[カタログ](/ja/models) のモデルページに合わせて調整してください。値が小さいほど、ツールでの使用が制限されます。
 
-![VS Code の chatLanguageModels.json には、URL https://api.hostlinku.com/v1/chat/completions のプロバイダー Hostlinku が含まれています。](/images/integrations/vscode-chatlanguagemodels.webp "chatLanguageModels.json に以下の内容を入力しました：プロバイダー customendpoint Hostlinku、完全な URL は /v1/chat/completions、apiKey はリファレンスシークレットです。")
+![VS Code内のchatLanguageModels.jsonには、Hostlinkuプロバイダー（URL: https://api.hostlinku.com/v1/chat/completions）が含まれています](/images/integrations/vscode-chatlanguagemodels.webp "入力後のchatLanguageModels.json：Hostlinkuのcustomendpointプロバイダー、/v1/chat/completionsへの完全なURL、apiKeyはシークレットの参照形式。")
 
-VS Codeが推測する必要がないように、`url`を**エンドポイントのパスを含めて**（`/v1/chat/completions`）入力してください。モデルを**Agent**モードで表示するには、`toolCalling: true`が必須です。
+VS Codeが推測する必要がないよう、`url`を**エンドポイントのパスを含めて完全に**（`/v1/chat/completions`）記述してください。
+**Agent**モードでモデルを表示するには、`toolCalling: true`が必須です。
 
-### チャットでモデルを選択してください
+<a id="pilih-model-di-chat"></a>
 
-ファイルを保存します。モデル Hostlinku が、コンテキストサイズと機能情報とともに **Chat: Manage Language Models** に表示されます：
+<a id="チャットでモデルを選択してください"></a>
 
-![VS CodeのDialog Language Modelsには、Hostlinkuグループ（Claude Haiku 4.5、Claude Sonnet 4.6、GPT-5.5）が含まれています。](/images/integrations/vscode-language-models.webp "チャット：言語モデルの管理 - コンテキストが200K/1Mで、chatLanguageModels.jsonのTools/Vision機能を備えたHostlinkuグループ。")
+### Chatでモデルを選択
 
-次に、チャットパネルのモデル選択ツールからモデルを選択します（表示されない場合は、VS Code を再起動してください）。最初のリクエストがコンソールに表示されます → **リクエストログ**。
+ファイルを保存します。Hostlinkuモデルが、**Chat: Manage Language Models** に、コンテキストサイズ
+および機能情報とともに表示されます：
 
-![VS Codeのチャットパネルにあるモデル選択ツールには、Hostlinkuのうち、Claude Sonnet 4.6、Claude Haiku 4.5、およびGPT-5.5が表示されています。](/images/integrations/vscode-chat-model-picker.webp "チャットモデルの選択：プロバイダーHostlinkuのモデルは、エージェントモードですぐに使用可能です。")
+![VS Codeの言語モデルダイアログには、Hostlinkuグループ（Claude Haiku 4.5、Claude Sonnet 4.6、GPT-5.5）が含まれています](/images/integrations/vscode-language-models.webp "チャット：言語モデルの管理 - 200K/1Mのコンテキストと、chatLanguageModels.jsonのTools/Vision機能を備えたHostlinkuグループ。")
+
+次に、チャットパネルのモデルセレクターからモデルを選択してください（表示されない場合はVS Codeを再起動してください）。最初のリクエストはコンソールに表示されます → **リクエストログ**。
+
+![VS Codeのチャットパネルにあるモデルピッカーには、HostlinkuのClaude Sonnet 4.6、Claude Haiku 4.5、GPT-5.5が表示されています](/images/integrations/vscode-chat-model-picker.webp "Chatモデルピッカー：Hostlinkuのプロバイダーが提供するモデルは、Agentモードですぐに使用可能です。")
 
 </Steps>
 
-## その他のAPI形式
+<a id="format-api-lain"></a>
 
-各モデルは、`apiType`に基づき、モデルごとに異なる形式を使用することができます：
+<a id="その他のapi形式"></a>
+
+## その他のAPIフォーマット
+
+各モデルは、モデルごとの `apiType` を通じて異なるフォーマットを使用できます：
 
 | `apiType` | `url` | 注記 |
 |---|---|---|
-| `chat-completions` | `https://api.hostlinku.com/v1/chat/completions` | 推奨されるデフォルト設定 - カタログ内のすべてのモデル。 |
-| `messages` | `https://api.hostlinku.com/v1/messages` | フォーマット Anthropic；VS Code はキーを `x-api-key` として送信（ゲートウェイで受信）。 |
-| `responses` | `https://api.hostlinku.com/v1/responses` | **必ず** `"statefulResponses": false` を追加してください - 下記を参照してください。 |
+| `chat-completions` | `https://api.hostlinku.com/v1/chat/completions` | 推奨されるデフォルト設定 - すべてのカタログモデル。 |
+| `messages` | `https://api.hostlinku.com/v1/messages` | Anthropicのフォーマット：VS Codeはキーを`x-api-key`として送信します（ゲートウェイで受け入れられます）。 |
+| `responses` | `https://api.hostlinku.com/v1/responses` | **必須** `"statefulResponses": false` を追加してください - 下記を参照してください。 |
 
-<Callout type="important" title="Responses API Hostlinku はステートレスです">
-デフォルトでは、VS Code は `apiType: "responses"` モデルに対して `previous_response_id` を送信しますが、Hostlinku はレスポンスを保存しないため、そのようなリクエストは `400` として拒否されます。 Responses APIを使用したい場合は、そのモデルに`"statefulResponses": false`を追加して、VS Codeが会話の履歴をすべて送信するようにしてください。[Responses API](/ja/responses)を参照してください。
+<Callout type="important" title="HostlinkuのAPIレスポンスはステートレスです">
+  デフォルトでは、VS Codeは`apiType: "responses"`のモデルに対して`previous_response_id`を送信しますが、
+  Hostlinkuはレスポンスを保存しないため、そのようなリクエストは`400`で拒否されます。
+  Responses APIを使用したい場合は、そのモデルに`"statefulResponses": false`を追加して、VS
+  Codeが会話の履歴全体を送信するようにしてください。[Responses API](/ja/responses)を参照してください。
 </Callout>
 
 ```json
@@ -116,19 +144,30 @@ VS Codeが推測する必要がないように、`url`を**エンドポイント
 }
 ```
 
-## 知っておくべきこと
+<a id="yang-perlu-diketahui"></a>
 
-- **インライン提案（オートコンプリート）は引き続きCopilotを使用します。** BYOKはチャットとユーティリティタスクにのみ適用されます。セマンティック検索、エンベディング、コード補完にはGitHubアカウントが必要です。
-- **GitHubにログインしていない場合**、VS Codeは*ユーティリティモデル*（セッション名、コミットメッセージなど）の選択を求めます。 `chat.utilityModel`および`chat.utilitySmallModel`の設定には、モデルHostlinkuを入力してください。`claude-haiku-4-5`は*small*に適しています。
-- **Copilot Business/Enterprise：** 組織の管理者は、GitHubのCopilot設定で「*Bring Your Own Language Model Key in VS Code*」ポリシーを有効にする必要があります。
-- **信頼されていないワークスペース**（制限モード）では、**Auto**モデルのみが表示されます。Hostlinkuモデルを表示するには、ワークスペースを信頼してください。
+<a id="知っておくべきこと"></a>
+
+## 留意事項
+
+- **インライン提案（オートコンプリート）は引き続きCopilotを使用してください。** BYOKはチャットおよび
+  ユーティリティタスクにのみ適用されます。セマンティック検索、エンベディング、およびコード補完にはGitHubアカウントが必要です。
+- **GitHubにログインしていない場合**、VS Codeは*ユーティリティモデル*（セッションタイトル、コミットメッセージ、
+  など）の選択を求めます。 `chat.utilityModel` および `chat.utilitySmallModel` の設定に、Hostlinkuのモデルを入力してください。
+  `claude-haiku-4-5` は *small* に適しています。
+- **Copilot Business/Enterprise:** 組織の管理者は、GitHubのCopilot設定で *Bring Your Own
+  Language Model Key in VS Code* ポリシーを有効にする必要があります。
+- **信頼されていないワークスペース**（Restricted Mode）では、**Auto**モデルのみが表示されます。
+  Hostlinkuモデルを表示させるには、ワークスペースを信頼する必要があります。
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-| 症状 | Solusi |
+| 症状 | 解決策 |
 |---|---|
-| エージェントモードでモデルが表示されない | `"toolCalling": true`セットを使用し、カタログに記載されている*ツール呼び出し*機能付きのモデルを採用してください。 |
-| `401` | APIキーが間違っている／無効化されている - 「Language Models」エディタ内のプロバイダーの歯車アイコンから更新してください。 |
-| `404 model_not_found` | `id`のslugは、`GET /v1/models`と完全に一致する必要があります。 |
-| `400`は`previous_response_id`を参照している | `apiType: "responses"`を搭載したモデルで、`"statefulResponses": false`は搭載されていない。 |
-| 新型モデルは登場しなかった | `chatLanguageModels.json`を保存した後、VS Codeを再起動してください。 |
+| 「Model」はエージェントモードでは表示されません | `"toolCalling": true` を設定し、カタログから *tool calling* に対応したモデルを使用してください。 |
+| `401` | APIキーが不正または無効化されている場合 - Language Modelsエディタ内のプロバイダーの歯車アイコンから更新してください。 |
+| `404 model_not_found` | `id`は、`GET /v1/models`のスラグと完全に一致させる必要があります。 |
+| `400` は `previous_response_id` を指します | `apiType: "responses"` を持つモデルで、`"statefulResponses": false` がないもの。 |
+| 新しいモデルは表示されません | `chatLanguageModels.json`を保存した後、VS Codeを再起動してください。 |
