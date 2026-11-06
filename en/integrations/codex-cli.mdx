@@ -1,6 +1,6 @@
 ---
-title: "Codex CLI"
-description: "Run the OpenAI Codex CLI via Hostlinku with a custom provider in ~/.codex/config.toml (wire_api = \"responses\")"
+title: "Codex"
+description: "Run OpenAI Codex via Hostlinku with a custom provider in ~/.codex/config.toml (wire_api = \"responses\")"
 icon: terminal
 ---
 
@@ -83,20 +83,28 @@ curl https://api.hostlinku.com/v1/responses \
 
 <a id="some-models-via-their-profiles"></a>
 
-## Some models are defined via profiles
+## Multiple models via profiles
 
-Use `[profiles.*]` to switch models/providers without editing the configuration:
+`cepat` and `kuat` are example names you can choose freely; they are not default profiles from Codex or Hostlinku. Profile names may contain letters, numbers, hyphens, and underscores.
+
+Codex reads `~/.codex/config.toml`. When you run `--profile <nama>`, Codex also reads `~/.codex/<nama>.config.toml`. Create a separate file for each profile, with settings at the top level; do not use the `[profiles.*]` section. See the [official Codex profile guide](https://developers.openai.com/codex/config-advanced/#profiles).
+
+The `~/.codex/cepat.config.toml` file:
 
 ```toml
-[profiles.cepat]
 model = "gpt-5-6-luna"
 model_provider = "hostlinku"
 model_reasoning_effort = "low"
+```
 
-[profiles.kuat]
+The `~/.codex/kuat.config.toml` file:
+
+```toml
 model = "gpt-6-astra"
 model_provider = "hostlinku"
 ```
+
+The `hostlinku` provider is defined in `~/.codex/config.toml`. Select a profile when running Codex:
 
 ```bash
 codex --profile kuat
@@ -104,7 +112,7 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
 ```
 
 <Callout type="warning" title="Model and tool compatibility">
-  Use native Responses models supported by your Codex tool version. Bridge Chat Completions supports text and function calls; custom shell/patch tools and encrypted reasoning require native support. If you see `The requested tool type is not supported by this model`, switch models or use the appropriate Chat/Anthropic client. See the [Responses API](/en/responses).
+  Use an OpenAI/GPT model supported by your version of Codex. In Performance and Low-Cost Service Modes, Codex does not support the Claude model or domestic models such as DeepSeek, Qwen, GLM, Kimi, MiniMax, and MiMo. Bridge Chat Completions support text and function calls; custom shell/patch tools and encrypted reasoning require native support. If `The requested tool type is not supported by this model` appears, switch to an OpenAI/GPT model or use Claude Code/Chat for other models. For Dedicated, tool support depends on the model and deployment; test before production. See [Responses API](/en/responses).
 </Callout>
 
 <Callout type="note" title="Stateless">

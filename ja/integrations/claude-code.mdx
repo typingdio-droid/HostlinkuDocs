@@ -148,11 +148,10 @@ JetBrainsでは、*設定 → ツール → Claude Code → 環境変数*で同�
 
 ## 非Claudeモデルを使用してください
 
-ゲートウェイはプロトコルを翻訳するため、`sonnet`/`haiku`というエイリアスには、
-[カタログ](/ja/models) から任意のスラグを指定できます：
+サービスモードの「Performance」および「Low-Cost」におけるClaude Codeは、Claudeモデルに加え、DeepSeek、Qwen、GLM、Kimi、MiniMax、MiMoなどの国内モデルもサポートしています。 これらのモードでは、Claude CodeはGPTモデルをサポートしていません。GPTモデルを使用する場合は、Codex CLI、Chat、またはResponses APIをご利用ください。ゲートウェイがプロトコルを変換するため、`sonnet`や`haiku`といったエイリアスには、[カタログ](/ja/models)から国内モデルのスラグを指定できます：
 
 ```bash
-export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
+export ANTHROPIC_DEFAULT_SONNET_MODEL=deepseek-v4-pro
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 ```
 
@@ -160,9 +159,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 対象モデルの機能に従う — カタログの `capabilities` フィールドを確認してください。
 
 <Callout type="note" title="Claude Codeは、Claude以外のモデル名は認識しません">
-  `gpt-5-5` や `deepseek-v4-flash` のようなスラッグを使用する場合、Claude Code は
-  `unrecognized_model`という警告を表示し、200kトークンのコンテキストを想定します。リクエストは正常に実行されます
-  （検証済み）が、対象モデルのウィンドウがそれより大きい場合は、クライアント側でコンテキストを調整してください。
+  `deepseek-v4-pro`や`deepseek-v4-flash`のようなスラグを使用する場合、Claude Codeは`unrecognized_model`という警告を表示し、200kトークンのコンテキストを想定します。対象モデルがより大きなウィンドウを持つ場合は、クライアント側でコンテキストを調整してください。
 </Callout>
 
 <Callout type="tip" title="サブエージェントの残高を節約する">

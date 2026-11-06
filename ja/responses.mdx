@@ -23,7 +23,7 @@ Content-Type: application/json
 成功レスポンスには `x-request-id` が含まれます。非ストリーミングの成功レスポンスには、`x-model`（モデルのパブリックスラグ）も含まれます。
 
 <Callout type="note" title="モデルおよびツールの互換性">
-  `model`は、[モデルカタログ](/ja/models)のパブリックスラグを使用します。Gatewayは、デプロイメントモデルに応じて、ResponsesのネイティブパスとChat Completionsへのブリッジを提供します。レスポンス形式のサポートは、すべてのモデルがResponsesの全機能やCodexツールをサポートしていることを意味するものではありません。
+  `model`は、[モデルカタログ](/ja/models)のパブリックスラグを使用しています。ゲートウェイは、デプロイメントモデルに応じて、ネイティブおよびブリッジ経由のChat Completionsへのレスポンスパスを提供します。 Service ModeのPerformanceおよびLow-Costでは、CodexはOpenAI/GPTモデルのみをサポートしており、Claudeモデルおよび国内モデルはサポートされていません。Dedicatedの場合、ツールのサポートはモデルおよびデプロイメントによって異なります。レスポンス形式のサポートは、すべてのモデルがResponsesの全機能やCodexツールをサポートしていることを意味するものではありません。
 </Callout>
 
 Service Mode APIキーで利用可能なモデルを選択してください。Vision、reasoning、caching、JSONスキーマ、およびツール呼び出しは、モデルの機能に従います。ネイティブのレスポンスはアップストリームの機能を継承します。ブリッジChat Completionsは、メッセージ、モデルがサポートする画像、および`type: "function"`のツールをサポートします。ホスト型/カスタムツールおよび暗号化されたreasoningには、ネイティブのサポートが必要です。
@@ -32,7 +32,7 @@ Service Mode APIキーで利用可能なモデルを選択してください。V
 
 ## クイック設定
 
-各ツールの詳細なガイドは、[Codex CLI](/ja/integrations/codex-cli) および
+各ツールの詳細なガイドは、[Codex](/ja/integrations/codex-cli) および
 [OpenAI Agents SDK](/ja/integrations/agents-sdk) に掲載されています。
 
 **Codex CLI** (`~/.codex/config.toml`)

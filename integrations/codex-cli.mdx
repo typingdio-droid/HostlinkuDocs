@@ -1,6 +1,6 @@
 ---
-title: Codex CLI
-description: Jalankan OpenAI Codex CLI lewat Hostlinku dengan provider kustom di ~/.codex/config.toml (wire_api = "responses")
+title: Codex
+description: Jalankan OpenAI Codex lewat Hostlinku dengan provider kustom di ~/.codex/config.toml (wire_api = "responses")
 icon: terminal
 ---
 
@@ -65,20 +65,30 @@ curl https://api.hostlinku.com/v1/responses \
 
 </Steps>
 
-## Beberapa model lewat profile
+<a id="beberapa-model-lewat-profile"></a>
 
-Gunakan `[profiles.*]` untuk berpindah model/provider tanpa mengedit konfigurasi:
+## Beberapa model lewat profil
+
+`cepat` dan `kuat` adalah nama contoh yang bebas kamu pilih, bukan profil bawaan Codex atau Hostlinku. Nama profil boleh berisi huruf, angka, tanda hubung, dan garis bawah.
+
+Codex membaca `~/.codex/config.toml`. Saat kamu menjalankan `--profile <nama>`, Codex juga membaca `~/.codex/<nama>.config.toml`. Buat file terpisah untuk setiap profil, dengan pengaturan di tingkat utama; jangan gunakan bagian `[profiles.*]`. Lihat [panduan profil resmi Codex](https://developers.openai.com/codex/config-advanced/#profiles).
+
+File `~/.codex/cepat.config.toml`:
 
 ```toml
-[profiles.cepat]
 model = "gpt-5-6-luna"
 model_provider = "hostlinku"
 model_reasoning_effort = "low"
+```
 
-[profiles.kuat]
+File `~/.codex/kuat.config.toml`:
+
+```toml
 model = "gpt-6-astra"
 model_provider = "hostlinku"
 ```
+
+Provider `hostlinku` tetap didefinisikan di `~/.codex/config.toml`. Pilih profil saat menjalankan Codex:
 
 ```bash
 codex --profile kuat
@@ -86,7 +96,7 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
 ```
 
 <Callout type="warning" title="Kompatibilitas model dan tool">
-  Gunakan model Responses native yang mendukung tool versi Codex kamu. Bridge Chat Completions mendukung teks dan function calling; custom tools shell/patch serta reasoning terenkripsi memerlukan dukungan native. Jika muncul `The requested tool type is not supported by this model`, ganti model atau gunakan klien Chat/Anthropic yang sesuai. Lihat [Responses API](/responses).
+  Gunakan model OpenAI/GPT yang mendukung tool versi Codex kamu. Pada Service Mode Performance dan Low-Cost, Codex tidak mendukung model Claude maupun model domestik seperti DeepSeek, Qwen, GLM, Kimi, MiniMax, dan MiMo. Bridge Chat Completions mendukung teks dan function calling; custom tools shell/patch serta reasoning terenkripsi memerlukan dukungan native. Jika muncul `The requested tool type is not supported by this model`, ganti ke model OpenAI/GPT atau gunakan Claude Code/Chat untuk model lain. Untuk Dedicated, dukungan tool mengikuti model dan deployment; uji sebelum produksi. Lihat [Responses API](/responses).
 </Callout>
 
 <Callout type="note" title="Stateless">

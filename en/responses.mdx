@@ -23,7 +23,7 @@ Content-Type: application/json
 A successful response includes `x-request-id`; a non-streaming successful response also includes `x-model` (the model’s public slug).
 
 <Callout type="note" title="Model and tool compatibility">
-  `model` uses the public slug from the [model catalog](/en/models). The Gateway provides native Responses paths and a bridge to Chat Completions depending on the deployment model. Support for response formats does not mean that every model supports all Responses features or the Codex tool.
+  `model` uses the public slug from the [model catalog](/en/models). The gateway provides native and bridge paths to Chat Completions depending on the deployment model. In Performance and Low-Cost Service Modes, Codex only supports OpenAI/GPT models; Claude and domestic models are not supported. For Dedicated, tool support depends on the model and deployment. Response format support does not imply that every model supports all Responses features or Codex tools.
 </Callout>
 
 Select an available model for the Service Mode API key. Vision, reasoning, caching, JSON schema, and tool calls follow the model’s capabilities. Native responses pass through upstream features; the Chat Completions bridge supports messages, model-supported images, and the `type: "function"` tool. Hosted/custom tools and encrypted reasoning require native support.
@@ -32,7 +32,7 @@ Select an available model for the Service Mode API key. Vision, reasoning, cachi
 
 ## Quick Setup
 
-Complete guides for each tool are available in the [Codex CLI](/en/integrations/codex-cli) and
+Complete guides for each tool are available in the [Codex](/en/integrations/codex-cli) and
 [OpenAI Agents SDK](/en/integrations/agents-sdk).
 
 **Codex CLI** (`~/.codex/config.toml`)

@@ -142,11 +142,10 @@ In JetBrains, set the same variables in *Settings → Tools → Claude Code → 
 
 ## Use a non-Claude model
 
-Since the gateway translates protocols, the aliases `sonnet`/`haiku` can be replaced with any slug from the
-[catalog](/en/models):
+Claude Code in Service Mode (Performance and Low-Cost) supports Claude models as well as domestic models such as DeepSeek, Qwen, GLM, Kimi, MiniMax, and MiMo. GPT models are not supported in Claude Code in these modes; use the Codex CLI, Chat, or Responses API for GPT models. Since the gateway translates the protocol, aliases such as `sonnet` and `haiku` can be populated with domestic model slugs from the [catalog](/en/models):
 
 ```bash
-export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
+export ANTHROPIC_DEFAULT_SONNET_MODEL=deepseek-v4-pro
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 ```
 
@@ -154,9 +153,7 @@ Features that depend on model capabilities (tool use, *extended thinking*, visio
 the target model’s capabilities—check the `capabilities` field in the catalog.
 
 <Callout type="note" title="Claude Code does not recognize non-Claude model names">
-  When using slugs like `gpt-5-5` or `deepseek-v4-flash`, Claude Code displays a warning
-  `unrecognized_model` and assumes a 200k-token context. The request still runs normally
-  (verified), but adjust the context on the client side if the target model has a larger window.
+  When using slugs like `deepseek-v4-pro` or `deepseek-v4-flash`, Claude Code displays a warning `unrecognized_model` and assumes a 200k-token context. Adjust the context on the client side if the target model has a larger window.
 </Callout>
 
 <Callout type="tip" title="Save balance for sub-agents">
