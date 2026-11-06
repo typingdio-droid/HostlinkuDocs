@@ -148,7 +148,7 @@ JetBrainsでは、*設定 → ツール → Claude Code → 環境変数*で同�
 
 ## 非Claudeモデルを使用してください
 
-サービスモードの「Performance」および「Low-Cost」におけるClaude Codeは、Claudeモデルに加え、DeepSeek、Qwen、GLM、Kimi、MiniMax、MiMoなどの国内モデルもサポートしています。 これらのモードでは、Claude CodeはGPTモデルをサポートしていません。GPTモデルを使用する場合は、Codex CLI、Chat、またはResponses APIをご利用ください。ゲートウェイがプロトコルを変換するため、`sonnet`や`haiku`といったエイリアスには、[カタログ](/ja/models)から国内モデルのスラグを指定できます：
+Service Mode Performance の Claude Code は、Claude モデルに加え、DeepSeek、Qwen、GLM、Kimi、MiniMax、MiMo などの国内モデルもサポートしています。Low-Cost では、Low-Cost カタログに国内モデルが含まれていないため、Claude Code は Claude モデルのみをサポートします。 どちらのモードにおいても、Claude CodeではGPTモデルはサポートされていません。GPTモデルを使用する場合は、Codex CLI、Chat、またはResponses APIをご利用ください。ゲートウェイがプロトコルを変換するため、`sonnet`や`haiku`といったエイリアスには、[カタログ](/ja/models)からClaudeまたは国内モデルのスラグを指定できます：
 
 ```bash
 export ANTHROPIC_DEFAULT_SONNET_MODEL=deepseek-v4-pro

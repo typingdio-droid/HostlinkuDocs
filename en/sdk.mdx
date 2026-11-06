@@ -226,11 +226,7 @@ for await (const event of stream) {
 </Callout>
 
 <Callout type="warning" title="Limits per client">
-  **Codex CLI is for OpenAI models only** (`gpt-*`) — Claude models and other non-OpenAI models
-  are rejected by the upstream due to differences in tool types. **Claude Code** can use non-Claude models,
-  but displays an `unrecognized_model` warning and assumes a 200k-token context.
-  Details are available on the [Codex](/en/integrations/codex-cli) page and
-  [Claude Code](/en/integrations/claude-code).
+  **Codex** in Service Mode (Performance and Low-Cost) is limited to OpenAI models (`gpt-*`); Claude and domestic models are rejected upstream due to tool type differences. For Dedicated, tool support depends on the model and deployment. **Claude Code** in Performance mode can use Claude and domestic models, while in Low-Cost mode, only Claude models are supported; GPT models are not supported. Claude Code displays the warning `unrecognized_model` and assumes a 200k-token context for non-Claude slugs. Details are available on the [Codex](/integrations/codex-cli) and [Claude Code](/integrations/claude-code) pages.
 </Callout>
 
 <a id="sumber-daya-terkait"></a>

@@ -45,7 +45,7 @@ Console、登录和结账的端点限制按 IP 地址计算，并与模型使用
 
 ## API密钥信用额度
 
-Console 表单提供 **Monthly Spending Limit**。密钥管理 API 还支持 `daily`、`weekly`、`monthly` 以及总计 `lifetime`/不重置。 每日计费周期从 UTC 00:00 开始，每周计费周期从周一 UTC 00:00 开始，每月计费周期从每月 1 日 UTC 00:00 开始。请参阅 [身份验证](/zh/authentication)。
+Console 表单提供 **Monthly Spending Limit**。密钥管理 API 接受 `daily`、`weekly`、`monthly` 或使用 `null` 表示不重置。 每日计费周期从 UTC 00:00 开始，每周计费周期从周一 UTC 00:00 开始，每月计费周期从每月 1 日 UTC 00:00 开始。请参阅 [身份验证](/zh/authentication)。
 
 限额基于密钥的累计费用，而非令牌数量。达到限额后，后续请求将被拒绝并返回 `402 PAYMENT_REQUIRED` 状态码。追加余额不会改变密钥的限额。
 

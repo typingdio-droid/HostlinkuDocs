@@ -58,7 +58,7 @@ Console offers a **Monthly Spending Limit**. The key management API supports the
 | `daily` | As of 00:00 UTC on the current day |
 | `weekly` | Starting Monday at 00:00 UTC this week |
 | `monthly` | Effective from the 1st at 00:00 UTC of the current month |
-| `lifetime` / without reset | Total during the key’s active period |
+| `null` / without reset | Total during the key’s active period |
 
 Costs are accumulated based on recorded request usage for each key. Once the limit is reached, subsequent requests are rejected with a `402 PAYMENT_REQUIRED` response. The limit per key is separate from the organization’s credit balance: a top-up increases the balance but does not raise the key limit. See [Billing & Balance](/en/billing).
 

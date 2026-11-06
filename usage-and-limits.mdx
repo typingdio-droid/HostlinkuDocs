@@ -37,7 +37,7 @@ Baca header reset atau `Retry-After` bila tersedia. Kurangi konkurensi dan gunak
 
 ## Limit kredit API key
 
-Form Console menawarkan **Monthly Spending Limit**. API pengelolaan key juga mendukung `daily`, `weekly`, `monthly`, dan total `lifetime`/tanpa reset. Jendela harian dimulai 00:00 UTC, mingguan Senin 00:00 UTC, bulanan tanggal 1 pada 00:00 UTC. Lihat [Autentikasi](/authentication).
+Form Console menawarkan **Monthly Spending Limit**. API pengelolaan key menerima `daily`, `weekly`, `monthly`, atau `null` untuk tanpa reset. Jendela harian dimulai 00:00 UTC, mingguan Senin 00:00 UTC, bulanan tanggal 1 pada 00:00 UTC. Lihat [Autentikasi](/authentication).
 
 Limit memakai biaya yang tercatat untuk key, bukan jumlah token. Setelah tercapai, request berikutnya ditolak `402 PAYMENT_REQUIRED`. Saldo tambahan tidak mengubah limit key.
 

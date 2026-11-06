@@ -49,7 +49,7 @@ Console、ログイン、およびチェックアウトのエンドポイント�
 
 ## APIキーのクレジット制限
 
-Form Consoleでは**Monthly Spending Limit**が提供されています。キー管理APIも`daily`、`weekly`、`monthly`、および合計`lifetime`（リセットなし）をサポートしています。 日単位の期間の開始は00:00 UTC、週単位は月曜日の00:00 UTC、月単位は毎月1日の00:00 UTCです。[認証](/ja/authentication)を参照してください。
+Form Consoleでは**Monthly Spending Limit**が提供されています。キー管理APIは、リセットを行わない場合、`daily`、`weekly`、`monthly`、または`null`を受け付けます。 日単位の期間の開始は00:00 UTC、週単位は月曜日の00:00 UTC、月単位は毎月1日の00:00 UTCです。[認証](/ja/authentication)を参照してください。
 
 制限は、トークンの数ではなく、キーに記録された費用に基づいて適用されます。制限に達すると、次のリクエストは `402 PAYMENT_REQUIRED` として拒否されます。残高を追加しても、キーの制限は変更されません。
 
