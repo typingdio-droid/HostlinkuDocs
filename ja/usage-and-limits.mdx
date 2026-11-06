@@ -41,6 +41,7 @@ Console、ログイン、およびチェックアウトのエンドポイント�
 
 リセットヘッダーまたは`Retry-After`（存在する場合）を確認してください。同時実行数を減らし、ジッターを伴う指数関数的バックオフを使用してください。休止せずにリクエストを繰り返し送信しても、制限は解除されません。
 
+リミッターエンドポイントは、`RateLimit-Limit`、`RateLimit-Remaining`、および`RateLimit-Reset`（秒）を返します。429エラーが発生した場合は、`Retry-After`または`retry-after-ms`が返されることもあります。
 </Callout>
 
 <a id="limit-kredit-api-key"></a>
