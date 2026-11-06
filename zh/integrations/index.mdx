@@ -13,7 +13,7 @@ icon: panels-top-left
 | 工具 | 使用的 API 格式 | 基础 URL | 指南 |
 |---|---|---|---|
 | Claude Code（CLI 及 VS Code/JetBrains 扩展） | Anthropic 消息 | `https://api.hostlinku.com` | [Claude Code](/zh/integrations/claude-code) |
-| Codex CLI | OpenAI 响应 | `https://api.hostlinku.com/v1` | [Codex CLI](/zh/integrations/codex-cli) |
+| Codex | OpenAI 响应 | `https://api.hostlinku.com/v1` | [Codex](/zh/integrations/codex-cli) |
 | DeepSeek Harness (`dsh`) | Anthropic 消息 | `https://api.hostlinku.com` | [DeepSeek Harness](/zh/integrations/deepseek-harness) |
 | CC Switch（GUI 管理器 Claude Code、Codex、OpenCode） | Anthropic 消息 / OpenAI 响应 | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [CC Switch](/zh/integrations/cc-switch) |
 | Cursor | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` | [Cursor](/zh/integrations/cursor) |
@@ -38,7 +38,7 @@ icon: panels-top-left
 ## 兼容性限制
 
 - **不同工具的 URL 格式各异。** Anthropic SDK 通常使用 `https://api.hostlinku.com`；OpenAI 工具使用 `https://api.hostlinku.com/v1`。VS Code 和 Junie 可能需要完整的端点 URL。请遵循表格中各工具的指南。
-- **Codex CLI 需要原生 Responses 工具的支持**，包括 shell 和 `apply_patch`。仅靠文本/函数调用桥接还不够；请参阅 [Codex CLI](/zh/integrations/codex-cli)。
+- **Codex CLI 需要原生 Responses 工具的支持**，包括 shell 和 `apply_patch`。仅靠文本/函数调用桥接还不够；请参阅 [Codex](/zh/integrations/codex-cli)。
 - **功能遵循模型和协议。**请在模型页面以及[API参考](/zh/api-reference)中查看对视觉、推理、JSON模式和工具调用的支持情况。
 - **FIM/内联自动补全和嵌入功能尚未支持。** 此集成通过“聊天补全”、“响应”和“消息”功能使用聊天、代理或编辑功能。
 

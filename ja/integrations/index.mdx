@@ -15,7 +15,7 @@ APIキーと[カタログ](/ja/models)のモデルを使用して、ツールを
 | ツール | 使用されるAPIのフォーマット | Base URL | ガイド |
 |---|---|---|---|
 | Claude Code（CLI および VS Code/JetBrains 拡張機能） | Anthropic Messages | `https://api.hostlinku.com` | [Claude Code](/ja/integrations/claude-code) |
-| Codex CLI | OpenAIの応答 | `https://api.hostlinku.com/v1` | [Codex CLI](/ja/integrations/codex-cli) |
+| Codex | OpenAIの応答 | `https://api.hostlinku.com/v1` | [Codex](/ja/integrations/codex-cli) |
 | DeepSeek Harness (`dsh`) | Anthropic Messages | `https://api.hostlinku.com` | [DeepSeek Harness](/ja/integrations/deepseek-harness) |
 | CC Switch（GUIマネージャー：Claude Code、Codex、OpenCode） | Anthropicのメッセージ / OpenAIの応答 | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [CC Switch](/ja/integrations/cc-switch) |
 | Cursor | OpenAIチャット補完 | `https://api.hostlinku.com/v1` | [Cursor](/ja/integrations/cursor) |
@@ -40,7 +40,7 @@ APIキーと[カタログ](/ja/models)のモデルを使用して、ツールを
 ## 互換性の制限
 
 - **URLの形式はツールごとに異なります。** AnthropicのSDKでは通常`https://api.hostlinku.com`を使用しますが、OpenAIのツールでは`https://api.hostlinku.com/v1`を使用します。VS CodeやJunieでは、完全なエンドポイントURLを要求する場合があります。表に記載されている各ツールのガイドラインに従ってください。
-- **Codex CLI には、シェルや `apply_patch` を含むネイティブの Responses ツールのサポートが必要です**。テキストや関数呼び出しのブリッジだけでは不十分です。[Codex CLI](/ja/integrations/codex-cli) を参照してください。
+- **Codex CLI には、シェルや `apply_patch` を含むネイティブの Responses ツールのサポートが必要です**。テキストや関数呼び出しのブリッジだけでは不十分です。[Codex](/ja/integrations/codex-cli) を参照してください。
 - **機能はモデルとプロトコルに従います。** モデルページおよび[APIリファレンス](/ja/api-reference)で、ビジョン、推論、JSONスキーマ、およびツール呼び出しのサポートを確認してください。
 - **FIM/インラインオートコンプリートおよびエンベディングは、まだ対応されていません。** この統合では、Chat Completions、Responses、およびMessagesを通じて、チャット、エージェント、または編集機能を利用します。
 
