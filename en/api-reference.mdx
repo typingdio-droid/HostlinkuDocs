@@ -30,9 +30,22 @@ The slug appearing in the key catalog can be used for supported endpoints. Forma
 
 <a id="shared-organization-quota"></a>
 
-## Organization-wide quota
+<a id="rate-limiting"></a>
 
-Each Service Mode has a quota of **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared among all API keys and organization members. Login, Console, and checkout have their own per-IP limits. [Usage & Limits](/en/usage-and-limits).
+## Rate Limiting
+
+The following quotas apply per **organization × Service Mode**. All API keys and members of the same organization share the quota; adding keys or members does not increase the quota.
+
+| Limit type | Default quota | Description |
+|---|---:|---|
+| RPM (requests/minute) | 600 | Calculated per organization and Service Mode, not per model. |
+| Input TPM (tokens/minute) | 6,500,000 | Calculated based on the recorded input tokens for the organization and Service Mode. |
+| Output TPM (tokens/minute) | 200,000 | Calculated based on the recorded output tokens for the organization and Service Mode. |
+
+- Request quotas are calculated when requests are received. Input and output tokens are recorded after the response is complete; ongoing requests are not terminated.
+- Login, Console, and checkout each have their own IP-based limits; see [Usage & Limits](/en/usage-and-limits).
+- If the quota is exceeded, the gateway returns `429 RATE_LIMITED`. Use `Retry-After` or `retry-after-ms` if available, reduce concurrency, and perform exponential backoff with jitter.
+- Need more capacity? Contact [Support](/en/support).
 
 ## Error Codes
 

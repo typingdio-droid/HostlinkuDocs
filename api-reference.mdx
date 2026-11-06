@@ -22,9 +22,22 @@ OpenAI SDK memakai `https://api.hostlinku.com/v1`; Anthropic SDK memakai `https:
 
 Slug yang muncul di katalog key dapat dipakai pada endpoint yang didukung. Kompatibilitas format tidak menjamin seluruh fitur setiap klien. Periksa batas [Responses](/responses) dan [integrasi yang dipakai](/integrations).
 
-## Kuota bersama organisasi
+<a id="rate-limiting"></a>
 
-Setiap Service Mode memiliki kuota **600 request, 6.500.000 token input, dan 200.000 token output per menit**, dipakai bersama semua API key dan anggota organisasi. Login, Console, dan checkout memiliki batas per IP tersendiri. [Pemakaian & Limit](/usage-and-limits).
+## Rate Limiting
+
+Kuota berikut berlaku per **organisasi × Service Mode**. Semua API key dan anggota organisasi yang sama berbagi kuota; menambah key atau anggota tidak menambah kuota.
+
+| Tipe limit | Kuota default | Keterangan |
+|---|---:|---|
+| RPM (request/menit) | 600 | Dihitung per organisasi dan Service Mode, bukan per model. |
+| Input TPM (token/menit) | 6.500.000 | Dihitung dari token input yang tercatat untuk organisasi dan Service Mode. |
+| Output TPM (token/menit) | 200.000 | Dihitung dari token output yang tercatat untuk organisasi dan Service Mode. |
+
+- Kuota request dihitung saat request diterima. Token input dan output dicatat setelah respons selesai; request yang sedang berjalan tidak diputus.
+- Login, Console, dan checkout memakai batas per IP tersendiri; lihat [Pemakaian & Limit](/usage-and-limits).
+- Jika kuota terlampaui, gateway mengembalikan `429 RATE_LIMITED`. Gunakan `Retry-After` atau `retry-after-ms` bila tersedia, kurangi konkurensi, dan lakukan backoff eksponensial dengan jitter.
+- Butuh kapasitas lebih tinggi? Hubungi [Dukungan](/support).
 
 ## Error Codes
 
