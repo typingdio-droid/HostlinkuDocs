@@ -233,11 +233,7 @@ for await (const event of stream) {
 </Callout>
 
 <Callout type="warning" title="クライアントごとの制限">
-  **Codex CLIはOpenAIモデル専用**（`gpt-*`）です。Claudeモデルやその他の非OpenAIモデルは、
-  ツールの種類の違いによりアップストリームで拒否されます。 **Claude Code**はClaude以外のモデルを使用できますが、
-  `unrecognized_model`という警告が表示され、コンテキストは200kトークンとみなされます。
-  詳細は[Codex](/ja/integrations/codex-cli)および
-  [Claude Code](/ja/integrations/claude-code)のページに記載されています。
+  **Codex**の「Service Mode Performance」および「Low-Cost」は、OpenAIモデル（`gpt-*`）のみに対応しています。Claudeモデルおよび国内モデルは、ツールの種類の違いによりアップストリームで拒否されます。「Dedicated」の場合、ツールのサポートはモデルおよびデプロイメントによって異なります。 **Performance**モードの**Claude Code**ではClaudeモデルと国内モデルを使用できますが、**Low-Cost**モードではClaudeモデルのみ使用可能です。GPTモデルはサポートされていません。Claude Codeは`unrecognized_model`の警告を表示し、Claude以外のスラグについては200kトークンのコンテキストを想定しています。 詳細は、[Codex](/integrations/codex-cli)および[Claude Code](/integrations/claude-code)のページをご覧ください。
 </Callout>
 
 <a id="sumber-daya-terkait"></a>

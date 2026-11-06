@@ -47,7 +47,7 @@ Check the Reset header or `Retry-After` if available. Reduce concurrency and use
 
 ## API key credit limit
 
-The Console form offers a **Monthly Spending Limit**. The key management API also supports `daily`, `weekly`, `monthly`, and total `lifetime`/non-resetting limits. The daily window begins at 00:00 UTC, the weekly window on Monday at 00:00 UTC, and the monthly window on the 1st at 00:00 UTC. See [Authentication](/en/authentication).
+The Console form offers a **Monthly Spending Limit**. The key management API accepts `daily`, `weekly`, `monthly`, or `null` for no reset. The daily window begins at 00:00 UTC, the weekly window on Monday at 00:00 UTC, and the monthly window on the 1st at 00:00 UTC. See [Authentication](/en/authentication).
 
 The limit is based on the recorded cost for the key, not the number of tokens. Once reached, subsequent requests are rejected with a `402 PAYMENT_REQUIRED` response. Additional balance does not change the key limit.
 

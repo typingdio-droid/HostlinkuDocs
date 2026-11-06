@@ -48,7 +48,7 @@ Console menawarkan **Monthly Spending Limit**. API pengelolaan key mendukung per
 | `daily` | Sejak 00:00 UTC hari berjalan |
 | `weekly` | Sejak Senin 00:00 UTC minggu berjalan |
 | `monthly` | Sejak tanggal 1, 00:00 UTC bulan berjalan |
-| `lifetime` / tanpa reset | Total selama masa aktif key |
+| `null` / tanpa reset | Total selama masa aktif key |
 
 Akumulasi memakai biaya request yang tercatat untuk key. Setelah limit tercapai, request berikutnya ditolak dengan `402 PAYMENT_REQUIRED`. Limit per key berbeda dari saldo kredit organisasi: top-up menambah saldo, tetapi tidak menaikkan limit key. Lihat [Billing & Saldo](/billing).
 

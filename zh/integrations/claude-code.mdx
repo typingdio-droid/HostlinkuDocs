@@ -144,7 +144,7 @@ Claude Code 扩展会自行检查登录信息，因此必须在扩展设置中�
 
 ## 使用非Claude模型
 
-在“服务模式”的“高性能”和“低成本”模式下，Claude Code 支持 Claude 模型以及 DeepSeek、Qwen、GLM、Kimi、MiniMax 和 MiMo 等本土模型。 在上述模式下，Claude Code 不支持 GPT 模型；如需使用 GPT 模型，请使用 Codex CLI、Chat 或 Responses API。由于网关会转换协议，因此 `sonnet`/`haiku` 中的别名可以填入来自 [目录](/zh/models) 的本土模型 slug：
+在 Service Mode Performance 下，Claude Code 支持 Claude 模型以及 DeepSeek、Qwen、GLM、Kimi、MiniMax 和 MiMo 等本土模型。在“低成本”模式下，Claude Code 仅支持 Claude 模型，因为“低成本”目录中不包含本土模型。 在两种模式下，Claude Code 均不支持 GPT 模型；如需使用 GPT 模型，请使用 Codex CLI、Chat 或 Responses API。由于网关会转换协议，因此别名 `sonnet`/`haiku` 可以填入来自 [目录](/zh/models) 的 Claude 或本土模型的 slug：
 
 ```bash
 export ANTHROPIC_DEFAULT_SONNET_MODEL=deepseek-v4-pro

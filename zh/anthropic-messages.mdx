@@ -24,7 +24,7 @@ Content-Type: application/json
 成功响应包含 `request-id` / `x-request-id` 标头（Hostlinku 请求 ID，格式为 `msg_…`）；非流式传输的成功响应还包含 `x-model`。处理程序之前的错误可能不包含此 ID。
 
 <Callout type="note" title="任何模型，不仅限于Claude">
-  `model` 使用与 [模型目录](/zh/models) 相同的 Hostlinku 公共 slug——例如 `claude-sonnet-4-6`、`deepseek-v4-pro`、`glm-5-3-flash`。Anthropic Messages 端点可以调用非 Claude 模型，但各代理客户端的支持情况有所不同：服务模式（性能版和低成本版）中的 Claude Code 支持 Claude 模型和本土模型，但不支持 GPT 模型。 请查阅[集成指南](/zh/integrations)以了解各客户端的限制。
+  `model` 使用与 [模型目录](/zh/models) 相同的 Hostlinku 公共 slug——例如 `claude-sonnet-4-6`、`deepseek-v4-pro`、`glm-5-3-flash`。Anthropic Messages 端点可调用非 Claude 模型，但代理客户端的支持情况有所不同：Service Mode Performance 下的 Claude Code 支持 Claude 模型和本土模型；而在 Low-Cost 模式下仅支持 Claude 模型。 Claude Code 不支持 GPT 模型。请查阅 [集成指南](/zh/integrations) 以了解各客户端的限制。
 </Callout>
 
 <a id="konfigurasi-cepat"></a>
