@@ -112,7 +112,7 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
 ```
 
 <Callout type="warning" title="Model and tool compatibility">
-  Use native Responses models supported by your Codex tool version. Bridge Chat Completions supports text and function calls; custom shell/patch tools and encrypted reasoning require native support. If you see `The requested tool type is not supported by this model`, switch models or use the appropriate Chat/Anthropic client. See the [Responses API](/en/responses).
+  Use an OpenAI/GPT model supported by your version of Codex. In Performance and Low-Cost Service Modes, Codex does not support the Claude model or domestic models such as DeepSeek, Qwen, GLM, Kimi, MiniMax, and MiMo. Bridge Chat Completions support text and function calls; custom shell/patch tools and encrypted reasoning require native support. If `The requested tool type is not supported by this model` appears, switch to an OpenAI/GPT model or use Claude Code/Chat for other models. For Dedicated, tool support depends on the model and deployment; test before production. See [Responses API](/en/responses).
 </Callout>
 
 <Callout type="note" title="Stateless">

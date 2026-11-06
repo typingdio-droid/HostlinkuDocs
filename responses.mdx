@@ -23,7 +23,7 @@ Content-Type: application/json
 Respons sukses menyertakan `x-request-id`; respons sukses non-streaming juga menyertakan `x-model` (slug publik model).
 
 <Callout type="note" title="Kompatibilitas model dan tool">
-  `model` memakai slug publik dari [katalog model](/models). Gateway menyediakan jalur Responses native dan bridge ke Chat Completions sesuai deployment model. Dukungan format respons tidak berarti setiap model mendukung seluruh fitur Responses atau tool Codex.
+  `model` memakai slug publik dari [katalog model](/models). Gateway menyediakan jalur Responses native dan bridge ke Chat Completions sesuai deployment model. Pada Service Mode Performance dan Low-Cost, Codex hanya mendukung model OpenAI/GPT; model Claude dan model domestik tidak didukung. Untuk Dedicated, dukungan tool mengikuti model dan deployment. Dukungan format respons tidak berarti setiap model mendukung seluruh fitur Responses atau tool Codex.
 </Callout>
 
 Pilih model yang tersedia untuk Service Mode API key. Vision, reasoning, caching, JSON schema, dan tool calling mengikuti kemampuan model. Responses native meneruskan fitur upstream; bridge Chat Completions mendukung pesan, gambar yang didukung model, dan tool `type: "function"`. Hosted/custom tools dan reasoning terenkripsi memerlukan dukungan native.

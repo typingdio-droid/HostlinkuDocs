@@ -113,7 +113,7 @@ codex --profile cepat "tulis unit test untuk utils/date.ts"
 ```
 
 <Callout type="warning" title="モデルおよびツールの互換性">
-  お使いのCodexツールバージョンに対応したネイティブのResponsesモデルを使用してください。Bridge Chat Completionsはテキストおよび関数呼び出しに対応していますが、カスタムツール（shell/patch）および暗号化された推論にはネイティブサポートが必要です。`The requested tool type is not supported by this model`というエラーが表示された場合は、モデルを変更するか、適切なChat/Anthropicクライアントを使用してください。 [Responses API](/ja/responses)を参照してください。
+  お使いのCodexツールに対応したOpenAI/GPTモデルを使用してください。 Service Modeの「Performance」および「Low-Cost」では、CodexはClaudeモデルや、DeepSeek、Qwen、GLM、Kimi、MiniMax、MiMoなどの国内モデルをサポートしていません。Bridge Chat Completionsはテキストおよび関数呼び出しをサポートしていますが、カスタムツール（shell/patch）および暗号化された推論にはネイティブサポートが必要です。 `The requested tool type is not supported by this model`が表示された場合は、OpenAI/GPTモデルに切り替えるか、他のモデルの場合はClaude Code/Chatを使用してください。Dedicatedの場合、ツールのサポートはモデルおよびデプロイメントに依存します。本番環境導入前にテストを行ってください。[Responses API](/ja/responses)を参照してください。
 </Callout>
 
 <Callout type="note" title="ステートレス">

@@ -144,11 +144,10 @@ Claude Code 扩展会自行检查登录信息，因此必须在扩展设置中�
 
 ## 使用非Claude模型
 
-由于网关负责协议转换，别名 `sonnet`/`haiku` 可以填入来自
-[目录](/zh/models) 中的任意 slug：
+在“服务模式”的“高性能”和“低成本”模式下，Claude Code 支持 Claude 模型以及 DeepSeek、Qwen、GLM、Kimi、MiniMax 和 MiMo 等本土模型。 在上述模式下，Claude Code 不支持 GPT 模型；如需使用 GPT 模型，请使用 Codex CLI、Chat 或 Responses API。由于网关会转换协议，因此 `sonnet`/`haiku` 中的别名可以填入来自 [目录](/zh/models) 的本土模型 slug：
 
 ```bash
-export ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5-5
+export ANTHROPIC_DEFAULT_SONNET_MODEL=deepseek-v4-pro
 export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 ```
 
@@ -156,9 +155,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek-v4-flash
 目标模型的能力——请查阅目录中的 `capabilities` 字段。
 
 <Callout type="note" title="Claude Code 不识别非 Claude 的模型名称">
-  当使用 `gpt-5-5` 或 `deepseek-v4-flash` 等 slug 时，Claude Code 会显示警告
-  `unrecognized_model` 并假设上下文为 200k 个令牌。请求仍会正常运行
-  （已验证），但如果目标模型的窗口更大，请在客户端调整上下文。
+  当使用类似 `deepseek-v4-pro` 或 `deepseek-v4-flash` 的 slug 时，Claude Code 会显示 `unrecognized_model` 的警告，并默认采用 200k 令牌的上下文。如果目标模型的上下文窗口更大，请在客户端调整上下文。
 </Callout>
 
 <Callout type="tip" title="为子代理节省余额">

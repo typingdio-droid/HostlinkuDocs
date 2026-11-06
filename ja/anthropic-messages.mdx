@@ -24,9 +24,7 @@ Content-Type: application/json
 成功レスポンスには、ヘッダー `request-id` / `x-request-id`（HostlinkuのリクエストID、形式 `msg_…`）が含まれます。非ストリーミングの成功レスポンスには、`x-model` も含まれます。ハンドラー到達前のエラーには、このIDが含まれない場合があります。
 
 <Callout type="note" title="モデルはすべて対象であり、Claudeだけではありません">
-  `model`には、[モデルカタログ](/ja/models)と同じHostlinkuのパブリックスラグを使用します -
-  例：`claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。Claude以外のモデルも、
-  Anthropic形式を介して呼び出すことが可能です。翻訳を行うのはゲートウェイです。
+  `model`は、[モデルカタログ](/ja/models)と同じHostlinkuのパブリックスラグを使用しています。例：`claude-sonnet-4-6`、`deepseek-v4-pro`、`glm-5-3-flash`。Anthropic MessagesエンドポイントはClaude以外のモデルを呼び出すことができますが、エージェントクライアントのサポートは異なります。Service Mode PerformanceおよびLow-CostのClaude Codeは、GPTモデルではなく、Claudeモデルおよび国内モデルをサポートしています。 各クライアントの制限については、[統合ガイド](/ja/integrations)をご確認ください。
 </Callout>
 
 <a id="konfigurasi-cepat"></a>

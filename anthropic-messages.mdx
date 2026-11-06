@@ -24,9 +24,7 @@ Autentikasi menerima header `x-api-key` (gaya Anthropic) **atau** `Authorization
 Respons sukses menyertakan header `request-id` / `x-request-id` (ID request Hostlinku, format `msg_…`); respons sukses non-streaming juga menyertakan `x-model`. Error sebelum handler dapat tidak menyertakan ID ini.
 
 <Callout type="note" title="Model apa saja, bukan hanya Claude">
-  `model` memakai slug publik Hostlinku yang sama dengan [katalog model](/models) -
-  mis. `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Model non-Claude tetap bisa dipanggil
-  lewat format Anthropic; gateway yang menerjemahkan.
+  `model` memakai slug publik Hostlinku yang sama dengan [katalog model](/models) - mis. `claude-sonnet-4-6`, `deepseek-v4-pro`, `glm-5-3-flash`. Endpoint Anthropic Messages dapat memanggil model non-Claude, tetapi dukungan klien agent berbeda: Claude Code pada Service Mode Performance dan Low-Cost mendukung model Claude dan model domestik, bukan model GPT. Periksa [panduan integrasi](/integrations) untuk batas tiap klien.
 </Callout>
 
 ## Konfigurasi cepat

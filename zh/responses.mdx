@@ -23,7 +23,7 @@ Content-Type: application/json
 成功响应包含 `x-request-id`；非流式传输的成功响应还包含 `x-model`（模型的公共 slug）。
 
 <Callout type="note" title="模型和工具的兼容性">
-  `model` 使用 [模型目录](/zh/models) 中的公开 slug。网关根据部署模型，提供原生 Responses 路径以及连接到 Chat Completions 的桥接路径。支持响应格式并不意味着每个模型都支持 Responses 的全部功能或 Codex 工具。
+  `model` 使用来自 [模型目录](/zh/models) 的公共 slug。网关根据部署模式提供原生响应路径和通往聊天补全功能的桥接路径。 在“性能”和“低成本”服务模式下，Codex 仅支持 OpenAI/GPT 模型；不支持 Claude 模型和本土模型。对于 Dedicated 模式，工具支持情况取决于模型和部署方式。响应格式的支持并不意味着每个模型都支持 Responses 的所有功能或 Codex 工具。
 </Callout>
 
 为“服务模式 API 密钥”选择可用的模型。“Vision”、“reasoning”、“caching”、“JSON schema”和“tool calling”功能应遵循模型的能力。“Responses native”传递上游功能；“bridge Chat Completions”支持消息、模型支持的图片以及 `type: "function"` 类型的工具。托管/自定义工具和加密推理功能需要原生支持。
