@@ -37,6 +37,7 @@ Console、登录和结账的端点限制按 IP 地址计算，并与模型使用
 
 如有，请读取重置标头或 `Retry-After`。减少并发次数，并使用带抖动的指数退避算法。不间断地重复请求无法解决限制问题。
 
+限流端点返回 `RateLimit-Limit`、`RateLimit-Remaining` 和 `RateLimit-Reset`（秒）。当出现 429 状态码时，`Retry-After` 或 `retry-after-ms` 也可能出现。
 </Callout>
 
 <a id="limit-kredit-api-key"></a>

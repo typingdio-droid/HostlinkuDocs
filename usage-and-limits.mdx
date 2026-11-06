@@ -33,6 +33,7 @@ Batas endpoint Console, login, dan checkout dihitung per IP dan terpisah dari ku
 
 Baca header reset atau `Retry-After` bila tersedia. Kurangi konkurensi dan gunakan backoff eksponensial dengan jitter. Mengulang request terus-menerus tanpa jeda tidak menyelesaikan pembatasan.
 
+Limiter endpoint mengirim `RateLimit-Limit`, `RateLimit-Remaining`, dan `RateLimit-Reset` (detik). Saat 429, `Retry-After` atau `retry-after-ms` juga dapat tersedia.
 </Callout>
 
 ## Limit kredit API key

@@ -39,6 +39,7 @@ The limits for the Console, login, and checkout endpoints are calculated per IP 
 
 Check the Reset header or `Retry-After` if available. Reduce concurrency and use exponential backoff with jitter. Repeating requests continuously without a pause will not resolve the limitation.
 
+The limiter endpoint returns `RateLimit-Limit`, `RateLimit-Remaining`, and `RateLimit-Reset` (seconds). When a 429 error occurs, `Retry-After` or `retry-after-ms` may also be returned.
 </Callout>
 
 <a id="limit-kredit-api-key"></a>
