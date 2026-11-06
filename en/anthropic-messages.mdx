@@ -24,7 +24,7 @@ Authentication accepts the `x-api-key` header (Anthropic style) **or** `Authoriz
 Successful responses include the `request-id` / `x-request-id` header (Hostlinku request ID, `msg_…` format); non-streaming successful responses also include `x-model`. Errors occurring before the handler may not include these IDs.
 
 <Callout type="note" title="Any model, not just Claude">
-  `model` uses the same Hostlinku public slug as the [model catalog](/en/models) — e.g., `claude-sonnet-4-6`, `deepseek-v4-pro`, `glm-5-3-flash`. Anthropic Messages endpoints can call non-Claude models, but client agent support varies: Claude Code in Performance and Low-Cost Service Modes supports Claude models and domestic models, not GPT models. Check the [integration guide](/en/integrations) for limits per client.
+  `model` uses the same Hostlinku public slug as the [model catalog](/en/models) — e.g., `claude-sonnet-4-6`, `deepseek-v4-pro`, `glm-5-3-flash`. Anthropic Messages endpoints can call non-Claude models, but client agent support varies: Claude Code in Service Mode Performance supports both Claude and domestic models; in Low-Cost mode, only Claude models are supported. GPT models are not supported in Claude Code. Check the [integration guide](/en/integrations) for each client’s limits.
 </Callout>
 
 <a id="konfigurasi-cepat"></a>

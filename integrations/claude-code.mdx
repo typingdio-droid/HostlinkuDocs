@@ -124,7 +124,7 @@ Di JetBrains, isi variabel yang sama di *Settings → Tools → Claude Code → 
 
 ## Pakai model non-Claude
 
-Claude Code pada Service Mode Performance dan Low-Cost mendukung model Claude serta model domestik seperti DeepSeek, Qwen, GLM, Kimi, MiniMax, dan MiMo. Model GPT tidak didukung di Claude Code pada mode tersebut; gunakan Codex CLI, Chat, atau Responses API untuk model GPT. Karena gateway menerjemahkan protokol, alias `sonnet`/`haiku` bisa diisi slug model domestik dari [katalog](/models):
+Claude Code pada Service Mode Performance mendukung model Claude serta model domestik seperti DeepSeek, Qwen, GLM, Kimi, MiniMax, dan MiMo. Pada Low-Cost, Claude Code hanya mendukung model Claude karena katalog Low-Cost tidak memuat model domestik. Model GPT tidak didukung di Claude Code pada kedua mode; gunakan Codex CLI, Chat, atau Responses API untuk model GPT. Karena gateway menerjemahkan protokol, alias `sonnet`/`haiku` bisa diisi slug Claude atau model domestik dari [katalog](/models):
 
 ```bash
 export ANTHROPIC_DEFAULT_SONNET_MODEL=deepseek-v4-pro
@@ -140,7 +140,7 @@ kapabilitas model tujuan - cek field `capabilities` di katalog.
 
 <Callout type="tip" title="Hemat saldo untuk sub-agent">
   Claude Code memakai alias *haiku* untuk tugas ringan (ringkasan, judul sesi, sub-agent cepat).
-  Mengisinya dengan `claude-haiku-4-5` atau `deepseek-v4-flash` memangkas biaya sesi panjang secara
+  Mengisinya dengan `claude-haiku-4-5` atau `deepseek-v4-flash` (Performance) memangkas biaya sesi panjang secara
   signifikan tanpa memengaruhi kualitas model utama.
 </Callout>
 

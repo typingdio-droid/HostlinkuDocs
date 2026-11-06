@@ -238,11 +238,7 @@ for await (const event of stream) {
 </Callout>
 
 <Callout type="warning" title="每个客户端的限制">
-  **Codex CLI 仅适用于 OpenAI 模型**（`gpt-*`）——Claude 模型及其他非 OpenAI 模型
-  因工具类型不同而被上游拒绝。 **Claude Code** 可以使用非 Claude 模型，
-  但会显示 `unrecognized_model` 警告，并默认上下文长度为 200k 个令牌。
-  详情请参阅 [Codex](/zh/integrations/codex-cli) 页面以及
-  [Claude Code](/zh/integrations/claude-code) 页面中。
+  **Codex**在 Performance 和 Low-Cost Service Mode 下仅支持 OpenAI 模型（`gpt-*`）；Claude 模型和本土模型因工具类型差异而被上游拒绝。对于 Dedicated 模式，工具支持取决于模型和部署方式。 **Claude Code**在 Performance 模式下可使用Claude模型和本土模型，而在 Low-Cost 模式下仅支持Claude模型；不支持GPT模型。Claude Code会显示`unrecognized_model`警告，并假设非Claude的slug上下文长度为200k个令牌。 详情请参阅 [Codex](/integrations/codex-cli) 和 [Claude Code](/integrations/claude-code) 页面。
 </Callout>
 
 <a id="sumber-daya-terkait"></a>

@@ -224,11 +224,7 @@ for await (const event of stream) {
 </Callout>
 
 <Callout type="warning" title="Batas per klien">
-  **Codex CLI hanya untuk model OpenAI** (`gpt-*`) - model Claude dan model non-OpenAI lain
-  ditolak upstream karena perbedaan tipe tool. **Claude Code** bisa memakai model non-Claude,
-  tetapi menampilkan peringatan `unrecognized_model` dan mengasumsikan konteks 200k token.
-  Detail ada di halaman [Codex](/integrations/codex-cli) dan
-  [Claude Code](/integrations/claude-code).
+  **Codex** pada Service Mode Performance dan Low-Cost hanya untuk model OpenAI (`gpt-*`); model Claude dan model domestik ditolak upstream karena perbedaan tipe tool. Untuk Dedicated, dukungan tool mengikuti model dan deployment. **Claude Code** pada Performance dapat memakai model Claude dan model domestik, sedangkan pada Low-Cost hanya model Claude; model GPT tidak didukung. Claude Code menampilkan peringatan `unrecognized_model` dan mengasumsikan konteks 200k token untuk slug non-Claude. Detail ada di halaman [Codex](/integrations/codex-cli) dan [Claude Code](/integrations/claude-code).
 </Callout>
 
 ## Sumber Daya Terkait
