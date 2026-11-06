@@ -84,20 +84,28 @@ curl https://api.hostlinku.com/v1/responses \
 
 <a id="プロフィールに表示されるいくつかのモデル"></a>
 
-## プロファイルを経由するいくつかのモデル
+## プロファイル経由での複数のモデル
 
-設定を編集せずにモデルやプロバイダーを切り替えるには、`[profiles.*]` を使用してください：
+`cepat` および `kuat` は、Codex や Hostlinku のデフォルトのプロファイル名ではなく、自由に選択できる例示用の名前です。プロファイル名には、英字、数字、ハイフン、およびアンダーバーを含めることができます。
+
+Codexは`~/.codex/config.toml`を読み込みます。`--profile <nama>`を実行すると、Codexは`~/.codex/<nama>.config.toml`も読み込みます。各プロファイルごとに個別のファイルを作成し、設定はルートレベルで行ってください。`[profiles.*]`セクションは使用しないでください。[Codexの公式プロファイルガイド](https://developers.openai.com/codex/config-advanced/#profiles)を参照してください。
+
+ファイル `~/.codex/cepat.config.toml`:
 
 ```toml
-[profiles.cepat]
 model = "gpt-5-6-luna"
 model_provider = "hostlinku"
 model_reasoning_effort = "low"
+```
 
-[profiles.kuat]
+ファイル `~/.codex/kuat.config.toml`:
+
+```toml
 model = "gpt-6-astra"
 model_provider = "hostlinku"
 ```
+
+プロバイダー `hostlinku` は `~/.codex/config.toml` で定義されています。Codex を実行する際にプロファイルを選択してください：
 
 ```bash
 codex --profile kuat

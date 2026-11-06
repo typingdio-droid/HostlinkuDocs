@@ -78,20 +78,28 @@ curl https://api.hostlinku.com/v1/responses \
 
 <a id="几位模特通过个人资料"></a>
 
-## 部分模型通过配置文件
+## 通过配置文件调用多个模型
 
-使用 `[profiles.*]` 可在不编辑配置的情况下切换模型/提供商：
+`cepat` 和 `kuat` 是您可以自由选择的示例名称，并非 Codex 或 Hostlinku 的默认配置文件。配置文件名称可以包含字母、数字、连字符和下划线。
+
+Codex 会读取 `~/.codex/config.toml`。当你运行 `--profile <nama>` 时，Codex 也会读取 `~/.codex/<nama>.config.toml`。请为每个配置文件创建单独的文件，并在根级别进行设置；请勿使用 `[profiles.*]` 部分。请参阅 [Codex 官方配置文件指南](https://developers.openai.com/codex/config-advanced/#profiles)。
+
+文件 `~/.codex/cepat.config.toml`：
 
 ```toml
-[profiles.cepat]
 model = "gpt-5-6-luna"
 model_provider = "hostlinku"
 model_reasoning_effort = "low"
+```
 
-[profiles.kuat]
+文件 `~/.codex/kuat.config.toml`：
+
+```toml
 model = "gpt-6-astra"
 model_provider = "hostlinku"
 ```
+
+提供程序 `hostlinku` 仍定义在 `~/.codex/config.toml` 中。运行 Codex 时请选择配置文件：
 
 ```bash
 codex --profile kuat

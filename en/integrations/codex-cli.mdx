@@ -83,20 +83,28 @@ curl https://api.hostlinku.com/v1/responses \
 
 <a id="some-models-via-their-profiles"></a>
 
-## Some models are defined via profiles
+## Multiple models via profiles
 
-Use `[profiles.*]` to switch models/providers without editing the configuration:
+`cepat` and `kuat` are example names you can choose freely; they are not default profiles from Codex or Hostlinku. Profile names may contain letters, numbers, hyphens, and underscores.
+
+Codex reads `~/.codex/config.toml`. When you run `--profile <nama>`, Codex also reads `~/.codex/<nama>.config.toml`. Create a separate file for each profile, with settings at the top level; do not use the `[profiles.*]` section. See the [official Codex profile guide](https://developers.openai.com/codex/config-advanced/#profiles).
+
+The `~/.codex/cepat.config.toml` file:
 
 ```toml
-[profiles.cepat]
 model = "gpt-5-6-luna"
 model_provider = "hostlinku"
 model_reasoning_effort = "low"
+```
 
-[profiles.kuat]
+The `~/.codex/kuat.config.toml` file:
+
+```toml
 model = "gpt-6-astra"
 model_provider = "hostlinku"
 ```
+
+The `hostlinku` provider is defined in `~/.codex/config.toml`. Select a profile when running Codex:
 
 ```bash
 codex --profile kuat
