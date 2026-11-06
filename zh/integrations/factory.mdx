@@ -1,27 +1,36 @@
 ---
 title: "Factory Droid"
-description: "在 ~/.factory/settings.json 中将模型 Hostlinku 添加为 customModels，并在 Droid CLI 以及 Factory 桌面应用程序中使用它"
+description: "将 Hostlinku 模型作为 customModels 添加到 ~/.factory/settings.json 中，并在 Droid CLI 以及 Factory 桌面应用程序中使用"
 icon: bot
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Droid](https://docs.factory.ai/cli/byok/overview) - Factory 的代理编码工具 - 支持 **BYOK 自定义模型**。 自定义模型从 `~/.factory/settings.json` 读取，可在 Droid CLI 以及 Factory 桌面应用程序中使用（不适用于 Factory 网页/移动平台）。API 密钥始终保存在本地，不会发送至 Factory 服务器。
+[Droid](https://docs.factory.ai/cli/byok/overview) —— Factory 的代理编码工具 —— 支持 **BYOK
+自定义模型**。自定义模型从 `~/.factory/settings.json` 读取，并在 Droid CLI 以及
+Factory 桌面应用程序中可用（不适用于 Factory 网页/移动平台）。API 密钥保存在本地，不会发送
+至 Factory 服务器。
 
 <Steps>
 
-### 将 API 密钥保存到环境变量中
+<a id="simpan-api-key-di-environment"></a>
+
+<a id="将-api-密钥保存到环境变量中"></a>
+
+### 将 API 密钥保存在环境中
 
 ```bash
 export HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
-将其添加到 `~/.zshrc` / `~/.bashrc` 中以使其永久生效。Droid 从 `settings.json` 中读取 `${HOSTLINKU_API_KEY}` 的引用。
+将其添加到 `~/.zshrc` / `~/.bashrc` 中以永久生效。Droid 从 `settings.json` 中读取 `${HOSTLINKU_API_KEY}`
+的引用。
+
+<a id="daftarkan-model-di-settingsjson"></a>
 
 ### 在 settings.json 中注册模型
 
-打开（或创建）`~/.factory/settings.json`，然后添加`customModels`：
+打开（或创建）`~/.factory/settings.json`，然后添加 `customModels`：
 
 ```json
 {
@@ -54,32 +63,46 @@ export HOSTLINKU_API_KEY=sk-your-api-key
 }
 ```
 
-| `provider` | API 格式 | 基准URL Hostlinku |
+| `provider` | API 格式 | Base URL Hostlinku |
 |---|---|---|
-| `anthropic` | Anthropic Messages | `https://api.hostlinku.com`（不含`/v1`） |
-| `generic-chat-completion-api` | OpenAI Chat Completions | `https://api.hostlinku.com/v1` |
+| `anthropic` | Anthropic 消息 | `https://api.hostlinku.com`（不带 `/v1`） |
+| `generic-chat-completion-api` | OpenAI 聊天补全 | `https://api.hostlinku.com/v1` |
 
-### 在Droid上选择机型
+<a id="pilih-model-di-droid"></a>
 
-运行 `droid`，输入 `/model`，然后在 **自定义模型** 部分选择模型（名称与 `displayName` 一致）。第一个请求将显示在控制台 → **请求日志** 中。
+<a id="在droid上选择机型"></a>
+
+### 在 Droid 中选择机型
+
+运行 `droid`，输入 `/model`，然后在 **自定义模型** 部分选择模型（名称与
+`displayName` 一致）。首次请求将显示在控制台 → **请求日志** 中。
 
 </Steps>
 
-## 需知事项
+<a id="yang-perlu-diketahui"></a>
 
-<Callout type="tip" title="通过Anthropic提供的Claude模型">
-提供商 `anthropic` 使用 Messages API，因此 `cache_control` 被转发，且提示缓存功能完全正常。您可以在 Droid 中通过 `/cost` 检查节省效果，或查看请求日志中的 *cache* 列。
+<a id="需知事项"></a>
+
+## 注意事项
+
+<Callout type="tip" title="通过 Anthropic 提供商提供的 Claude 模型">
+  提供商 `anthropic` 使用 Messages API，因此 `cache_control` 会被传递，且提示缓存
+  功能完全有效。您可以在 Droid 中通过 `/cost` 或请求日志中的 *cache* 列查看节省情况。
 </Callout>
 
-- **GPT及其他模型**（DeepSeek、GLM、Qwen、Kimi）通过`generic-chat-completion-api`的兼容性最佳。Droid平台上的`openai`提供商使用Responses API； Hostlinku 以 *无状态* 方式为 Responses 提供服务 ([详情](/zh/responses))，因此如有疑问，请选择 Chat Completions。
-- **`maxOutputTokens`** 请勿超过[产品目录](/zh/models)中规定的模型输出限值。
-- **通用提供程序的提示缓存**取决于目标模型。
+- **GPT 及其他模型**（DeepSeek、GLM、Qwen、Kimi）通过
+  `generic-chat-completion-api` 实现。Droid 中的 `openai` 提供商使用 Responses API；Hostlinku
+  以 *无状态* 方式提供 Responses 服务（[详情](/zh/responses)），因此如有疑问，请选择 Chat Completions。
+- **`maxOutputTokens`** 请勿超过 [目录](/zh/models) 中模型的输出限制。
+- **通用提供商的提示缓存**取决于目标模型。
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-| 症状 | Solusi |
+| 症状 | 解决方案 |
 |---|---|
-| 模型未在 `/model` 中显示 | JSON 无效或 `provider` 输入有误 - 请使用 `jq . ~/.factory/settings.json` 进行核对。 |
-| 错误：未找到变量 | `HOSTLINKU_API_KEY` 尚未在运行 `droid` 的 shell 中导出。 |
-| 所有请求中均包含`404` | 基础 URL弄混了：`anthropic`与`/v1`搞混了，`generic-chat-completion-api`与`/v1`搞混了。 |
-| `404 model_not_found` | `model` 的 slug 必须与 `GET /v1/models` 完全一致。 |
+| “Model”未出现在 `/model` 中 | JSON 无效或 `provider` 拼写错误——请使用 `jq . ~/.factory/settings.json` 进行检查。 |
+| 未找到 Error 变量 | `HOSTLINKU_API_KEY` 尚未在运行 `droid` 的 shell 中导出。 |
+| 所有请求中的 `404` | Base URL 混淆：`anthropic` 缺少 `/v1`，`generic-chat-completion-api` 包含 `/v1`。 |
+| `404 model_not_found` | `model` 必须与 `GET /v1/models` 中的 slug 完全一致。 |

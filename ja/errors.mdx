@@ -1,14 +1,18 @@
 ---
-title: エラー
-description: プロトコル別のエラー形式、Hostlinkuコード、対処方法。
+title: "エラー"
+description: "プロトコルごとのエラー形式、Hostlinkuコード、および適切な対応措置。"
 icon: circle-alert
 ---
 
-## レスポンス形式
+<a id="format-respons"></a>
 
-エラー形式はエンドポイントによって異なります。`error.message` は問題の説明です。自動処理にはHTTPステータスとエラーコード／タイプを使ってください。メッセージの言語はサービスによって異なる場合があります。
+<a id="レスポンス形式"></a>
 
-**Chat Completionsと一般エンドポイント**はHostlinkuコードを使用します：
+## レスポンスの形式
+
+エラーのフォーマットはエンドポイントに準拠します。`error.message` メッセージは問題を説明します。自動処理には HTTP ステータスおよびエラーコード／タイプを使用してください。メッセージの表現はサービスによって異なる場合があります。
+
+**Chat Completionsおよび一般的なエンドポイント**には、Hostlinkuのコードを使用してください：
 
 ```json
 {
@@ -23,71 +27,83 @@ icon: circle-alert
 }
 ```
 
-**Anthropic Messages**は `error.type` を使用し、`error.code` にHostlinkuコードを含みません：
+**Anthropic Messages**では、`error.type`を使用し、`error.code`にはHostlinkuのコードを含めない：
 
 ```json
 {"type":"error","error":{"type":"invalid_request_error","message":"The request body is invalid."}}
 ```
 
-**OpenAI Responses**はOpenAI形式と変換されたコードを使用します：
+**OpenAIの応答**は、OpenAIのフォーマットとマッピングされたコードを使用しています：
 
 ```json
 {"error":{"message":"The request body is invalid.","type":"invalid_request_error","param":null,"code":"invalid_request"}}
 ```
 
-Responsesの変換例：`UNAUTHORIZED` → `invalid_api_key`、`MODEL_NOT_FOUND` → `model_not_found`、429エラー → `rate_limit_exceeded`。Messagesでは `authentication_error`、`not_found_error`、`rate_limit_error` などのタイプに分類されます。
+レスポンスのマッピング例：`UNAUTHORIZED` → `invalid_api_key`、`MODEL_NOT_FOUND` → `model_not_found`、エラー429 → `rate_limit_exceeded`。 メッセージは、`authentication_error`、`not_found_error`、`rate_limit_error`などのタイプごとに分類されます。
 
-スキーマ検証エラーはChat Completionsで **422**、Messages/Responsesで **400** です。`error.details` は任意で、`error.details.issues` は不正なフィールドを示します。本文の解析、リクエストのレート制限、未知のパスなど、プロトコルハンドラーより前のエラーには一般のHostlinku形式が使われる場合があります。
+スキーマの検証では、チャット補完では**422**を使用しますが、メッセージ/レスポンスでは**400**を使用します。`error.details`はオプションです。`error.details.issues`は、無効なフィールドを示します。 プロトコルハンドラー以前のエラー（例：ボディの解析、リクエストの制限、未知のパスなど）については、Hostlinkuの一般的なフォーマットを使用できます。
 
-## Hostlinkuコード
+<a id="kode-hostlinku"></a>
 
-以下はゲートウェイと一般エンドポイントのHostlinkuコードです。Messages/Responsesでは上記の変換が適用されます。アカウントや決済の各エンドポイントでは、ほかの専用コードが返る場合もあります。
+<a id="hostlinkuコード"></a>
 
-| HTTP | コード | 意味と対処 |
+## Hostlinkuのコード
+
+この表は、ゲートウェイおよび一般的なエンドポイントにおけるHostlinkuのコードを参照しています。メッセージ/レスポンスには上記のマッピングが適用されます。アカウント固有のコードやその他の支払い関連のコードは、関連するエンドポイントに表示される場合があります。
+
+| HTTP | コード | 意味と動作 |
 |---|---|---|
-| 400 | `BAD_REQUEST` | JSONやパラメータが不正です。モデルの出力上限も確認し、リクエストを修正してください。 |
-| 400 | `MODEL_NOT_IN_SERVICE_MODE` | キーのService Modeでモデルを利用できません。同じキーで `GET /v1/models` を確認してください。 |
-| 400 | `UPSTREAM_REJECTED` | プロバイダーが拒否しました。サニタイズされた理由を読み、入力を修正してください。 |
-| 401 | `UNAUTHORIZED` | 認証がない、無効、取り消し済み、または期限切れです。キーを確認してください。 |
-| 402 | `PAYMENT_REQUIRED` | 利用可能残高が不足、またはキーの利用上限に達しました。[Billing](/ja/billing)を確認してください。 |
-| 403 | `FORBIDDEN` | アクセスが拒否されました。アカウント権限を確認してください。 |
-| 404 | `NOT_FOUND` | パスまたはリソースがありません。URLとIDを確認してください。 |
-| 404 | `MODEL_NOT_FOUND` | モデルのslugがありません。カタログを確認してください。 |
-| 405 | `METHOD_NOT_ALLOWED` | HTTPメソッドが不正です。`Allow` ヘッダーのメソッドを使用してください。 |
-| 413 | `BAD_REQUEST` | 本文が大きすぎます。本文のサイズを減らしてください。 |
-| 415 | `BAD_REQUEST` | 本文のエンコーディング／文字セットが未対応です。形式を確認してください。 |
-| 422 | `VALIDATION_FAILED` | 本文／クエリの検証に失敗しました。`error.details.issues` のフィールドを修正してください。 |
-| 429 | `RATE_LIMITED` | Service Modeごとの組織クォータ、またはエンドポイント／IP上限に達しました。上流からの制限もあります。待機し、同時実行数を減らしてください。 |
-| 429 | `MODEL_AT_CAPACITY` | プロバイダー側でモデルが満杯です。再試行の待機時間に従ってください。 |
-| 429 | `MODEL_COOLDOWN` | 失敗後にモデルのデプロイが復旧中です。再試行の待機時間に従ってください。 |
-| 500 | `INTERNAL` | 内部エラーです。リクエスト情報を保存し、繰り返す場合は報告してください。 |
-| 503 | `MODEL_UNAVAILABLE` | モデルが利用不可または非推奨です。カタログと代替モデルを確認し、一時的な障害なら再試行してください。 |
-| 503 | `PROVIDER_UNAVAILABLE` | プロバイダーへの経路が利用できません。間隔と回数の上限を設けて再試行してください。 |
-| 503 | `UPSTREAM_ERROR` | 上流の障害です。間隔と回数の上限を設けて再試行してください。 |
-| 503 | `UPSTREAM_TIMEOUT` | 上流がタイムアウトしました。間隔と回数の上限を設けて再試行してください。 |
-| 503 | `UPSTREAM_UNREACHABLE` | 上流に接続できません。間隔と回数の上限を設けて再試行してください。 |
+| 400 | `BAD_REQUEST` | JSON/パラメータは処理できません。これにはモデルの出力制限も含まれます。「request」を修正してください。 |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | 「Model」はサービスモードのキーには存在しません。同じキーを持つ `GET /v1/models` からモデルを選択してください。 |
+| 400 | `UPSTREAM_REJECTED` | プロバイダーがリクエストを拒否しました。サニタイズされた理由を確認し、入力を修正してください。 |
+| 401 | `UNAUTHORIZED` | 認証が存在しない、不正、無効、または期限切れの場合。キーを確認してください。 |
+| 402 | `PAYMENT_REQUIRED` | 利用可能な残高が不足しているか、キーのクレジット上限に達しています。[Billing](/ja/billing)をご確認ください。 |
+| 403 | `FORBIDDEN` | アクセスが拒否されました。アカウントの権限を確認してください。 |
+| 404 | `NOT_FOUND` | 「Path」または「resource」は存在しません。URLとIDを確認してください。 |
+| 404 | `MODEL_NOT_FOUND` | モデルのスラグは存在しません。カタログを確認してください。 |
+| 405 | `METHOD_NOT_ALLOWED` | HTTPメソッドが誤っています。`Allow`ヘッダーに記載されているメソッドを使用してください。 |
+| 413 | `BAD_REQUEST` | ペイロードが大きすぎます。ボディのサイズを縮小してください。 |
+| 415 | `BAD_REQUEST` | ボディのエンコーディング/文字セットはサポートされていません。ボディの形式を確認してください。 |
+| 422 | `VALIDATION_FAILED` | Body/queryの検証に失敗しました。`error.details.issues`内のフィールドを修正してください。 |
+| 429 | `RATE_LIMITED` | サービスモードごとの組織クォータ、またはエンドポイント／IPごとの制限に達した場合、アップストリーム側でも制限が返されることがあります。待機し、同時接続数を減らしてください。 |
+| 429 | `MODEL_AT_CAPACITY` | プロバイダーにおけるモデルのフル容量。リトライの指示を待ってください。 |
+| 429 | `MODEL_COOLDOWN` | デプロイメントモデルは障害から復旧中です。再試行の指示を待ってください。 |
+| 500 | `INTERNAL` | 内部エラー。リクエスト情報を保存し、再発した場合は報告してください。 |
+| 503 | `MODEL_UNAVAILABLE` | モデルは利用不可または非推奨です。カタログと代替モデルを確認し、障害が一時的なものである場合は再試行してください。 |
+| 503 | `PROVIDER_UNAVAILABLE` | プロバイダーの経路は利用できません。一定時間をおいて再度お試しください。 |
+| 503 | `UPSTREAM_ERROR` | アップストリームの障害。一定時間待ってから再試行してください。 |
+| 503 | `UPSTREAM_TIMEOUT` | アップストリームがタイムアウトしました。一定時間待ってから再試行してください。 |
+| 503 | `UPSTREAM_UNREACHABLE` | アップストリームに接続できません。一定時間待ってから再試行してください。 |
 
-### Consoleとチェックアウト
+<a id="console-dan-checkout"></a>
 
-以下はアカウント／チェックアウトのコードで、`/v1/*` の推論エラーとは別です：
+<a id="consoleとチェックアウト"></a>
 
-| HTTP | コード | 意味と対処 |
+### Consoleとcheckout
+
+以下のコードはアカウント／チェックアウトに関連するものであり、推論エラー `/v1/*` の契約には該当しません：
+
+| HTTP | コード | 意味と動作 |
 |---|---|---|
-| 403 | `API_KEY_NOT_ALLOWED` | Consoleのアカウント用エンドポイントにAPIキーを使っています。Consoleのログインセッションを使ってください。 |
-| 409 | `CONFLICT` | 現在の状態と操作が競合しています。状態を再取得してから再試行してください。 |
-| 424 | `CHECKOUT_FAILED` | 決済プロバイダーが請求を作成できませんでした。メッセージと取引を確認してから再作成してください。 |
-| 424 | `BANK_BUSY` | iPaymuの銀行／チャネルが混雑しています。チェックアウトで別の銀行を選んでください。 |
+| 403 | `API_KEY_NOT_ALLOWED` | APIキーは、Consoleアカウントのエンドポイントで使用されます。Consoleのログインセッションを使用してください。 |
+| 409 | `CONFLICT` | 操作が現在の状態と矛盾しています。再試行する前に状態を再読み込みしてください。 |
+| 424 | `CHECKOUT_FAILED` | プロバイダーによる請求処理に失敗しました。再実行する前に、メッセージを確認し、取引内容を確認してください。 |
+| 424 | `BANK_BUSY` | iPaymuの銀行／チャネルが混雑しています。チェックアウト画面で提供されている他の銀行を選択してください。 |
 
-## 再試行とストリーミング
+<a id="retry-dan-streaming"></a>
 
-`Retry-After` は待機秒数、`retry-after-ms` はミリ秒です。ヘッダーがない場合はジッター付き指数バックオフと試行回数の上限を使ってください。同じ組織内でキーやメンバーアカウントを増やしても共有クォータは増えません。[使用量と上限](/ja/usage-and-limits)を参照してください。
+<a id="再試行とストリーミング"></a>
 
-SSE開始後の失敗はストリーム内のエラーイベントで送られ、開始時のHTTPステータスは変わりません。Chat Completionsの例：
+## Retryおよびストリーミング
+
+指定されている場合、`Retry-After`には待機時間が秒単位で、`retry-after-ms`にはミリ秒単位で含まれます。指定がない場合は、ジッター付きの指数関数的バックオフと試行回数制限を使用してください。 共有クォータについては、同じ組織内のキーやメンバーアカウントを追加してもクォータは増加しません。[使用状況と制限](/ja/usage-and-limits)を参照してください。
+
+SSEが開始されると、失敗はストリーム内でエラーイベントとして送信されます。初期のHTTPステータスは変更されません。チャットコンプリートの例：
 
 ```text
 data: {"error":{"code":"MODEL_AT_CAPACITY","message":"The model is at capacity right now. Please retry shortly.","type":"upstream_error","retry_after_ms":4000}}
 ```
 
-ゲートウェイが処理したストリーム障害の後に `[DONE]` は追加されません。エラーイベントなしで接続が切れる場合もあります。`[DONE]` や切断だけで成功とは判断せず、エラーイベントとリクエストログを確認してください。[Messages](/ja/anthropic-messages)と[Responses](/ja/responses)で各イベント形式を確認してください。
+Gatewayは、処理したストリームの失敗後に`[DONE]`を追加しません。エラーイベントが発生しなくても接続が切断される場合があります。 `[DONE]`というマーカーや接続の終了だけでは成功を証明するものではありません。エラーイベントとリクエストログを確認してください。イベント「Messages/Responses」の形式については、[Messages](/ja/anthropic-messages)および[Responses](/ja/responses)で説明されています。
 
-報告には、取得できた場合の `x-request-id`、発生時刻、エンドポイント、モデル、HTTPステータス、シークレットを除いたエラー本文を添えてください。[サポート](/ja/support)を参照してください。
+報告の際は、利用可能な場合は `x-request-id`、発生時刻、エンドポイント、モデル、HTTPステータス、およびシークレットを含まないエラー本文を記載してください。[サポート](/ja/support)を参照してください。

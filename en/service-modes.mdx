@@ -1,0 +1,54 @@
+---
+title: "Service Mode"
+description: "Dedicated, Performance, and Low-Cost: API key selection, model catalog, pricing, and usage limits."
+icon: layers
+---
+
+**Service Mode** determines the model catalog, service paths, and pricing for an API key. Select **Dedicated**, **Performance**, or **Low-Cost** when creating a key in the [Console](https://console.hostlinku.com).
+
+<a id="mode-yang-tersedia"></a>
+
+## Available modes
+
+| Mode | The value of `service_mode` | Notes |
+|---|---|---|
+| **Dedicated** | `dedicated` | Mode options for Dedicated model sets. See the [Dedicated guide](/en/dedicated). |
+| **Performance** | `performance` | Default options on the API key creation form. |
+| **Low-Cost** | `low_cost` | Mode options with their own model catalogs and pricing. |
+
+A model may be available in more than one mode with different pricing. Compare models and prices in the [catalog](https://hostlinku.com/models).
+
+<a id="memilih-mode-untuk-api-key"></a>
+
+<a id="selecting-a-mode-for-an-api-key"></a>
+
+## Selecting a mode for the API key
+
+1. Open **API Keys** in the Console, then create a new key.
+2. Select the Service Mode based on the model and pricing plan you wish to use.
+3. Use that key in the API request.
+
+**One API key corresponds to one Service Mode.** To use multiple modes, create separate keys. The mode is determined by the key, not by additional parameters in the request; there is no automatic fallback to another mode.
+
+<a id="memeriksa-katalog-dan-harga-berdasarkan-api-key"></a>
+
+<a id="checking-the-keys-catalog-and-pricing"></a>
+
+## Check the catalog and pricing based on the API key
+
+Call `GET /v1/models` using the API key you intend to use:
+
+```bash
+curl https://api.hostlinku.com/v1/models \
+  -H "Authorization: Bearer $HOSTLINKU_API_KEY"
+```
+
+The models and prices in the response are determined by the Service Mode associated with the API key used. The price for each model is available in the `pricing` object. See the [Models reference](/en/models) for field definitions and public catalog endpoints.
+
+<a id="batas-penggunaan-dan-kompatibilitas"></a>
+
+## Usage limits and compatibility
+
+Quotas are shared within the organization for each Service Mode. Details are available at [Usage & Limits](/en/usage-and-limits).
+
+Support for features, protocols, and output limits follows the model. Use the [API Reference](/en/api-reference) and model pages to check for support.

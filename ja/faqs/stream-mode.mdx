@@ -1,15 +1,18 @@
 ---
 title: "ストリームモード"
-description: "HostlinkuとOpenAI SDKでSSEストリーミングを使用する方法（Python requests、curl、Node.js）。"
+description: "HostlinkuでOpenAI SDK、Python requests、curl、およびNode.jsを使用してSSEストリーミングを利用する方法。"
 icon: radio
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-ストリームモードでは、SSE（`text/event-stream`）を介して回答をトークン単位で送信します。回答全体の完了を待たず、モデルが回答を始めた時点でトークンを表示できます。最初のトークンまでの時間はモデルとプロバイダーに依存します。`"stream": true`で有効にします。
+ストリームモードでは、SSE（`text/event-stream`）を介してトークン単位で応答を送信します。トークンは、応答全体が完了するのを待たずに、モデルが応答を開始した時点で表示可能です。最初のトークンが送信されるタイミングは、モデルおよびプロバイダーによって異なります。`"stream": true` を指定して有効化します。
 
-## 概要：curl
+<a id="ringkas-curl"></a>
+
+<a id="概要curl"></a>
+
+## 要約：curl
 
 ```bash
 curl -N https://api.hostlinku.com/v1/chat/completions \
@@ -17,7 +20,7 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{ "role": "user", "content": "1から5まで数えてください。" }],
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
     "stream": true
   }'
 ```
@@ -32,7 +35,9 @@ data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content
 data: [DONE]
 ```
 
-## Python - SDK OpenAI
+<a id="python---sdk-openai"></a>
+
+## Python - OpenAI SDK
 
 ```python
 from openai import OpenAI
@@ -44,7 +49,7 @@ client = OpenAI(
 
 stream = client.chat.completions.create(
     model="gpt-5-5",
-    messages=[{"role": "user", "content": "短い段落を書いてください。"}],
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
     stream=True,
 )
 for chunk in stream:
@@ -55,7 +60,7 @@ for chunk in stream:
 
 ## Python - requests
 
-リクエストには`stream=True`を使用し、`iter_lines()`を読み取ってください。`data: [DONE]`を受信したら停止してください。
+リクエストでは `stream=True` を使用し、`iter_lines()` を読み取ってください。`data: [DONE]` を受信したら停止してください。
 
 ```python
 import json
@@ -69,7 +74,7 @@ response = requests.post(
     },
     json={
         "model": "gpt-5-5",
-        "messages": [{"role": "user", "content": "こんにちは！"}],
+        "messages": [{"role": "user", "content": "Halo!"}],
         "stream": True,
     },
     stream=True,
@@ -92,7 +97,9 @@ for line in response.iter_lines():
         print(delta, end="", flush=True)
 ```
 
-## Node.js - SDK OpenAI
+<a id="nodejs---sdk-openai"></a>
+
+## Node.js - OpenAI SDK
 
 ```js
 import OpenAI from "openai";
@@ -104,7 +111,7 @@ const client = new OpenAI({
 
 const stream = await client.chat.completions.create({
   model: "gpt-5-5",
-  messages: [{ role: "user", content: "こんにちは！" }],
+  messages: [{ role: "user", content: "Halo!" }],
   stream: true,
 });
 
@@ -114,13 +121,17 @@ for await (const chunk of stream) {
 }
 ```
 
-## メモ Hostlinku
+<a id="catatan-hostlinku"></a>
 
-- ヘッダー `x-request-id` は、ストリーミング応答でも引き続き送信されます。
-- ストリームが途中で失敗した場合、ゲートウェイは`data: {"error": {...}}`イベントを送信し、偽の`[DONE]`は**送信しない**。
-- 料金は、ストリーミング終了後の実際の使用量に基づいて計算されます。使用量が確認できない場合は、予約時の推定値に基づいて請求されます。
+<a id="メモ-hostlinku"></a>
+
+## Hostlinkuの注記
+
+- ヘッダー `x-request-id` は、ストリーミングレスポンスでも引き続き送信されます。
+- ストリームが途中で失敗した場合、ゲートウェイはイベント `data: {"error": {...}}` を送信し、偽の `[DONE]` は**送信しません**。
+- 費用は、ストリーム終了後の実際の使用量に基づいて計算されます。使用量が確認できない場合は、予約に基づく見積もりが請求に適用されます。
 - リバースプロキシやCDNでレスポンスをバッファリングしないでください。`text/event-stream`をそのまま転送してください。
 
-<Callout type="tip" title="いつストリーミングするのが良いでしょうか？">
-レスポンスの速さが求められるチャットアプリやエージェントには、`stream: true`を使用してください。進行状況が表示されないバッチ処理やジョブの場合は、非ストリーミングの方がシンプルです。
+<Callout type="tip" title="いつストリーミングするのが適切ですか？">
+  レスポンスの速さが求められるチャットアプリやエージェントでは、`stream: true`を使用してください。進行状況を表示しないバッチ/ジョブの場合は、非ストリーミングの方がシンプルです。
 </Callout>

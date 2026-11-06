@@ -4,25 +4,33 @@ description: "JetBrainsのJunie CLIを、カスタムモデルプロファイル
 icon: terminal
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrainsが提供するターミナル用エージェント - は、JSONファイル形式の**カスタムモデルプロファイル**に対応しています。1つのプロファイルには、エンドポイント、API形式、APIキー、および軽めのタスク向けのメインモデルと高速モデル（*faster model*）が含まれます。
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrainsのターミナル用エージェント
+ターミナル用 - JSONファイル形式の**カスタムモデルプロファイル**をサポートしています。1つのプロファイルには、エンドポイント、
+API形式、APIキー、および軽作業用のメインモデルと高速モデル（*faster model*）が含まれます。
 
-JetBrains IDE内のAIアシスタントについては、[JetBrains AIアシスタント](/ja/integrations/jetbrains)をご覧ください。
+JetBrains IDE内のAIアシスタントについては、[JetBrains AI Assistant](/ja/integrations/jetbrains)を参照してください。
 
 <Steps>
 
-### Junie CLI をインストールし、API キーを保存する
+<a id="instal-junie-cli-dan-simpan-api-key"></a>
+
+<a id="junie-cli-をインストールしapi-キーを保存する"></a>
+
+### Junie CLIをインストールし、APIキーを保存してください
 
 ```bash
 curl -fsSL https://junie.jetbrains.com/install.sh | bash
 export HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
+<a id="buat-profil-hostlinku"></a>
+
 ### Hostlinkuのプロフィールを作成する
 
-Junieは、`~/.junie/models/*.json`（ユーザーレベル）および`.junie/models/*.json`（プロジェクトレベル）のプロフィールを検索しました。`.json`を除いたファイル名がプロファイルIDとなります。`~/.junie/models/hostlinku.json`を作成してください：
+Junieは、`~/.junie/models/*.json`（ユーザーレベル）および`.junie/models/*.json`（
+プロジェクトレベル）でプロファイルを検索します。`.json`を含まないファイル名がプロファイルIDとなります。 `~/.junie/models/hostlinku.json` を作成します：
 
 ```json
 {
@@ -39,23 +47,32 @@ Junieは、`~/.junie/models/*.json`（ユーザーレベル）および`.junie/m
 }
 ```
 
-<Callout type="important" title="baseUrl は完全なエンドポイントの URL です">
-Junieは`baseUrl`にパスを**追加しなかった**。`OpenAICompletion`については`/v1/chat/completions`まで、`Anthropic`については`/v1/messages`まで記述する。
+<Callout type="important" title="baseUrlは完全なエンドポイントURLです">
+  Junieは`baseUrl`にパスを**追加しない**。`OpenAICompletion`の場合は
+  `/v1/chat/completions`まで、`Anthropic`の場合は`/v1/messages`まで記述する。
 </Callout>
 
-### プロファイルで実行する
+<a id="jalankan-dengan-profil"></a>
+
+<a id="プロファイルで実行する"></a>
+
+### プロファイルで実行
 
 ```bash
 junie --model custom:hostlinku
 ```
 
-プロファイルは、TUIのモデル一覧の**「カスタム」**タブや、`/model`コマンドでも表示されます。最初のリクエストはコンソールの**「リクエストログ」**に表示されます。
+「プロファイル」は、TUIのモデル一覧の**「カスタム」**タブや、コマンド `/model` でも表示されます。最初のリクエスト
+はコンソールの**「リクエストログ」**に表示されます。
 
 </Steps>
 
+<a id="varian-format-anthropic"></a>
+
 ## バリエーション：Anthropic形式
 
-Messages API（フルプロンプトキャッシュ）を使用したClaudeモデルの場合、2つ目のプロファイル（例：`~/.junie/models/hostlinku-claude.json`）を作成します：
+Messages API（完全なプロンプトキャッシュ）を備えたClaudeモデルの場合、2つ目のプロファイルを作成してください。例：
+`~/.junie/models/hostlinku-claude.json`:
 
 ```json
 {
@@ -68,19 +85,31 @@ Messages API（フルプロンプトキャッシュ）を使用したClaudeモ�
 }
 ```
 
-次に、`junie --model custom:hostlinku-claude`を実行してください。
+その後、`junie --model custom:hostlinku-claude` を実行してください。
 
-## 知っておくべきこと
+<a id="yang-perlu-diketahui"></a>
 
-- **`${HOSTLINKU_API_KEY}`** は、プロファイルの読み込み時に環境変数から読み込まれます。変数が設定されていない場合、プロファイルの読み込みは失敗し、Junie は欠落している変数の名前を通知します。これは、リポジトリにコミットされるプロファイルにおいても安全です（`.junie/models/`）。
-- **メインモデル対高速モデル。** メインモデル（`claude-sonnet-4-6`、`gpt-5-5`）には、強力な*ツール呼び出し*機能を備えたモデルを選択してください。ファスターモデル（要約および分類）には、`claude-haiku-4-5`や`deepseek-v4-flash`のような低コストなモデルで十分です。
-- **Responses API (`OpenAIResponses`)** は `https://api.hostlinku.com/v1/responses` でも利用可能ですが、*ステートレス*です ([詳細](/ja/responses))。`OpenAICompletion` が最も安全な選択肢です。
+<a id="知っておくべきこと"></a>
+
+## 留意事項
+
+- **`${HOSTLINKU_API_KEY}`** は、プロファイルの読み込み時に環境変数から読み込まれます。変数がまだ
+  設定されていない場合、プロファイルの読み込みは失敗し、Junieは欠落している変数名を通知します。これは、リポジトリ（`.junie/models/`）に
+  コミットされたプロファイルであっても安全です。
+- **メインモデルと高速モデル。** メインモデルには、強力な*ツール呼び出し*機能を備えたモデルを選択してください
+  （`claude-sonnet-4-6`、`gpt-5-5`）；`claude-haiku-4-5`や`deepseek-v4-flash`のような低コストモデルは
+  ファスターモデル（要約・分類）には十分です。
+- **Responses API (`OpenAIResponses`)** も `https://api.hostlinku.com/v1/responses` で利用可能ですが、
+  *ステートレス* です ([詳細](/ja/responses))。`OpenAICompletion` が最も
+  選択肢です。
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-| 症状 | 対処方法 |
+| 症状 | 解決策 |
 |---|---|
-| `404` | `baseUrl` は不完全です - `/v1/chat/completions` または `/v1/messages` で終わる必要があります。 |
-| プロフィールが表示されない | ファイル名またはファイルの場所が間違っているか、JSONが無効です。プロファイル = `.json`を含まないファイル名。 |
-| 環境変数のエラー | `junie` を実行しているシェルで、`HOSTLINKU_API_KEY` をエクスポートします。 |
-| ツール呼び出しに失敗する／エージェントがループする | [カタログ](/ja/models)でtool calling対応とモデル上限を確認してください。モデルを変更する前にリクエストログを調べてください。 |
+| `404` | `baseUrl`は不完全です。末尾は `/v1/chat/completions` または `/v1/messages` で終わる必要があります。 |
+| プロファイルが表示されない | ファイル名またはファイルの場所が間違っているか、JSONが無効です。Profile = `.json` を除いたファイル名。 |
+| 環境変数「Error」 | `junie` を実行しているシェルで `HOSTLINKU_API_KEY` をエクスポートしてください。 |
+| ツール呼び出しの失敗／エージェントがループしている | [カタログ](/ja/models)で、ツールの呼び出し対応状況とモデルの制限を確認してください。モデルを変更する前に、リクエストログを確認してください。 |

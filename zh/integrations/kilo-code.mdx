@@ -1,64 +1,98 @@
 ---
 title: "Kilo Code"
-description: "在 Kilo Code 中通过提供商 OpenAI（自定义基础 URL）、OpenAI（兼容）或 Anthropic 创建配置文件 Hostlinku"
+description: "通过 OpenAI（自定义基础 URL）、OpenAI Compatible 或 Anthropic 提供商在 Kilo Code 中创建 Hostlinku 配置配置文件"
 icon: code-xml
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Kilo Code](https://kilocode.ai) - 适用于 VS Code 和 JetBrains 的编码代理扩展（源自 Cline/Roo Code 的分支）- 会按 **配置文件** 保存提供商的设置。 您可以创建一个与其他配置文件独立的 Hostlinku 配置文件，并只需单击一下即可切换。
+[Kilo Code](https://kilocode.ai) —— 适用于 VS Code 和 JetBrains 的编码代理扩展（源自
+Cline/Roo Code）——按**配置文件**存储提供商设置。您可以创建
+独立于其他配置文件的Hostlinku配置文件，并一键切换。
 
-**先决条件：**已安装 Kilo Code 扩展程序，并从 [控制台](https://console.hostlinku.com) → **API 密钥** 中获取 API 密钥 Hostlinku (`sk-…`)。
+**先决条件：**已安装 Kilo Code 扩展，并获取来自
+[console](https://console.hostlinku.com) → **API Keys** 中的 Hostlinku API 密钥（`sk-…`）。
 
 <Steps>
 
+<a id="buat-profil"></a>
+
 ### 创建个人资料
 
-打开 Kilo Code 面板 → 齿轮图标（**设置**）→ **提供商**。在 **配置文件** 中，点击 **+** 并为配置文件命名（例如 `Hostlinku`）。
+打开 Kilo Code 面板 → 齿轮图标（**Settings**）→ **Providers**。在 **Configuration Profile** 中，
+点击 **+** 并为配置文件命名（例如 `Hostlinku`）。
 
-### 填写提供商和基础 URL
+<a id="isi-provider-dan-base-url"></a>
 
-| Field | 值 |
+<a id="填写提供商和基础-url"></a>
+
+### 提供商和基础 URL 的内容
+
+| 字段 | 值 |
 |---|---|
 | **API 提供商** | `OpenAI` |
-| **使用自定义基础网址** | 已勾选 |
+| **使用自定义基础 URL** | 已勾选 |
 | **基础 URL** | `https://api.hostlinku.com/v1` |
-| **OpenAI API密钥** | `sk-…`（API密钥 Hostlinku） |
-| **模型** | [目录](/zh/models)中的slug，例如 `gpt-5-5` |
+| **OpenAI API 密钥** | `sk-…`（Hostlinku API密钥） |
+| **模型** | 来自 [目录](/zh/models) 的 slug，例如 `gpt-5-5` |
 
-![Kilo Code：提供商 OpenAI，自定义基础 URL 为 https://api.hostlinku.com/v1](/images/integrations/kilo-code-openai.webp "勾选“使用自定义基础 URL”，然后输入 https://api.hostlinku.com/v1。")
+![Kilo Code：OpenAI 提供商，自定义基础 URL 为 https://api.hostlinku.com/v1](/images/integrations/kilo-code-openai.webp "勾选‘Use custom base URL’选项，然后填写 https://api.hostlinku.com/v1。")
 
-提供商 `OpenAI` 仅显示 Kilo Code 识别的模型。 对于其他模型（Claude、DeepSeek、GLM、Kimi、Qwen），请选择 **OpenAI Compatible** - 其基础 URL 和 API 密钥与 Chat Completions 相同，然后在 **Model ID** 栏中输入相应模型的名称。
+提供商 `OpenAI` 仅显示 Kilo Code 已知的模型。对于其他 slug（如 Claude、
+DeepSeek、GLM、Kimi、Qwen），请选择 **OpenAI Compatible**——其基础 URL 和 API 密钥相同，然后在 **Model ID** 中输入
+相应的 slug。
 
-### 保存并尝试
+<a id="simpan-dan-coba"></a>
 
-点击**“保存”**，然后提交一项小任务（*“简要说明此仓库的README”*）。请求会显示在控制台 → **请求日志** 中。
+<a id="保存并尝试"></a>
+
+### 保存并测试
+
+点击**“保存”**，然后提交一个小任务（*“简要说明此仓库的 README”*）。请求将显示在控制台
+→ **请求日志**中。
 
 </Steps>
 
-## 备选方案：提供商 Anthropic
+<a id="alternatif-provider-anthropic"></a>
 
-选择 **API 提供商** `Anthropic`，勾选 **使用自定义基础 URL**，填写 `https://api.hostlinku.com`（**不包含** `/v1`），并将 API 密钥 Hostlinku 粘贴到 **Anthropic API 密钥** 字段中。 可用模型仅限于 Kilo Code 所支持的 Claude 模型-请选择其 slug 与 Hostlinku 目录中完全一致的模型（例如 `claude-sonnet-4-6`、`claude-haiku-4-5`）。
+<a id="备选方案提供商-anthropic"></a>
 
-![Kilo Code：提供商 Anthropic，自定义基础 URL 为 https://api.hostlinku.com](/images/integrations/kilo-code-anthropic.png "Anthropic 路径：基础 URL 为 https://api.hostlinku.com，不带 /v1。")
+## 备选方案：服务提供商 Anthropic
+
+选择 **API 提供商** `Anthropic`，勾选 **使用自定义基础 URL**，填写 `https://api.hostlinku.com`
+（**不带** `/v1`），并将 Hostlinku 的 API 密钥粘贴到 **Anthropic API 密钥** 字段中。 可用模型仅限于
+Kilo Code 所知的 Claude 模型——请选择其 slug 与 Hostlinku 目录中完全一致的模型
+（例如 `claude-sonnet-4-6`、`claude-haiku-4-5`）。
+
+![Kilo Code：Anthropic 提供商，自定义基础 URL 为 https://api.hostlinku.com](/images/integrations/kilo-code-anthropic.png "Anthropic 路径：基础 URL 为 https://api.hostlinku.com，不带 /v1。")
 
 <Callout type="note" title="提示缓存">
-通过 Anthropic 路径，Kilo Code 发送了 `cache_control`，而 Hostlinku 将其转发-缓存Token在 `cache_read_input_tokens` 中被报告，并按模型缓存价格计费。 参见 [提示缓存](/zh/prompt-caching)。
+  通过 Anthropic 通道，Kilo Code 发送 `cache_control`，Hostlinku 将其转发——缓存令牌
+  会在 `cache_read_input_tokens` 中报告，并按模型缓存价格计费。参见
+  [提示缓存](/zh/prompt-caching)。
 </Callout>
 
-## 需知事项
+<a id="yang-perlu-diketahui"></a>
 
-- **每种模式一个配置文件。** Kilo Code 可以在 *Architect*、*Code* 和 *Debug* 模式下使用不同的配置文件。例如：Architect = `claude-opus-4-6`，Code = `claude-sonnet-4-6`。
-- **无需自定义标头。** Hostlinku 只需使用 API 密钥；请将自定义标头部分留空。
-- **内联自动完成** Kilo Code 使用的 FIM 端点未由 Hostlinku 提供服务-请在默认提供商中保留该功能（参见 [概述](/zh/integrations#compatibility-limits)）。
+<a id="需知事项"></a>
+
+## 注意事项
+
+- **每种模式一个配置文件。** Kilo Code 可以为 *Architect*、*Code*
+  和 *Debug* 模式使用不同的配置文件。简明示例：Architect = `claude-opus-4-6`，Code = `claude-sonnet-4-6`。
+- **无需自定义头部。** Hostlinku 只需使用 API 密钥；请将自定义
+  头部部分留空。
+- **内联自动补全** Kilo Code 使用 Hostlinku 未支持的 FIM 端点——请保留
+  该功能在默认提供商中（参见 [概述](/integrations#compatibility-limits)）。
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-| 症状 | 解决方法 |
+| 症状 | 解决方案 |
 |---|---|
-| `401` | 密钥错误/已被移除，或在其他配置文件中已填写-请确保**Hostlinku**配置文件处于活动状态。 |
-| 所有请求中均包含`404` | 基础 URL缺少`/v1`（路径OpenAI），或者在路径Anthropic中反而使用了`/v1`。请与上方的截图进行对比。 |
-| `404 model_not_found` | 模型ID输入有误；请从`GET /v1/models`中复制。 |
-| 下拉菜单中没有模型 Claude/DeepSeek | 供应商`OpenAI`仅显示模型OpenAI-请使用**OpenAI兼容款**。 |
-| Agent未调用工具便停止 | 请在[目录](/zh/models)中检查模型是否支持*tool calling*。 |
+| `401` | 密钥错误/已被撤销，或在其他配置文件中已填写——请确保**Hostlinku**配置文件处于活动状态。 |
+| 所有请求中的 `404` | Base URL 缺少 `/v1`（OpenAI 路径），或者在 Anthropic 路径中反而使用了 `/v1`。请参考上方的截图。 |
+| `404 model_not_found` | Model ID 拼写有误；请从 `GET /v1/models` 处复制。 |
+| 下拉菜单中不存在 Claude/DeepSeek 模型 | 提供商 `OpenAI` 仅显示 OpenAI 模型——请使用 **OpenAI Compatible**。 |
+| 代理在未调用工具的情况下停止运行 | 请检查 [目录](/zh/models) 中各模型对 *tool calling* 的支持情况。 |

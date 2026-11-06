@@ -1,36 +1,46 @@
 ---
-title: 支持
-description: 联系渠道及排查问题所需信息。
+title: "支持"
+description: "用于排查问题的帮助和信息渠道。"
 icon: life-buoy
 ---
 
-## 联系渠道
+<a id="kanal-dukungan"></a>
 
-| 渠道 | 用途 |
+<a id="联系渠道"></a>
+
+## 支持渠道
+
+| Kanal | 用途 |
 |---|---|
-| [halo@hostlinku.com](mailto:halo@hostlinku.com) | 技术、账户和计费问题 |
-| [Console](https://console.hostlinku.com) | 余额、API密钥、请求日志及审计 |
-| [Status](https://status.hostlinku.com) | 正在发生的故障和事件 |
+| [halo@hostlinku.com](mailto:halo@hostlinku.com) | 技术问题、账户和计费 |
+| [Console](https://console.hostlinku.com) | 余额、API密钥、请求日志和审计 |
+| [状态](https://status.hostlinku.com) | 正在发生的故障和事件 |
 
-小型团队会在工作日尽快回复邮件（尽最大努力）。事件更新会发布在Status页面。
+工作日内，小型团队将尽快回复电子邮件（尽最大努力）。事件更新将在“状态”页面上发布。
 
-## 报告所需信息
+<a id="informasi-untuk-laporan"></a>
 
-1. 响应或Console日志中可用的 `x-request-id`。
-2. 包含时区的时间、端点和模型slug。
-3. HTTP状态和错误正文；代码／类型因 [API格式](/zh/errors) 而异。
-4. 去除API密钥及敏感数据的最小可复现请求。
+<a id="报告所需信息"></a>
+
+## 报告信息
+
+1. `x-request-id`（若在 Console 的响应或日志中出现）。
+2. 事件时间（含时区）、端点和模型 slug。
+3. HTTP 状态码及错误正文；代码/类型根据 [API 格式](/zh/errors) 有所不同。
+4. 可重现的最小请求示例，其中已删除 API 密钥和敏感数据。
 
 ```text
-时间: 2026-11-06 14:32 UTC+7
+Waktu: 2026-11-06 14:32 UTC+7
 Request ID: <x-request-id>
 Endpoint: /v1/chat/completions
 Model: gpt-5-5
 HTTP: 503
 Error: UPSTREAM_TIMEOUT ("The request timed out. Please retry.")
-备注: 最近10分钟出现3次。
+Catatan: Terjadi 3 kali dalam 10 menit terakhir.
 ```
+
+<a id="masalah-keamanan"></a>
 
 ## 安全问题
 
-请将安全发现私下发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)，主题为 `[SECURITY]`。处理前请勿公开细节。支持团队不会索要API密钥、密码或OTP验证码；报告中请勿包含密钥。
+请将安全发现私下发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)，邮件主题请注明 `[SECURITY]`。在问题处理完成前，请勿公开相关细节。支持团队不会索要 API 密钥、密码或 OTP 代码；请勿在报告中包含机密信息。

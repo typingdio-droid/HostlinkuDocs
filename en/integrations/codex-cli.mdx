@@ -6,20 +6,30 @@ icon: terminal
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Codex CLI](https://developers.openai.com/codex/cli) uses OpenAI Responses. Point a custom provider at [`POST /v1/responses`](/en/responses); tool and reasoning compatibility depends on the model and Responses path.
+[Codex CLI](https://developers.openai.com/codex/cli) uses the OpenAI Responses protocol. Route custom providers to [`POST /v1/responses`](/en/responses); tool matching and reasoning depend on the model and the Responses route used.
 
 <Steps>
 
-### Install Codex CLI
+<a id="instal-codex-cli"></a>
+
+<a id="install-codex-cli"></a>
+
+### Install the Codex CLI
 
 ```bash
 npm install -g @openai/codex
-# or: brew install codex
+# atau: brew install codex
 ```
 
-### Add Hostlinku as a provider
+<a id="tambahkan-provider-hostlinku"></a>
 
-Edit `~/.codex/config.toml` (create it if it doesn't exist). Providers **must** be defined in this user file-the `.codex/config.toml` file within the project must not override `model_providers` for security reasons.
+<a id="add-hostlinku-as-a-provider"></a>
+
+### Add the Hostlinku provider
+
+Edit `~/.codex/config.toml` (create it if it doesn’t exist). Providers **must** be defined in this
+user’s file—`.codex/config.toml` within the project must not override `model_providers` for
+security reasons.
 
 ```toml
 model = "gpt-5-3-codex"
@@ -33,23 +43,32 @@ env_key = "HOSTLINKU_API_KEY"
 wire_api = "responses"
 ```
 
-### Set the API key and run it
+<a id="set-api-key-dan-jalankan"></a>
+
+<a id="set-the-api-key-and-run-it"></a>
+
+### Set the API key and run
 
 ```bash
 export HOSTLINKU_API_KEY=sk-your-api-key   # simpan di ~/.zshrc / ~/.bashrc
 codex
 ```
 
-Codex reads the key from the variable specified in `env_key`; the key is never written to `config.toml`.
+Codex reads the key from the variable named `env_key`; the key is never written to
+`config.toml`.
 
-<Callout type="tip" title="Prefer a one-click GUI?">
-  Use the [CC Switch](/en/integrations/cc-switch) desktop app to add and switch Codex providers or
-  models visually without editing `config.toml` by hand.
+<Callout type="tip" title="Want to manage it via the GUI with a single click?">
+  Use the [CC Switch](/en/integrations/cc-switch) desktop app to add and switch
+  Codex providers/models without manually editing `config.toml`.
 </Callout>
+
+<a id="verifikasi"></a>
 
 ### Verification
 
-Send a simple instruction (e.g., *"explain the structure of this repo"*). The request will appear in the console → **Request Log** using the `gpt-5-3-codex` model. If you want to verify the endpoint before opening Codex:
+Send a single simple instruction (e.g., *"explain the structure of this repo"*). The request will appear in
+the console → **Request Log** using the `gpt-5-3-codex` model. If you want to verify the endpoint before
+opening Codex:
 
 ```bash
 curl https://api.hostlinku.com/v1/responses \
@@ -60,7 +79,11 @@ curl https://api.hostlinku.com/v1/responses \
 
 </Steps>
 
-## Some models via their profiles
+<a id="beberapa-model-lewat-profile"></a>
+
+<a id="some-models-via-their-profiles"></a>
+
+## Some models are defined via profiles
 
 Use `[profiles.*]` to switch models/providers without editing the configuration:
 
@@ -77,33 +100,37 @@ model_provider = "hostlinku"
 
 ```bash
 codex --profile kuat
-codex --profile cepat "write unit tests for utils/date.ts"
+codex --profile cepat "tulis unit test untuk utils/date.ts"
 ```
 
 <Callout type="warning" title="Model and tool compatibility">
-  Use a native Responses model supporting your Codex version’s tools. The Chat Completions bridge supports text and function calling; custom shell/patch tools and encrypted reasoning require native support. If you receive `The requested tool type is not supported by this model`, change models or use an appropriate Chat/Anthropic client. See [Responses API](/en/responses).
+  Use native Responses models supported by your Codex tool version. Bridge Chat Completions supports text and function calls; custom shell/patch tools and encrypted reasoning require native support. If you see `The requested tool type is not supported by this model`, switch models or use the appropriate Chat/Anthropic client. See the [Responses API](/en/responses).
 </Callout>
 
 <Callout type="note" title="Stateless">
-  Send the full history in `input` and use `store: false`. Hostlinku rejects non-null `previous_response_id` or `conversation` and `background: true`. Encrypted reasoning items require upstream support; see [Responses API](/en/responses).
+  Send the full history in `input` and use `store: false`. Hostlinku rejects non-null `previous_response_id` or `conversation` and `background: true`. Encrypted reasoning items can only be used if the upstream path supports them; see [Responses API](/en/responses).
 </Callout>
 
-<Callout type="tip" title="Just want to change the default OpenAI endpoint?">
-Alternative without a new provider: set `openai_base_url = "https://api.hostlinku.com/v1"` in `config.toml` and `OPENAI_API_KEY=sk-…` (your Hostlink API key). A custom provider is still recommended because its name is clearly displayed in the UI and its key is separate from the original OpenAI key.
+<Callout type="tip" title="Do you just want to replace the default OpenAI endpoint?">
+  Alternative without a new provider: set `openai_base_url = "https://api.hostlinku.com/v1"` in
+  `config.toml` and `OPENAI_API_KEY=sk-…` (Hostlinku API key). A custom provider is still recommended
+  because their names are clearly displayed in the UI and their keys are separate from the original OpenAI keys.
 </Callout>
 
 ## Troubleshooting
 
-- **`401`** - The variable in `env_key` has not been exported in the shell where `codex` is running.
-- **Shell/patch tools do not run** — check the model and Responses path for tool support; a text answer does not prove a tool ran.
+- **`401`** - the variable in `env_key` has not been exported in the shell where `codex` is running.
+- **Shell/patch tool did not run** — check tool support in the model and Responses path; a text-only response does not prove the tool was executed.
 - **`400 previous_response_id`** — remove `previous_response_id`/`conversation`, resend the full history in `input`, and use `store: false`.
 - **Model not found / `404`** - incorrect slug; `/v1/models` displays a valid list for
-Your key.
-- **Old client versions** — update Codex and use `wire_api = "responses"` as described in the [official configuration reference](https://developers.openai.com/codex/config-reference/).
+  your key.
+- **Legacy client versions** — update the Codex and use `wire_api = "responses"` as per the [official configuration reference](https://developers.openai.com/codex/config-reference/).
+
+<a id="sumber-daya-terkait"></a>
 
 ## Related resources
 
-- [CC Switch Integration Guide](/en/integrations/cc-switch)
-- [Hostlinku Responses API](/en/responses)
-- [OpenAI API documentation](https://developers.openai.com/)
-- [Codex documentation](https://developers.openai.com/codex/)
+- [CC Switch Guide](/en/integrations/cc-switch)
+- [Hostlinku API Responses](/en/responses)
+- [OpenAI API Documentation](https://developers.openai.com/)
+- [Official Codex Documentation](https://developers.openai.com/codex/)

@@ -1,34 +1,49 @@
 ---
-title: "VS Code（聊天）"
-description: "在 VS Code 的内置聊天和客服功能中，通过“自定义端点”提供商使用 Hostlinku 模型-无需登录 GitHub，仅需 API 密钥 Hostlinku"
+title: "VS Code (Chat)"
+description: "通过“自定义端点”提供商在 VS Code 的内置聊天和代理中使用 Hostlinku 模型——无需登录 GitHub，仅需 Hostlinku 的 API 密钥"
 icon: code-xml
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[VS Code](https://code.visualstudio.com/docs/agent-customization/language-models) 的内置聊天功能（聊天面板、代理模式和内联聊天）可通过 **自定义端点** 提供商使用外部模型。 该提供程序支持三种 API 格式-Chat Completions、Responses、Anthropic 和 Messages-这四种格式均由 Hostlinku 提供支持。 此类 BYOK 模型**无需登录 GitHub 或安装 Copilot 插件**。
+[VS Code](https://code.visualstudio.com/docs/agent-customization/language-models) 内置聊天功能
+（聊天面板、Agent 模式和内联聊天）可通过 **Custom
+Endpoint** 提供商调用外部模型。该提供商支持三种 API 格式——Chat Completions、Responses 和 Anthropic
+Messages——这三种格式均由 Hostlinku 提供支持。此类 BYOK 模型**无需登录 GitHub
+或安装 Copilot 插件**。
 
-**先决条件：** 最新版本的 VS Code（自定义端点已取代已弃用的 *OpenAI Compatible* 提供程序）以及 [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) 扩展。
+**先决条件：** 最新版本的 VS Code（自定义端点已取代已弃用的 *OpenAI Compatible*
+提供商）以及扩展
+[GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat)。
 
 <Steps>
 
+<a id="tambahkan-provider-custom-endpoint"></a>
+
 ### 添加自定义端点提供商
 
-打开命令面板（⌘/Ctrl + Shift + P）→ **聊天：管理语言模型** → **添加模型** → **自定义端点**。然后填写：
+打开命令面板（⌘/Ctrl + Shift + P）→ **Chat: Manage Language Models** → **Add Models** →
+**Custom Endpoint**。然后填写：
 
 | 提示 | 值 |
 |---|---|
 | **组名** | `Hostlinku` |
 | **显示名称** | `Hostlinku` |
-| **API密钥** | `sk-…`（API密钥 Hostlinku） |
+| **API密钥** | `sk-…`（Hostlinku API密钥） |
 | **API 类型** | **Chat Completions** |
 
-VS Code 将 API 密钥存储在密钥存储中，并将该密钥的引用 (`${input:chat.lm.secret.…}`) 写入 `chatLanguageModels.json`。**请勿**将原始密钥粘贴到 JSON 文件中。
+VS Code 将 API 密钥存储在密钥存储中，并将引用
+(`${input:chat.lm.secret.…}`) 写入 `chatLanguageModels.json`。**请勿**将原始密钥粘贴到
+JSON 文件中。
 
-### 注册模型 Hostlinku
+<a id="daftarkan-model-hostlinku"></a>
 
-VS Code 打开了 `chatLanguageModels.json`。将 [目录](/zh/models) 中的 slug 填入 `models` 数组中-保持 VS Code 已生成的 `apiKey` 值不变：
+<a id="注册模型-hostlinku"></a>
+
+### 列出 Hostlinku 模型
+
+VS Code 打开 `chatLanguageModels.json`。将 `models` 数组填充为
+[目录](/zh/models) 中的 slug——保留 VS Code 生成的 `apiKey` 值：
 
 ```json
 [
@@ -70,36 +85,46 @@ VS Code 打开了 `chatLanguageModels.json`。将 [目录](/zh/models) 中的 sl
 ]
 ```
 
-上方的`contextWindow`和`maxOutputTokens`是VS Code的本地限制示例。请按[目录](/zh/models)中的模型页面调整；较低的值会限制工具内的使用量。
+上文中的 `contextWindow` 和 `maxOutputTokens` 是 VS Code 的本地限制示例。请根据 [目录](/zh/models) 中的模型页面进行调整；较小的数值会限制工具中的使用。
 
-![VS Code 中的 chatLanguageModels.json 文件包含提供商 Hostlinku，其网址为 https://api.hostlinku.com/v1/chat/completions](/images/integrations/vscode-chatlanguagemodels.webp "填写完 chatLanguageModels.json 后：提供商 customendpoint Hostlinku，完整 URL 为 /v1/chat/completions，apiKey 为密钥引用。")
+![VS Code 中的 chatLanguageModels.json 包含 Hostlinku 提供商，其 URL 为 https://api.hostlinku.com/v1/chat/completions](/images/integrations/vscode-chatlanguagemodels.webp "填充后的 chatLanguageModels.json：Hostlinku 自定义端点提供商，完整 URL 指向 /v1/chat/completions，apiKey 采用密钥引用形式。")
 
-请输入 `url` **并附上端点路径**（`/v1/chat/completions`），以免 VS Code 需要猜测。`toolCalling: true` 是必需的，以便模型在 **Agent** 模式下显示。
+请将 `url` **连同端点路径**（`/v1/chat/completions`）完整写出，以免 VS Code 需要
+进行推测。`toolCalling: true` 是必需的，以便模型在 **Agent** 模式下显示。
+
+<a id="pilih-model-di-chat"></a>
 
 ### 在聊天中选择模型
 
-保存文件。Hostlinku模型出现在**Chat: Manage Language Models**中，并附有其上下文大小和功能信息：
+保存文件。Hostlinku 模型出现在 **Chat：管理语言模型** 中，并附有其
+上下文大小和功能：
 
-![VS Code 的“对话语言模型”包含组 Hostlinku：Claude Haiku 4.5、Claude Sonnet 4.6、GPT-5.5](/images/integrations/vscode-language-models.webp "聊天：管理语言模型 - Hostlinku 组，上下文为 200K/1M，并具备 chatLanguageModels.json 文件中定义的 Tools/Vision 功能。")
+![VS Code 语言模型对话框包含 Hostlinku 组：Claude Haiku 4.5、Claude Sonnet 4.6、GPT-5.5](/images/integrations/vscode-language-models.webp "聊天：管理语言模型 - Hostlinku 组，具有 200K/1M 的上下文限制，并具备 chatLanguageModels.json 文件中定义的 Tools/Vision 功能。")
 
-然后从“聊天”面板中的模型选择器中选择一个模型（如果尚未显示，请重启 VS Code）。第一个请求将显示在控制台中 → **请求日志**。
+然后从“聊天”面板中的模型选择器中选择模型（如果未显示，请重启 VS Code）。第一个请求
+会显示在控制台 → **请求日志** 中。
 
-![VS Code 聊天面板中的模型选择器显示了 Hostlinku 中的 Claude Sonnet 4.6、Claude Haiku 4.5 和 GPT-5.5](/images/integrations/vscode-chat-model-picker.webp "聊天模型选择：来自提供商Hostlinku的模型已可在代理模式下使用。")
+![VS Code 聊天面板中的模型选择器显示了 Hostlinku 提供的 Claude Sonnet 4.6、Claude Haiku 4.5 和 GPT-5.5](/images/integrations/vscode-chat-model-picker.webp "Chat 模型选择器：Hostlinku 提供商的模型可在 Agent 模式下直接使用。")
 
 </Steps>
 
+<a id="format-api-lain"></a>
+
 ## 其他 API 格式
 
-每个模型均可通过`apiType`采用不同的格式：
+每个模型可通过其各自的 `apiType` 使用不同的格式：
 
 | `apiType` | `url` | 注释 |
 |---|---|---|
-| `chat-completions` | `https://api.hostlinku.com/v1/chat/completions` | 建议的默认设置-所有目录中的模型。 |
-| `messages` | `https://api.hostlinku.com/v1/messages` | 格式为 Anthropic；VS Code 将密钥作为 `x-api-key` 发送（网关已接收）。 |
-| `responses` | `https://api.hostlinku.com/v1/responses` | **必须**添加 `"statefulResponses": false` - 详见下文。 |
+| `chat-completions` | `https://api.hostlinku.com/v1/chat/completions` | 建议的默认设置——所有目录模型。 |
+| `messages` | `https://api.hostlinku.com/v1/messages` | Anthropic 格式；VS Code 将密钥作为 `x-api-key` 发送（网关接受此格式）。 |
+| `responses` | `https://api.hostlinku.com/v1/responses` | **必须**添加 `"statefulResponses": false` ——详见下文。 |
 
-<Callout type="important" title="Responses API Hostlinku 属于无状态型">
-默认情况下，VS Code 会为 `apiType: "responses"` 模型发送 `previous_response_id`，而 Hostlinku 不会保存响应，因此此类请求会被 `400` 拒绝。 若要使用 Responses API，请在该模型中添加 `"statefulResponses": false`，以便 VS Code 发送完整的对话记录。请参阅 [Responses API](/zh/responses)。
+<Callout type="important" title="Hostlinku API 的响应是无状态的">
+  默认情况下，VS Code 会为 `apiType: "responses"` 的模型发送 `previous_response_id`，
+  而 Hostlinku 不存储响应，因此此类请求将被 `400` 拒绝。如果
+  希望使用 Responses API，请在该模型中添加 `"statefulResponses": false`，以便 VS
+  Code 发送完整的对话历史记录。请参阅 [Responses API](/zh/responses)。
 </Callout>
 
 ```json
@@ -116,19 +141,30 @@ VS Code 打开了 `chatLanguageModels.json`。将 [目录](/zh/models) 中的 sl
 }
 ```
 
-## 需知事项
+<a id="yang-perlu-diketahui"></a>
 
-- **内联建议（自动补全）仍使用 Copilot。** BYOK 仅适用于聊天和实用任务；语义搜索、嵌入和代码补全需要 GitHub 账户。
-- **无需登录 GitHub**，VS Code 会提示你选择 *实用模型*（会话标题、提交信息等）。 请将 `chat.utilityModel` 和 `chat.utilitySmallModel` 的设置填入 Hostlinku 模型-`claude-haiku-4-5` 适用于 *small* 类型。
-- **Copilot Business/Enterprise：** 组织管理员需在 Copilot GitHub 设置中启用 *在 VS Code 中使用自带语言模型密钥* 策略。
-- **不受信任的工作区**（受限模式）仅显示 **Auto** 模型；请信任该工作区，以便显示 Hostlinku 模型。
+<a id="需知事项"></a>
+
+## 注意事项
+
+- **内联建议（自动补全）仍使用 Copilot。** BYOK 仅适用于聊天和
+  实用任务；语义搜索、嵌入和代码补全需要 GitHub 账户。
+- **无需登录 GitHub**，VS Code 会要求你选择 *实用模型*（会话标题、提交信息、
+  等）。 请将 `chat.utilityModel` 和 `chat.utilitySmallModel` 的设置填入 Hostlinku 模型——
+  `claude-haiku-4-5` 适用于 *small* 模型。
+- **Copilot Business/Enterprise：** 组织管理员需在 Copilot GitHub 设置中启用 *Bring Your Own
+  Language Model Key in VS Code* 策略。
+- **不受信任的工作区**（受限模式）仅显示 **Auto** 模型；请信任
+  该工作区，以便显示 Hostlinku 模型。
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-| 症状 | Solusi |
+| 症状 | 解决方案 |
 |---|---|
-| 模型在Agent模式下未显示 | 选择套件`"toolCalling": true`，并使用目录中带有*tool calling*功能的模型。 |
-| `401` | API密钥错误/已被撤销 - 请通过“语言模型”编辑器中的服务提供商齿轮图标进行更新。 |
-| `404 model_not_found` | `id` 的 slug 必须与 `GET /v1/models` 完全一致。 |
-| `400` 引用了 `previous_response_id` | 模型为`apiType: "responses"`，不含`"statefulResponses": false`。 |
-| 新模型未亮相 | 保存 `chatLanguageModels.json` 后，请重新启动 VS Code。 |
+| “Model”在 Agent 模式中未出现 | 设置 `"toolCalling": true`，并使用目录中带有 *tool calling* 的模型。 |
+| `401` | API密钥错误/已撤销——请通过语言模型编辑器中的提供商齿轮图标进行更新。 |
+| `404 model_not_found` | `id` 必须与 `GET /v1/models` 中的 slug 完全一致。 |
+| `400` 指 `previous_response_id` | 具有 `apiType: "responses"` 且不包含 `"statefulResponses": false` 的模型。 |
+| 新模型未显示 | 保存 `chatLanguageModels.json` 后，请重启 VS Code。 |

@@ -1,54 +1,80 @@
 ---
-title: API Reference
-description: Hostlinkuのエンドポイント、認証、メトリクスの概要
+title: "APIリファレンス"
+description: "Hostlinkuのエンドポイント、認証、およびメトリクスの概要"
 icon: code
 ---
 
-ゲートウェイはAPIキー、Consoleの`/api/*`はログインセッションを使います。パラメータ、vision、reasoning、cache、tool callingはモデルとプロトコル経路によって異なります。
+ゲートウェイのエンドポイントにはAPIキーを使用してください。`/api/*`にあるConsoleアカウントのエンドポイントは、ログインセッションを使用します。パラメータ、ビジョン、推論、キャッシュ、およびツール呼び出しのサポートは、モデルおよびプロトコルパスに従います。
 
 | エンドポイント | 用途 | ガイド |
 |---|---|---|
-| `GET /v1/models` | キーのService Modeのモデル一覧 | [Models](/ja/models) |
-| `POST /v1/chat/completions` | チャットとSSE | [Chat Completions](/ja/chat-completions) |
+| `GET /v1/models` | サービスモードのキーに関するカタログ | [Models](/ja/models) |
+| `POST /v1/chat/completions` | チャットおよびSSEストリーミング | [チャット補完](/ja/chat-completions) |
 | `POST /v1/messages` | Anthropic形式のメッセージ | [Anthropic Messages](/ja/anthropic-messages) |
-| `POST /v1/messages/count_tokens` | 無料のAnthropic形式token数計算 | [Count tokens](/ja/anthropic-messages) |
-| `POST /v1/responses` | ステートレスResponses | [Responses API](/ja/responses) |
+| `POST /v1/messages/count_tokens` | Anthropic形式のトークンを無料で計算する | [トークン数](/ja/anthropic-messages) |
+| `POST /v1/responses` | レスポンスはステートレスです | [レスポンスAPI](/ja/responses) |
 
-## Base URLと認証
+<a id="base-url-dan-autentikasi"></a>
 
-OpenAI SDKのURLは`https://api.hostlinku.com/v1`、Anthropic SDKは`https://api.hostlinku.com`です。`Authorization: Bearer sk-your-api-key`または`x-api-key`を使用できます。[認証](/ja/authentication)。
+<a id="base-urlと認証"></a>
 
-## モデルとツールの互換性
+## ベースURLと認証
 
-キーの一覧にあるslugを対応エンドポイントで使用してください。形式の互換性はすべてのクライアント機能を保証しません。[Responsesの制限](/ja/responses)と[連携ガイド](/ja/integrations)を確認してください。
+OpenAI SDKでは `https://api.hostlinku.com/v1` を使用し、Anthropic SDKでは `https://api.hostlinku.com` を使用します。ゲートウェイは `Authorization: Bearer sk-your-api-key` または `x-api-key` を受け付けます。 [認証](/ja/authentication)を参照してください。
 
-## 組織で共有する利用枠
+<a id="kompatibilitas-model-dan-tool"></a>
 
-各Service Modeの毎分利用枠は**600リクエスト、入力6,500,000token、出力200,000token**です。組織のすべてのキーとメンバーで共有します。ログイン、Console、checkoutのIP別制限は独立しています。[使用状況と制限](/ja/usage-and-limits)。
+<a id="モデルとツールの互換性"></a>
+
+## モデルおよびツールの互換性
+
+キーカタログに表示される「Slug」は、サポートされているエンドポイントで使用できます。フォーマットの互換性は、すべてのクライアントにおける全機能を保証するものではありません。[レスポンス](/ja/responses)および[使用されている統合機能](/integrations)の制限を確認してください。
+
+<a id="kuota-bersama-organisasi"></a>
+
+<a id="組織で共有する利用枠"></a>
+
+## 組織全体のクォータ
+
+各サービスモードには、**1分あたり600リクエスト、6,500,000トークンの入力、および200,000トークンの出力**というクォータがあり、すべてのAPIキーおよび組織メンバーで共有されます。ログイン、コンソール、およびチェックアウトには、IPごとの個別の制限があります。 [使用状況と制限](/ja/usage-and-limits)。
+
+<a id="error-codes"></a>
 
 ## エラーコード
 
-エラー形式はエンドポイントによって異なります。ハンドラー到達前のエラーはHostlinku共通形式になる場合があります。コードと対処は[Error](/ja/errors)、固有形式は[Anthropic Messages](/ja/anthropic-messages)と[Responses](/ja/responses)を参照してください。
+エラーのフォーマットはエンドポイントに準拠します。ハンドラー以前に発生したエラーについては、Hostlinkuの一般的なエンベロープを使用できます。エラーコードの一覧とエラーへの対処方法は、[Error](/ja/errors)に記載されています。 特定のフォーマットについては、[Anthropic Messages](/ja/anthropic-messages#format-error) および [Responses](/ja/responses#format-error) を参照してください。
 
-## 利用可能なモデルの取得
+<a id="query-available-models"></a>
 
-`GET /v1/models`はキーのService Modeに応じたモデルと料金を返します。サイトのモデル一覧は`GET /api/public/models-v2`を使います。機能と料金は[モデル](/ja/models)を参照してください。
+<a id="利用可能なモデルの取得"></a>
 
-## 料金とストリーミング
+## 利用可能なモデルを照会する
 
-非streamのchat応答には`hostlinku.cost`と`hostlinku.latencyMs`が含まれます。stream完了後の料金はLogs / Analytics / Billingで確認してください。各chunkに料金が含まれるとは限りません。`x-request-id`があれば記録してください。[課金と残高](/ja/billing)。
+`GET /v1/models` は、Service Modeキーのモデルと価格を返します。サイトカタログでは `GET /api/public/models-v2` を使用します。リスト、機能、および料金の確認方法については、[モデル](/ja/models)を参照してください。
 
-## メトリクスと表示例の意味
+<a id="biaya-dan-streaming"></a>
+
+<a id="料金とストリーミング"></a>
+
+## 費用とストリーミング
+
+非ストリーミングのチャットレスポンスには、`hostlinku.cost` および `hostlinku.latencyMs` が含まれます。ストリーミングが完了したら、[Logs] / [Analytics] / [Billing] で料金を確認してください。各チャンクごとに料金が発生するとは期待しないでください。利用可能な場合は、`x-request-id` を記録してください。 [請求・残高](/ja/billing)。
+
+<a id="arti-metrik-dan-contoh-angka"></a>
+
+<a id="メトリクスと表示例の意味"></a>
+
+## メトリクスの意味と数値例
 
 | メトリクス | 意味 |
 |---|---|
-| `hostlinku.latencyMs` | gateway の受信から応答完了までの時間。 |
-| TTFT | stream の最初の token を観測するまでの時間。非 stream では空の場合があります。 |
-| TPS | 条件を満たす stream サンプルの最初の token 以降の出力 token/秒。 |
+| `hostlinku.latencyMs` | リクエストがゲートウェイで受信されてからレスポンスが完了するまでの時間。 |
+| TTFT | ストリーム上で最初のトークンが検出されるまでの時間。非ストリーミングの場合は空欄でもよい。 |
+| TPS | 最初のトークン以降の1秒あたりのトークン出力数（条件を満たすサンプルストリームから）。 |
 
-- **landingアニメーション**は固定の例示値を使い、再生中の推論リクエストから計測した値ではありません。
-- **モデル詳細の60本の棒グラフ**は平均・P95レイテンシと失敗数の集計から生成します。各棒は合成された表示で、リクエストやprobeの時系列ではありません。Consoleの使用量グラフはリクエストデータの集計を使います。
-- **landingフッターバッジ**は固定の状態値です。監視結果と障害は[Status](https://status.hostlinku.com)で確認してください。
-- **Reachable**は401/403/404を含む500未満のHTTP応答を意味します。到達性を示すもので、ログインや推論の成功は対応する機能で確認します。
+- **ランディングアニメーション**では、固定の例示数値を使用します。アニメーション内の数値は、再生時にリクエストから推測されるものではありません。
+- **モデル詳細の60本の棒グラフ**は、レイテンシの平均値／P95値および障害件数の集計値から構成されています。各棒は合成された可視化であり、単一のリクエストや連続したプローブを表すものではありません。Consoleの使用状況グラフは、リクエストデータの集計値を使用しています。
+- **ランディングページのフッターバッジ**は固定ステータスを表示します。監視結果やインシデントについては、[ステータス](https://status.hostlinku.com)をご確認ください。
+- **Reachable**とは、401/403/404を含む500未満のHTTPレスポンスを意味します。このチェックはエンドポイントの到達可能性を示すものであり、ログインの成功や推論については、それぞれの機能を通じて確認されます。
 
-同じ期間・Service Mode・サンプルのメトリクスを比較してください。アニメーション、容量仕様、トラフィック集計、benchmarkはそれぞれ異なる情報源です。
+期間、サービスモード、およびサンプルが同一であるメトリクスを比較してください。アニメーションの結果、容量仕様、トラフィックの集計、およびベンチマークは、それぞれ異なる情報源に基づいています。

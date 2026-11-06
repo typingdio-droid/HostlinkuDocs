@@ -4,14 +4,17 @@ description: "通过自定义模型配置文件（Chat Completions 或 Anthropic
 icon: terminal
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrains 面向终端的代理编码工具 - 支持以 JSON 文件形式定义的 **自定义模型配置文件**。一个配置文件包含端点、API 格式、API 密钥，以及用于轻量级任务的主模型和快速模型（*faster model*）。
+[Junie CLI](https://junie.jetbrains.com/docs/custom-llm-models.html) - JetBrains 的代理编码工具
+——支持以 JSON 文件形式定义的 **自定义模型配置文件**。一个配置文件包含端点、
+API 格式、API 密钥，以及用于轻量级任务的主模型和快速模型（*faster model*）。
 
-有关 JetBrains IDE 中的 AI 助手，请参阅 [JetBrains AI 助手](/zh/integrations/jetbrains)。
+关于 JetBrains IDE 中的 AI 助手，请参阅 [JetBrains AI 助手](/zh/integrations/jetbrains)。
 
 <Steps>
+
+<a id="instal-junie-cli-dan-simpan-api-key"></a>
 
 ### 安装 Junie CLI 并保存 API 密钥
 
@@ -20,9 +23,12 @@ curl -fsSL https://junie.jetbrains.com/install.sh | bash
 export HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
+<a id="buat-profil-hostlinku"></a>
+
 ### 创建 Hostlinku 个人资料
 
-Junie 在 `~/.junie/models/*.json`（用户级别）和 `.junie/models/*.json`（项目级别）中查找配置文件。不包含 `.json` 的文件名即为配置文件 ID。创建 `~/.junie/models/hostlinku.json`：
+Junie 在 `~/.junie/models/*.json`（用户级别）和 `.junie/models/*.json`（项目级别）中
+查找配置文件。不带 `.json` 的文件名即为配置文件 ID。 创建 `~/.junie/models/hostlinku.json`：
 
 ```json
 {
@@ -40,8 +46,11 @@ Junie 在 `~/.junie/models/*.json`（用户级别）和 `.junie/models/*.json`�
 ```
 
 <Callout type="important" title="baseUrl 是完整的端点 URL">
-Junie **没有**向`baseUrl`添加任何路径。对于`OpenAICompletion`，写到`/v1/chat/completions`；对于`Anthropic`，写到`/v1/messages`。
+  Junie **未**向 `baseUrl` 添加任何路径。对于 `OpenAICompletion`，写至
+  `/v1/chat/completions`；对于 `Anthropic`，写至 `/v1/messages`。
 </Callout>
+
+<a id="jalankan-dengan-profil"></a>
 
 ### 使用配置文件运行
 
@@ -49,13 +58,19 @@ Junie **没有**向`baseUrl`添加任何路径。对于`OpenAICompletion`，写�
 junie --model custom:hostlinku
 ```
 
-该配置文件还会显示在 TUI 模型列表的 **自定义** 选项卡中，并可通过命令 `/model` 访问。首次请求会显示在控制台 → **请求日志** 中。
+“配置文件”也出现在 TUI 模型列表的 **“自定义”** 选项卡中，以及通过 `/model` 命令显示。首次请求
+会显示在控制台 → **请求日志** 中。
 
 </Steps>
 
-## 模型：Anthropic
+<a id="varian-format-anthropic"></a>
 
-对于采用 Messages API（全提示缓存）的 Claude 模型，请创建第二个配置文件，例如 `~/.junie/models/hostlinku-claude.json`：
+<a id="模型anthropic"></a>
+
+## 变体：Anthropic 格式
+
+对于使用 Messages API（全提示缓存）的 Claude 模型，请创建第二个配置文件，例如：
+`~/.junie/models/hostlinku-claude.json`:
 
 ```json
 {
@@ -70,17 +85,29 @@ junie --model custom:hostlinku
 
 然后运行 `junie --model custom:hostlinku-claude`。
 
-## 需知事项
+<a id="yang-perlu-diketahui"></a>
 
-- **`${HOSTLINKU_API_KEY}`** 在加载配置文件时从环境变量中读取。如果该变量尚未设置，配置文件加载将失败，且 Junie 会提示缺失的变量名称-这对于提交到代码库的配置文件来说是安全的（`.junie/models/`）。
-- **主力机型与更快的机型。** 为主模型选择具有强大*工具调用*功能的模型（`claude-sonnet-4-6`、`gpt-5-5`）；而对于快速模型（摘要与分类），`claude-haiku-4-5`或`deepseek-v4-flash`等低成本模型已足够。
-- **Responses API (`OpenAIResponses`)** 在 `https://api.hostlinku.com/v1/responses` 中同样可用，但属于 *无状态* 类型 ([详情](/zh/responses))。`OpenAICompletion` 是最安全的选择。
+<a id="需知事项"></a>
+
+## 注意事项
+
+- **`${HOSTLINKU_API_KEY}`** 在加载配置文件时从环境变量中读取。如果该变量尚未
+  设置，配置文件加载将失败，且 Junie 会指出缺失的变量名称——这对于
+  提交到仓库（`.junie/models/`）的配置文件是安全的。
+- **主模型与更快模型。** 为主模型选择具有强大*工具调用*能力的模型
+  （`claude-sonnet-4-6`、`gpt-5-5`）；而像 `claude-haiku-4-5` 或 `deepseek-v4-flash`
+  这类低成本模型则足以作为“更快模型”（摘要与分类）。
+- **API 响应（`OpenAIResponses`）** 也可在 `https://api.hostlinku.com/v1/responses` 上获取，
+  但具有 *无状态* 特性 ([详情](/zh/responses))。`OpenAICompletion` 是最
+  安全的选择。
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-| 症状 | 解决方法 |
+| 症状 | 解决方案 |
 |---|---|
-| `404` | `baseUrl` 尚未完成-应以 `/v1/chat/completions` 或 `/v1/messages` 结尾。 |
-| 个人资料未显示 | 文件名/位置错误，或 JSON 格式无效。配置文件 = 不包含 `.json` 的文件名。 |
-| 环境变量错误 | 在运行 `junie` 的 shell 中导出 `HOSTLINKU_API_KEY`。 |
-| 工具调用失败／Agent循环运行 | 请在[目录](/zh/models)中检查tool calling支持和模型限制。更换模型前先检查请求日志。 |
+| `404` | `baseUrl` 尚未完整——应以 `/v1/chat/completions` 或 `/v1/messages` 结尾。 |
+| “Profil”未出现 | 文件名/位置有误，或 JSON 格式无效。Profile = 不带 `.json` 的文件名。 |
+| Error 环境变量 | 在运行 `junie` 的 shell 中导出 `HOSTLINKU_API_KEY`。 |
+| 工具调用失败 / 代理循环 | 请在[目录](/zh/models)中检查调用工具的支持情况和模型限制。在更换模型之前，请检查请求日志。 |

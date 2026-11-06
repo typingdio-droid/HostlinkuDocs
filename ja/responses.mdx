@@ -1,15 +1,18 @@
 ---
 title: "Responses API"
-description: "エンドポイント POST /v1/responses (OpenAI Responses API 互換) - Codex CLI、OpenAI Agents SDK、または API キー Hostlinku を使用した client.responses.create() を使用してください"
+description: "エンドポイントの参照：POST /v1/responses（OpenAI Responses API互換） - Codex CLI、OpenAI Agents SDK、またはHostlinkuのAPIキーを使用したclient.responses.create()を使用してください"
 icon: workflow
 ---
-
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku は、[OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) - **Codex CLI** で使用されるフォーマット - と互換性のあるエンドポイントを提供します。 **OpenAI Agents SDK**、およびOpenAI SDKの`client.responses.create()`メソッドで使用されるフォーマットです。 base URL を変更するだけで済みます。API キー、残高、Service Mode、レート制限、およびリクエストログは、`/v1/chat/completions` および `/v1/messages` と同じです。
+Hostlinkuは、
+[OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) — **Codex CLI**、**OpenAI Agents SDK**、およびOpenAI SDKの`client.responses.create()`メソッドで使用される
+フォーマットです。
+base URLを変更するだけで済みます。APIキー、残高、サービスモード、レート制限、およびリクエストログは、
+`/v1/chat/completions`および`/v1/messages`と同じです。
 
 ```http
 POST https://api.hostlinku.com/v1/responses
@@ -17,17 +20,20 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-成功した応答には `x-request-id`、成功した非ストリーミング応答には `x-model`（公開 slug）も含まれます。
+成功レスポンスには `x-request-id` が含まれます。非ストリーミングの成功レスポンスには、`x-model`（モデルのパブリックスラグ）も含まれます。
 
-<Callout type="note" title="モデルとツールの互換性">
-  `model` は[モデルカタログ](/ja/models)の公開 slug を使用します。モデルの deployment に応じて Responses ネイティブ経路または Chat Completions ブリッジを使用します。応答形式の互換性は、全モデルで Responses の全機能や Codex ツールが利用できることを意味しません。
+<Callout type="note" title="モデルおよびツールの互換性">
+  `model`は、[モデルカタログ](/ja/models)のパブリックスラグを使用します。Gatewayは、デプロイメントモデルに応じて、ResponsesのネイティブパスとChat Completionsへのブリッジを提供します。レスポンス形式のサポートは、すべてのモデルがResponsesの全機能やCodexツールをサポートしていることを意味するものではありません。
 </Callout>
 
-API キーの Service Mode で利用可能なモデルを選択してください。vision、reasoning、キャッシュ、JSON schema、tool calling はモデルに依存します。Responses ネイティブは upstream の機能を転送し、Chat Completions ブリッジはメッセージ、対応画像、`type: "function"` ツールを扱います。hosted/custom tools と暗号化 reasoning にはネイティブ対応が必要です。
+Service Mode APIキーで利用可能なモデルを選択してください。Vision、reasoning、caching、JSONスキーマ、およびツール呼び出しは、モデルの機能に従います。ネイティブのレスポンスはアップストリームの機能を継承します。ブリッジChat Completionsは、メッセージ、モデルがサポートする画像、および`type: "function"`のツールをサポートします。ホスト型/カスタムツールおよび暗号化されたreasoningには、ネイティブのサポートが必要です。
+
+<a id="konfigurasi-cepat"></a>
 
 ## クイック設定
 
-各ツールの詳細なガイドは、[Codex CLI](/ja/integrations/codex-cli) および [OpenAI Agents SDK](/ja/integrations/agents-sdk) に掲載されています。
+各ツールの詳細なガイドは、[Codex CLI](/ja/integrations/codex-cli) および
+[OpenAI Agents SDK](/ja/integrations/agents-sdk) に掲載されています。
 
 **Codex CLI** (`~/.codex/config.toml`)
 
@@ -85,36 +91,44 @@ from agents import Agent, Runner, set_default_openai_client, set_tracing_disable
 from openai import AsyncOpenAI
 
 set_default_openai_client(AsyncOpenAI(api_key="sk-your-api-key", base_url="https://api.hostlinku.com/v1"))
-set_tracing_disabled(True)  # OpenAI トレースはゲートウェイ経由では利用できません
+set_tracing_disabled(True)  # tracing OpenAI tidak tersedia lewat gateway
 
 agent = Agent(name="Asisten", instructions="Jawab singkat.", model="gpt-5-5")
 result = Runner.run_sync(agent, "Sebutkan 3 bahasa pemrograman.")
 print(result.final_output)
 ```
 
-## bodyパラメータ
+<a id="parameter-body"></a>
 
-| パラメータ | タイプ | 説明 |
+<a id="bodyパラメータ"></a>
+
+## ボディパラメータ
+
+| パラメータ | タイプ | 備考 |
 |---|---|---|
-| `model` | `string` | **必須。** Hostlinkuの公開モデルslug。 |
-| `input` | `string` \| `array` | **必須。** 単一のテキスト、または配列の項目：`message`（`role` + `content` には `input_text`/`input_image`/…が含まれる）、 `function_call`、`function_call_output`、`reasoning`。 |
+| `model` | `string` | **必須。** Hostlinkuモデルのスラッグ。 |
+| `input` | `string` \| `array` | **必須。** 単一のテキスト、または配列の項目：`message`（`role` + `content`には`input_text`/`input_image`/…が含まれる）、`function_call`、`function_call_output`、`reasoning`。 |
 | `instructions` | `string` | システムプロンプト（開発者向けメッセージ）。 |
-| `max_output_tokens` | `integer` | 出力トークンの上限。モデルの出力上限を超えた場合、`400`として拒否されます。 |
-| `stream` | `boolean` | SSE用の`true`（下記参照）。 |
-| `tools`, `tool_choice`, `parallel_tool_calls` | - | 関数呼び出し形式 Responses (`{ "type": "function", "name", "parameters" }`)。 |
+| `max_output_tokens` | `integer` | トークンの出力制限。モデルの出力制限を超えた場合、`400`で拒否されます。 |
+| `stream` | `boolean` | SSEについては`true`（下記参照）。 |
+| `tools`、`tool_choice`、`parallel_tool_calls` | - | 関数呼び出し形式のレスポンス（`{ "type": "function", "name", "parameters" }`）。 |
 | `reasoning` | `object` | 例：`{ "effort": "low" \| "medium" \| "high", "summary": "auto" }`。 |
-| `include` | `string[]` | 例：`["reasoning.encrypted_content"]`。暗号化項目は upstream の Responses ネイティブ対応に依存します。chat ブリッジは暗号化 reasoning 項目を保持しません。 |
-| `text`, `truncation`, `temperature`, `top_p`, `metadata`, `user`, `prompt_cache_key`, `safety_identifier` | - | OpenAIの仕様に準拠；モデルに反映済み。 |
+| `include` | `string[]` | 例：`["reasoning.encrypted_content"]`；暗号化された項目の利用可能性は、アップストリームのネイティブレスポンスのサポートに依存します。Bridgeチャットでは、暗号化された推論項目は保持されません。 |
+| `text`、`truncation`、`temperature`、`top_p`、`metadata`、`user`、`prompt_cache_key`、`safety_identifier` | - | OpenAIの仕様に準拠し、モデルに転送されます。 |
 | `store` | `boolean` | 常に `false` として扱われます（*Stateless* を参照）。 |
-| `previous_response_id`, `conversation`, `background` | - | 非 null の `previous_response_id` と `conversation` は `400 invalid_request_error`。`background: true` は拒否します。省略可能で、`background: false` は受け付けます。 |
+| `previous_response_id`、`conversation`、`background` | - | `previous_response_id` および `conversation` が null でない場合は `400 invalid_request_error` で拒否されます。`background: true` は拒否されます。フィールドは省略可能です。`background: false` は受け入れられます。 |
 
-Responses の追加フィールドは転送されます。経路と upstream の対応により、転送、無視、または拒否される場合があります。スキーマの受理はモデル機能を保証しません。無効な body は `400 invalid_request_error`、詳細は `error.details.issues` です。
+レスポンスのボディ内のその他のフィールドは転送されます。パラメータは、パスおよびアップストリームのサポートに応じて、転送、無視、または拒否される場合があります。スキーマの受け入れは、モデル機能の保証ではありません。無効なボディは `400 invalid_request_error` として拒否され、詳細は `error.details.issues` に記載されます。
 
-<Callout type="important" title="Stateless - `input`に完全な履歴を送信">
-  履歴全体を `input` に送り `store: false` を使用してください。非 null の `previous_response_id` / `conversation` と `background: true` は拒否されます。`GET`/`DELETE /v1/responses/{id}` は提供しません。reasoning 項目の再利用は native 経路で可能ですが、chat ブリッジは項目をスキップします。
+<Callout type="important" title="Stateless - `input`に完全な履歴を送信する">
+  `store: false` を指定して、`input` に完全な履歴を送信してください。`previous_response_id` および `conversation` が null でない場合、ならびに `background: true` は拒否されます。`GET`/`DELETE /v1/responses/{id}` は利用できません。 reasoningアイテムはネイティブパスで再利用可能であり、ブリッジチャットはこれをバイパスします。
 </Callout>
 
-## 非ストリーミングの応答
+<a id="respons-non-streaming"></a>
+
+<a id="非ストリーミングの応答"></a>
+
+## 非ストリーミング応答
 
 ```json
 {
@@ -133,7 +147,7 @@ Responses の追加フィールドは転送されます。経路と upstream の
       "type": "message",
       "status": "completed",
       "role": "assistant",
-      "content": [{ "type": "output_text", "text": "APIゲートウェイとは …", "annotations": [] }]
+      "content": [{ "type": "output_text", "text": "API gateway adalah …", "annotations": [] }]
     }
   ],
   "usage": {
@@ -149,19 +163,30 @@ Responses の追加フィールドは転送されます。経路と upstream の
 }
 ```
 
-`id` および `model` は、常に Hostlinku のパブリック ID です。 ブロック`hostlinku`は拡張情報（OpenAIのSDKはこれを無視する）であり、<CreditIcon />、Service Mode API keyの費用およびレイテンシが含まれている。 `status: "incomplete"` および `incomplete_details.reason = "max_output_tokens"` は、出力が `max_output_tokens` によって切り詰められていることを意味しますが、実際のトークンに基づいて課金されます。
+`id` および `model` は常に Hostlinku の公開識別子です。`hostlinku` ブロックは拡張子（OpenAI SDK
+はこれを無視します）であり、コスト <CreditIcon />、サービスモードの API キー、およびレイテンシが含まれます。`status: "incomplete"` に対して
+`incomplete_details.reason = "max_output_tokens"` の場合、出力は `max_output_tokens` によって切り詰められたことを意味します
+- 実際のトークンに基づいて課金されます。
 
-<Callout type="warning" title="推論モデル + `max_output_tokens`（小型）">
-推論モデル（例：DeepSeek V4、GPT-6、思考機能付きClaude）では、思考トークンも`max_output_tokens`にカウントされます。 小さい値（例：`16`）は通常、`reasoning`の項目のみに割り当てられる → `status: "incomplete"`および`output`には、`message`を含まない`reasoning`の項目のみが含まれる。 `max_output_tokens` ≥ 256 を使用するか、`reasoning.effort` を `"low"` に下げる。
+<Callout type="warning" title="推論モデル + `max_output_tokens` が小さい">
+  推論モデル（例：DeepSeek V4、GPT-6、thinking機能付きClaude）では、推論トークンも
+  `max_output_tokens` にカウントされます。値が小さい場合（例：`16`）、通常は `reasoning` 項目だけで上限に達してしまいます
+  だけで使い切られてしまう → `status: "incomplete"` となり、`output` には `message` なしで `reasoning` 項目のみが含まれる。
+  `max_output_tokens` を 256 以上に設定するか、`reasoning.effort` を `"low"` に下げる。
 </Callout>
 
-<Callout type="note" title="Responses API の使用規約">
-Chat Completionsと同様に、`input_tokens`にはキャッシュトークンが**すでに含まれています**。詳細については`input_tokens_details.cached_tokens`を参照してください。`output_tokens`には`reasoning_tokens`が含まれています。 請求書Hostlinkuは、これらの構成要素についてそれぞれの価格に基づいて計算されます（[請求](/ja/billing)を参照）。
+<Callout type="note" title="APIレスポンスの使用に関する規約">
+  Chat Completionsと同様に、`input_tokens`にはキャッシュされたトークンが**すでに含まれています**。詳細は
+  `input_tokens_details.cached_tokens`に記載されています。`output_tokens`には`reasoning_tokens`が含まれています。Hostlinkuの請求額は
+  は、これらのコンポーネントの各単価に基づいて計算されます（[Billing](/ja/billing)を参照）。
 </Callout>
+
+<a id="streaming-stream-true"></a>
 
 ## ストリーミング (`stream: true`)
 
-ゲートウェイは、Responses API（`event:` + `data:`）のフレーム形式でSSEイベントを転送します。これには、アップストリームからの`sequence_number`も含まれます：
+Gatewayは、APIレスポンスのフレーミング（`event:` + `data:`）を使用してSSEイベントを転送し、これには
+アップストリームからの`sequence_number`が含まれます：
 
 ```text
 event: response.created
@@ -180,7 +205,7 @@ event: response.output_text.delta
 data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_…","output_index":0,"content_index":0,"delta":"API gateway"}
 
 event: response.output_text.done
-data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"APIゲートウェイとは …"}
+data: {"type":"response.output_text.done","sequence_number":5,"item_id":"msg_…","output_index":0,"content_index":0,"text":"API gateway adalah …"}
 
 event: response.content_part.done
 data: {"type":"response.content_part.done","sequence_number":6,…}
@@ -194,12 +219,20 @@ data: {"type":"response.completed","sequence_number":8,"response":{"id":"resp_�
 
 注：
 
-- upstream が最終 usage を提供した場合、`response.completed` または `response.incomplete` に含まれます。課金にはその値を使用し、usage がない場合やゼロの場合は予約時の見積もりを使用することがあります。`hostlinku.cost` は成功した非ストリーミング応答の拡張です。各 SSE イベントには保証されません。
-- ツールコールは、`response.output_item.added`（`type: "function_call"`）、`response.function_call_arguments.delta`、および`response.function_call_arguments.done`を経由して送信されます。
-- ストリームが途中で失敗した場合、ゲートウェイは`event: error`と`{"type":"error","code":…,"message":…}`を送信し、偽の`response.completed`は**送信しない**。
-- 最初のバイトが送信される前のエラー（残高不足、モデルが存在しない、レート制限）は、正しいHTTPステータスを伴う通常のJSONレスポンスとして返されます。SDK OpenAIでは、これらを例外（`AuthenticationError`、`NotFoundError`、 `RateLimitError`、…）。
+- 最終的な使用量（Usage final）は、アップストリームで提供されている場合、`response.completed` または `response.incomplete` に含まれます。コストは当該使用量に基づいて計算されます。使用量が空またはゼロの場合、ゲートウェイは予約の推定値を使用することがあります。拡張子 `hostlinku.cost` は、非ストリーミングの成功レスポンスで利用可能です。すべての SSE イベントでこれを期待しないでください。
+- ツール呼び出しは、`response.output_item.added` (`type: "function_call"`)、
+  `response.function_call_arguments.delta`、および `response.function_call_arguments.done` を通じて配信されます。
+- ストリームが途中で失敗した場合、ゲートウェイは `event: error` を
+  `{"type":"error","code":…,"message":…}` の形式で送信し、偽の `response.completed` は**送信しません**。
+- 最初のバイトが返される前のエラー（残高不足、モデルが存在しない、レート制限）は、
+  正しいHTTPステータスを伴う通常のJSONレスポンスとして返されます。OpenAI SDKはこれを例外
+  （`AuthenticationError`、`NotFoundError`、`RateLimitError`、…）にマッピングします。
 
-## ツールの呼び出し（関数の呼び出し）
+<a id="tool-calling-function-calling"></a>
+
+<a id="ツールの呼び出し関数の呼び出し"></a>
+
+## ツール呼び出し（関数呼び出し）
 
 ```python
 tools = [{
@@ -226,7 +259,11 @@ r2 = client.responses.create(
 print(r2.output_text)
 ```
 
-## フォーマットエラー
+<a id="format-error"></a>
+
+<a id="フォーマットエラー"></a>
+
+## エラーの形式
 
 ```json
 { "error": { "message": "The API key is invalid or has been revoked.", "type": "authentication_error", "param": null, "code": "invalid_api_key" } }
@@ -234,14 +271,14 @@ print(r2.output_text)
 
 | HTTP | `error.type` | `error.code` | 一般的な原因 |
 |---|---|---|---|
-| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | ボディが無効です。`max_output_tokens`がモデルの制限を超えています。`previous_response_id`が送信されました。Service Modeキーにはモデルが存在しません。 |
-| 401 | `authentication_error` | `invalid_api_key` | APIキーが間違っている、無効化されている、または有効期限が切れている、あるいはAPIキーなしでリクエストが行われた。 |
-| 402 | `insufficient_quota` | `insufficient_quota` | 残高が不足しているか、APIキーのクレジット上限に達しています。 |
+| 400 | `invalid_request_error` | `invalid_request` / `model_not_in_service_mode` | Bodyが無効です。`max_output_tokens`がモデルの制限を超えています。`previous_response_id`が送信されています。Service Modeキーではモデルが利用できません。 |
+| 401 | `authentication_error` | `invalid_api_key` | APIキーが不正、無効化、または期限切れの場合、あるいはAPIキーなしのリクエスト。 |
+| 402 | `insufficient_quota` | `insufficient_quota` | 残高が不足しているか、APIキーのクレジット上限に達しました。 |
 | 403 | `permission_error` | - | アカウントが停止されました／アクセスが拒否されました。 |
-| 404 | `not_found_error` | `model_not_found` / `not_found` | slugモデルが存在しない、または `GET /v1/responses/{id}`（ステートレス）。 |
-| 429 | `rate_limit_error` | `rate_limit_exceeded` | リクエストの制限に達しました（ヘッダー `Retry-After` を参照）。 |
-| 503 | `server_error` | `model_unavailable` / `server_error` | モデル／上流が利用できません。カタログと代替モデルを確認し、一時的な障害なら間隔を設けて再試行してください。 |
+| 404 | `not_found_error` | `model_not_found` / `not_found` | モデルのスラッグは存在しないか、`GET /v1/responses/{id}`（ステートレス）である。 |
+| 429 | `rate_limit_error` | `rate_limit_exceeded` | リクエスト制限に達しました（`Retry-After`ヘッダーを参照）。 |
+| 503 | `server_error` | `model_unavailable` / `server_error` | モデル／アップストリームは利用できません。カタログや代替モデルを確認してください。一時的な障害の場合は、間隔を空けて再試行してください。 |
 
-表はプロトコルで処理されたエラーです。ハンドラーより前のレート制限や本文解析には一般のHostlinku形式が使われる場合があります。[エラー](/ja/errors)を参照してください。
+表は、プロトコルが処理するエラーを示しています。ハンドラー前のリクエストやボディの解析に関する制限については、Hostlinkuの一般的な形式を使用できます。[Error](/ja/errors)を参照してください。
 
-エラーは内部識別情報を隠すために処理されます。upstream の拒否理由の一部は表示される場合があります。
+エラーメッセージは、内部識別情報を隠蔽するためにサニタイズされていますが、アップストリームによる拒否理由の一部はそのまま表示される場合があります。

@@ -1,61 +1,117 @@
 ---
-title: "アカウント、課金、ポリシー"
-description: "アカウント、決済、費用、プライバシーの短いFAQ。"
+title: "アカウント、課金、およびポリシー"
+description: "アカウント、支払い、料金、プライバシーに関する簡潔な回答。"
 icon: users
 ---
 
+<a id="akun-dan-api-key"></a>
+
 ## アカウントとAPIキー
 
-### どう始めますか？
+<a id="bagaimana-mulai"></a>
 
-[新規登録](https://api.hostlinku.com/api/auth2/register) または [ログイン](https://api.hostlinku.com/api/auth2/login) し、[Console](https://console.hostlinku.com) を開きます。**Billing** でチャージし、**API Keys** でキーを作成してください。[クイックスタート](/ja/getting-started) を参照してください。
+<a id="どう始めますか"></a>
 
-### キーの設定は？
+### どのように始めればよいですか？
 
-名前、Service Mode **Performance / Low-Cost / Dedicated**、有効期限 **30/60/90日または無期限**、任意の月間上限です。初期値はPerformanceと30日です。スコープ選択はありません。APIの追加期間は [認証](/ja/authentication) を参照してください。
+[登録](https://api.hostlinku.com/api/auth2/register) または [ログイン](https://api.hostlinku.com/api/auth2/login) を行い、[Console](https://console.hostlinku.com) を開いてください。 **Billing**で残高をチャージし、**API Keys**でキーを作成してください。[クイックスタート](/ja/getting-started)の手順に従ってください。
 
-### シークレットの保存方法は？
+<a id="apa-pengaturan-key-yang-tersedia"></a>
 
-表示は一度だけで、サーバーはSHA-256ハッシュを保存します。サーバー環境変数に保管してください。キーは編集、無効化・有効化、削除できます。紛失・漏洩したキーは交換してください。
+<a id="キーの設定は"></a>
 
-### パスキーと2FAは使えますか？
+### 利用可能なキーの設定にはどのようなものがありますか？
 
-はい。**Settings → Security** でKeycloakのWebAuthnパスキー、TOTP認証アプリ、リカバリーコードを利用できます。
+**Performance / Low-Cost / Dedicated**というサービスモード名、**30/60/90日または無期限**という有効期限、およびオプションの月間制限を選択してください。デフォルトはPerformanceおよび30日です。 スコープはありません。キー管理APIは追加期間をサポートしています。[認証](/ja/authentication)を参照してください。
 
-## 残高と決済
+<a id="bagaimana-secret-disimpan"></a>
 
-### クレジットとは？
+<a id="シークレットの保存方法は"></a>
 
-サービス単位は **1クレジット = $1**。関連するキーが組織残高を共有します。自由に支払いできる法定通貨ではありません。返金は [返金ポリシー](/ja/legals/refund-policy) に従います。
+### シークレットはどのように保存されますか？
 
-### チャージ方法は？
+Secretは1回のみ登場します。サーバーはSHA-256ハッシュを保存します。サーバー環境に保存してください。Keyは編集、無効化／有効化、削除が可能です。Secretが紛失または漏洩した場合は、keyを交換してください。
 
-**Billing** で金額と方法を選びます。新規QRIS/VAは **iPaymu Direct**、暗号資産は **Heleketのホスト型決済** です。金額、ボーナス、為替、手数料、期限は支払い前に確認できます。確認後に自動加算されます。[課金と残高](/ja/billing) を参照してください。
+<a id="apakah-passkey-dan-2fa-tersedia"></a>
 
-### 費用と請求書はどこですか？
+<a id="パスキーと2faは使えますか"></a>
 
-**Logs** はリクエスト費用、**Analytics** は使用概要、**Billing** は取引と請求書です。非ストリーミングchatは `hostlinku.cost` を含み、SSEは終了後に費用を確認します。usage欠落時は推定される場合があります。
+### パスキーと2FAは利用可能ですか？
 
-ブラウザから印刷・PDF保存できます。Billing ProfileはConsoleのブラウザに保存され、印刷物がPayや他の端末と異なる場合があります。
+はい。**[Settings] → [Security]** では、Keycloak を通じて WebAuthn のパスキー、TOTP 認証アプリ、およびリカバリーコードが提供されます。
 
-### 自動チャージや残高不足メールは？
+<a id="saldo-dan-pembayaran"></a>
 
-現在のBillingに設定はありません。本番利用前に残高を確認・チャージしてください。残高を増やしてもキー上限は増えません。
+<a id="残高と決済"></a>
+
+## 残高と支払い
+
+<a id="apa-arti-kredit"></a>
+
+<a id="クレジットとは"></a>
+
+### 「クレジット」とはどういう意味ですか？
+
+**1クレジット＝1ドル**は、プリペイドサービスの単位です。組織の残高は、関連するキーによって使用されるものであり、自由に使用できる法定通貨ではありません。返金については、[返金ポリシー](/ja/legals/refund-policy)に従います。
+
+<a id="bagaimana-top-up"></a>
+
+<a id="チャージ方法は"></a>
+
+### チャージの方法は？
+
+**Billing**を開き、金額と支払い方法を選択してください。新しいQRIS/VAは**iPaymu Direct**を使用し、暗号資産は**Heleket hosted**を使用します。金額、ボーナス、為替レート、手数料、および期限は支払い前に表示されます。確認後、クレジットは自動的に反映されます。 [請求・残高](/ja/billing)をご確認ください。
+
+<a id="di-mana-biaya-dan-invoice"></a>
+
+<a id="費用と請求書はどこですか"></a>
+
+### 費用と請求書はどこにありますか？
+
+**Logs**にはリクエストのコストが表示され、**Analytics**には使用状況の概要、**Billing**には取引と請求書が表示されます。非ストリーミングチャットには`hostlinku.cost`が含まれます。SSEについては、完了後に最終的なコストを確認してください。欠落している使用量は推定可能です。
+
+請求書はブラウザから印刷またはPDFとして出力できます。「Billing Profile」はConsoleのブラウザにローカルで保存されるため、Consoleの印刷物はPayや他のデバイスでの請求書とは異なる場合があります。
+
+<a id="apakah-ada-auto-recharge-atau-email-saldo-rendah"></a>
+
+<a id="自動チャージや残高不足メールは"></a>
+
+### 自動リチャージ機能や残高不足の通知メールはありますか？
+
+アクティブな請求機能ではまだ利用できません。本番環境での利用前に、残高を確認し、チャージを行ってください。残高を追加しても、キーの制限は増加しません。
+
+<a id="error-dan-privasi"></a>
 
 ## エラーとプライバシー
 
-### 429・402への対応は？
+<a id="apa-tindakan-untuk-429-atau-402"></a>
 
-429では`Retry-After`に従って待ち、バックオフを使ってください。[使用状況と制限](/ja/usage-and-limits)を参照してください。402では利用可能残高とキー上限を確認してください。[課金と残高](/ja/billing)を参照してください。
+<a id="429402への対応は"></a>
 
-### 失敗はすべて無料ですか？
+### 429または402が発生した場合の対処方法は？
 
-課金対象の使用量がない失敗では予約を解放します。中断ストリームや部分利用ではLogsの最終費用を確認してください。
+429の場合、`Retry-After`に従って待機し、バックオフを行ってください。[使用量と制限](/ja/usage-and-limits)を参照してください。402の場合、利用可能な残高とキーのクレジット制限を確認してください。[請求と残高](/ja/billing)を参照してください。
 
-### プロンプトと回答は保存されますか？
+<a id="apakah-semua-request-gagal-bebas-biaya"></a>
 
-Body loggingは **初期状態で無効** です。費用、トークン、状態、遅延のメタデータは記録します。管理者が有効にすると本文サイズを制限し、認証情報フィールドを伏せ、初期保持期間14日で削除します。プロンプト内の秘密は自動で伏せません。[プライバシーポリシー](/ja/legals/privacy-policy) を参照してください。
+<a id="失敗はすべて無料ですか"></a>
 
-### 問い合わせ先は？
+### すべてのリクエストの失敗は無料ですか？
 
-サービス： [halo@hostlinku.com](mailto:halo@hostlinku.com)。個人データ： [privacy@hostlinku.com](mailto:privacy@hostlinku.com)。[セキュリティ](/ja/legals/security) と [サポート](/ja/support) を参照してください。
+課金対象となる利用がない場合の失敗は、予約を解除します。ストリームが切断された場合や部分的な利用については、Logsで最終的な料金を確認してください。
+
+<a id="apakah-prompt-dan-respons-disimpan"></a>
+
+<a id="プロンプトと回答は保存されますか"></a>
+
+### プロンプトと応答は保存されますか？
+
+ボディのロギングは**デフォルトで無効**です。コスト、トークン、ステータス、レイテンシのメタデータは引き続き記録されます。管理者が有効にした場合、ボディのサイズに制限が設けられ、認証情報のフィールドはフィルタリングされ、デフォルトの保持期間は14日間となります。プロンプト内の機密情報は自動的にフィルタリングされません。 [プライバシーポリシー](/ja/legals/privacy-policy)をご参照ください。
+
+<a id="bagaimana-menghubungi-dukungan"></a>
+
+<a id="問い合わせ先は"></a>
+
+### サポートへの連絡方法は？
+
+サービス：[halo@hostlinku.com](mailto:halo@hostlinku.com)。個人データの請求：[privacy@hostlinku.com](mailto:privacy@hostlinku.com)。 [セキュリティ](/ja/legals/security) および [サポート](/ja/support) をご覧ください。

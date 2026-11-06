@@ -1,19 +1,22 @@
 ---
 title: "Zed"
-description: "Zedのsettings.jsonにHostlinkuをopenai_compatibleプロバイダーとして追加し、エージェントパネルで任意のモデルを使用してください"
+description: "Zedのsettings.jsonにHostlinkuをopenai_compatibleプロバイダーとして追加し、Agent Panelで任意のモデルを使用してください"
 icon: code-xml
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Zed](https://zed.dev/docs/ai/use-api-access) は、`settings.json` を通じて **OpenAI 互換** のカスタムプロバイダーをサポートしています。 モデルは明示的に宣言する必要があります（Zedは自動検出を行いません）。その後、APIキーをAgent Panelまたは環境変数を通じて一度設定してください。
+[Zed](https://zed.dev/docs/ai/use-api-access)は、`settings.json`を通じてカスタム**OpenAI互換**プロバイダーをサポートしています。
+モデルは明示的に宣言する必要があります（Zedは自動検出を行いません）。その後、
+APIキーは、エージェントパネルまたは環境変数を通じて一度だけ入力します。
 
 <Steps>
 
+<a id="deklarasikan-provider-dan-model"></a>
+
 ### プロバイダーとモデルを宣言する
 
-`zed: open settings` を開き（⌘/Ctrl + ,）、以下を追加してください：
+`zed: open settings` (⌘/Ctrl + ,) を開き、以下を追加してください：
 
 ```json
 {
@@ -50,42 +53,57 @@ import { Callout, Steps } from "/snippets/mdx.jsx";
 }
 ```
 
-`api_url`は、末尾にスラッシュを付けずに`/v1`で終わらなければなりません。 `max_tokens`はモデルのコンテキストサイズです（[カタログ](/ja/models)の`context_window`を参照）。`name`はslugが完全に一致している必要があります。
+`api_url`は、末尾にスラッシュを付けずに`/v1`で終わらなければなりません。`max_tokens`はコンテキストのサイズです
+（[カタログ](/ja/models)の`context_window`を参照）。`name`はスラグと完全に一致させる必要があります。
+
+<a id="masukkan-api-key"></a>
 
 ### APIキーを入力してください
 
-いずれかを選択してください：
+以下のいずれかを選択してください：
 
-- **エージェントパネル** → 設定アイコン (`agent: open settings`) → プロバイダー「**hostlinku**」を検索 → APIキー `sk-…` を貼り付けます。Zedはこれを`settings.json`ではなく、システムのキーチェーンに保存します。
-- プロバイダーIDを大文字で表記した名前の**環境変数** + `_API_KEY`：
+- **Agent Panel** → 設定アイコン (`agent: open settings`) → プロバイダー **hostlinku** を検索 → 貼り付け
+  APIキー `sk-…`。Zedはこれを`settings.json`ではなく、システムのキーチェーンに保存します。
+- **環境変数**：プロバイダーIDを大文字で表記し、`_API_KEY`を付加したもの：
 
 ```bash
 export HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
-その変数をエクスポート済みのシェルからZedを実行してください（あるいは、シェルプロファイルに追加してから再ログインしてください）。
+それらの変数がエクスポートされているシェルからZedを実行してください（またはシェルプロファイルに追加して
+再ログインしてください）。
+
+<a id="pilih-model-di-agent-panel"></a>
 
 ### エージェントパネルでモデルを選択してください
 
-エージェントパネル（⌘/Ctrl + ?）を開き、モデルセレクターから**hostlinku**グループを選択します。メッセージを1件送信し、コンソールの**リクエストログ**でリクエストを確認してください。
+エージェントパネル（⌘/Ctrl + ?）を開き、モデルセレクターから**hostlinku**グループを選択してください。メッセージを1件送信し、コンソールの**リクエストログ**でそのリクエストを確認してください。
 
 </Steps>
 
+<a id="opsi-model-lanjutan"></a>
+
 ## 高度なモデルオプション
 
-| フィールド | いつ使うのか |
+| フィールド | 使用場面 |
 |---|---|
 | `reasoning_effort` (`"low"`/`"medium"`/`"high"`) | 推論モデル（GPT-5.x、Claude 4.6、DeepSeek V4）。 |
-| `capabilities.max_tokens_parameter: true` | モデルが`max_completion_tokens`を拒否し、Hostlinkuが両方を承認する場合に限り、デフォルトのままにしておきます。 |
-| `capabilities.chat_completions: false` | モデルを Responses API (`/v1/responses`) に移行する - Hostlinku でもサポートされているが、Zed ではデフォルトの Chat Completions の方が十分に検証されている。 |
+| `capabilities.max_tokens_parameter: true` | モデルが `max_completion_tokens` を拒否する場合に限り、Hostlinkuは両方を許容するため、デフォルトのままにします。 |
+| `capabilities.chat_completions: false` | モデルをResponses API (`/v1/responses`) に移行する — Hostlinkuでもサポートされているが、ZedではデフォルトのChat Completionsの方が十分に検証されている。 |
 
-<Callout type="note" title="「予測の編集」は含まれません">
-Zedの「予測の編集」（インラインオートコンプリート）機能は、`edit_predictions`で個別に構成され、Hostlinkuでは提供されていない`/v1/completions`（FIM）エンドポイントを使用します。 Agent Panel、インラインアシスタント、およびスレッドにはHostlinkuを使用し、予測の編集はデフォルトのプロバイダーのままにしてください。
+<Callout type="note" title="「Predictions」の編集は対象外です">
+  Zedの*edit predictions*（インラインオートコンプリート）機能は、`edit_predictions`で個別に設定され、
+  Hostlinkuでは提供されていないエンドポイント `/v1/completions`（FIM）を使用します。Agent Panel、インラインアシスタント、スレッドについてはHostlinku
+  をAgent Panel、インラインアシスタント、スレッドに使用し、編集予測はデフォルトのプロバイダーのままにしてください。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-- **プロバイダーが表示されない** - `settings.json` が無効です（コンマ／括弧）。`zed: open log` を確認してください。
-- **`401`** - プロバイダ `hostlinku` のキーが入力されていないか、Zed の起動後に環境変数がエクスポートされました。Zed を再起動してください。
-- **ツール呼び出しは無視されます** - 当該モデルで `capabilities.tools: true` であることを確認してください。
-- **コンテキスト全体が早すぎる** - `max_tokens`は`context_window`モデルに比べて小さすぎる；カタログに合わせて調整してください。
+- **プロバイダーが表示されない** - `settings.json`が無効です（コンマ/括弧）。`zed: open log`を確認してください。
+- **`401`** - プロバイダー `hostlinku` に対してキーが入力されていないか、Zed の起動後に環境変数がエクスポートされています
+  。Zed を再起動してください。
+- **ツール呼び出しは無視** - 当該モデルで `capabilities.tools: true` であることを確認してください。
+- **コンテキストの取得が早すぎる** - `max_tokens` がモデルの `context_window` に対して小さすぎる；
+  カタログに合わせて調整してください。

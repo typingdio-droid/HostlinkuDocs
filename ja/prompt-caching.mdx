@@ -1,26 +1,34 @@
 ---
-title: Prompt Caching
-description: 繰り返し使うプロンプトの指定、キャッシュトークン、Consoleでの費用確認。
+title: "プロンプトのキャッシュ"
+description: "繰り返しプロンプトにマークを付け、トークンキャッシュを理解し、Consoleで費用を確認してください。"
 icon: database
 ---
 
-Prompt cachingは、同じprefixの処理費用を減らせる仕組みです。対応状況、最小トークン数、有効期間、価格はモデルとプロバイダーに依存します。同じプロンプトを再送してもキャッシュヒットは保証されません。
+プロンプトのキャッシュにより、繰り返されるプレフィックスの処理コストを削減できます。サポート、トークンのしきい値、有効期間、およびキャッシュのレートは、モデルおよびプロバイダーによって異なります。プロンプトが再送信されたからといって、キャッシュヒットが保証されるわけではありません。
 
-## 価格と使用量
+<a id="harga-dan-penggunaan"></a>
 
-利用するAPIキーで [`GET /v1/models`](/ja/models) の `pricing.cache_read` と `pricing.cache_write` を確認してください。価格はキーのService Modeに従い、100万トークン単位です。未設定の価格は省略される場合があります。キャッシュ書き込みは通常の入力より高いことがあり、節約額はトークン数とその後のヒット回数に依存します。
+<a id="価格と使用量"></a>
 
-Consoleの **Logs** はInput、Output、Cache Read、Cache Write、最終費用を表示します。Cache Write 5m/1hの内訳は上流が返した場合だけ記録され、`-` はゼロではなく情報がないことを示します。過去の費用内訳の一部は現在の単価で計算されますが、過去の合計は保存されています。[Billing](/ja/billing)を参照してください。
+## 価格と利用状況
 
-## プロンプトの配置
+使用するAPIキーで、[`GET /v1/models`](/ja/models) における `pricing.cache_read` および `pricing.cache_write` を確認してください。価格はサービスモードのキーに基づいており、100万トークンごとに計算されます。利用できない料金については記載されない場合があります。 キャッシュへの書き込みは通常の入力よりもコストが高くなる可能性があるため、コスト削減効果はトークンの数やその後のキャッシュヒット率によって異なります。
 
-静的な内容を先に置きます。ツール定義、system prompt／文書、過去のメッセージの順にし、最新のユーザーメッセージや変化する値を後に置いてください。タイムスタンプやツールの順序など、prefixの変更でキャッシュミスが起こる場合があります。
+Consoleの**ログ**には、入力、出力、キャッシュ読み取り、キャッシュ書き込み、および最終的な費用が表示されます。キャッシュ書き込みの詳細（5分/1時間）は、アップストリームから報告があった場合にのみ表示されます。`-`は、詳細が利用できないことを意味し、ゼロではないことを示します。 過去の履歴については、一部の費用内訳に現在の料金が適用されていますが、過去の合計額は引き続き保存されています。[Billing](/ja/billing)を参照してください。
 
-対応経路のClaudeでは、静的ブロックに `cache_control` を付けます。この指定だけでヒットするわけではなく、モデルと上流の条件を満たす必要があります。
+<a id="menyusun-prompt"></a>
+
+<a id="プロンプトの配置"></a>
+
+## プロンプトの作成
+
+静的なコンテンツを先に配置してください：ツールの定義、システムプロンプト／ドキュメント、そして古いメッセージの順です。最新のユーザーメッセージや変更された値は、その後に配置してください。プレフィックスの変更（タイムスタンプやツールの順序を含む）は、キャッシュミスを引き起こす可能性があります。
+
+Claudeが対応している環境では、静的ブロックに`cache_control`を設定してください。この指定はキャッシュヒットを強制するものではありません。ブロックは引き続き、モデルおよびアップストリームの要件を満たす必要があります。
 
 ## Anthropic Messages
 
-`system` ブロックに `cache_control` を付ける例です：
+以下の例では、`system`ブロック内で`cache_control`を使用しています：
 
 ```bash
 curl https://api.hostlinku.com/v1/messages \
@@ -32,10 +40,10 @@ curl https://api.hostlinku.com/v1/messages \
     "max_tokens": 1024,
     "system": [{
       "type": "text",
-      "text": "<変更しない長い指示と参考文書>",
+      "text": "<instruksi panjang dan dokumen referensi yang tidak berubah>",
       "cache_control": {"type": "ephemeral"}
     }],
-    "messages": [{"role": "user", "content": "第3節を要約してください。"}]
+    "messages": [{"role": "user", "content": "Ringkas bagian 3."}]
   }'
 ```
 
@@ -52,11 +60,13 @@ curl https://api.hostlinku.com/v1/messages \
 }
 ```
 
-`cache_creation_input_tokens` は書き込み、`cache_read_input_tokens` は読み取りのトークン数です。読み取りがゼロより大きければ、上流がキャッシュ使用を報告しています。キャッシュの条件を満たさない場合や情報がない場合、両方ともゼロになることがあります。
+`cache_creation_input_tokens`はキャッシュ書き込みをカウントし、`cache_read_input_tokens`はキャッシュ読み取りをカウントします。ゼロより大きい読み取り値は、アップストリームから報告されたキャッシュの使用を示します。リクエストがキャッシュの条件を満たさない場合、またはキャッシュ情報が利用できない場合は、両方がゼロになることがあります。
 
-## OpenAI Chat Completions
+<a id="openai-chat-completions"></a>
 
-Claudeモデルでは、bridgeがcontent partの `cache_control` をAnthropicブロックへ転送します：
+## OpenAIチャット補完
+
+Claudeモデルでは、ブリッジがコンテンツパートの`cache_control`をAnthropicブロックに転送します：
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -67,26 +77,34 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [
       {"role": "system", "content": [{
         "type": "text",
-        "text": "<変更しない長い指示と参考文書>",
+        "text": "<instruksi panjang dan dokumen referensi yang tidak berubah>",
         "cache_control": {"type": "ephemeral"}
       }]},
-      {"role": "user", "content": "第3節を要約してください。"}
+      {"role": "user", "content": "Ringkas bagian 3."}
     ]
   }'
 ```
 
-Chat Completionsの `usage.prompt_tokens` にはキャッシュトークンが含まれます。`usage.prompt_tokens_details.cached_tokens` は読み取り、`cache_write_tokens` は情報がある場合の書き込み数です。キャッシュトークンを `prompt_tokens` に再度足さないでください。
+「Chat Completions」形式では、`usage.prompt_tokens`にはキャッシュトークンが含まれています。`usage.prompt_tokens_details.cached_tokens`はキャッシュの読み取りを、`cache_write_tokens`はキャッシュの書き込み（利用可能な場合）をカウントします。キャッシュトークンを`prompt_tokens`に再度加算しないでください。
 
-## Agentとその他のプロトコル
+<a id="agent-dan-protokol-lain"></a>
 
-すでに `cache_control` を付けるアプリはHostlinku経由でも利用できますが、挙動はアプリのバージョンとモデルに依存します。[IDE・Agent統合](/ja/integrations)を参照してください。他のモデルは指定なしで上流の自動キャッシュを利用する場合がありますが、ヒットと使用量の報告はモデルごとに異なります。
+<a id="agentとその他のプロトコル"></a>
 
-`/v1/responses` のChat Completions bridgeは、現在 `cache_control` の明示指定を提供していません。native／上流経路の自動キャッシュと報告されるトークン数はモデルに依存します。上記のClaude指定には `/v1/messages` または `/v1/chat/completions` を使ってください。
+## エージェントおよびその他のプロトコル
 
-## ヒットの確認
+`cache_control` を設定済みのアプリケーションは、Hostlinku にリダイレクトされた際にこれを利用できます。動作はアプリケーションのバージョンやモデルによって異なります。[IDE およびエージェントの統合](/integrations) を参照してください。他のモデルでは、この設定なしでもアップストリームの自動キャッシュを利用できますが、ヒット数やレポートはモデルごとに異なります。
 
-1. モデルの条件を満たすプロンプトを送り、**Logs** のCache Write/Readを確認します。
-2. 上流のキャッシュ有効期間内に同じprefixを再送し、Cache Readを確認します。
-3. 同じモデル、Service Mode、出力の長さで比較します。出力トークン数も費用差に影響します。
+`/v1/responses` は、Chat Completions ブリッジにおいて `cache_control` の明示的なマーカーをまだ提供していません。自動キャッシュおよびネイティブ/アップストリームから報告されるキャッシュトークンは、引き続きモデルに従います。上記の例における Claude のマーカーについては、`/v1/messages` または `/v1/chat/completions` を使用してください。
 
-Cache Readがゼロのままなら、prefix、ブロックサイズ、モデル対応、有効期間を確認してください。使用量の情報が想定と違う場合は[サポート](/ja/support)を参照してください。
+<a id="memeriksa-cache-hit"></a>
+
+<a id="ヒットの確認"></a>
+
+## キャッシュヒットの確認
+
+1. モデル要件を満たすプロンプトを送信し、**Logs**でキャッシュの書き込み/読み取りを確認してください。
+2. アップストリームのキャッシュ期間内に同じプレフィックスを送信し、Cache Readが設定されているか確認してください。
+3. 「request」を、モデル、サービスモード、および出力長が同じものと比較してください。コストの差は、キャッシュだけでなく、出力トークンにも影響されます。
+
+Cache Readがゼロのままの場合は、プレフィックス、ブロックサイズ、モデルのサポート状況、およびキャッシュの有効期間を確認してください。使用状況に関する情報が一致しない場合は、[ヘルプ](/ja/support)を参照してください。

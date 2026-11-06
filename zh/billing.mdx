@@ -1,58 +1,78 @@
 ---
 title: "计费与余额"
-description: "充值、查看使用费用、下载发票。"
+description: "为组织充值。查看使用费用。下载发票。"
 icon: credit-card
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-Hostlinku使用预付信用额度。**1 <CreditIcon /> = $1**。关联API密钥共享组织的服务信用余额。退款遵循 [退款政策](/zh/legals/refund-policy)。
+Hostlinku 使用预付信用额。**1 <CreditIcon /> = $1**。组织余额由相关 API 密钥共享，属于服务信用额。退款遵循 [退款政策](/zh/legals/refund-policy)。
 
-## 充值
+<a id="isi-saldo"></a>
 
-1. 打开 [Console](https://console.hostlinku.com) → **Billing** → 充值。
-2. 选择金额或预设套餐和方式。
-3. VA选择银行，加密货币选择币种/网络。
-4. 检查总额、奖励、汇率、费用后按指示付款。验证后自动到账。
+<a id="tambah-saldo-organisasi"></a>
 
-| 方式 | 提供商 | 页面 |
+<a id="充值"></a>
+
+## 增加组织余额
+
+1. 打开 [Console](https://console.hostlinku.com) → **计费** → 充值。
+2. 选择金额或预设值，然后选择支付方式。
+3. 对于虚拟账户（VA），请选择“银行”；对于加密货币，请选择“币种/网络”。
+4. 请核对总金额、奖励、汇率和费用，然后按照说明付款。付款验证通过后，积分将自动到账。
+
+| 方法 | 提供商 | 页面 |
 |---|---|---|
-| QRIS | iPaymu Direct | Hostlinku Pay，印尼盾QR |
-| Virtual Account | iPaymu Direct | Hostlinku Pay，银行VA号码 |
-| 加密货币 | Heleket | Heleket付款页面 |
+| QRIS | iPaymu Direct | Hostlinku Pay、印尼盾二维码 |
+| 虚拟账户 | iPaymu Direct | Hostlinku Pay、虚拟账户（VA）银行账号 |
+| 加密 | Heleket | Heleket 支付页面 |
 
-最低、最高金额和可用方式遵循付款摘要。加密货币付款账单默认 **20分钟**，提供商可能延长。链接有效期与付款期限不同，请遵循显示期限；链接失效时从Billing重新打开交易。
+最低值、最高值和可用方法请参照付款摘要。加密货币付款发票的默认有效期为**20分钟**；服务提供商可延长该时限。链接有效期与付款截止时间不同：请遵循显示的截止日期，若链接失效，请从“计费”页面重新开启交易。
 
-Pay链接无需登录即可访问一笔交易，请私密保管。历史交易仍可能有NOWPayments/BlockBee链接。
+Pay 链接无需登录即可用于单笔交易。请妥善保管该链接。NOWPayments/BlockBee 链接仍可能出现在旧交易中。
+
+<a id="biaya-penggunaan"></a>
 
 ## 使用费用
 
-价格取决于模型和 **密钥Service Mode**。查看 [模型目录](/zh/models)、Console的 **Models** 或目标密钥的 `GET /v1/models`。
+价格取决于模型和**服务模式密钥**。请查阅[模型目录](/zh/models)、Console中的**Models**，或使用将要使用的密钥调用 `GET /v1/models`。
 
-| 维度 | 价格单位 |
+| 维度 | 单价 |
 |---|---|
-| 输入、输出、缓存读写 | 每100万Token |
-| 网页搜索（可用时） | 每1000次调用 |
+| 输入、输出、缓存读/写 | 每 100 万个令牌 |
+| 网络搜索（如有） | 每 1K 次调用 |
 
-缓存Token属于输入，不会作为普通输入重复计费。按上游usage结算；usage缺失时可能估算。
+Token缓存属于输入项，不再作为常规输入进行计数。计费采用上游使用量；若使用量不可用，费用可采用估算值。
 
-- **非流式chat**：费用显示于 `hostlinku.cost`。
-- **SSE流式**：完成后在 **Logs / Analytics / Billing** 查看最终费用。
+- **非流式聊天**：费用显示在 `hostlinku.cost` 上。
+- **流式传输 SSE**：流传输完成后，请在 **日志 / 分析 / 计费** 中查看最终费用。
 
-## 可用余额与密钥限额
+<a id="saldo-tersedia-dan-limit-key"></a>
 
-`available = balance − reserved`。进行中的请求暂时预留余额，结束后结算。
+<a id="可用余额与密钥限额"></a>
 
-充值增加组织余额，不改变密钥 **Monthly Spending Limit**。收到 `402 PAYMENT_REQUIRED` 时阅读消息，按需充值、等待重置或修改密钥限额。参阅 [身份验证](/zh/authentication)。
+## 可用余额和限额密钥
 
-## 交易与发票
+`available = balance − reserved`。部分余额会暂时为正在执行的请求预留。请求完成后，将计算使用费用，并释放剩余的预留额度。
 
-**Billing** 展示交易及已付款充值的发票，可用浏览器打印/保存PDF。Pay发票需要有效链接和已付款交易。
+Top-up 用于增加组织余额，而非 **Monthly Spending Limit** 密钥。若收到 `402 PAYMENT_REQUIRED` 响应，请检查消息：若余额不足则补充余额，或若已达到限额则等待重置/修改限额密钥。详情请参阅 [身份验证](/zh/authentication)。
 
-**Billing Profile** 存储于浏览器并影响Console打印件。未同步至其他设备或服务器发票，Pay详情可能不同。
+<a id="transaksi-dan-invoice"></a>
 
-请在Console监控余额。当前Billing没有自动充值或低余额邮件设置。
+<a id="交易与发票"></a>
 
-## 历史费用与analytics明细
+## 交易和发票
 
-已计费请求总额保存在日志中。部分输入、输出和缓存明细按当前价格重新计算，可能与历史总额不同。展示明细的变化不会对旧请求再次计费。
+打开**Billing**查看交易记录和已支付的充值发票。通过浏览器打印或保存PDF文件。Pay链接生成的发票需要有效的链接且交易状态为已支付。
+
+**计费配置文件**存储在浏览器中，并会影响 Console 生成的发票内容。该配置文件尚未与其他设备或发票服务器同步；Pay 发票可能显示不同的详细信息。
+
+在 Console 中查看余额。自动充值和低余额提醒邮件功能在当前的计费流程中尚不可用。
+
+<a id="biaya-historis-dan-rincian-analytics"></a>
+
+<a id="历史费用与analytics明细"></a>
+
+## 历史费用和分析详情
+
+已计费的请求总费用会保存在日志中。部分输入/输出/缓存明细会根据当前费率重新计算，因此明细可能与历史总计有所不同。明细显示方式的变更不会对旧请求重新计费。

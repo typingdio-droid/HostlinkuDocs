@@ -6,11 +6,18 @@ icon: workflow
 
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Xum](https://xum.cdr.dev/config/providers) (formerly **Mux**) runs multiple coding agents in parallel, each with its own isolated workspace, from your desktop or browser. Xum supports **custom providers** with your choice of API format-the cleanest way to add Hostlinku without changing the default OpenAI/Anthropic provider.
+[Xum](https://xum.cdr.dev/config/providers) (formerly **Mux**) runs multiple coding agents
+in parallel, each with an isolated workspace, from a desktop or browser. Xum supports
+**custom providers** with your choice of API format—the cleanest way to add Hostlinku without
+changing the built-in OpenAI/Anthropic provider.
 
 <Steps>
 
-### Save the API key to a file
+<a id="simpan-api-key-di-file"></a>
+
+<a id="save-the-api-key-to-a-file"></a>
+
+### Store the API key in a file
 
 ```bash
 mkdir -p ~/.config/hostlinku
@@ -18,7 +25,11 @@ printf '%s' 'sk-your-api-key' > ~/.config/hostlinku/api-key
 chmod 600 ~/.config/hostlinku/api-key
 ```
 
-### Add Hostlinku as a provider
+<a id="tambahkan-provider-hostlinku"></a>
+
+<a id="add-hostlinku-as-a-provider"></a>
+
+### Add the Hostlinku provider
 
 Edit `~/.xum/providers.jsonc` and add a new provider:
 
@@ -43,17 +54,28 @@ Edit `~/.xum/providers.jsonc` and add a new provider:
 }
 ```
 
-For `anthropic-messages`, Xum adds `/v1` on its own, so the base URL is written **without** `/v1`. The provider ID (`hostlinku`, `hostlinku-claude`) must be in lowercase and cannot be the same as the name of the default provider.
+For `anthropic-messages`, Xum adds `/v1` on its own, so the base URL is written **without** `/v1`.
+Provider IDs (`hostlinku`, `hostlinku-claude`) must be lowercase and must not match the names of
+built-in providers.
+
+<a id="pilih-model"></a>
 
 ### Select a model
 
-Open the model picker (or `/model`) and select a model from the **Hostlinku** group. `models` is just a list of suggestions-you can still type in other slugs from the [catalog](/en/models) directly. The request appears in the console → **Request Log**.
+Open the model picker (or `/model`) and select a model from the **Hostlinku** group. `models` is only a list of
+suggestions—other slugs from the [catalog](/en/models) can still be typed directly. Requests appear in the
+console → **Request Log**.
 
 </Steps>
 
-## Alternative: the built-in OpenAI provider
+<a id="alternatif-provider-openai-bawaan"></a>
 
-If you prefer to use only one provider, configure the built-in **OpenAI** provider to use Hostlinku with the Chat Completions wire format (**Settings → Providers → OpenAI**, or in `providers.jsonc`):
+<a id="alternative-the-built-in-openai-provider"></a>
+
+## Alternative: built-in OpenAI provider
+
+If you prefer to use only one provider, configure the default **OpenAI** provider to use Hostlinku via the
+Chat Completions wire format (**Settings → Providers → OpenAI**, or in `providers.jsonc`):
 
 ```jsonc
 {
@@ -65,15 +87,17 @@ If you prefer to use only one provider, configure the built-in **OpenAI** provid
 }
 ```
 
-<Callout type="note" title="Why chatCompletions?">
-OpenAI's default wire format provider is the Responses API, while Responses on Hostlinku are *stateless* ([details](/en/responses)). Chat Completions supports all catalog models-including Claude-without that limitation.
+<Callout type="note" title="Why &quot;chatCompletions&quot;?">
+  OpenAI’s default wire format is the Responses API, while Responses on Hostlinku are
+  *stateless* ([details](/en/responses)). Chat Completions accepts all catalog models—including
+  Claude—without that restriction.
 </Callout>
 
 ## Troubleshooting
 
-| Symptoms | Solutions |
+| Symptoms | Solution |
 |---|---|
 | `401` | The contents of the `apiKeyFile` are incorrect (contain newlines or spaces) or the key has been revoked. |
-| `404` | `anthropic-messages` with a duplicate `/v1` - set the base URL to `https://api.hostlinku.com`. |
-| Provider not displayed | The provider ID contains uppercase letters or periods, or conflicts with a built-in provider name. |
-| `404 model_not_found` | Incorrectly typed slug - copied from `GET /v1/models`. |
+| `404` | `anthropic-messages` with a double `/v1`—write the base URL as `https://api.hostlinku.com`. |
+| "Provider" does not appear | Provider IDs use uppercase letters and periods, or conflict with built-in provider names. |
+| `404 model_not_found` | The "slug" is a typo—copy it from `GET /v1/models`. |

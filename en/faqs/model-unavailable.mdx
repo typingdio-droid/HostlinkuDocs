@@ -1,32 +1,46 @@
 ---
-title: Model unavailable
-description: The difference between 404 and 503, Service Modes, deprecated models, and next steps.
+title: "Model is not available"
+description: "Differences between 404 and 503, Service Mode, deprecated models, and possible actions."
 icon: server-off
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
+<a id="404-atau-503"></a>
+
 ## 404 or 503?
 
-| Status | Code | Meaning | Action |
+| Status | Code | Meaning | Actions |
 |---|---|---|---|
-| 404 | `MODEL_NOT_FOUND` | Slug is not in the catalog | Copy the slug from `GET /v1/models` |
-| 400 | `MODEL_NOT_IN_SERVICE_MODE` | Model exists but not for this key's mode | Change key/mode or pick another model |
-| 503 | `MODEL_UNAVAILABLE` | Model is deprecated/temporarily unavailable | Check `replacement_slug` in the error or catalog |
-| 503 | `UPSTREAM_ERROR` | Temporary upstream issue | Retry with backoff |
+| 404 | `MODEL_NOT_FOUND` | "Slug" is not in the catalog | Retrieve the slug from `GET /v1/models` |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | "Model" exists but is not available for API key mode | Replace "key/mode" or select another model |
+| 503 | `MODEL_UNAVAILABLE` | Deprecated/currently unavailable model | Check `replacement_slug` in the error or catalog |
+| 503 | `UPSTREAM_ERROR` | Temporary disruption in the upstream | Try again with backoff |
 
-## Deprecated models
+<a id="model-deprecated"></a>
 
-Deprecated models no longer appear in `GET /v1/models`. If the error includes a `replacement_slug`, use that slug. See active models in [Models](/en/models).
+<a id="deprecated-models"></a>
 
-## Why did a model disappear from my key?
+## Deprecated model
 
-The catalog can differ by Service Mode. Performance and Low-Cost keys may see different model lists. Check `GET /v1/models` with the correct key, or create a key with the desired mode in Console.
+Deprecated models no longer appear in `GET /v1/models`. If an error message includes `replacement_slug`, use that slug. The list of active models is available at [Models](/en/models).
 
-## Is my request routed automatically?
+<a id="kenapa-model-hilang-dari-key-saya"></a>
 
-For upstream failures, the gateway tries another route before giving up. If the model is not in the catalog or has no active route, the request still fails. Failover never changes the slug you send.
+<a id="why-did-a-model-disappear-from-my-key"></a>
+
+## Why is the model missing from my key?
+
+The catalog may vary by Service Mode. API keys for Performance and Low-Cost can view different lists of models. Check `GET /v1/models` with the correct key, or create a key with the desired mode in the Console.
+
+<a id="apakah-request-otomatis-dialihkan"></a>
+
+<a id="is-my-request-routed-automatically"></a>
+
+## Are requests automatically redirected?
+
+In the event of an upstream outage, the gateway attempts alternative routes before giving up. However, if the model is not available in the catalog or there are no active routes, the request will still fail. Failover does not change the slug you are using.
 
 <Callout type="tip" title="Quick check">
-  Compare the slug with the [model catalog](/en/models), then see [Errors](/en/errors). If it still fails, send the `x-request-id` to [support](/en/support).
+  Compare the slug with the [model catalog](/en/models), then check the error code details in [Error](/en/errors). If it still fails, send the `x-request-id` to [support](/en/support).
 </Callout>

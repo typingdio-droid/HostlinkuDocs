@@ -1,36 +1,44 @@
 ---
-title: Support
-description: Support channels and information for investigating an issue.
+title: "Support"
+description: "Support channels and information for troubleshooting issues."
 icon: life-buoy
 ---
 
+<a id="kanal-dukungan"></a>
+
 ## Support channels
 
-| Channel | Purpose |
+| Channel | Usage |
 |---|---|
-| [halo@hostlinku.com](mailto:halo@hostlinku.com) | Technical, account, and billing questions |
-| [Console](https://console.hostlinku.com) | Balance, API keys, request logs, and audit |
-| [Status](https://status.hostlinku.com) | Ongoing outages and incidents |
+| [halo@hostlinku.com](mailto:halo@hostlinku.com) | Technical questions, accounts, and billing |
+| [Console](https://console.hostlinku.com) | Balance, API key, request logs, and audit |
+| [Status](https://status.hostlinku.com) | Ongoing disruptions and incidents |
 
-A small team answers email as soon as possible on business days (best effort). Incident updates appear on the Status page.
+Emails are answered as soon as possible on business days by a small team (best-effort). Incident updates are posted on the Status page.
 
-## Information to include
+<a id="informasi-untuk-laporan"></a>
 
-1. `x-request-id` if available in the response or Console log.
-2. Time with time zone, endpoint, and model slug.
-3. HTTP status and error body; codes/types differ by [API format](/en/errors).
-4. A minimal reproducible request, with API keys and sensitive data removed.
+<a id="information-to-include"></a>
+
+## Information for reports
+
+1. `x-request-id` if present in Console responses or logs.
+2. Event time with time zone, endpoint, and model slug.
+3. HTTP status codes and error bodies; codes/types vary according to the [API format](/en/errors).
+4. A minimal, reproducible request example, with the API key and sensitive data removed.
 
 ```text
-Time: 2026-11-06 14:32 UTC+7
+Waktu: 2026-11-06 14:32 UTC+7
 Request ID: <x-request-id>
 Endpoint: /v1/chat/completions
 Model: gpt-5-5
 HTTP: 503
 Error: UPSTREAM_TIMEOUT ("The request timed out. Please retry.")
-Notes: Occurred 3 times in the last 10 minutes.
+Catatan: Terjadi 3 kali dalam 10 menit terakhir.
 ```
+
+<a id="masalah-keamanan"></a>
 
 ## Security issues
 
-Send security findings privately to [halo@hostlinku.com](mailto:halo@hostlinku.com) with the subject `[SECURITY]`. Avoid publishing details before they are addressed. Support does not ask for API keys, passwords, or OTP codes; do not include secrets in reports.
+Submit security findings privately to [halo@hostlinku.com](mailto:halo@hostlinku.com) with the subject `[SECURITY]`. Avoid publishing details before they are addressed. The support team does not ask for API keys, passwords, or OTP codes; do not include secrets in your report.

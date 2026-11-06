@@ -1,6 +1,6 @@
 ---
 title: "Billing & Saldo"
-description: "Isi saldo, lihat biaya penggunaan, dan unduh invoice."
+description: "Tambah saldo organisasi. Lihat biaya penggunaan. Unduh invoice."
 icon: credit-card
 ---
 
@@ -8,7 +8,9 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 Hostlinku memakai kredit prabayar. **1 <CreditIcon /> = $1**. Saldo organisasi dipakai bersama oleh API key yang terkait dan merupakan kredit layanan. Pengembalian mengikuti [Refund Policy](/legals/refund-policy).
 
-## Isi saldo
+<a id="isi-saldo"></a>
+
+## Tambah saldo organisasi
 
 1. Buka [Console](https://console.hostlinku.com) → **Billing** → top-up.
 2. Pilih nominal atau preset, lalu metode pembayaran.
@@ -41,7 +43,7 @@ Token cache termasuk input dan tidak dihitung lagi sebagai input biasa. Billing 
 
 ## Saldo tersedia dan limit key
 
-`available = balance − reserved`. Sebagian saldo ditahan sementara untuk request berjalan, lalu diselesaikan setelah request selesai.
+`available = balance − reserved`. Sebagian saldo dicadangkan sementara untuk request yang berjalan. Setelah request selesai, biaya pemakaian dihitung dan sisa reservasi dilepas.
 
 Top-up menambah saldo organisasi, bukan **Monthly Spending Limit** key. Jika menerima `402 PAYMENT_REQUIRED`, periksa pesan: isi saldo jika kurang, atau tunggu reset/ubah limit key jika tercapai. Detail di [Autentikasi](/authentication).
 
@@ -49,7 +51,7 @@ Top-up menambah saldo organisasi, bukan **Monthly Spending Limit** key. Jika men
 
 Buka **Billing** untuk riwayat transaksi dan invoice top-up yang sudah dibayar. Cetak atau simpan PDF melalui browser. Invoice dari tautan Pay memerlukan link valid dan transaksi paid.
 
-**Billing Profile** disimpan di browser dan memengaruhi cetakan Console. Profil belum tersinkron ke perangkat lain atau invoice server; invoice Pay dapat menampilkan detail berbeda.
+**Billing Profile** disimpan di browser dan memengaruhi hasil cetak invoice dari Console. Profil belum tersinkron ke perangkat lain atau invoice server; invoice Pay dapat menampilkan detail berbeda.
 
 Pantau saldo di Console. Pengaturan auto-recharge dan email saldo rendah belum tersedia pada alur Billing aktif.
 

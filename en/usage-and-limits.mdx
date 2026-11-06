@@ -1,76 +1,102 @@
 ---
 title: "Usage & Limits"
-description: "Rate limits, key spending caps, balances, and usage monitoring."
+description: "Rate limit, key spending limit, balance, and usage monitoring."
 icon: gauge
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Usage is constrained by rate limits, key credit caps, and organization balance.
+Usage is limited by rate limits, key credit limits, and organizational balances.
 
-## Shared organization quota
+<a id="kuota-bersama-organisasi"></a>
 
-All API keys and members in the same organization share this quota. Adding keys or using another member account does not increase it.
+<a id="shared-organization-quota"></a>
 
-| Service Mode | Requests/minute | Input tokens/minute | Output tokens/minute |
+## Organization-wide quota
+
+The following quotas are shared by all API keys and members within the same organization. Adding a key or using another member’s account does not increase the quota.
+
+| Service Mode | Requests per minute | `input` tokens per minute | `output` tokens per minute |
 |---|---|---|---|
 | Performance | 600 | 6,500,000 | 200,000 |
 | Low-Cost | 600 | 6,500,000 | 200,000 |
 | Dedicated | 600 | 6,500,000 | 200,000 |
 
+<a id="batas-endpoint-lain"></a>
+
 ## Other endpoint limits
 
-Console, login, and checkout endpoint limits are counted per IP, separately from model usage quotas.
+The limits for the Console, login, and checkout endpoints are calculated per IP address and are separate from the model usage quota.
 
-| Scope | Limit | Grouping |
+| Scope | Limits | Grouping |
 |---|---|---|
-| Console/public endpoints using the general limiter | **120 requests / 60 seconds** | Per IP |
-| Endpoints using the authentication limiter | **30 attempts / 15 minutes** | Per IP |
-| Token-based checkout GET | **90 requests / 60 seconds** | Per IP |
-| Token-based checkout mutations | **15 requests / 60 seconds** | Per IP |
+| Console/public endpoint with a general limiter | **120 requests / 60 seconds** | Per IP |
+| Endpoint with authentication limiter | **30 attempts / 15 minutes** | Per IP |
+| GET checkout with token | **90 requests / 60 seconds** | Per IP |
+| Token-based checkout mutation | **15 requests / 60 seconds** | Per IP |
 
-<Callout type="tip" title="Pause before retrying 429">
+<Callout type="tip" title="Wait before retrying a request that was rejected with a 429 error">
 
-Read reset headers or `Retry-After` when available. Reduce concurrency and use exponential backoff with jitter. Repeated immediate retries do not resolve the limit.
+Check the Reset header or `Retry-After` if available. Reduce concurrency and use exponential backoff with jitter. Repeating requests continuously without a pause will not resolve the limitation.
 
 </Callout>
 
-## API key credit caps
+<a id="limit-kredit-api-key"></a>
 
-The Console form offers **Monthly Spending Limit**. The key-management API also supports `daily`, `weekly`, `monthly`, and total `lifetime`/no reset. Daily windows begin at 00:00 UTC, weekly at Monday 00:00 UTC, and monthly at 00:00 UTC on the first day. See [Authentication](/en/authentication).
+<a id="api-key-credit-caps"></a>
 
-Caps use recorded costs for the key, not token counts. Once reached, subsequent requests return `402 PAYMENT_REQUIRED`. Adding balance does not change a key's cap.
+## API key credit limit
 
-## Balance reservations
+The Console form offers a **Monthly Spending Limit**. The key management API also supports `daily`, `weekly`, `monthly`, and total `lifetime`/non-resetting limits. The daily window begins at 00:00 UTC, the weekly window on Monday at 00:00 UTC, and the monthly window on the 1st at 00:00 UTC. See [Authentication](/en/authentication).
 
-The gateway reserves an estimated cost from organization balance, forwards the request, and settles using upstream usage. It releases the unused reservation. If usage is missing, billing may estimate it. Failures with no billable usage release the reservation.
+The limit is based on the recorded cost for the key, not the number of tokens. Once reached, subsequent requests are rejected with a `402 PAYMENT_REQUIRED` response. Additional balance does not change the key limit.
 
-Balance for new requests is `available = balance − reserved`. Both balance and key caps must allow the request; see [Billing & Balance](/en/billing).
+<a id="reservasi-saldo"></a>
 
-## Monitor in the Console
+<a id="balance-reservations"></a>
+
+## Balance reservation
+
+The gateway reserves an estimated cost from the organization’s balance, forwards requests, and then settles the cost based on upstream usage. The remaining reservation is released. If usage data is unavailable, billing may use the estimate. A failure without billable usage releases the reservation.
+
+The new request balance is `available = balance − reserved`. The balance and key limits must be sufficient; see [Billing & Balance](/en/billing).
+
+<a id="memantau-di-console"></a>
+
+<a id="monitor-in-the-console"></a>
+
+## Monitoring in the Console
 
 | Menu | Data |
 |---|---|
-| **Overview / Analytics** | Requests, tokens, cache, and costs by time range |
-| **Logs** | Model, status, tokens, cost, latency, TTFT, and request details |
-| **API Keys** | Status, Service Mode, expiry, caps, and key usage |
-| **Billing** | Organization balance, top-ups, transactions, invoices |
+| **Overview / Analytics** | Summary of requests, tokens, cache, and costs by time period |
+| **Logs** | Model, status, token, cost, latency, TTFT, and request details |
+| **API Keys** | Status, Service Mode, expiration, limit, and key usage |
+| **Billing** | Organization balance, top-up, transaction, invoice |
 
-Non-streaming chat completions include `hostlinku.cost`. SSE streaming does not guarantee a cost block in chunks; check the final charge in Logs/Analytics/Billing. `x-request-id` helps connect requests with logs.
+Non-streaming chat completion includes `hostlinku.cost`. Streaming SSE does not guarantee cost blocks per chunk; check the final cost via Logs/Analytics/Billing. `x-request-id` helps link requests to logs.
+
+<a id="isi-log-dan-retensi"></a>
 
 ## Log content and retention
 
-Body logging is **off by default**. If enabled by an admin, content is size-limited and credential fields are redacted; body retention defaults to 14 days. Usage/transaction metadata remains stored. See [Privacy](/en/legals/privacy-policy).
+Body logging is **disabled by default**. If enabled by an admin, the content is size-limited and credential fields are filtered; the default body retention period is 14 days. Usage/transaction metadata is still stored. See [Privacy](/en/legals/privacy-policy).
 
-Raw health probe records have a default retention of **30 days** and are cleaned up periodically. Probe retention is separate from 14-day request body retention; usage and transaction metadata is retained.
+Raw health probe data is stored for **30 days** by default, then periodically purged. Request content has a separate retention period of **14 days**. Usage and transaction metadata is retained.
+
+<a id="biaya-historis"></a>
 
 ## Historical costs
 
-Charged totals use stored log values. Some analytics breakdowns are recalculated from tokens and current rates; they may differ from historical totals without charging old requests again.
+The total billed cost continues to use the value stored in the log. Some analytics details are recalculated based on the current token and rates; these details may differ from historical totals without re-billing.
 
-## Understanding 429 and 402
+<a id="arti-429-dan-402"></a>
 
-| Code | Meaning | Action |
+<a id="understanding-429-and-402"></a>
+
+## Meaning of 429 and 402
+
+| Code | Meaning | Actions |
 |---|---|---|
-| `429 RATE_LIMITED` | Request count limit exceeded | Wait for reset, back off, reduce concurrency |
-| `402 PAYMENT_REQUIRED` | Insufficient available balance or key cap reached | Read the message: top up, wait for reset, or adjust the appropriate cap |
+| `429 RATE_LIMITED` | The request limit has been exceeded | Wait for reset, backoff, reduce concurrency |
+| `402 PAYMENT_REQUIRED` | Available balance is insufficient or the key limit has been reached | Read the message: top up balance, wait for reset, or change the appropriate limit |

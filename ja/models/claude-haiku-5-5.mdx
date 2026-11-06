@@ -1,6 +1,6 @@
 ---
 title: "Claude Haiku 5.5"
-description: "AnthropicのClaude Haiku 5.5。カタログのコンテキストは1,000,000トークンです。"
+description: "Anthropic社のClaude Haiku 5.5、カタログコンテキスト1,000,000トークン。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -8,40 +8,50 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | プロパティ | 値 |
 |---|---|
 | プロバイダー | Anthropic |
-| スラッグ | `claude-haiku-5-5` |
+| Slug | `claude-haiku-5-5` |
 | リリース | 2026-10-07 |
-| カタログのコンテキスト | 1,000,000 トークン |
+| カタログの文脈 | 1,000,000 トークン |
 | カタログの最大出力 | 128,000 トークン |
-| Service Mode | Performance, Low-Cost |
+| Service Mode | Performance、Low-Cost |
+
+<a id="kapabilitas"></a>
 
 ## 機能
 
-`text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
+`text`、`streaming`、`tool-calling`、`function-calling`、`json-mode`、`reasoning`、`code-generation`、`multilingual`、`vision`、`image-input`、`multimodal`、`long-context`。
 
-## 料金
+<a id="harga"></a>
 
-**2026年11月6日更新**。[最新価格](https://hostlinku.com/ja/models/claude-haiku-5-5)はAPIキーのService Modeに従います。**1 <CreditIcon /> = \$1**。`—` は料金の記載がないことを示します。料金区分はプロンプトのトークン数で決まります。
+<a id="料金"></a>
 
-| 項目 | 単位 | 料金区分 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+## 価格
+
+**2026年11月6日**更新。 [最新価格](https://hostlinku.com/models/claude-haiku-5-5)は、Service Mode APIキーに基づきます。**1 <CreditIcon /> = \$1**。`—`は、料金が未設定であることを意味します。ティアはプロンプトトークンの数に基づきます。
+
+| 項目 | 単位 | Tier | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
 |---|---|---|---|---|
-| 入力（プロンプト） | 100万トークンあたり | 基本 | 0.084 | 0.01605 |
-| 出力 | 100万トークンあたり | 基本 | 0.42 | 0.08025 |
-| キャッシュ読み取り | 100万トークンあたり | 基本 | 0.0084 | 0.001605 |
-| キャッシュ書き込み（5分） | 100万トークンあたり | 基本 | 0.105 | 0.020063 |
-| キャッシュ書き込み（1時間） | 100万トークンあたり | 基本 | 0.168 | 0.0321 |
-| Web検索 | 1,000回あたり | 基本 | 10.5 | 10.7 |
-| 入力（プロンプト） | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.42 | 0.08025 |
-| 出力 | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 2.1 | 0.40125 |
-| キャッシュ読み取り | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.042 | 0.008025 |
-| キャッシュ書き込み（5分） | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.525 | 0.100313 |
-| キャッシュ書き込み（1時間） | 100万トークンあたり | プロンプト ≥ 100,000 トークン | 0.84 | 0.1605 |
+| 入力（プロンプト） | 1Mトークンあたり | 基本 | 0.084 | 0.01605 |
+| 出力（完了） | 1Mトークンあたり | 基本 | 0.42 | 0.08025 |
+| キャッシュ読み取り | 1Mトークンあたり | 基本 | 0.0084 | 0.001605 |
+| キャッシュ書き込み（5分） | 1Mトークンあたり | 基本 | 0.105 | 0.020063 |
+| キャッシュ書き込み（1時間） | 1Mトークンあたり | 基本 | 0.168 | 0.0321 |
+| Web検索 | 1,000コールあたり | 基本 | 10.5 | 10.7 |
+| 入力（プロンプト） | 1Mトークンあたり | プロンプト：100,000トークン以上 | 0.42 | 0.08025 |
+| 出力（完了） | 1Mトークンあたり | プロンプト：100,000トークン以上 | 2.1 | 0.40125 |
+| キャッシュ読み取り | 1Mトークンあたり | プロンプト：100,000トークン以上 | 0.042 | 0.008025 |
+| キャッシュ書き込み（5分） | 1Mトークンあたり | プロンプト：100,000トークン以上 | 0.525 | 0.100313 |
+| キャッシュ書き込み（1時間） | 1Mトークンあたり | プロンプト：100,000トークン以上 | 0.84 | 0.1605 |
 
-## 対応エンドポイント
+<a id="endpoint-yang-didukung"></a>
 
-| Endpoint | Format | 対応 |
+<a id="対応エンドポイント"></a>
+
+## サポートされているエンドポイント
+
+| エンドポイント | フォーマット | サポート |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 利用可能 |
-| `POST /v1/messages` | Anthropic Messages | ネイティブ |
-| `POST /v1/responses` | OpenAI Responses | 変換（ブリッジ） |
+| `POST /v1/chat/completions` | OpenAIチャット補完 | 利用可能 |
+| `POST /v1/messages` | Anthropic Messages | native |
+| `POST /v1/responses` | OpenAIの応答 | adapted (bridge) |
 
-[互換性の制限](/ja/api-reference#モデルとツールの互換性)。
+[互換性の制限](/ja/api-reference#kompatibilitas-model-dan-tool).

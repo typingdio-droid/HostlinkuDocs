@@ -1,15 +1,18 @@
 ---
-title: "流式传输模式"
-description: "如何在 Hostlinku 和 OpenAI SDK 上使用 SSE 流式传输，以及 Python requests、curl 和 Node.js。"
+title: "流模式"
+description: "如何在 Hostlinku 上使用 OpenAI SDK、Python requests、curl 和 Node.js 进行 SSE 流式传输。"
 icon: radio
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-流模式通过 SSE（`text/event-stream`）以Token为单位发送答案。模型开始回答时即可显示Token，无需等待整段答案；首个Token的等待时间取决于模型和提供商。使用 `"stream": true` 启用此模式。
+流模式通过 SSE（`text/event-stream`）以单个令牌为单位发送响应。令牌可在模型开始响应时显示，无需等待整个响应完成；第一个令牌出现的时间取决于模型和提供商。通过 `"stream": true` 启用该模式。
 
-## 简述：curl
+<a id="ringkas-curl"></a>
+
+<a id="简述curl"></a>
+
+## 简写：curl
 
 ```bash
 curl -N https://api.hostlinku.com/v1/chat/completions \
@@ -17,14 +20,14 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{ "role": "user", "content": "从1数到5。" }],
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
     "stream": true
   }'
 ```
 
-`-N` 标志很重要：如果没有该标志，curl 会将输出暂存，直到缓冲区已满或流结束。
+`-N` 标志很重要：如果没有它，curl 会暂停输出，直到缓冲区已满或流结束。
 
-片段格式：
+分段格式：
 
 ```text
 data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content":"1"}}]}
@@ -32,7 +35,9 @@ data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content
 data: [DONE]
 ```
 
-## Python - SDK OpenAI
+<a id="python---sdk-openai"></a>
+
+## Python - OpenAI SDK
 
 ```python
 from openai import OpenAI
@@ -44,7 +49,7 @@ client = OpenAI(
 
 stream = client.chat.completions.create(
     model="gpt-5-5",
-    messages=[{"role": "user", "content": "写一个简短段落。"}],
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
     stream=True,
 )
 for chunk in stream:
@@ -55,7 +60,7 @@ for chunk in stream:
 
 ## Python - requests
 
-在请求中使用 `stream=True`，并读取 `iter_lines()`。收到 `data: [DONE]` 时停止。
+在请求中使用 `stream=True`，并调用 `iter_lines()`。收到 `data: [DONE]` 时停止。
 
 ```python
 import json
@@ -69,7 +74,7 @@ response = requests.post(
     },
     json={
         "model": "gpt-5-5",
-        "messages": [{"role": "user", "content": "你好！"}],
+        "messages": [{"role": "user", "content": "Halo!"}],
         "stream": True,
     },
     stream=True,
@@ -92,7 +97,9 @@ for line in response.iter_lines():
         print(delta, end="", flush=True)
 ```
 
-## Node.js - SDK OpenAI
+<a id="nodejs---sdk-openai"></a>
+
+## Node.js - OpenAI SDK
 
 ```js
 import OpenAI from "openai";
@@ -104,7 +111,7 @@ const client = new OpenAI({
 
 const stream = await client.chat.completions.create({
   model: "gpt-5-5",
-  messages: [{ role: "user", content: "你好！" }],
+  messages: [{ role: "user", content: "Halo!" }],
   stream: true,
 });
 
@@ -114,13 +121,17 @@ for await (const chunk of stream) {
 }
 ```
 
-## 备注 Hostlinku
+<a id="catatan-hostlinku"></a>
 
-- `x-request-id` 标头仍会在流响应中发送。
-- 如果流在传输过程中失败，网关会发送 `data: {"error": {...}}` 事件，并且**不会**发送虚假的 `[DONE]` 事件。
-- 费用将根据流式响应结束后实际的使用量计算；如果无法获取实际使用量，则按预留量的预估值计费。
-- 请勿在反向代理或CDN中缓存响应。请原样转发`text/event-stream`。
+<a id="备注-hostlinku"></a>
 
-<Callout type="tip" title="什么时候适合使用流式传输？">
-对于需要快速响应的聊天应用或agent，请使用 `stream: true`。对于不显示进度条的批处理/任务，非流式处理更为简单。
+## Hostlinku 注释
+
+- 在流式响应中仍需发送 `x-request-id` 标头。
+- 如果流在中间失败，网关会发送事件 `data: {"error": {...}}`，而**不会**发送虚假的 `[DONE]`。
+- 费用根据流结束后的实际使用量计算；如果无法获取实际使用量，则按预留量估算进行计费。
+- 请勿在反向代理或 CDN 中缓存响应。请原样转发 `text/event-stream`。
+
+<Callout type="tip" title="何时适合进行流媒体传输？">
+  对于需要快速响应的聊天或客服应用，请使用 `stream: true`。对于不显示进度条的批处理/任务，非流式处理更为简单。
 </Callout>

@@ -1,14 +1,16 @@
 ---
 title: "はじめに"
-description: 最初のリクエストと次に読むガイド
+description: "最初のリクエストを送信し、次のガイドを選択してください"
 icon: house
 ---
 
-HostlinkuはOpenAI Chat Completions、Anthropic Messages、Responses APIを1つのゲートウェイで提供します。APIキーには**Performance**、**Low-Cost**、**Dedicated**のService Modeが設定され、そのモードに応じたモデルと料金を利用できます。
+Hostlinkuは、1つのゲートウェイを通じてOpenAI Chat Completions、Anthropic Messages、およびResponses APIを提供しています。APIキーは、サービスモード**Performance**、**Low-Cost**、または**Dedicated**に紐付けられており、モデルと価格はそれぞれのモードに従います。
+
+<a id="request-pertama"></a>
 
 ## 最初のリクエスト
 
-[Console](https://console.hostlinku.com)で登録し、組織の残高をチャージしてAPIキーを作成してください。キーのモデル一覧からslugを選び、必要に応じて例を変更します。[クイックスタート](/ja/getting-started)。
+[Console](https://console.hostlinku.com) に登録し、組織の残高を補充してから、APIキーを作成してください。以下の例では、キーカタログのモデルを使用しています。必要に応じてスラグを変更してください。[完全ガイド](/ja/getting-started)。
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -17,25 +19,27 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -d '{"model":"gpt-5-5","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
+<a id="langkah-berikutnya"></a>
+
 ## 次のステップ
 
 <CardGroup cols={2}>
   <Card title="認証" icon="key" href="/ja/authentication">
-    キー、Service Mode、クレジット上限を管理。
+    キー、サービスモード、およびクレジット制限を管理します。
   </Card>
   <Card title="モデル" icon="box" href="/ja/models">
-    slug、機能、料金を確認。
+    「slug」、「kapabilitas」、「tarif」を選択してください。
   </Card>
-  <Card title="連携" icon="terminal" href="/ja/integrations">
-    SDK、IDE、coding agentを接続。
+  <Card title="統合" icon="terminal" href="/integrations">
+    SDK、IDE、またはコーディングエージェントを連携させてください。
   </Card>
-  <Card title="API Reference" icon="code" href="/ja/api-reference">
-    エンドポイントと形式を選択。
+  <Card title="APIリファレンス" icon="code" href="/ja/api-reference">
+    エンドポイントとリクエスト形式を選択してください。
   </Card>
-  <Card title="課金と残高" icon="credit-card" href="/ja/billing">
-    チャージと使用料金を確認。
+  <Card title="請求と残高" icon="credit-card" href="/ja/billing">
+    残高を確認し、利用料金を確認してください。
   </Card>
-  <Card title="使用状況と制限" icon="gauge" href="/ja/usage-and-limits">
-    組織共有の利用枠と429を理解。
+  <Card title="使用方法と制限" icon="gauge" href="/ja/usage-and-limits">
+    共有クォータと429エラーの処理について理解しておくこと。
   </Card>
 </CardGroup>

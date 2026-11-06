@@ -1,14 +1,18 @@
 ---
-title: Introduction
-description: Send your first request and choose your next guide
+title: "Introduction"
+description: "Send the first request and select the next guide"
 icon: house
 ---
 
-Hostlinku provides OpenAI Chat Completions, Anthropic Messages, and Responses API through one gateway. Each API key belongs to **Performance**, **Low-Cost**, or **Dedicated** Service Mode; its models and rates follow that mode.
+Hostlinku provides OpenAI Chat Completions, Anthropic Messages, and Responses API through a single gateway. API keys are tied to the **Performance**, **Low-Cost**, or **Dedicated** Service Modes; models and pricing follow those modes.
 
-## Your first request
+<a id="request-pertama"></a>
 
-Register in [Console](https://console.hostlinku.com), top up your organization balance, and create an API key. Use a model from your key’s catalog; replace the example slug when needed. [Full quickstart](/en/getting-started).
+<a id="your-first-request"></a>
+
+## First request
+
+Sign up at [Console](https://console.hostlinku.com), top up your organization’s balance, and then create an API key. The following example uses a model from the key catalog; replace the slug if necessary. [Complete guide](/en/getting-started).
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -17,25 +21,27 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -d '{"model":"gpt-5-5","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
+<a id="langkah-berikutnya"></a>
+
 ## Next steps
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="key" href="/en/authentication">
     Manage keys, Service Mode, and credit limits.
   </Card>
-  <Card title="Models" icon="box" href="/en/models">
-    Choose slugs, capabilities, and rates.
+  <Card title="Model" icon="box" href="/en/models">
+    Select slugs, capabilities, and pricing plans.
   </Card>
-  <Card title="Integrations" icon="terminal" href="/en/integrations">
-    Connect an SDK, IDE, or coding agent.
+  <Card title="Integration" icon="terminal" href="/integrations">
+    Connect the SDK, IDE, or coding agent.
   </Card>
   <Card title="API Reference" icon="code" href="/en/api-reference">
-    Choose an endpoint and request format.
+    Select the endpoint and request format.
   </Card>
   <Card title="Billing & Balance" icon="credit-card" href="/en/billing">
-    Top up and read usage costs.
+    Top up your balance and view usage charges.
   </Card>
   <Card title="Usage & Limits" icon="gauge" href="/en/usage-and-limits">
-    Understand shared quotas and 429 responses.
+    Understand shared quotas and how 429 errors are handled.
   </Card>
 </CardGroup>

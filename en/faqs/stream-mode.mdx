@@ -1,14 +1,18 @@
 ---
-title: Stream Mode
-description: How to use SSE streaming in Hostlinku with the OpenAI SDK, Python requests, curl, and Node.js.
+title: "Stream Mode"
+description: "How to use SSE streaming on Hostlinku with the OpenAI SDK, Python requests, curl, and Node.js."
 icon: radio
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-Stream mode sends the answer token by token over SSE (`text/event-stream`). Tokens can be displayed as the model starts answering, without waiting for the full answer; time to the first token depends on the model and provider. Enable it with `"stream": true`.
+Stream mode sends responses token-by-token via SSE (`text/event-stream`). Tokens can be displayed as soon as the model begins responding, without waiting for the entire response to complete; the timing of the first token depends on the model and provider. Enable it with `"stream": true`.
 
-## Quick start: curl
+<a id="ringkas-curl"></a>
+
+<a id="quick-start-curl"></a>
+
+## Summary: curl
 
 ```bash
 curl -N https://api.hostlinku.com/v1/chat/completions \
@@ -16,12 +20,12 @@ curl -N https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{ "role": "user", "content": "Count from 1 to 5." }],
+    "messages": [{ "role": "user", "content": "Hitung 1 sampai 5." }],
     "stream": true
   }'
 ```
 
-The `-N` flag matters: without it, curl buffers the output until the buffer fills or the stream ends.
+The `-N` flag is important: without it, curl holds output until the buffer is full or the stream is complete.
 
 Chunk format:
 
@@ -30,6 +34,8 @@ data: {"id":"cmpl_…","model":"gpt-5-5","choices":[{"index":0,"delta":{"content
 
 data: [DONE]
 ```
+
+<a id="python---sdk-openai"></a>
 
 ## Python - OpenAI SDK
 
@@ -43,7 +49,7 @@ client = OpenAI(
 
 stream = client.chat.completions.create(
     model="gpt-5-5",
-    messages=[{"role": "user", "content": "Write one short paragraph."}],
+    messages=[{"role": "user", "content": "Tulis satu paragraf pendek."}],
     stream=True,
 )
 for chunk in stream:
@@ -54,7 +60,7 @@ for chunk in stream:
 
 ## Python - requests
 
-Set `stream=True` on the request and read `iter_lines()`. Stop when you receive `data: [DONE]`.
+Use `stream=True` in requests and call `iter_lines()`. Stop when you receive `data: [DONE]`.
 
 ```python
 import json
@@ -68,7 +74,7 @@ response = requests.post(
     },
     json={
         "model": "gpt-5-5",
-        "messages": [{"role": "user", "content": "Hello!"}],
+        "messages": [{"role": "user", "content": "Halo!"}],
         "stream": True,
     },
     stream=True,
@@ -91,6 +97,8 @@ for line in response.iter_lines():
         print(delta, end="", flush=True)
 ```
 
+<a id="nodejs---sdk-openai"></a>
+
 ## Node.js - OpenAI SDK
 
 ```js
@@ -103,7 +111,7 @@ const client = new OpenAI({
 
 const stream = await client.chat.completions.create({
   model: "gpt-5-5",
-  messages: [{ role: "user", content: "Hello!" }],
+  messages: [{ role: "user", content: "Halo!" }],
   stream: true,
 });
 
@@ -113,13 +121,15 @@ for await (const chunk of stream) {
 }
 ```
 
-## Hostlinku notes
+<a id="catatan-hostlinku"></a>
 
-- The `x-request-id` header is still sent on streaming responses.
-- If the stream fails midway, the gateway sends a `data: {"error": {...}}` event and **does not** send a fake `[DONE]`.
-- Billing uses actual usage after the stream ends; if usage is unavailable, the reserved estimate is used.
-- Do not buffer the response in a reverse proxy or CDN. Pass `text/event-stream` through as-is.
+## Hostlinku Notes
 
-<Callout type="tip" title="When should you stream?">
-  For chat or agent apps where responsiveness matters, use `stream: true`. For batch jobs that do not show progress, non-streaming is simpler.
+- The `x-request-id` header is still sent in streaming responses.
+- If a stream fails midway, the gateway sends the event `data: {"error": {...}}` and **does not** send a fake `[DONE]`.
+- Costs are calculated based on actual usage after the stream ends; if usage data is unavailable, billing uses reservation estimates.
+- Do not buffer responses in a reverse proxy or CDN. Forward `text/event-stream` as-is.
+
+<Callout type="tip" title="When is the best time to stream?">
+  For chat or agent applications that require a fast-feeling response, use `stream: true`. For batch/job tasks that do not display progress, non-streaming is simpler.
 </Callout>

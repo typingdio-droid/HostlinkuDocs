@@ -1,25 +1,36 @@
 ---
 title: "Factory Droid"
-description: "~/.factory/settings.json に Hostlinku モデルを customModels として追加し、Droid CLI および Factory デスクトップアプリで使用してください"
+description: "~/.factory/settings.json に Hostlinku モデルを customModels として追加し、Droid CLI および Factory デスクトップアプリケーションで使用してください。"
 icon: bot
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Droid](https://docs.factory.ai/cli/byok/overview) - Factoryのコーディングエージェント - は、**BYOKカスタムモデル**に対応しています。 カスタムモデルは`~/.factory/settings.json`から読み込まれ、Droid CLIおよびFactoryデスクトップアプリで利用可能です（FactoryのWeb/モバイルプラットフォームでは利用できません）。APIキーはローカルに保持され、Factoryサーバーには送信されません。
+[Droid](https://docs.factory.ai/cli/byok/overview) - Factoryのコーディングエージェント - **BYOK
+カスタムモデル**をサポートしています。カスタムモデルは `~/.factory/settings.json` から読み込まれ、Droid CLI および
+Factory デスクトップアプリケーションで利用可能です（Factory のウェブ/モバイルプラットフォームでは利用できません）。API キーはローカルに保持され、
+Factory サーバーには送信されません。
 
 <Steps>
 
-### APIキーを環境変数に保存する
+<a id="simpan-api-key-di-environment"></a>
+
+<a id="apiキーを環境変数に保存する"></a>
+
+### APIキーは環境変数に保存してください
 
 ```bash
 export HOSTLINKU_API_KEY=sk-your-api-key
 ```
 
-`~/.zshrc` / `~/.bashrc` に追加して永続化してください。Droid は `settings.json` から `${HOSTLINKU_API_KEY}` の参照を読み取ります。
+永続化させるために `~/.zshrc` / `~/.bashrc` に追加してください。Droidは `settings.json` から `${HOSTLINKU_API_KEY}`
+を参照します。
 
-### settings.json にモデルを登録する
+<a id="daftarkan-model-di-settingsjson"></a>
+
+<a id="settingsjson-にモデルを登録する"></a>
+
+### settings.jsonにモデルを登録してください
 
 `~/.factory/settings.json` を開く（または作成する）し、`customModels` を追加します：
 
@@ -54,32 +65,47 @@ export HOSTLINKU_API_KEY=sk-your-api-key
 }
 ```
 
-| `provider` | APIの形式 | ベースURL Hostlinku |
+| `provider` | APIのフォーマット | Base URL Hostlinku |
 |---|---|---|
 | `anthropic` | Anthropic Messages | `https://api.hostlinku.com`（`/v1`を除く） |
-| `generic-chat-completion-api` | OpenAI Chat Completions | `https://api.hostlinku.com/v1` |
+| `generic-chat-completion-api` | OpenAIチャット補完 | `https://api.hostlinku.com/v1` |
 
-### Droidでモデルを選択
+<a id="pilih-model-di-droid"></a>
 
-`droid`を実行し、`/model`と入力してから、**Custom models** のセクションでモデルを選択します（`displayName` と同じ名前）。最初のリクエストがコンソールに表示されます → **リクエストログ**。
+<a id="droidでモデルを選択"></a>
+
+### Droidでモデルを選択する
+
+`droid`を実行し、`/model`と入力して、**Custom models**セクションでモデルを選択してください（名前は
+`displayName`に準拠）。最初のリクエストはコンソールの**リクエストログ**に表示されます。
 
 </Steps>
 
-## 知っておくべきこと
+<a id="yang-perlu-diketahui"></a>
 
-<Callout type="tip" title="Anthropic社のモデル「Claude」">
-プロバイダー `anthropic` は Messages API を使用しているため、`cache_control` は転送され、プロンプトのキャッシュが完全に機能します。Droid の `/cost` またはリクエストログの *cache* 列で、その節約効果を確認してください。
+<a id="知っておくべきこと"></a>
+
+## 留意事項
+
+<Callout type="tip" title="Anthropic社のプロバイダー経由のClaudeモデル">
+  プロバイダー `anthropic` は Messages API を使用しているため、`cache_control` が転送され、プロンプトのキャッシュ機能が
+  完全に機能します。Droid の `/cost` またはリクエストログの *cache* 列で、その節約効果を確認してください。
 </Callout>
 
-- **GPTslugおよびその他のモデル**（DeepSeek、GLM、Qwen、Kimi）は、`generic-chat-completion-api`を介して最も互換性が高くなります。Droidの`openai`プロバイダーはResponses APIを使用しています。 HostlinkuはResponsesに対して*ステートレス*でサービスを提供します（[詳細](/ja/responses)）、そのため、迷った場合はChat Completionsを選択してください。
-- **`maxOutputTokens`** [カタログ](/ja/models)に記載されているモデルの出力上限を超えないでください。
-- **ジェネリックプロバイダーのプロンプトキャッシュ**は、ターゲットモデルによって異なります。
+- **GPTおよびその他のモデル**（DeepSeek、GLM、Qwen、Kimi）は、
+  `generic-chat-completion-api` 経由で最も互換性が高いです。Droidの `openai` プロバイダーは Responses API を使用しています。Hostlinku
+  は Responses を *ステートレス* で提供しています ([詳細](/ja/responses)) ため、迷った場合は Chat Completions を選択してください
+  。
+- **`maxOutputTokens`** は、[カタログ](/ja/models)に記載されているモデルの出力制限を超えないようにしてください。
+- **汎用プロバイダー向けのプロンプトキャッシュ**は、対象モデルによって異なります。
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-| 症状 | Solusi |
+| 症状 | 解決策 |
 |---|---|
-| `/model`にモデルが表示されない | JSONが無効、または`provider`の入力ミス - `jq . ~/.factory/settings.json`で確認してください。 |
-| 変数が見つかりませんというエラー | `HOSTLINKU_API_KEY`は、`droid`を実行しているシェルではまだエクスポートされていません。 |
-| すべてのリクエストにおける`404` | ベースURLが入れ替わっています：`anthropic`と`/v1`、`generic-chat-completion-api`と`/v1`。 |
-| `404 model_not_found` | `model`のslugは、`GET /v1/models`と完全に一致している必要があります。 |
+| 「Model」は `/model` には表示されません | JSONが無効、または`provider`のスペルミスがあります。`jq . ~/.factory/settings.json`で確認してください。 |
+| 変数「Error」が見つかりません | `HOSTLINKU_API_KEY`は、`droid`を実行しているシェルではまだエクスポートされていません。 |
+| すべてのリクエストにおける `404` | Base URLが入れ替わっています：`anthropic`には`/v1`がなく、`generic-chat-completion-api`には`/v1`が付いています。 |
+| `404 model_not_found` | `model`は、`GET /v1/models`のスラッグと完全に一致させる必要があります。 |

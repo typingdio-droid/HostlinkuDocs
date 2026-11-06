@@ -1,14 +1,18 @@
 ---
-title: Errors
-description: Error formats by protocol, Hostlinku codes, and how to respond.
+title: "Error"
+description: "Error formats by protocol, Hostlinku codes, and corresponding actions."
 icon: circle-alert
 ---
 
-## Response formats
+<a id="format-respons"></a>
 
-The error format depends on the endpoint. `error.message` explains the problem; use the HTTP status and error code/type for automated handling. Message language can vary by service.
+<a id="response-formats"></a>
 
-**Chat Completions and general endpoints** use Hostlinku codes:
+## Response format
+
+Error formatting follows the endpoint. The `error.message` describes the issue; use HTTP status codes and error codes/types for automated handling. Message language may vary by service.
+
+**Chat Completions and general endpoints** use the Hostlinku code:
 
 ```json
 {
@@ -23,71 +27,79 @@ The error format depends on the endpoint. `error.message` explains the problem; 
 }
 ```
 
-**Anthropic Messages** uses `error.type`, without a Hostlinku code in `error.code`:
+**Anthropic Messages** use `error.type`, without the Hostlinku code in `error.code`:
 
 ```json
 {"type":"error","error":{"type":"invalid_request_error","message":"The request body is invalid."}}
 ```
 
-**OpenAI Responses** uses the OpenAI format with mapped codes:
+**OpenAI Responses** use the OpenAI format and mapped codes:
 
 ```json
 {"error":{"message":"The request body is invalid.","type":"invalid_request_error","param":null,"code":"invalid_request"}}
 ```
 
-Responses mapping examples: `UNAUTHORIZED` → `invalid_api_key`, `MODEL_NOT_FOUND` → `model_not_found`, and 429 errors → `rate_limit_exceeded`. Messages groups these through types such as `authentication_error`, `not_found_error`, and `rate_limit_error`.
+Examples of response mappings: `UNAUTHORIZED` → `invalid_api_key`, `MODEL_NOT_FOUND` → `model_not_found`, and error 429 → `rate_limit_exceeded`. "Messages" are grouped by type, such as `authentication_error`, `not_found_error`, and `rate_limit_error`.
 
-Schema validation returns **422** for Chat Completions and **400** for Messages/Responses. `error.details` is optional; `error.details.issues` identifies invalid fields. Errors before a protocol handler, such as body parsing, request rate limiting, or unknown paths, can use the general Hostlinku format.
+Schema validation uses **422** in Chat Completions, but **400** in Messages/Responses. `error.details` is optional; `error.details.issues` indicates invalid fields. Errors occurring before the protocol handler—such as body parsing, request limitations, or an unknown path—may use the standard Hostlinku format.
 
-## Hostlinku codes
+<a id="kode-hostlinku"></a>
 
-This table covers Hostlinku codes for gateway and general endpoints. Messages/Responses use the mapping above; other account or payment codes can appear on their respective endpoints.
+<a id="hostlinku-codes"></a>
 
-| HTTP | Code | Meaning and action |
+## Hostlinku Code
+
+This table refers to Hostlinku codes for gateways and common endpoints. Messages/Responses use the mapping above; account-specific or other payment codes may appear on the relevant endpoints.
+
+| HTTP | Code | Meaning and actions |
 |---|---|---|
-| 400 | `BAD_REQUEST` | Invalid JSON/parameters, including the model output limit. Correct the request. |
-| 400 | `MODEL_NOT_IN_SERVICE_MODE` | The model is unavailable in the key's Service Mode. Choose from `GET /v1/models` using the same key. |
+| 400 | `BAD_REQUEST` | JSON/parameters cannot be processed, including model output limits. Correct the request. |
+| 400 | `MODEL_NOT_IN_SERVICE_MODE` | The model is not available under the Service Mode key. Select a model from `GET /v1/models` using the same key. |
 | 400 | `UPSTREAM_REJECTED` | The provider rejected the request. Read the sanitized reason and correct the input. |
-| 401 | `UNAUTHORIZED` | Missing, invalid, revoked, or expired authentication. Check the key. |
-| 402 | `PAYMENT_REQUIRED` | Insufficient available balance or key spending limit reached. Check [Billing](/en/billing). |
-| 403 | `FORBIDDEN` | Access denied. Check account permissions. |
-| 404 | `NOT_FOUND` | Path or resource unavailable. Check the URL and ID. |
-| 404 | `MODEL_NOT_FOUND` | Unknown model slug. Check the catalog. |
-| 405 | `METHOD_NOT_ALLOWED` | Incorrect HTTP method. Use a method from the `Allow` header. |
-| 413 | `BAD_REQUEST` | Payload too large. Reduce the body size. |
-| 415 | `BAD_REQUEST` | Unsupported body encoding/charset. Check the body format. |
-| 422 | `VALIDATION_FAILED` | Body/query validation failed. Correct fields in `error.details.issues`. |
-| 429 | `RATE_LIMITED` | Organization quota per Service Mode or endpoint/IP limit reached; upstream can also return rate limiting. Wait and reduce concurrency. |
-| 429 | `MODEL_AT_CAPACITY` | The provider's model capacity is full. Follow retry advice. |
-| 429 | `MODEL_COOLDOWN` | Model deployments are recovering after failures. Follow retry advice. |
-| 500 | `INTERNAL` | Internal error. Save request details and report repeated failures. |
-| 503 | `MODEL_UNAVAILABLE` | Model unavailable or deprecated. Check the catalog and replacements; retry if the outage is temporary. |
-| 503 | `PROVIDER_UNAVAILABLE` | Provider route unavailable. Retry with a delay and a limited attempt count. |
-| 503 | `UPSTREAM_ERROR` | Upstream failure. Retry with a delay and a limited attempt count. |
-| 503 | `UPSTREAM_TIMEOUT` | Upstream timed out. Retry with a delay and a limited attempt count. |
-| 503 | `UPSTREAM_UNREACHABLE` | Upstream unreachable. Retry with a delay and a limited attempt count. |
+| 401 | `UNAUTHORIZED` | Authentication is missing, incorrect, revoked, or expired. Check the key. |
+| 402 | `PAYMENT_REQUIRED` | Available balance is low or the key credit limit has been reached. Check [Billing](/en/billing). |
+| 403 | `FORBIDDEN` | Access denied. Check your account permissions. |
+| 404 | `NOT_FOUND` | Path or resource is not available. Check the URL and ID. |
+| 404 | `MODEL_NOT_FOUND` | There is no model slug. Check the catalog. |
+| 405 | `METHOD_NOT_ALLOWED` | The HTTP method is incorrect. Use the methods listed in the `Allow` header. |
+| 413 | `BAD_REQUEST` | The payload is too large. Reduce the body size. |
+| 415 | `BAD_REQUEST` | Body encoding/charset is not supported. Check the body format. |
+| 422 | `VALIDATION_FAILED` | Body/query validation failed. Correct the fields in `error.details.issues`. |
+| 429 | `RATE_LIMITED` | The organization quota per Service Mode or the endpoint/IP limit has been reached; the upstream may also impose restrictions. Wait and reduce concurrency. |
+| 429 | `MODEL_AT_CAPACITY` | Full model capacity at the provider. Wait for a retry suggestion. |
+| 429 | `MODEL_COOLDOWN` | The deployment model is recovering after a failure. Wait for a retry prompt. |
+| 500 | `INTERNAL` | Internal error. Save the request information and report it if it recurs. |
+| 503 | `MODEL_UNAVAILABLE` | The model is unavailable or deprecated. Check the catalog and replacement models; retry if the outage is indeed temporary. |
+| 503 | `PROVIDER_UNAVAILABLE` | The provider is unavailable. Please try again after a short delay. |
+| 503 | `UPSTREAM_ERROR` | Upstream disruption. Please try again after a short delay. |
+| 503 | `UPSTREAM_TIMEOUT` | Upstream timed out. Please try again after a short delay. |
+| 503 | `UPSTREAM_UNREACHABLE` | Upstream is unreachable. Please try again after a short delay. |
+
+<a id="console-dan-checkout"></a>
 
 ### Console and checkout
 
-These account/checkout codes are separate from the `/v1/*` inference error contract:
+The following code relates to accounts/checkout and not the `/v1/*` inference error contract:
 
-| HTTP | Code | Meaning and action |
+| HTTP | Code | Meaning and actions |
 |---|---|---|
-| 403 | `API_KEY_NOT_ALLOWED` | An API key was used on a Console account endpoint. Use a Console login session. |
-| 409 | `CONFLICT` | The operation conflicts with the current state. Reload the state before retrying. |
-| 424 | `CHECKOUT_FAILED` | The provider failed to create an invoice. Read the message and check the transaction before creating another. |
-| 424 | `BANK_BUSY` | The iPaymu bank/channel is busy. Choose another bank offered by checkout. |
+| 403 | `API_KEY_NOT_ALLOWED` | The API key is used in the Console account endpoint. Use the Console login session. |
+| 409 | `CONFLICT` | The operation conflicts with the current state. Reload the state before trying again. |
+| 424 | `CHECKOUT_FAILED` | The provider failed to generate an invoice. Read the message and check the transaction before retrying. |
+| 424 | `BANK_BUSY` | Your iPaymu bank/channel is currently busy. Please select another bank offered during checkout. |
+
+<a id="retry-dan-streaming"></a>
 
 ## Retry and streaming
 
-When present, `Retry-After` gives the wait in seconds and `retry-after-ms` gives milliseconds. Otherwise, use exponential backoff with jitter and a limited attempt count. Adding keys or member accounts within the same organization does not increase the shared quota; see [Usage & Limits](/en/usage-and-limits).
+If available, `Retry-After` specifies the wait time in seconds and `retry-after-ms` specifies the wait time in milliseconds. If not present, use exponential backoff with jitter and a retry limit. For shared quotas, adding a key or member account to the same organization does not increase the quota; see [Usage & Limits](/en/usage-and-limits).
 
-Once SSE begins, failures are sent as error events within the stream; the initial HTTP status does not change. Chat Completions example:
+Once SSE begins, failures are sent as error events in the stream; the initial HTTP status remains unchanged. Examples of Chat Completions:
 
 ```text
 data: {"error":{"code":"MODEL_AT_CAPACITY","message":"The model is at capacity right now. Please retry shortly.","type":"upstream_error","retry_after_ms":4000}}
 ```
 
-The gateway does not append `[DONE]` after a stream failure it handles. A connection can also close without an error event. `[DONE]` or connection closure alone does not establish success; check error events and request logs. See [Messages](/en/anthropic-messages) and [Responses](/en/responses) for their event formats.
+The gateway does not add `[DONE]` after a stream failure it handles. Connections may also be terminated without an error event. The `[DONE]` marker or the end of a connection alone does not prove success; check for error events and request logs. The format of Messages/Responses events is described in [Messages](/en/anthropic-messages) and [Responses](/en/responses).
 
-When reporting, include `x-request-id` if available, time, endpoint, model, HTTP status, and the error body without secrets. See [Support](/en/support).
+When reporting an issue, include the `x-request-id` if available, the time of the incident, the endpoint, the model, the HTTP status, and the error body without any secrets. See [Support](/en/support).

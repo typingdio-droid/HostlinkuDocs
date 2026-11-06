@@ -1,54 +1,76 @@
 ---
-title: API Reference
-description: Hostlinku端点、认证和指标概览
+title: "API 参考"
+description: "Hostlinku 的端点、身份验证和指标概述"
 icon: code
 ---
 
-网关端点使用API密钥，Console账户的`/api/*`端点使用登录会话。参数、vision、reasoning、cache和tool calling支持取决于模型与协议路径。
+请使用 API 密钥访问网关端点。位于 `/api/*` 下的 Console 账户端点使用登录会话。对参数、视觉、推理、缓存和工具调用的支持应遵循其模型及协议路径。
 
 | 端点 | 用途 | 指南 |
 |---|---|---|
-| `GET /v1/models` | 密钥Service Mode的模型目录 | [Models](/zh/models) |
-| `POST /v1/chat/completions` | 聊天与SSE流式传输 | [Chat Completions](/zh/chat-completions) |
-| `POST /v1/messages` | Anthropic格式消息 | [Anthropic Messages](/zh/anthropic-messages) |
-| `POST /v1/messages/count_tokens` | 免费计算Anthropic格式token数 | [Count tokens](/zh/anthropic-messages) |
-| `POST /v1/responses` | 无状态Responses | [Responses API](/zh/responses) |
+| `GET /v1/models` | 服务模式关键术语目录 | [Models](/zh/models) |
+| `POST /v1/chat/completions` | 聊天和 SSE 流媒体 | [聊天补全](/zh/chat-completions) |
+| `POST /v1/messages` | Anthropic 格式消息 | [Anthropic Messages](/zh/anthropic-messages) |
+| `POST /v1/messages/count_tokens` | 免费计算 Anthropic 格式的令牌 | [计数令牌](/zh/anthropic-messages) |
+| `POST /v1/responses` | 无状态响应 | [API 响应](/zh/responses) |
 
-## Base URL与认证
+<a id="base-url-dan-autentikasi"></a>
 
-OpenAI SDK使用`https://api.hostlinku.com/v1`，Anthropic SDK使用`https://api.hostlinku.com`。网关接受`Authorization: Bearer sk-your-api-key`或`x-api-key`。参见[认证](/zh/authentication)。
+<a id="base-url与认证"></a>
 
-## 模型与工具兼容性
+## 基础 URL 和身份验证
 
-请在支持的端点上使用密钥目录中的slug。格式兼容不保证所有客户端功能。查看[Responses限制](/zh/responses)和[集成指南](/zh/integrations)。
+OpenAI SDK 使用 `https://api.hostlinku.com/v1`；Anthropic SDK 使用 `https://api.hostlinku.com`。网关接受 `Authorization: Bearer sk-your-api-key` 或 `x-api-key`。 请参阅 [身份验证](/zh/authentication)。
+
+<a id="kompatibilitas-model-dan-tool"></a>
+
+<a id="模型与工具兼容性"></a>
+
+## 模型和工具的兼容性
+
+密钥目录中出现的 Slug 可在支持的端点上使用。格式兼容性并不保证每个客户端都能支持所有功能。请检查 [响应](/zh/responses) 的限制以及 [所使用的集成](/integrations)。
+
+<a id="kuota-bersama-organisasi"></a>
 
 ## 组织共享配额
 
-每个Service Mode每分钟有**600请求、6,500,000输入token和200,000输出token**的配额，由组织的所有成员和API密钥共享。登录、Console和checkout另有独立的IP限额。参见[用量与限额](/zh/usage-and-limits)。
+每种服务模式的配额为**每分钟 600 次请求、6,500,000 个输入令牌和 200,000 个输出令牌**，由所有 API 密钥和组织成员共享。登录、Console 和结账各有独立的每 IP 限制。 [使用与限制](/zh/usage-and-limits)。
+
+<a id="error-codes"></a>
 
 ## 错误代码
 
-错误格式随端点而定；到达端点处理器前的错误可能采用Hostlinku通用格式。代码与处理方式见[Error](/zh/errors)，专用格式见[Anthropic Messages](/zh/anthropic-messages)和[Responses](/zh/responses)。
+错误格式遵循端点规范；处理程序之前的失败可使用 Hostlinku 的通用封装格式。错误代码列表及处理方法详见 [Error](/zh/errors)。 特定格式请参见 [Anthropic Messages](/zh/anthropic-messages#format-error) 和 [Responses](/zh/responses#format-error)。
+
+<a id="query-available-models"></a>
 
 ## 查询可用模型
 
-`GET /v1/models`返回密钥Service Mode的模型和价格。网站目录使用`GET /api/public/models-v2`。能力和价格说明见[模型](/zh/models)。
+`GET /v1/models` 返回服务模式密钥对应的模型及其价格。网站目录使用 `GET /api/public/models-v2`。请参阅 [模型](/zh/models) 以了解列表、功能以及如何解读定价。
 
-## 费用与流式传输
+<a id="biaya-dan-streaming"></a>
 
-非流式chat响应包含`hostlinku.cost`和`hostlinku.latencyMs`。流结束后请在Logs / Analytics / Billing查看费用，不要期待每个chunk都包含费用。响应有`x-request-id`时请记录。参见[计费与余额](/zh/billing)。
+<a id="费用与流式传输"></a>
 
-## 指标与示例数值
+## 费用和流媒体
+
+非流式聊天响应包含 `hostlinku.cost` 和 `hostlinku.latencyMs`。流式传输完成后，请在“日志/分析/计费”中查看费用；不要期望每个数据块都会产生费用。如有，请记录 `x-request-id`。 [计费与余额](/zh/billing)。
+
+<a id="arti-metrik-dan-contoh-angka"></a>
+
+<a id="指标与示例数值"></a>
+
+## 指标的含义和数值示例
 
 | 指标 | 含义 |
 |---|---|
-| `hostlinku.latencyMs` | 网关收到请求到响应完成的时间。 |
-| TTFT | 观察到第一个流式 token 的时间；非流式请求可能为空。 |
-| TPS | 符合条件的流式样本中，第一个 token 之后每秒输出 token 数。 |
+| `hostlinku.latencyMs` | 从网关接收请求到响应完成所花费的时间。 |
+| TTFT | 在流中观察到第一个令牌所需的时间；在非流式传输中可以为空。 |
+| TPS | 从符合条件的样本流中，在第一个令牌之后每秒输出的令牌数。 |
 
-- **landing动画**使用固定示例数值，并非动画播放时推理请求的测量结果。
-- **模型详情60柱图**由平均/P95延迟和失败汇总生成。每根柱为合成展示，不代表按时间排序的请求或probe。Console用量图表使用请求数据汇总。
-- **landing页脚徽章**使用固定状态；监控结果与故障请查看[Status](https://status.hostlinku.com)。
-- **Reachable**表示低于500的HTTP响应，包括401/403/404。它说明端点可访问；登录和推理是否成功需分别检查相应功能。
+- **着陆页动画**使用固定的示例数字；动画中的数字并非在播放时根据请求推断得出。
+- **模型详细信息中的 60 根柱状图** 由延迟的平均值/P95 值和故障次数的聚合数据构成。每根柱状图均为综合可视化结果，并非单个请求或连续探针的数据。Console 的使用情况图表使用请求数据的聚合结果。
+- **Badge footer landing** 采用固定状态；请查看 [状态](https://status.hostlinku.com) 以获取监控结果和事件信息。
+- **Reachable** 指 HTTP 响应代码小于 500，包括 401/403/404。此检查用于验证端点的可达性；登录成功与推断结果则通过各自的函数进行验证。
 
-请比较同一时间范围、Service Mode和样本的指标。动画、容量规格、流量汇总和benchmark的数据来源各不相同。
+请比较同一时间段、同一服务模式和同一样本的指标。动画结果、容量规格、流量汇总和基准测试的数据来源各不相同。

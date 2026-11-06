@@ -1,26 +1,34 @@
 ---
-title: 快速入门
-description: 创建API密钥并向Hostlinku发送第一个请求。
+title: "快速入门"
+description: "创建 API 密钥并向 Hostlinku 发送第一个请求。"
 icon: rocket
 ---
 
 import { Steps } from "/snippets/mdx.jsx";
 
-准备好curl和余额，然后按照以下步骤操作。
+准备好 curl 和信用余额，然后按照以下步骤操作。
 
 <Steps>
 
+<a id="masuk-dan-isi-saldo"></a>
+
 ### 登录并充值
 
-打开 [注册](https://api.hostlinku.com/api/auth2/register) 或 [登录](https://api.hostlinku.com/api/auth2/login)。登录由Keycloak处理。在 [Console](https://console.hostlinku.com) 的 **Billing** 中充值后再发送请求。支付方式请参阅 [Billing](/zh/billing)。
+打开 [列表](https://api.hostlinku.com/api/auth2/register) 或 [登录](https://api.hostlinku.com/api/auth2/login)。 登录由 Keycloak 提供支持。在 [控制台](https://console.hostlinku.com) 中，打开 **计费** 并充值后，再发送请求。请参阅 [计费](/zh/billing) 了解支付方式。
 
-### 创建API密钥
+<a id="buat-api-key"></a>
 
-打开 **API Keys → 创建API密钥**，输入名称并选择 **Performance**（默认）、**Low-Cost** 或 **Dedicated**。Service Mode决定模型及价格。复制仅显示一次的 `sk-…` 密钥并保存在服务器环境变量中。有效期、支出限额及通行密钥／2FA设置请参阅 [身份验证](/zh/authentication)。
+<a id="创建api密钥"></a>
+
+### 创建 API 密钥
+
+打开 **API Keys → 创建 API 密钥**，命名后，选择 **Performance**（默认）、**Low-Cost** 或 **Dedicated**。服务模式决定模型和价格。 复制仅显示一次的密钥 `sk-…`，并将其保存在服务器环境中。过期设置、信用额度限制以及密钥/双因素认证（2FA）的说明请参见 [身份验证](/zh/authentication)。
+
+<a id="kirim-request-pertama"></a>
 
 ### 发送第一个请求
 
-使用密钥Service Mode支持的模型。本例使用 `gpt-5-5`；Dedicated密钥或其他模型请从 [`GET /v1/models`](/zh/models) 获取slug。
+请使用“服务模式”密钥的可用模型。以下示例使用 `gpt-5-5`；若使用 Dedicated 密钥或其他选项，请从 [`GET /v1/models`](/zh/models) 获取 slug。
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -28,11 +36,11 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{"role": "user", "content": "你好！请简短介绍自己。"}]
+    "messages": [{"role": "user", "content": "Halo! Perkenalkan dirimu singkat saja."}]
   }'
 ```
 
-非流式响应为JSON。以下为节选示例，Token数、费用和延迟仅作说明：
+非流式响应采用 JSON 格式。以下示例经过截取；token、费用和延迟仅用于说明：
 
 ```json
 {
@@ -41,7 +49,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   "model": "gpt-5-5",
   "choices": [{
     "index": 0,
-    "message": {"role": "assistant", "content": "你好！我是 …"},
+    "message": {"role": "assistant", "content": "Halo! Saya adalah …"},
     "finish_reason": "stop"
   }],
   "usage": {"prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60},
@@ -54,16 +62,20 @@ curl https://api.hostlinku.com/v1/chat/completions \
 }
 ```
 
+<a id="periksa-hasil"></a>
+
 ### 检查结果
 
-在 **Logs** 查看请求Token数、费用和延迟，在 **Billing** 查看组织余额。请求失败时请查看 [错误代码](/zh/errors)。API密钥用于 `/v1/*`；Console账户端点使用登录会话。
+打开 **日志** 可查看令牌、费用和请求延迟；**计费** 显示组织余额。如果请求失败，请检查 [错误代码](/zh/errors)。API 密钥用于 `/v1/*`；Console 账户的端点使用登录会话。
 
 </Steps>
 
+<a id="langkah-berikutnya"></a>
+
 ## 下一步
 
-- [API参考](/zh/api-reference)：选择Chat Completions、Messages或Responses。
-- [SDK与代码示例](/zh/sdk)：Python、TypeScript和流式传输。
-- [IDE与Agent集成](/zh/integrations)：应用及编程Agent指南。
-- [用量与限制](/zh/usage-and-limits)：组织共享配额。
-- [支持](/zh/support)：帮助及报告所需信息。
+- [API 参考](/zh/api-reference)：选择“Chat Completions”、“Messages”或“Responses”。
+- [SDK 和代码示例](/zh/sdk)：Python、TypeScript 和流式处理。
+- [IDE 与代理集成](/integrations)：应用程序和代理编码指南。
+- [使用与限制](/zh/usage-and-limits)：组织共享配额。
+- [支持](/zh/support)：帮助和报告信息。

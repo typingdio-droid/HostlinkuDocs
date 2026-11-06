@@ -1,33 +1,41 @@
 ---
 title: "Muse Wonder"
-description: "Muse Wonder by Meta, with a catalog context window of 1,048,576 tokens."
+description: "Muse Wonder from Meta, with a catalog context of 1,048,576 tokens."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-| Property | Value |
+| Properties | Value |
 |---|---|
 | Provider | Meta |
 | Slug | `muse-wonder-1-0` |
-| Released | 2026-10-14 |
+| Release | 2026-10-14 |
 | Catalog context | 1,048,576 tokens |
-| Catalog max output | Not listed |
+| Max catalog output | Not yet listed |
 | Service Mode | Performance |
+
+<a id="kapabilitas"></a>
 
 ## Capabilities
 
 `text`, `streaming`, `tool-calling`, `function-calling`, `json-mode`, `reasoning`, `code-generation`, `multilingual`, `vision`, `image-input`, `multimodal`, `long-context`.
 
-## Pricing
+<a id="harga"></a>
 
-Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/muse-wonder-1-0) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+<a id="pricing"></a>
+
+## Price
+
+Updated **November 6, 2026**. [Current pricing](https://hostlinku.com/models/muse-wonder-1-0) follows the Service Mode API key. **1 <CreditIcon /> = \$1**. `—` means the rate is not listed. Tiers are based on the number of prompt tokens.
 
 | Item | Unit | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| Input (prompt) | per 1M tokens | Base | 3.36 |
-| Output (completion) | per 1M tokens | Base | 16.8 |
-| Cache read | per 1M tokens | Base | 0.168 |
-| Web search | per 1K calls | Base | 2.625 |
+| Input (prompt) | per 1M tokens | Basics | 3.36 |
+| Output (completion) | per 1M tokens | Basics | 16.8 |
+| Cache read | per 1M tokens | Basics | 0.168 |
+| Web search | per 1K calls | Basics | 2.625 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## Supported endpoints
 
@@ -37,4 +45,4 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/mu
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
+[Compatibility limits](/en/api-reference#kompatibilitas-model-dan-tool).

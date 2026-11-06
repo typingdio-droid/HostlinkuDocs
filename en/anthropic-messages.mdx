@@ -1,6 +1,6 @@
 ---
 title: "Anthropic Messages"
-description: "POST /v1/messages endpoint reference (Anthropic-compatible) - use the Anthropic SDK, Claude Code, or Cursor with your Hostlink API key"
+description: "Reference endpoint POST /v1/messages (Anthropic-compatible) — use the Anthropic SDK, Claude Code, or Cursor with the Hostlinku API key"
 icon: message-square
 ---
 
@@ -8,7 +8,10 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-In addition to the OpenAI format, Hostlinku also provides endpoints compatible with the [Anthropic Messages API](https://docs.anthropic.com/en/api/messages). The official Anthropic SDK, **Claude Code**, Cursor, Cline, and other tools that support the Anthropic protocol can be used simply by changing the base URL-one API key and one Hostlinku balance cover both formats.
+In addition to the OpenAI format, Hostlinku also provides endpoints compatible with
+[Anthropic Messages API](https://docs.anthropic.com/en/api/messages). The official Anthropic SDK,
+**Claude Code**, Cursor, Cline, and other tools that support the Anthropic protocol can be used simply
+by changing the base URL—one API key and one Hostlinku balance work for both formats.
 
 ```http
 POST https://api.hostlinku.com/v1/messages
@@ -17,15 +20,21 @@ anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
 
-Authentication accepts the `x-api-key` header (Anthropic style) **or** `Authorization: Bearer sk-…`. Successful responses include `request-id` / `x-request-id` (Hostlinku request ID, in the format `msg_…`); successful non-streaming responses also include `x-model`. Errors before the handler may omit these IDs.
+Authentication accepts the `x-api-key` header (Anthropic style) **or** `Authorization: Bearer sk-…`.
+Successful responses include the `request-id` / `x-request-id` header (Hostlinku request ID, `msg_…` format); non-streaming successful responses also include `x-model`. Errors occurring before the handler may not include these IDs.
 
 <Callout type="note" title="Any model, not just Claude">
-`model` uses the same Hostlinku public slug as the [model catalog](/en/models) - e.g., `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Non-Claude models can still be invoked via the Anthropic format; the gateway handles the translation.
+  `model` uses the same Hostlinku public slug as the [model catalog](/en/models) —
+  e.g., `claude-sonnet-4-6`, `gpt-5-5`, `deepseek-v4-flash`. Non-Claude models can still be called
+  via the Anthropic format; the gateway handles the translation.
 </Callout>
+
+<a id="konfigurasi-cepat"></a>
 
 ## Quick Setup
 
-Step-by-step guides for each tool (Claude Code, Cline, and others) are available at [IDE & Agent Integration](/en/integrations).
+Step-by-step guides for each tool (Claude Code, Cline, and others) are available at
+[IDE & Agent Integrations](/integrations).
 
 **Claude Code**
 
@@ -36,7 +45,7 @@ export ANTHROPIC_MODEL=claude-sonnet-4-6
 claude
 ```
 
-**Python (Anthropic's official SDK)**
+**Python (Anthropic’s official SDK)**
 
 ```python
 import anthropic
@@ -68,24 +77,29 @@ const msg = await client.messages.create({
 });
 ```
 
-## Body Parameters
+<a id="parameter-body"></a>
 
-| Parameter | Type | Description |
+## Body parameters
+
+| Parameter | Type | Notes |
 |---|---|---|
 | `model` | `string` | **Required.** Hostlinku model slug. |
-| `messages` | `array` | **Required.** `{ role: "user" \| "assistant", content }`; `content` is a string or an array of blocks (`text`, `image`, `tool_use`, `tool_result`, …). |
-| `max_tokens` | `integer` | **Required** (as per the Anthropic specification). Returns a `400` error if the model's output limit is exceeded. |
-| `system` | `string` \| `array` | System prompt; block arrays support `cache_control`. |
+| `messages` | `array` | **Required.** `{ role: "user" \| "assistant", content }`; `content` is a string or block array (`text`, `image`, `tool_use`, `tool_result`, …). |
+| `max_tokens` | `integer` | **Required** (as per Anthropic specifications). A `400` error is returned if the model’s output limit is exceeded. |
+| `system` | `string` | `array` | System prompt; the block array supports `cache_control`. |
 | `stream` | `boolean` | `true` for SSE (see below). |
 | `temperature` | `number` | `0`–`1`. |
-| `top_p`, `top_k` | `number`, `integer` | Alternative sampling. |
-| `stop_sequences` | `string[]` | Maximum of 16. |
-| `tools`, `tool_choice` | `array`, `any` | Uses the Anthropic tool format (including `input_schema`). |
+| `top_p`, `top_k` | `number`, `integer` | Alternative examples. |
+| `stop_sequences` | `string[]` | Maximum 16. |
+| `tools`, `tool_choice` | `array`, `any` | Use the Anthropic format (including `input_schema`). |
 | `thinking` | `object` | Extended thinking, e.g., `{ "type": "enabled", "budget_tokens": 1024 }`. |
 | `metadata` | `object` | E.g., `{ "user_id": "…" }`. |
 | `mcp_servers`, `context_management`, `output_format` | - | Passed through as-is (depending on model support). |
 
-Fields not in the list are discarded. An invalid body results in a `400 invalid_request_error` response, with details for each field in `error.details.issues`.
+Fields not on the list are discarded. Invalid bodies are rejected with a `400 invalid_request_error` response, with
+details per field in `error.details.issues`.
+
+<a id="respons-non-streaming"></a>
 
 ## Non-streaming response
 
@@ -95,7 +109,7 @@ Fields not in the list are discarded. An invalid body results in a `400 invalid_
   "type": "message",
   "role": "assistant",
   "model": "claude-haiku-4-5",
-  "content": [{ "type": "text", "text": "An API gateway is …" }],
+  "content": [{ "type": "text", "text": "API gateway adalah …" }],
   "stop_reason": "end_turn",
   "stop_sequence": null,
   "usage": {
@@ -109,15 +123,19 @@ Fields not in the list are discarded. An invalid body results in a `400 invalid_
 }
 ```
 
-`id` and `model` are always Hostlinku's public identifiers. The `hostlinku` block is an extension (the Anthropic SDK ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency.
+`id` and `model` are always Hostlinku’s public identifiers. The `hostlinku` block is an extension (the Anthropic SDK
+ignores it) containing the cost <CreditIcon />, Service Mode API key, and latency.
 
 <Callout type="note" title="Anthropic usage conventions">
-According to Anthropic's specifications, `input_tokens` **does not** include cache tokens; cache tokens are reported separately in `cache_read_input_tokens` / `cache_creation_input_tokens`. Hostlinku’s billing calculates all three at their respective rates-identical to the `/v1/chat/completions` endpoint (see [Billing](/en/billing)).
+  According to Anthropic’s specifications, `input_tokens` **does not** include cache tokens; cache tokens are reported
+  separately in `cache_read_input_tokens` / `cache_creation_input_tokens`. Hostlinku billing calculates
+  all three at their respective rates—identical to the `/v1/chat/completions` endpoint
+  (see [Billing](/en/billing)).
 </Callout>
 
 ## Streaming (`stream: true`)
 
-The gateway streams SSE events using the Anthropic framing (`event:` + `data:`):
+The gateway streams SSE events using Anthropic framing (`event:` + `data:`):
 
 ```text
 event: message_start
@@ -141,11 +159,14 @@ data: {"type":"message_stop"}
 
 Note:
 
-- Final usage is recorded in `message_delta`; charges are calculated based on actual usage after `message_stop`.
-- If the stream fails midway, the gateway sends an `event: error` with
-`{"type":"error","error":{"type":…,"message":…}}` and **do not** send a fake `message_stop`.
-- Errors occurring before the first byte (insufficient balance, model not found, rate limit) are returned as
-A standard JSON response with the correct HTTP status code - the Anthropic SDK maps it to an exception (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+- Final usage is recorded in `message_delta`; costs are calculated based on actual usage after `message_stop`.
+- If a stream fails midway, the gateway sends `event: error` with
+  `{"type":"error","error":{"type":…,"message":…}}` and **does not** send a fake `message_stop`.
+- Errors occurring before the first byte (out of balance, model not found, rate limit) are returned as
+  standard JSON responses with the correct HTTP status—the Anthropic SDK maps these to exceptions
+  (`AuthenticationError`, `NotFoundError`, `RateLimitError`, …).
+
+<a id="hitung-token"></a>
 
 ## Count tokens
 
@@ -153,9 +174,12 @@ A standard JSON response with the correct HTTP status code - the Anthropic SDK m
 POST https://api.hostlinku.com/v1/messages/count_tokens
 ```
 
-Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`. Response: `{ "input_tokens": 15 }`. No charge.
+Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`. Response
+`{ "input_tokens": 15 }`. No charge.
 
-## Format error
+<a id="format-error"></a>
+
+## Error format
 
 ```json
 { "type": "error", "error": { "type": "authentication_error", "message": "The API key is invalid or has been revoked." } }
@@ -163,14 +187,14 @@ Body: `model`, `messages`, optional `system`, `tools`, `tool_choice`, `thinking`
 
 | HTTP | `error.type` | Common causes |
 |---|---|---|
-| 400 | `invalid_request_error` | Invalid body; `max_tokens` exceeds the model limit; model not available in Service Mode key. |
-| 401 | `authentication_error` | Invalid, revoked, or expired API key. |
+| 400 | `invalid_request_error` | Invalid body; `max_tokens` exceeds the model limit; the model is not available in Service Mode key. |
+| 401 | `authentication_error` | API key is incorrect/revoked/expired. |
 | 402 | `billing_error` | Insufficient balance or API key credit limit reached. |
 | 403 | `permission_error` | Account suspended / access denied. |
-| 404 | `not_found_error` | The model slug does not exist in the catalog. |
-| 429 | `rate_limit_error` | Request limit reached. |
-| 503 | `overloaded_error` | Model/upstream unavailable. Check the catalog and replacements; retry with a delay for temporary outages. |
+| 404 | `not_found_error` | The model slug is not in the catalog. |
+| 429 | `rate_limit_error` | The request limit has been reached. |
+| 503 | `overloaded_error` | Model/upstream is unavailable. Check the catalog for alternative models; retry with a delay if there is a temporary outage. |
 
-The table shows protocol-handled errors. Request rate limiting or body parsing before the handler can use the general Hostlinku format; see [Errors](/en/errors).
+The table lists errors handled by the protocol. Restrictions on requests or parsing the body before the handler can use the standard Hostlinku format; see [Error](/en/errors).
 
-Errors are sanitized to mask internal identities; some upstream rejection reasons can still appear. [Error](/en/errors).
+Error messages are sanitized to obscure internal identifiers; some reasons for upstream rejections may still appear. [Error](/en/errors).

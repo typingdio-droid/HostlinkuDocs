@@ -1,23 +1,27 @@
 ---
-title: "Service Mode Dedicated"
-description: "Dedicated models, API key selection, model limits, pricing, and prompt caching."
+title: "Dedicated Service Mode"
+description: "Dedicated Model, API key selection, limits per model, pricing, and prompt caching."
 icon: server
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 import { Callout } from "/snippets/mdx.jsx";
 
-**Dedicated** is a Hostlinku Service Mode for the set of models available in that mode. Select **Dedicated** when creating an API key in the [Console](https://console.hostlinku.com). The mode belongs to the key; requests do not use an extra parameter to change it.
+**Dedicated** is one of Hostlinku’s Service Modes for the set of models available in that mode. Select **Dedicated** when creating an API key in the [Console](https://console.hostlinku.com). The mode is tied to the key; requests do not use additional parameters to change the mode.
 
 <Callout type="note" title="One API key = one Service Mode">
-Create separate API keys to use Performance or Low-Cost alongside Dedicated. Available models and prices follow the key’s Service Mode; check `GET /v1/models` with that key.
+To use Performance and Low-Cost simultaneously, create separate API keys. Callable models and pricing follow the Service Mode key; check `GET /v1/models` using that key.
 </Callout>
+
+A comparison of the three modes and how to choose a key is available at [Service Mode](/en/service-modes).
+
+<a id="model-yang-tersedia"></a>
 
 ## Available models
 
-Updated **6 November 2026**. The following DeepSeek, GLM, and Kimi models are available in the [Dedicated catalog](https://hostlinku.com/en/models?mode=dedicated).
+Updated **November 6, 2026**. The following DeepSeek, GLM, and Kimi models are available in the [Dedicated catalog](https://hostlinku.com/models?mode=dedicated).
 
-| Model / API ID | Family | Catalog context | Catalog max output |
+| Model / API ID | Family | Catalog context | Max catalog output |
 |---|---|---|---|
 | [DeepSeek-V4.1-Flash](/en/models/deepseek-v4-1-flash) · `deepseek-v4-1-flash` | DeepSeek | 1,000,000 tokens | 384,000 tokens |
 | [DeepSeek-V4.1-Flash Fast](/en/models/deepseek-v4-1-flash-fast) · `deepseek-v4-1-flash-fast` | DeepSeek | 1,000,000 tokens | 384,000 tokens |
@@ -27,11 +31,15 @@ Updated **6 November 2026**. The following DeepSeek, GLM, and Kimi models are av
 | [GLM-5.3 Flash Hyper](/en/models/glm-5-3-flash-hyper) · `glm-5-3-flash-hyper` | Zhipu | 1,000,000 tokens | 64,000 tokens |
 | [Kimi K3.1 Pro Hyper](/en/models/kimi-k3-1-pro-hyper) · `kimi-k3-1-pro-hyper` | Moonshot | 1,048,576 tokens | 64,000 tokens |
 
-Copy the exact API ID from the catalog, including `deepseek-v4-1-flash-fast`. Context limits, output limits, and features vary by model.
+Copy the API ID exactly as it appears in the catalog, including `deepseek-v4-1-flash-fast`. Context, output, and feature limits vary by model.
 
-## Endpoints and authentication
+<a id="endpoint-dan-autentikasi"></a>
 
-The base URL remains `https://api.hostlinku.com`. The following API formats are available; some models use bridges to adapt the format. Check support for vendor features and application built-in tools separately.
+<a id="endpoints-and-authentication"></a>
+
+## Endpoint and authentication
+
+The base URL remains `https://api.hostlinku.com`. The following API formats are available; some models use a bridge to adapt the format. Support for all vendor features or built-in application tools must be verified separately.
 
 | Format | Endpoint | Authentication header |
 |---|---|---|
@@ -39,15 +47,21 @@ The base URL remains `https://api.hostlinku.com`. The following API formats are 
 | OpenAI Responses | `POST /v1/responses` | `Authorization: Bearer <API_KEY>` |
 | Anthropic Messages | `POST /v1/messages` | `x-api-key: <API_KEY>` |
 
-## Pricing
+<a id="harga"></a>
 
-Billed by usage at the API key’s Service Mode rates. **1 <CreditIcon /> = \$1**. Check [Dedicated rates](https://hostlinku.com/en/models?mode=dedicated) or `GET /v1/models` with a Dedicated key.
+<a id="pricing"></a>
+
+## Price
+
+Billed based on usage via the Service Mode API key. **1 <CreditIcon /> = $1**. Check the [Dedicated pricing](https://hostlinku.com/models?mode=dedicated) or `GET /v1/models` using a Dedicated key.
 
 ## Prompt caching
 
-Models supporting automatic caching may reuse repeated prefixes without `cache_control`. Cache hits and lifetimes depend on upstream. Cache usage is reported through `cached_tokens` in Chat Completions or `cache_read_input_tokens` in Messages when available. See [Prompt Caching](/en/prompt-caching).
+In models that support auto-caching, repeating prefixes can result in cache hits without `cache_control`. Hits and cache duration follow the upstream. Cache usage is reported via `cached_tokens` in Chat Completions or `cache_read_input_tokens` in Messages when available. See [Prompt Caching](/en/prompt-caching).
+
+<a id="batasan"></a>
 
 ## Limitations
 
-- The model must be available in the key’s Service Mode; there is no automatic fallback to another mode.
-- Features and output limits depend on the model and protocol. Bridges may not support application built-in tools.
+- The model must be available for the Service Mode key; there is no automatic fallback to another mode.
+- Features and output limits follow the model and protocol. The application’s built-in tools may not be supported by the bridge.

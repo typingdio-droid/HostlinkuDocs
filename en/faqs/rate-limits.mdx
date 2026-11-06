@@ -1,22 +1,24 @@
 ---
-title: Rate limits
-description: Hostlinku request limits, response headers, and recommended backoff.
+title: "Rate limit"
+description: "Hostlinku request limits, sent headers, and how to implement backoff."
 icon: gauge
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-The service quota is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All organization API keys and members are affected when the quota is reached.
+The service quota is **600 requests, 6,500,000 input tokens, and 200,000 output tokens per minute**, shared within the same organization. All API keys and organization members are affected when the quota is reached.
 
-See [Usage & Limits](/en/usage-and-limits) for quota details and handling 429.
+Details on quotas and how to handle 429 errors can be found in [Usage & Limits](/en/usage-and-limits).
+
+<a id="backoff-yang-disarankan"></a>
 
 ## Recommended backoff
 
-1. Use `Retry-After` when present.
-2. Otherwise start at 1 second and double each attempt (1, 2, 4, 8 seconds) with jitter.
-3. Cap retries, for example at 5 attempts.
-4. Queue work in your app instead of sending bursts.
+1. Check `Retry-After`; if present, wait for that duration.
+2. If none exist, start at 1 second and double the value for each attempt (1, 2, 4, 8 seconds) with jitter.
+3. Limit the number of attempts, for example, to 5 times.
+4. For high load, queue requests on the application side rather than sending bursts.
 
 <Callout type="tip" title="Need a higher limit?">
-  Contact [halo@hostlinku.com](mailto:halo@hostlinku.com) with your account email and expected load. See [Usage & Limits](/en/usage-and-limits).
+  Contact [halo@hostlinku.com](mailto:halo@hostlinku.com) with your account email and estimated usage. Usage details are available at [Usage & Limits](/en/usage-and-limits).
 </Callout>

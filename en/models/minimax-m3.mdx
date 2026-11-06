@@ -1,38 +1,46 @@
 ---
 title: "MiniMax M3"
-description: "MiniMax M3 by MiniMax, with a catalog context window of 1,000,000 tokens."
+description: "MiniMax M3 from MiniMax, with a catalog context of 1,000,000 tokens."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-| Property | Value |
+| Properties | Value |
 |---|---|
 | Provider | MiniMax |
 | Slug | `minimax-m3` |
 | Input | text, image |
 | Output | text |
 | Release | 2026-07-13 |
-| Tags | reasoning |
+| Tag | reasoning |
 | Catalog context | 1,000,000 tokens |
-| Catalog max output | 64,000 tokens |
+| Max catalog output | 64,000 tokens |
 | Service Mode | Performance |
+
+<a id="kapabilitas"></a>
 
 ## Capabilities
 
 `text`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `code-generation`, `long-context`, `multilingual`, `vision`, `image-input`, `multimodal`.
 
-## Pricing
+<a id="harga"></a>
 
-Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/minimax-m3) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+<a id="pricing"></a>
+
+## Price
+
+Updated **November 6, 2026**. [Current pricing](https://hostlinku.com/models/minimax-m3) follows the Service Mode API key. **1 <CreditIcon /> = $1**. `—` means the rate is not listed. Tiers are based on the number of prompt tokens.
 
 | Item | Unit | Tier | Performance (<CreditIcon />) |
 |---|---|---|---|
-| Input (prompt) | per 1M tokens | Base | 0.25956 |
-| Output (completion) | per 1M tokens | Base | 1.0374 |
-| Cache read | per 1M tokens | Base | 0.05208 |
+| Input (prompt) | per 1M tokens | Basics | 0.25956 |
+| Output (completion) | per 1M tokens | Basics | 1.0374 |
+| Cache read | per 1M tokens | Basics | 0.05208 |
 | Input (prompt) | per 1M tokens | Prompt ≥ 512,000 tokens | 0.51912 |
 | Output (completion) | per 1M tokens | Prompt ≥ 512,000 tokens | 2.07564 |
 | Cache read | per 1M tokens | Prompt ≥ 512,000 tokens | 0.10416 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## Supported endpoints
 
@@ -42,7 +50,9 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/mi
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | adapted (bridge) |
 
-[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
+[Compatibility limits](/en/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## Example request
 

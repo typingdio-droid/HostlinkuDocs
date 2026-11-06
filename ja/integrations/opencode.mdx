@@ -1,27 +1,32 @@
 ---
 title: "OpenCode"
-description: "opencode.json で Hostlinku を OpenAI 互換のカスタムプロバイダーとして登録し、/models 経由でモデルを選択してください"
+description: "opencode.jsonでHostlinkuをOpenAI互換のカスタムプロバイダーとして登録し、/models経由でモデルを選択してください"
 icon: terminal
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[OpenCode](https://opencode.ai/docs/providers/) は AI SDK を採用しているため、OpenAI 互換のあらゆるプロバイダーを `opencode.json` を通じて追加できます。認証情報は、`/connect` コマンドによって個別に保存されます。
+[OpenCode](https://opencode.ai/docs/providers/)はAI SDKを採用しているため、
+OpenAI互換のプロバイダーであれば、`opencode.json`を介して追加可能です。認証情報は、コマンド
+`/connect`によって個別に保存されます。
 
 <Steps>
 
+<a id="simpan-kredensial"></a>
+
 ### 認証情報を保存する
 
-OpenCode内で`/connect`を実行し、**Other**までスクロールして、プロバイダーIDとして`hostlinku`を入力し、APIキーとして`sk-…`を貼り付けてください。キーは`~/.local/share/opencode/auth.json`に保存されています。
+OpenCode内で`/connect`を実行し、**Other**までスクロールして、プロバイダーIDに`hostlinku`を入力し、APIキー`sk-…`を貼り付けてください。キーは`~/.local/share/opencode/auth.json`に保存されています。
 
 ```text
 /connect  →  Other  →  provider id: hostlinku  →  API key: sk-…
 ```
 
+<a id="definisikan-provider"></a>
+
 ### プロバイダーを定義する
 
-プロジェクトのルートディレクトリで `opencode.json` を作成／変更します（グローバルの場合は `~/.config/opencode/opencode.json`）：
+プロジェクトのルートディレクトリ（グローバル設定の場合は `~/.config/opencode/opencode.json`）で `opencode.json` を作成または変更してください：
 
 ```json
 {
@@ -54,15 +59,23 @@ OpenCode内で`/connect`を実行し、**Other**までスクロールして、�
 }
 ```
 
-`opencode.json`のIDプロバイダーは、`/connect`で入力したものと**同一でなければならない**。`models`のキーはHostlinkuのslugである。`limit`は、OpenCodeが残りのコンテキストを計算する際に役立つ。
+`opencode.json`内のプロバイダーIDは、`/connect`時に指定したものと**一致している必要があります**。
+`models`内のキーはHostlinkuのスラッグです。`limit`は、OpenCodeが残りのコンテキストを計算するのに役立ちます。
+
+<a id="pilih-model"></a>
 
 ### モデルを選択
 
-`/models` を実行すると、登録したモデルを含むグループ **Hostlinku** が表示されます。`small_model` は軽微なタスク（セッションのタイトル、要約など）に使用されるため、長時間のセッションをより効率的に行うことができます。
+`/models` を実行すると、登録したモデルを含む **Hostlinku** グループが表示されます。`small_model`
+は軽微なタスク（セッションタイトル、要約）に使用されるため、長時間のセッションでもリソースを節約できます。
 
 </Steps>
 
-## 構成のバリエーション
+<a id="variasi-konfigurasi"></a>
+
+<a id="構成のバリエーション"></a>
+
+## 設定のバリエーション
 
 **環境変数からのAPIキー**（`/connect`を除く）：
 
@@ -81,14 +94,21 @@ OpenCode内で`/connect`を実行し、**Other**までスクロールして、�
 }
 ```
 
-**Responses API 経由** - `npm` を `@ai-sdk/openai` に変更してください。OpenCode では [`/v1/responses`](/ja/responses) を使用します。 GPT-5.xモデルで*推論サマリー*を取得したい場合に便利です。ほとんどのユーザーにとっては、`@ai-sdk/openai-compatible` (Chat Completions) で十分です。
+**Responses API 経由** - `npm` を `@ai-sdk/openai` に変更してください。OpenCode は
+[`/v1/responses`](/ja/responses)を使用します。GPT-5.xモデルで*推論サマリー*を取得したい場合に便利です。
+ほとんどのユーザーにとっては、`@ai-sdk/openai-compatible`（Chat Completions）で十分です。
 
-<Callout type="note" title="推論がインターリーブされたモデル">
-`reasoning_content` を返すモデル（例：DeepSeek V4、GLM 5）については、OpenCode がその推論経路を表示するように、モデル定義に `"reasoning": true` および `"interleaved": { "field": "reasoning_content" }` のオプションを指定することができます。
+<Callout type="note" title="推論が織り込まれたモデル">
+  `reasoning_content` を返すモデル（例：DeepSeek V4、GLM 5）には、モデル定義に
+  `"reasoning": true` および `"interleaved": { "field": "reasoning_content" }` というオプションを指定できます
+  ことで、OpenCodeに推論の過程を表示させることができます。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## トラブルシューティング
 
-- **`/models`にプロバイダーが表示されない** - `/connect`および`opencode.json`のIDが異なるか、JSONが無効です。`opencode auth list`を確認してください。
-- **`401`** - そのIDに対応するキーが保存されていません。`/connect`を再度実行してください。
-- **`404 model_not_found`** - `models`のキーは、`GET /v1/models`のslugと完全に一致する必要があります。
+- **プロバイダーが `/models` に表示されない** - `/connect` および `opencode.json` 内の ID が異なるか、JSON
+  が無効です。`opencode auth list` を確認してください。
+- **`401`** - そのIDに対応するキーがまだ保存されていません。`/connect`を再実行してください。
+- **`404 model_not_found`** - `models` キーは、`GET /v1/models` のスラッグと完全に一致する必要があります。

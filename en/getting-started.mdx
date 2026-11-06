@@ -1,26 +1,36 @@
 ---
-title: Quickstart
-description: Create an API key and send your first request to Hostlinku.
+title: "Quick Start"
+description: "Create an API key and send your first request to Hostlinku."
 icon: rocket
 ---
 
 import { Steps } from "/snippets/mdx.jsx";
 
-Prepare curl and a credit balance, then follow these steps.
+Set up curl and your credit balance, then follow the steps below.
 
 <Steps>
 
-### Sign in and top up
+<a id="masuk-dan-isi-saldo"></a>
 
-Open [Sign up](https://api.hostlinku.com/api/auth2/register) or [Sign in](https://api.hostlinku.com/api/auth2/login). Keycloak handles login. In the [Console](https://console.hostlinku.com), open **Billing** and top up before sending a request. See [Billing](/en/billing) for payment methods.
+<a id="sign-in-and-top-up"></a>
+
+### Log in and top up your balance
+
+Go to [Sign Up](https://api.hostlinku.com/api/auth2/register) or [Sign In](https://api.hostlinku.com/api/auth2/login). Login is powered by Keycloak. In the [Console](https://console.hostlinku.com), go to **Billing** and top up your credit balance before sending a request. See [Billing](/en/billing) for payment methods.
+
+<a id="buat-api-key"></a>
 
 ### Create an API key
 
-Open **API Keys → Create API key**, enter a name, and choose **Performance** (default), **Low-Cost**, or **Dedicated**. The Service Mode determines models and prices. Copy the `sk-…` secret shown only once and store it in your server environment. See [Authentication](/en/authentication) for expiry, spending limits, and passkey/2FA settings.
+Go to **API Keys → Create API Key**, enter a name, then select **Performance** (default), **Low-Cost**, or **Dedicated**. Service Mode determines the model and pricing. Copy the `sk-…` secret—which appears only once—and save it in your server environment. Settings for expiration, credit limits, and passkeys/2FA are explained in [Authentication](/en/authentication).
 
-### Send your first request
+<a id="kirim-request-pertama"></a>
 
-Use a model available in the key's Service Mode. This example uses `gpt-5-5`; for a Dedicated key or another model, get a slug from [`GET /v1/models`](/en/models).
+<a id="send-your-first-request"></a>
+
+### Send the first request
+
+Use the available models for the Service Mode key. The following example uses `gpt-5-5`; for Dedicated keys or other options, retrieve the slug from [`GET /v1/models`](/en/models).
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -28,11 +38,11 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{"role": "user", "content": "Hello! Introduce yourself briefly."}]
+    "messages": [{"role": "user", "content": "Halo! Perkenalkan dirimu singkat saja."}]
   }'
 ```
 
-A non-streaming response is JSON. This example is abbreviated; token counts, cost, and latency are illustrative:
+Non-streaming responses are in JSON format. The following example is truncated; the token, cost, and latency are for illustrative purposes only:
 
 ```json
 {
@@ -41,7 +51,7 @@ A non-streaming response is JSON. This example is abbreviated; token counts, cos
   "model": "gpt-5-5",
   "choices": [{
     "index": 0,
-    "message": {"role": "assistant", "content": "Hello! I am …"},
+    "message": {"role": "assistant", "content": "Halo! Saya adalah …"},
     "finish_reason": "stop"
   }],
   "usage": {"prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60},
@@ -54,16 +64,22 @@ A non-streaming response is JSON. This example is abbreviated; token counts, cos
 }
 ```
 
-### Check the result
+<a id="periksa-hasil"></a>
 
-Open **Logs** for request tokens, cost, and latency; **Billing** shows the organization balance. If a request fails, check the [error codes](/en/errors). API keys are used on `/v1/*`; Console account endpoints use a login session.
+<a id="check-the-result"></a>
+
+### Check the results
+
+Go to **Logs** for tokens, costs, and request latency; **Billing** displays the organization’s balance. If a request fails, check the [error codes](/en/errors). The API key is used at `/v1/*`; Console account endpoints require a login session.
 
 </Steps>
 
+<a id="langkah-berikutnya"></a>
+
 ## Next steps
 
-- [API Reference](/en/api-reference): choose Chat Completions, Messages, or Responses.
-- [SDK & Sample Code](/en/sdk): Python, TypeScript, and streaming.
-- [IDE & Agent Integrations](/en/integrations): app and coding agent guides.
-- [Usage & Limits](/en/usage-and-limits): shared organization quotas.
-- [Support](/en/support): help and information to include in reports.
+- [API Reference](/en/api-reference): select Chat Completions, Messages, or Responses.
+- [SDK & Code Samples](/en/sdk): Python, TypeScript, and streaming.
+- [IDE & Agent Integration](/integrations): application and agent coding guides.
+- [Usage & Limits](/en/usage-and-limits): organization-wide quotas.
+- [Support](/en/support): help and information for reporting issues.

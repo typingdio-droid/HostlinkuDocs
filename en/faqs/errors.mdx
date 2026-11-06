@@ -1,41 +1,41 @@
 ---
-title: Common errors
-description: Causes and fixes for the most common Hostlinku error codes.
+title: "Common errors"
+description: "The most common Hostlinku error codes and their solutions."
 icon: circle-alert
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-These codes use the Chat Completions format. Messages and Responses use their own error formats; see [Errors](/en/errors) for the full reference.
+The following code uses the Chat Completions format. Messages and Responses have their own error formats; see [Error](/en/errors) for a complete reference.
 
 ## 401 UNAUTHORIZED
 
-Check the key value and status in Console → **API Keys**. Gateway endpoints accept `Authorization: Bearer sk-...` or `x-api-key`. Do not retry with a key that is invalid, disabled, or expired.
+Check the key’s value and status in the Console → **API Keys**. The gateway endpoint accepts `Authorization: Bearer sk-...` or `x-api-key`. Do not repeat requests with the same key if the key is incorrect, inactive, or expired.
 
 ## 402 PAYMENT_REQUIRED
 
-Read the error message: top up the organization balance if available credit is insufficient, or adjust the key credit limit/wait for its reset if the limit is reached. Topping up does not raise a key limit. See [Billing & Balance](/en/billing).
+Read the error message: top up the organization’s balance if the available balance is insufficient, or adjust the key credit limit/wait for a reset if the limit has been reached. Topping up does not increase the key limit. See [Billing & Balance](/en/billing).
 
 ## 404 MODEL_NOT_FOUND
 
-The model slug is not in the catalog. Copy the slug from `GET /v1/models` or the [Models](/en/models) page.
+The model slug is not in the catalog. Retrieve the exact slug from `GET /v1/models` or the [Models](/en/models) page. Do not guess the slug based on the display name.
 
 ## 400 MODEL_NOT_IN_SERVICE_MODE
 
-The model exists but is not available for the API key's Service Mode. Create a key with the right mode or pick another model.
+The model exists but is not available for the Service Mode API key being used. Example: A "Low-Cost" key calls a model that only has "Performance" routes. Create a key with the appropriate mode or select a different model.
 
 ## 422 VALIDATION_FAILED
 
-Fix the fields listed in `details.issues`, such as empty `messages` or an incorrect field type. Validation uses 422 for Chat Completions and 400 for Messages and Responses. See the [request examples](/en/chat-completions).
+Correct the fields referenced in `details.issues`, such as an empty `messages` field or an incorrect field type. Status code 422 applies to Chat Completions validation; Messages and Responses use 400. See [request examples](/en/chat-completions).
 
 ## 429 RATE_LIMITED
 
-Each Service Mode quota is shared within the organization. Honor `Retry-After`, use backoff, and reduce bursts. Limiter-rejected requests do not deduct credit. See [Usage & Limits](/en/usage-and-limits).
+Service Mode quotas are shared across the organization. Wait according to `Retry-After`, use backoff, and reduce bursts. Requests rejected by the limiter do not deduct from the balance. Details are available at [Usage & Limits](/en/usage-and-limits).
 
 ## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
 
-The model is deprecated/unavailable, or the upstream has a temporary issue. Retry later for `UPSTREAM_ERROR`; for `MODEL_UNAVAILABLE`, check for a `replacement_slug`.
+The model is deprecated or unavailable, or the upstream service is experiencing a temporary outage. For `UPSTREAM_ERROR`, please try again later. For `MODEL_UNAVAILABLE`, check the error message to see if there is a `replacement_slug`.
 
-<Callout type="note" title="Debugging tip">
-  Keep the `x-request-id` response header. It lets support match the request with Console logs.
+<Callout type="note" title="Debugging tips">
+  Keep `x-request-id` from the response header. That ID can be used to match requests with logs in the Console when contacting support.
 </Callout>

@@ -1,23 +1,26 @@
 ---
 title: "速率限制"
-description: "Hostlinku请求的限制、发送的头部以及如何进行退避。"
+description: "Hostlinku的请求限制、发送的头部信息以及后退策略。"
 icon: gauge
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-服务配额为 **每分钟 600 次请求、6,500,000 输入 token 和 200,000 输出 token**，由同一组织共享。达到配额时，该组织所有 API 密钥和成员都会受到影响。
+服务配额为**每分钟 600 次请求、6,500,000 个输入令牌和 200,000 个输出令牌**，在同一组织内共享。当配额用尽时，所有 API 密钥和组织成员都会受到影响。
 
-配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
+配额详情及如何处理 429 错误请参见 [使用与限制](/zh/usage-and-limits)。
 
-## 建议的退避方式
+<a id="backoff-yang-disarankan"></a>
 
-1. 读取`Retry-After`；如果存在，则等待该值所对应的时间。
-2. 如果没有，则从1秒开始，每次试验将时间翻倍（1、2、4、8秒），并加入抖动。
-3. 限制尝试次数，例如5次。
-4. 对于高负载情况，应让请求在应用程序端排队，而不是发送突发请求。
+<a id="建议的退避方式"></a>
+
+## 建议的回退策略
+
+1. 读取 `Retry-After`；如果存在，则等待该值所指定的时间。
+2. 如果不存在，则从 1 秒开始，每次尝试将时间翻倍（1、2、4、8 秒），并加入抖动。
+3. 限制尝试次数，例如 5 次。
+4. 对于高负载情况，应在应用程序端对请求进行排队，而非发送突发流量。
 
 <Callout type="tip" title="需要更高的限额吗？">
-请通过电子邮件将账户信息和预计流量发送至 [halo@hostlinku.com](mailto:halo@hostlinku.com)。使用详情请参见 [使用情况与限额](/zh/usage-and-limits)。
+  请通过 [halo@hostlinku.com](mailto:halo@hostlinku.com) 发送邮件，提供账户信息和预计使用量。使用详情请参阅 [使用情况与限制](/zh/usage-and-limits)。
 </Callout>

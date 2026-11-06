@@ -1,70 +1,84 @@
 ---
 title: "Authentication"
-description: "Gateway API keys, Console login, Service Modes, expiry, and credit limits."
+description: "API key gateway, Console login, Service Mode, expiration, and credit limit."
 icon: key
 ---
 
 import { Callout } from "/snippets/mdx.jsx";
 
-The Hostlinku gateway uses `sk-…` API keys for `/v1/*` endpoints:
+The Hostlinku Gateway uses an API key in the format `sk-…` for the endpoint `/v1/*`:
 
 ```http
 Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-The `x-api-key: sk-…` header is also accepted. Create and manage keys in the [Console](https://console.hostlinku.com) → **API Keys**.
+The header `x-api-key: sk-…` is also accepted. Create and manage keys in [Console](https://console.hostlinku.com) → **API Keys**.
 
-<Callout type="important" title="API keys and Console sessions">
+<Callout type="important" title="API key and Console session">
 
-Use an API key for `/v1/chat/completions`, `/v1/messages`, `/v1/responses`, and `/v1/models`. Protected account endpoints under `/api/*` use a Console login session and reject API key authentication with `403 API_KEY_NOT_ALLOWED`. Login cookies do not replace API keys on `/v1/*`.
+The API key is used for `/v1/chat/completions`, `/v1/messages`, `/v1/responses`, and `/v1/models`. Protected account endpoints at `/api/*` use the Console login session and reject API key authentication with a `403 API_KEY_NOT_ALLOWED` error. The login cookie does not replace the API key for `/v1/*`.
 
 </Callout>
 
-## Console login
+<a id="login-console"></a>
 
-[Sign in](https://api.hostlinku.com/api/auth2/login) or [sign up](https://api.hostlinku.com/api/auth2/register) to open Keycloak login and return to the Console.
+<a id="console-login"></a>
 
-The Console uses the `hl_sid` server session; `hl_session` is a JWT cookie for some flows. Your browser manages them automatically. Passkeys, TOTP, and recovery codes are available in **Settings → Security**.
+## Log in to the Console
 
-## Create and manage an API key
+[Sign in](https://api.hostlinku.com/api/auth2/login) or [sign up](https://api.hostlinku.com/api/auth2/register) to access the Keycloak login page, then return to the Console.
 
-1. Open **API Keys → Create API key**.
-2. Enter a name (up to 64 characters) and choose a **Service Mode**: **Performance**, **Low-Cost**, or **Dedicated**. The form defaults to Performance. The mode determines the key's catalog, routing, and prices.
-3. Select **30 days** (default), **60 days**, **90 days**, or **Never**.
-4. Optionally enable **Monthly Spending Limit** and enter a monthly credit cap.
-5. Copy the secret shown once and store it in a server environment variable.
+Console uses the server session `hl_sid`; `hl_session` is a JWT cookie for some workflows. The browser manages it automatically. Passkey, TOTP, and recovery codes are available in **Settings → Security**.
 
-The current API key form has no endpoint scope selector. Service Mode, balance, expiry, credit limit, and rate limit still constrain the key. Obtain the correct model list for your key from [`GET /v1/models`](/en/models).
+<a id="membuat-dan-mengelola-api-key"></a>
 
-The server stores a SHA-256 hash of the secret, so it cannot display the secret again. The Console supports editing, disabling/enabling, and deleting keys. If a secret is lost or exposed, create a replacement, verify a request, and disable the old key.
+<a id="create-and-manage-an-api-key"></a>
+
+## Create and manage API keys
+
+1. Go to **API Keys → Create API Key**.
+2. Enter a name (maximum 64 characters) and select **Service Mode**: **Performance**, **Low-Cost**, or **Dedicated**. The default setting is Performance. The mode determines the catalog, routing, and pricing that apply to that key.
+3. Select an expiration period: **30 days** (default), **60 days**, **90 days**, or **Never**.
+4. If necessary, enable **Monthly Spending Limit** and enter the monthly credit limit.
+5. Copy the one-time secret that appears and store it in a server environment variable.
+
+There is currently no endpoint scope option on the API key form. Keys remain restricted to Service Mode, balance, expiration, credit limit, and rate limit. The correct list of models for your key can be obtained from [`GET /v1/models`](/en/models).
+
+Secrets are stored as SHA-256 hashes, so they cannot be reproduced. Console supports editing, enabling/disabling, and deleting keys. If a secret is lost or leaked, create a replacement, verify the request, and then disable the old key.
+
+<a id="limit-kredit-per-api-key"></a>
 
 ## Credit limit per API key
 
-The Console offers **Monthly Spending Limit**. The key-management API supports these UTC-calendar periods:
+Console offers a **Monthly Spending Limit**. The key management API supports the following periods (UTC calendar):
 
-| Period | Cost window in the UTC calendar |
+| Period | Cost window based on the UTC calendar |
 |---|---|
-| `daily` | Since 00:00 UTC today |
-| `weekly` | Since Monday 00:00 UTC this week |
-| `monthly` | Since 00:00 UTC on the first day of this month |
-| `lifetime` / no reset | Total during the key's active lifetime |
+| `daily` | As of 00:00 UTC on the current day |
+| `weekly` | Starting Monday at 00:00 UTC this week |
+| `monthly` | Effective from the 1st at 00:00 UTC of the current month |
+| `lifetime` / without reset | Total during the key’s active period |
 
-Usage is accumulated from recorded request costs for the key. Once the cap is reached, subsequent requests return `402 PAYMENT_REQUIRED`. A key's cap differs from the organization's credit balance: topping up adds balance but does not increase the key's cap. See [Billing & Balance](/en/billing).
+Costs are accumulated based on recorded request usage for each key. Once the limit is reached, subsequent requests are rejected with a `402 PAYMENT_REQUIRED` response. The limit per key is separate from the organization’s credit balance: a top-up increases the balance but does not raise the key limit. See [Billing & Balance](/en/billing).
 
-## Rate limits and errors
+<a id="rate-limit-dan-error"></a>
 
-All API keys and organization members share the quota **for each Service Mode**. Adding keys or member accounts does not increase it. See [Usage & Limits](/en/usage-and-limits) for quota values and handling 429.
+<a id="rate-limits-and-errors"></a>
 
-| Condition | HTTP | Code |
+## Rate limit and error
+
+Quotas are shared by all API keys and organization members **for each Service Mode**. Adding keys or member accounts does not increase the quota. Limit values and how to handle 429 errors are in [Usage & Limits](/en/usage-and-limits).
+
+| Conditions | HTTP | Code |
 |---|---|---|
-| Missing, invalid, disabled, or expired key | 401 | `UNAUTHORIZED` |
-| API key used to authenticate a Console account endpoint | 403 | `API_KEY_NOT_ALLOWED` |
-| Insufficient available balance or key credit cap reached | 402 | `PAYMENT_REQUIRED` |
+| Key does not exist, is invalid, is inactive, or has expired | 401 | `UNAUTHORIZED` |
+| The API key is used for authentication at the Console account endpoint | 403 | `API_KEY_NOT_ALLOWED` |
+| Available balance is low or the key credit limit has been reached | 402 | `PAYMENT_REQUIRED` |
 | Rate limit exceeded | 429 | `RATE_LIMITED` |
 
-<Callout type="tip" title="Keep keys on the server">
+<Callout type="tip" title="Store the key on the server">
 
-Use `HOSTLINKU_API_KEY` in your server environment. Create separate keys for each application or environment, set suitable expiry and limits, and keep secrets out of browsers and public repositories.
+Use `HOSTLINKU_API_KEY` in the server environment. Create a separate key for each application or environment, set appropriate expiration dates and limits, and do not store secrets in a browser or public repository.
 
 </Callout>

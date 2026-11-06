@@ -1,0 +1,56 @@
+---
+title: "Service Mode"
+description: "Dedicated、Performance 和 Low-Cost：API 密钥的选择、模型目录、价格和使用限制。"
+icon: layers
+---
+
+**服务模式** 用于确定 API 密钥对应的模型目录、服务路径和定价。在 [Console](https://console.hostlinku.com) 中创建密钥时，请选择 **Dedicated**、**Performance** 或 **Low-Cost**。
+
+<a id="mode-yang-tersedia"></a>
+
+## 可用模式
+
+| 模式 | `service_mode` 的值 | 说明 |
+|---|---|---|
+| **Dedicated** | `dedicated` | Dedicated 模型集的模式选项。请参阅 [Dedicated 指南](/zh/dedicated)。 |
+| **Performance** | `performance` | API密钥创建表单中的默认选项。 |
+| **Low-Cost** | `low_cost` | 模式选项配有独立的模型目录和定价方案。 |
+
+同一型号可能在多种模式下提供，且资费各不相同。请在[产品目录](https://hostlinku.com/models)中比较各型号及价格。
+
+<a id="memilih-mode-untuk-api-key"></a>
+
+<a id="为-api-key选择模式"></a>
+
+## 选择 API 密钥的模式
+
+1. 在 Console 中打开 **API Keys**，然后创建新密钥。
+2. 根据您希望使用的套餐和资费方案选择服务模式。
+3. 在 API 请求中使用该密钥。
+
+**一个 API 密钥仅对应一种服务模式。**若需使用多种模式，请创建独立的密钥。模式由密钥决定，而非请求中的附加参数；不会自动回退到其他模式。
+
+<a id="memeriksa-katalog-dan-harga-berdasarkan-api-key"></a>
+
+<a id="查看key对应-目录与价格"></a>
+
+## 根据 API 密钥查询产品目录和价格
+
+使用将要使用的 API 密钥调用 `GET /v1/models`：
+
+```bash
+curl https://api.hostlinku.com/v1/models \
+  -H "Authorization: Bearer $HOSTLINKU_API_KEY"
+```
+
+响应中的模型和价格由所用 API 密钥对应的服务模式决定。每个模型的价格可在 `pricing` 对象中查阅。请参阅 [模型参考](/zh/models) 以了解字段含义和公共目录的端点。
+
+<a id="batas-penggunaan-dan-kompatibilitas"></a>
+
+<a id="用量限制与兼容性"></a>
+
+## 使用限制与兼容性
+
+每个服务模式的配额在组织内共享。详细信息请参见 [使用情况与限制](/zh/usage-and-limits)。
+
+对功能、协议和输出限制的支持遵循模型规范。请使用 [API 参考](/zh/api-reference) 和模型页面来检查其支持情况。

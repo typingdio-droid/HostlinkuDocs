@@ -1,42 +1,41 @@
 ---
-title: "よく発生するエラー"
-description: "最もよく見られるエラーコード「Hostlinku」の原因と解決策。"
+title: "頻繁に発生するエラー"
+description: "Hostlinkuで最も頻繁に見られるエラーコードの原因と解決策。"
 icon: circle-alert
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-以下のコードはChat Completions形式です。MessagesとResponsesには独自のエラー形式があります。詳しくは[エラー](/ja/errors)を参照してください。
+以下のコードは「Chat Completions」形式を使用しています。「Messages」と「Responses」には独自のエラー形式があります。詳細については、[Error](/ja/errors)を参照してください。
 
 ## 401 UNAUTHORIZED
 
-Console → **API Keys**でキーの値と状態を確認してください。ゲートウェイのエンドポイントは`Authorization: Bearer sk-...`または`x-api-key`を受け付けます。無効・停止・期限切れのキーで再試行しないでください。
+Consoleの**API Keys**でキーの値とステータスを確認してください。ゲートウェイのエンドポイントは、`Authorization: Bearer sk-...` または `x-api-key` を受け付けます。キーが間違っている、無効、または期限切れの場合は、同じキーでリクエストを繰り返さないでください。
 
 ## 402 PAYMENT_REQUIRED
 
-エラーメッセージを確認し、利用可能な組織残高が不足していればチャージし、キーの利用上限に達していれば上限を変更するかリセットを待ってください。チャージしてもキーの上限は増えません。[課金と残高](/ja/billing)を参照してください。
+エラーメッセージをご確認ください：残高が不足している場合は組織の残高を補充するか、制限に達した場合はキーのクレジット制限を変更するか、リセットされるまでお待ちください。チャージを行ってもキーの制限は引き上げられません。[請求と残高](/ja/billing)をご覧ください。
 
 ## 404 MODEL_NOT_FOUND
 
-カタログにこのモデルのslugがありません。`GET /v1/models` または [モデル](/ja/models) ページから正確なslugを取得してください。表示名からslugを推測しないでください。
+モデルのスラグはカタログに存在しません。`GET /v1/models` または [Model](/ja/models) ページから正確なスラグを取得してください。表示名からスラグを推測しないでください。
 
 ## 400 MODEL_NOT_IN_SERVICE_MODE
 
-モデルは存在しますが、使用されているService Mode API keyでは利用できません。例：キー「Low-Cost」が、ルート「Performance」のみを持つモデルを呼び出しています。適切なモードのキーを作成するか、別のモデルを選択してください。
+モデルは存在しますが、使用されているサービスモードのAPIキーでは利用できません。例：Low-Costキーが、Performanceルートしか持たないモデルを呼び出しています。適切なモードのキーを作成するか、別のモデルを選択してください。
 
 ## 422 VALIDATION_FAILED
 
-`details.issues`のフィールドを修正してください。例えば`messages`が空、または型が不正な場合です。Chat Completionsの検証は422、MessagesとResponsesは400を返します。[リクエスト例](/ja/chat-completions)を参照してください。
+`details.issues` で言及されているフィールド（例：`messages` が空である、またはフィールドの型が間違っているなど）を修正してください。ステータス 422 は Chat Completions の検証に適用されます。Messages および Responses には 400 が使用されます。[リクエスト例](/ja/chat-completions) を参照してください。
 
 ## 429 RATE_LIMITED
 
-各Service Modeの利用枠は組織内で共有します。`Retry-After`に従って待機し、バックオフと送信量の調整を行ってください。limiterが拒否したリクエストは残高から引かれません。[使用状況と制限](/ja/usage-and-limits)を参照してください。
+サービスモードのクォータは組織内で共有されます。`Retry-After`に従って待機し、バックオフを使用し、バーストを抑制してください。リミッターによって拒否されたリクエストは、残高を消費しません。詳細は[使用状況と制限](/ja/usage-and-limits)をご覧ください。
 
 ## 503 MODEL_UNAVAILABLE / UPSTREAM_ERROR
 
-このモデルは非推奨または利用不可となっています。あるいは、アップストリームで一時的な障害が発生しています。`UPSTREAM_ERROR`については、しばらくしてから再度お試しください。`MODEL_UNAVAILABLE`については、エラーメッセージに`replacement_slug`が含まれていないかご確認ください。
+モデルが非推奨／利用不可であるか、アップストリームで一時的な障害が発生しています。`UPSTREAM_ERROR`の場合は、しばらくしてから再試行してください。`MODEL_UNAVAILABLE`の場合は、エラーメッセージに`replacement_slug`が含まれているか確認してください。
 
 <Callout type="note" title="デバッグのヒント">
-レスポンスヘッダーの「`x-request-id`」を保存してください。このIDは、サポートに連絡する際、リクエストとコンソールのログを照合するために使用できます。
+  レスポンスヘッダーの `x-request-id` はそのまま残してください。このIDは、サポートに問い合わせる際に、Consoleのログとリクエストを照合するために使用できます。
 </Callout>

@@ -1,0 +1,58 @@
+---
+title: "Service Mode"
+description: "Dedicated、Performance、およびLow-Cost：APIキーの選択、モデルカタログ、価格、および利用制限。"
+icon: layers
+---
+
+**Service Mode**は、APIキーのモデルカタログ、サービスパス、および価格を決定します。[Console](https://console.hostlinku.com)でキーを作成する際は、**Dedicated**、**Performance**、または**Low-Cost**を選択してください。
+
+<a id="mode-yang-tersedia"></a>
+
+<a id="利用できるモード"></a>
+
+## 利用可能なモード
+
+| モード | `service_mode`の値 | 備考 |
+|---|---|---|
+| **Dedicated** | `dedicated` | Dedicatedモデルセットのモード選択。[Dedicatedガイド](/ja/dedicated)を参照してください。 |
+| **Performance** | `performance` | APIキー作成フォームのデフォルト設定。 |
+| **Low-Cost** | `low_cost` | モデルカタログと独自の料金体系を備えたモードの選択肢。 |
+
+モデルは、料金が異なる複数のモードで利用可能な場合があります。モデルと価格については、[カタログ](https://hostlinku.com/models)でご確認ください。
+
+<a id="memilih-mode-untuk-api-key"></a>
+
+<a id="apiキーのモードを選ぶ"></a>
+
+## APIキーのモードの選択
+
+1. Consoleで**API Keys**を開き、新しいキーを作成してください。
+2. ご利用になりたいモデルと料金プランに応じて、サービスモードを選択してください。
+3. APIリクエストでは、そのキーを使用してください。
+
+**1つのAPIキーは1つのサービスモードにのみ使用されます。** 複数のモードを使用するには、個別のキーを作成してください。モードはキーによって決定され、リクエスト内の追加パラメータによって決定されるものではありません。他のモードへの自動フォールバックはありません。
+
+<a id="memeriksa-katalog-dan-harga-berdasarkan-api-key"></a>
+
+<a id="キーのカタログと料金を確認する"></a>
+
+## APIキーに基づいてカタログと価格を確認する
+
+使用するAPIキーを使用して、`GET /v1/models`を呼び出してください：
+
+```bash
+curl https://api.hostlinku.com/v1/models \
+  -H "Authorization: Bearer $HOSTLINKU_API_KEY"
+```
+
+レスポンス内のモデルと価格は、使用されるAPIキーのサービスモードによって決定されます。各モデルの価格は`pricing`オブジェクトで確認できます。フィールドの意味やパブリックカタログのエンドポイントについては、[Modelsのリファレンス](/ja/models)を参照してください。
+
+<a id="batas-penggunaan-dan-kompatibilitas"></a>
+
+<a id="利用制限と互換性"></a>
+
+## 利用制限および互換性
+
+クォータは、各サービスモードごとに組織内で共有されます。詳細は[使用状況と制限](/ja/usage-and-limits)をご覧ください。
+
+機能、プロトコル、および出力制限のサポートはモデルに準じます。[APIリファレンス](/ja/api-reference)およびモデルページを参照して、サポート状況を確認してください。

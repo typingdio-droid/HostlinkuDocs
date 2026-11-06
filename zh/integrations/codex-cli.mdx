@@ -1,26 +1,32 @@
 ---
 title: "Codex CLI"
-description: "通过 Hostlinku 运行 OpenAI Codex CLI，并在 ~/.codex/config.toml 中使用自定义提供程序（wire_api = \"responses\"）"
+description: "通过 Hostlinku 运行 OpenAI Codex CLI，并在 ~/.codex/config.toml 中使用自定义提供商（wire_api = \"responses\"）"
 icon: terminal
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Codex CLI](https://developers.openai.com/codex/cli) 使用 OpenAI Responses。将自定义 provider 指向 [`POST /v1/responses`](/zh/responses)；工具与 reasoning 兼容性取决于模型及 Responses 路径。
+[Codex CLI](https://developers.openai.com/codex/cli) 使用 OpenAI Responses 协议。将自定义提供程序指向 [`POST /v1/responses`](/zh/responses)；工具匹配和推理结果取决于所使用的模型和 Responses 路径。
 
 <Steps>
+
+<a id="instal-codex-cli"></a>
 
 ### 安装 Codex CLI
 
 ```bash
 npm install -g @openai/codex
-# 或者: brew install codex
+# atau: brew install codex
 ```
 
-### 添加提供商 Hostlinku
+<a id="tambahkan-provider-hostlinku"></a>
 
-编辑 `~/.codex/config.toml`（若不存在则创建）。该用户文件中**必须**定义提供程序-出于安全考虑，项目中的 `.codex/config.toml` 不得覆盖 `model_providers`。
+<a id="添加提供商-hostlinku"></a>
+
+### 添加 Hostlinku 提供商
+
+编辑 `~/.codex/config.toml`（若不存在则创建）。提供商**必须**在此文件中定义——
+出于安全考虑，项目内的 `.codex/config.toml` 文件不得覆盖 `model_providers`。
 
 ```toml
 model = "gpt-5-3-codex"
@@ -34,6 +40,8 @@ env_key = "HOSTLINKU_API_KEY"
 wire_api = "responses"
 ```
 
+<a id="set-api-key-dan-jalankan"></a>
+
 ### 设置 API 密钥并运行
 
 ```bash
@@ -41,15 +49,21 @@ export HOSTLINKU_API_KEY=sk-your-api-key   # simpan di ~/.zshrc / ~/.bashrc
 codex
 ```
 
-Codex 从名为 `env_key` 的变量中读取键；该键从未写入 `config.toml`。
+Codex 从名为 `env_key` 的变量中读取密钥；该密钥绝不会写入
+`config.toml`。
 
-<Callout type="tip" title="想要使用图形界面一键切换？">
-  使用桌面应用 [CC Switch](/zh/integrations/cc-switch)，无需手动编辑 `config.toml` 即可可视化添加和切换 Codex 提供商与模型。
+<Callout type="tip" title="想通过GUI一键管理吗？">
+  使用桌面应用程序 [CC Switch](/zh/integrations/cc-switch) 来添加和切换
+  Codex 提供商/模型，而无需手动编辑 `config.toml`。
 </Callout>
+
+<a id="verifikasi"></a>
 
 ### 验证
 
-发送一条简单的指令（例如 *“说明此仓库的结构”*）。该请求将显示在控制台的 → **请求日志** 中，模型编号为 `gpt-5-3-codex`。如果想在打开 Codex 之前确认端点：
+发送一条简单的指令（例如 *“解释此仓库的结构”*）。该请求将显示在
+控制台 → **请求日志** 中，模型为 `gpt-5-3-codex`。若要在
+打开 Codex 之前确认端点：
 
 ```bash
 curl https://api.hostlinku.com/v1/responses \
@@ -60,9 +74,13 @@ curl https://api.hostlinku.com/v1/responses \
 
 </Steps>
 
-## 几位模特通过个人资料
+<a id="beberapa-model-lewat-profile"></a>
 
-使用 `[profiles.*]` 可在无需修改配置的情况下切换模型/提供商：
+<a id="几位模特通过个人资料"></a>
+
+## 部分模型通过配置文件
+
+使用 `[profiles.*]` 可在不编辑配置的情况下切换模型/提供商：
 
 ```toml
 [profiles.cepat]
@@ -77,32 +95,39 @@ model_provider = "hostlinku"
 
 ```bash
 codex --profile kuat
-codex --profile cepat "为 utils/date.ts 编写单元测试"
+codex --profile cepat "tulis unit test untuk utils/date.ts"
 ```
 
-<Callout type="warning" title="模型与工具兼容性">
-  使用支持当前 Codex 工具的原生 Responses 模型。Chat Completions 桥接支持文本及 function calling；custom shell/patch tools 和加密 reasoning 需要原生支持。出现 `The requested tool type is not supported by this model` 时，请更换模型或使用合适的 Chat/Anthropic 客户端。见 [Responses API](/zh/responses)。
+<Callout type="warning" title="模型和工具的兼容性">
+  请使用支持您所用 Codex 版本工具的原生 Responses 模型。Bridge Chat Completions 支持文本和函数调用；自定义工具 shell/patch 以及加密推理则需要原生支持。如果出现 `The requested tool type is not supported by this model` 提示，请更换模型或使用相应的 Chat/Anthropic 客户端。 请参阅 [Responses API](/zh/responses)。
 </Callout>
 
-<Callout type="note" title="Stateless">
-  在 `input` 中发送完整历史并使用 `store: false`。Hostlinku 拒绝非 null 的 `previous_response_id` / `conversation` 和 `background: true`。加密 reasoning 项目需要 upstream 支持；见 [Responses API](/zh/responses)。
+<Callout type="note" title="无状态">
+  在 `input` 中发送完整历史记录，并使用 `store: false`。Hostlinku 不接受非空的 `previous_response_id` 或 `conversation`，也不接受 `background: true`。加密的推理项仅在上游路径支持时才可使用；请参阅 [Responses API](/zh/responses)。
 </Callout>
 
-<Callout type="tip" title="只是想替换默认的 OpenAI 端点吗？">
-无需新提供商的替代方案：将 `openai_base_url = "https://api.hostlinku.com/v1"` 设置为 `config.toml` 和 `OPENAI_API_KEY=sk-…`（API 密钥 Hostlinku）。 仍建议使用自定义提供商，因为其名称在用户界面中清晰可见，且其密钥与原始密钥 OpenAI 相互独立。
+<Callout type="tip" title="只想替换默认的 OpenAI 端点吗？">
+  无需新提供商的替代方案：在
+  `config.toml` 中设置 `openai_base_url = "https://api.hostlinku.com/v1"` 以及 `OPENAI_API_KEY=sk-…`（Hostlinku 的 API 密钥）。仍建议使用自定义提供商
+  ，因为其名称在用户界面中清晰可见，且密钥与原始 OpenAI 密钥相互独立。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-- **`401`** - `env_key` 中的变量尚未导出到运行 `codex` 的 shell 中。
-- **shell/patch 工具未执行** — 检查模型及 Responses 路径的工具支持；文本回答不能证明工具已执行。
-- **`400 previous_response_id`** — 移除 `previous_response_id` / `conversation`，在 `input` 中重发完整历史并使用 `store: false`。
-- **模型未显示 / `404`** - 别名错误；`/v1/models` 显示了与您的密钥对应的有效列表。
-- **旧版客户端** — 更新 Codex，并按[官方配置参考](https://developers.openai.com/codex/config-reference/)使用 `wire_api = "responses"`。
+- **`401`** - `codex` 运行所在的 shell 中，`env_key` 中的变量尚未导出。
+- **shell/patch 工具未运行** — 请检查该工具在响应模型和路径中的支持情况；仅凭文本回答无法证明该工具已运行。
+- **`400 previous_response_id`** — 删除 `previous_response_id`/`conversation`，在 `input` 中重新发送完整的历史记录，并使用 `store: false`。
+- **模型未显示 / `404`** - 路径不正确；`/v1/models` 会显示与
+  您的密钥对应的有效列表。
+- **旧版客户端** — 请更新 Codex 并根据 [官方配置参考](https://developers.openai.com/codex/config-reference/) 使用 `wire_api = "responses"`。
+
+<a id="sumber-daya-terkait"></a>
 
 ## 相关资源
 
-- [CC Switch 集成指南](/zh/integrations/cc-switch)
-- [Hostlinku Responses API](/zh/responses)
+- [CC Switch 指南](/zh/integrations/cc-switch)
+- [Hostlinku API 响应](/zh/responses)
 - [OpenAI API 文档](https://developers.openai.com/)
 - [Codex 官方文档](https://developers.openai.com/codex/)

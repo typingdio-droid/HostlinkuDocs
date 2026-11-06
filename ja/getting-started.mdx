@@ -1,26 +1,34 @@
 ---
-title: クイックスタート
-description: APIキーを作成し、Hostlinkuへ最初のリクエストを送信します。
+title: "クイックスタート"
+description: "APIキーを作成し、Hostlinkuに最初のリクエストを送信してください。"
 icon: rocket
 ---
 
 import { Steps } from "/snippets/mdx.jsx";
 
-curlとクレジット残高を用意し、次の手順に従ってください。
+curlとクレジット残高を準備し、以下の手順に従ってください。
 
 <Steps>
 
-### ログインしてチャージする
+<a id="masuk-dan-isi-saldo"></a>
 
-[新規登録](https://api.hostlinku.com/api/auth2/register)または[ログイン](https://api.hostlinku.com/api/auth2/login)を開きます。ログインはKeycloakが処理します。[Console](https://console.hostlinku.com)の **Billing** で、リクエスト前に残高をチャージしてください。決済方法は [Billing](/ja/billing) を参照してください。
+<a id="ログインしてチャージする"></a>
+
+### ログインして残高を補充する
+
+[一覧](https://api.hostlinku.com/api/auth2/register) または [ログイン](https://api.hostlinku.com/api/auth2/login) を開いてください。 ログインはKeycloakによって提供されています。[コンソール](https://console.hostlinku.com)で**Billing**を開き、リクエストを送信する前にクレジット残高を補充してください。お支払い方法については、[Billing](/ja/billing)をご覧ください。
+
+<a id="buat-api-key"></a>
 
 ### APIキーを作成する
 
-**API Keys → APIキーを作成** で名前を入力し、**Performance**（初期値）、**Low-Cost**、**Dedicated** を選びます。Service Modeによってモデルと価格が決まります。一度だけ表示される `sk-…` シークレットをコピーし、サーバーの環境変数に保存してください。有効期限、利用上限、パスキー／2FAの設定は [認証](/ja/authentication) に記載されています。
+**API Keys → APIキーの作成**を開き、名前を付けてから、**Performance**（デフォルト）、**Low-Cost**、または**Dedicated**を選択してください。サービスモードによってモデルと価格が決定されます。 一度だけ表示されるシークレット `sk-…` をコピーし、サーバー環境に保存してください。有効期限、クレジット制限、およびパスキー/2FAの設定については、[認証](/ja/authentication)で説明されています。
+
+<a id="kirim-request-pertama"></a>
 
 ### 最初のリクエストを送信する
 
-キーのService Modeで利用できるモデルを使います。この例は `gpt-5-5` です。Dedicatedキーや別のモデルを使う場合は、[`GET /v1/models`](/ja/models) からslugを取得してください。
+Service Modeキーには利用可能なモデルを使用してください。以下の例では`gpt-5-5`を使用しています。Dedicatedキーやその他のオプションについては、[`GET /v1/models`](/ja/models)からスラッグを取得してください。
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -28,11 +36,11 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key" \
   -d '{
     "model": "gpt-5-5",
-    "messages": [{"role": "user", "content": "こんにちは。簡単に自己紹介してください。"}]
+    "messages": [{"role": "user", "content": "Halo! Perkenalkan dirimu singkat saja."}]
   }'
 ```
 
-非ストリーミングのレスポンスはJSONです。以下は省略した例で、トークン数、費用、レイテンシは説明用の値です：
+非ストリーミングのレスポンスはJSON形式です。以下の例は一部抜粋であり、トークン、コスト、レイテンシはあくまで例示です：
 
 ```json
 {
@@ -41,7 +49,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   "model": "gpt-5-5",
   "choices": [{
     "index": 0,
-    "message": {"role": "assistant", "content": "こんにちは。私は …"},
+    "message": {"role": "assistant", "content": "Halo! Saya adalah …"},
     "finish_reason": "stop"
   }],
   "usage": {"prompt_tokens": 18, "completion_tokens": 42, "total_tokens": 60},
@@ -54,16 +62,22 @@ curl https://api.hostlinku.com/v1/chat/completions \
 }
 ```
 
-### 結果を確認する
+<a id="periksa-hasil"></a>
 
-**Logs** でトークン数、費用、レイテンシを、**Billing** で組織の残高を確認します。失敗した場合は [エラーコード](/ja/errors) を参照してください。APIキーは `/v1/*` で使い、Consoleのアカウント用エンドポイントにはログインセッションを使います。
+<a id="結果を確認する"></a>
+
+### 結果を確認してください
+
+**Logs** を開くと、トークン、コスト、リクエストのレイテンシを確認できます。**Billing** には組織の残高が表示されます。リクエストが失敗した場合は、[エラーコード](/ja/errors)を確認してください。APIキーは `/v1/*` で使用されます。Consoleアカウントのエンドポイントでは、ログインセッションが使用されます。
 
 </Steps>
 
+<a id="langkah-berikutnya"></a>
+
 ## 次のステップ
 
-- [APIリファレンス](/ja/api-reference)：Chat Completions、Messages、Responsesの選択。
-- [SDK・コード例](/ja/sdk)：Python、TypeScript、ストリーミング。
-- [IDE・Agent統合](/ja/integrations)：アプリとコーディングAgent。
-- [使用量と上限](/ja/usage-and-limits)：組織の共有クォータ。
-- [サポート](/ja/support)：問い合わせと報告に必要な情報。
+- [APIリファレンス](/ja/api-reference)：Chat Completions、Messages、またはResponsesを選択してください。
+- [SDK およびサンプルコード](/ja/sdk): Python、TypeScript、およびストリーミング。
+- [IDE & エージェントの統合](/integrations)：アプリケーションおよびエージェントのコーディングに関するガイド。
+- [使用状況と制限](/ja/usage-and-limits)：組織全体のクォータ。
+- [サポート](/ja/support)：ヘルプおよびレポートに関する情報。

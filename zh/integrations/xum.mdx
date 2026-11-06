@@ -4,14 +4,20 @@ description: "在 Xum（原 Mux）中将 Hostlinku 注册为自定义提供商�
 icon: workflow
 ---
 
-
 import { Callout, Steps } from "/snippets/mdx.jsx";
 
-[Xum](https://xum.cdr.dev/config/providers)（原名**Mux**）可在桌面或浏览器上并行运行多个编码代理，每个代理均拥有独立的工作区。 Xum 支持采用自选 API 格式的 **自定义提供程序** - 这是在不修改内置的 OpenAI/Anthropic 提供程序的情况下，添加 Hostlinku 的最简洁方式。
+[Xum](https://xum.cdr.dev/config/providers)（原名 **Mux**）可在桌面或浏览器上并行运行多个编码代理
+，每个代理均拥有隔离的工作区。Xum支持
+**自定义提供商**，并支持自选的API格式——这是在不
+更改内置的OpenAI/Anthropic提供商的情况下，添加Hostlinku的最简洁方式。
 
 <Steps>
 
-### 将 API 密钥保存到文件中
+<a id="simpan-api-key-di-file"></a>
+
+<a id="将-api-密钥保存到文件中"></a>
+
+### 将 API 密钥保存在文件中
 
 ```bash
 mkdir -p ~/.config/hostlinku
@@ -19,9 +25,13 @@ printf '%s' 'sk-your-api-key' > ~/.config/hostlinku/api-key
 chmod 600 ~/.config/hostlinku/api-key
 ```
 
-### 添加提供商 Hostlinku
+<a id="tambahkan-provider-hostlinku"></a>
 
-编辑 `~/.xum/providers.jsonc` 并添加新的服务提供商：
+<a id="添加提供商-hostlinku"></a>
+
+### 添加 Hostlinku 提供商
+
+编辑 `~/.xum/providers.jsonc` 并添加新的提供商：
 
 ```jsonc
 {
@@ -44,17 +54,28 @@ chmod 600 ~/.config/hostlinku/api-key
 }
 ```
 
-对于 `anthropic-messages`，Xum 自行添加了 `/v1`，因此基础 URL 书写时**不包含** `/v1`。 提供商 ID（`hostlinku`、`hostlinku-claude`）必须使用小写字母，且不得与默认提供商名称相同。
+对于 `anthropic-messages`，Xum 会自行添加 `/v1`，因此基础 URL 应**不包含** `/v1`。
+提供商 ID（`hostlinku`、`hostlinku-claude`）必须为小写，且不得与
+内置提供商的名称相同。
+
+<a id="pilih-model"></a>
 
 ### 选择模型
 
-打开模型选择器（或 `/model`），并从 **Hostlinku** 组中选择模型。`models` 仅提供建议列表-[目录](/zh/models) 中的其他 slug 仍可直接输入。 请求显示在控制台 → **请求日志** 中。
+打开模型选择器（或 `/model`）并从 **Hostlinku** 组中选择模型。`models` 仅为建议列表
+——[目录](/zh/models) 中的其他 slug 仍可直接输入。请求显示在
+控制台 → **请求日志** 中。
 
 </Steps>
 
-## 备选方案：内置提供商 OpenAI
+<a id="alternatif-provider-openai-bawaan"></a>
 
-如果您更倾向于仅使用一个服务提供商，请将默认的**OpenAI**服务提供商重定向至Hostlinku，并采用Chat Completions的线缆格式 （**设置 → 提供商 → OpenAI**，或在 `providers.jsonc` 中）：
+<a id="备选方案内置提供商-openai"></a>
+
+## 备选方案：内置的 OpenAI 提供商
+
+若仅希望使用一个提供商，请通过 wire
+格式将内置的 **OpenAI** 提供商指向 Hostlinku，采用 Chat Completions 格式（**设置 → 提供商 → OpenAI**，或在 `providers.jsonc` 中）：
 
 ```jsonc
 {
@@ -67,14 +88,18 @@ chmod 600 ~/.config/hostlinku/api-key
 ```
 
 <Callout type="note" title="为什么是 chatCompletions？">
-OpenAI 的默认数据格式提供程序是 Responses API，而 Responses 和 Hostlinku 则属于 *无状态* 类型 ([详情](/zh/responses))。 Chat Completions 支持所有目录模型-包括 Claude-且不受上述限制。
+  OpenAI 提供商的默认数据格式是 Responses API，而 Hostlinku 中的 Responses 属于
+  *无状态* ([详情](/zh/responses))。Chat Completions 支持目录中的所有模型——包括
+  Claude——且不受此限制。
 </Callout>
+
+<a id="troubleshooting"></a>
 
 ## 故障排除
 
-| 症状 | Solusi |
+| 症状 | 解决方案 |
 |---|---|
-| `401` | `apiKeyFile` 文件内容有误（存在换行符/空格），或密钥已被撤销。 |
-| `404` | `anthropic-messages` 与 `/v1` 重复 - 请填写基础 URL `https://api.hostlinku.com`。 |
-| 运营商未显示 | ID 提供商名称中包含大写字母或句点，或者与系统默认的提供商名称冲突。 |
-| `404 model_not_found` | Slug 拼写错误-复制自 `GET /v1/models`。 |
+| `401` | `apiKeyFile` 文件内容有误（包含换行符/空格）或密钥已被撤销。 |
+| `404` | `anthropic-messages` 带有双重 `/v1` — 请写成基础 URL `https://api.hostlinku.com`。 |
+| “Provider”未出现 | ID provider 需使用大写字母/句点，否则将与内置提供商名称冲突。 |
+| `404 model_not_found` | Slug 拼写有误——复制自 `GET /v1/models`。 |

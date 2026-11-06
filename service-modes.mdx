@@ -1,0 +1,42 @@
+---
+title: "Service Mode"
+description: "Dedicated, Performance, dan Low-Cost: pemilihan API key, katalog model, harga, dan batas penggunaan."
+icon: layers
+---
+
+**Service Mode** menentukan katalog model, jalur layanan, dan harga untuk sebuah API key. Pilih **Dedicated**, **Performance**, atau **Low-Cost** saat membuat key di [Console](https://console.hostlinku.com).
+
+## Mode yang tersedia
+
+| Mode | Nilai `service_mode` | Keterangan |
+|---|---|---|
+| **Dedicated** | `dedicated` | Pilihan mode untuk kumpulan model Dedicated. Lihat [panduan Dedicated](/dedicated). |
+| **Performance** | `performance` | Pilihan bawaan pada form pembuatan API key. |
+| **Low-Cost** | `low_cost` | Pilihan mode dengan katalog model dan tarif tersendiri. |
+
+Model dapat tersedia di lebih dari satu mode dengan tarif berbeda. Bandingkan model dan harga di [katalog](https://hostlinku.com/models).
+
+## Memilih mode untuk API key
+
+1. Buka **API Keys** di Console, lalu buat key baru.
+2. Pilih Service Mode sesuai model dan tarif yang ingin digunakan.
+3. Gunakan key tersebut pada request API.
+
+**Satu API key menggunakan satu Service Mode.** Untuk memakai beberapa mode, buat key terpisah. Mode ditentukan oleh key, bukan parameter tambahan dalam request; tidak ada fallback otomatis ke mode lain.
+
+## Memeriksa katalog dan harga berdasarkan API key
+
+Panggil `GET /v1/models` memakai API key yang akan digunakan:
+
+```bash
+curl https://api.hostlinku.com/v1/models \
+  -H "Authorization: Bearer $HOSTLINKU_API_KEY"
+```
+
+Model dan harga dalam respons ditentukan oleh Service Mode pada API key yang digunakan. Harga setiap model tersedia dalam objek `pricing`. Lihat [referensi Models](/models) untuk arti field dan endpoint katalog publik.
+
+## Batas penggunaan dan kompatibilitas
+
+Kuota dipakai bersama dalam organisasi untuk setiap Service Mode. Rincian ada di [Pemakaian & Limit](/usage-and-limits).
+
+Dukungan fitur, protokol, dan batas output mengikuti model. Gunakan [Referensi API](/api-reference) dan halaman model untuk memeriksa dukungannya.

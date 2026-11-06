@@ -1,6 +1,6 @@
 ---
 title: "GPT-6 Luna"
-description: "OpenAI的GPT-6 Luna，目录上下文为1,050,000个Token。"
+description: "OpenAI 的 GPT-6 Luna，基于 1,050,000 个令牌的目录上下文。"
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
@@ -10,44 +10,54 @@ import { CreditIcon } from "/snippets/credit-icon.jsx";
 | 提供商 | OpenAI |
 | Slug | `gpt-6-luna` |
 | 输入 | 文本、图片 |
-| 输出 | 文本 |
-| 发布日期 | 2026-09-21 |
+| 输出 | text |
+| 发布 | 2026-09-21 |
 | 标签 | fast |
-| 目录上下文 | 1,050,000 个Token |
-| 目录最大输出 | 128,000 个Token |
-| Service Mode | Performance, Low-Cost |
+| 目录背景 | 1,050,000 个令牌 |
+| 目录最大输出 | 128,000 个令牌 |
+| Service Mode | 性能、低成本 |
 
-## 能力
+<a id="kapabilitas"></a>
 
-`text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
+<a id="能力"></a>
+
+## 功能
+
+`text`、`vision`、`image-input`、`file-input`、`pdf-input`、`tool-calling`、`function-calling`、`structured-outputs`、`json-mode`、`streaming`、`reasoning`、`extended-thinking`、`code-execution`、 `web-search`、`code-generation`、`long-context`、`multilingual`、`multimodal`。
+
+<a id="harga"></a>
 
 ## 价格
 
-**2026年11月6日更新**。[当前价格](https://hostlinku.com/zh/models/gpt-6-luna)由API密钥的Service Mode决定。**1 <CreditIcon /> = \$1**。`—` 表示未列出费率。价格档位取决于提示词Token数。
+更新于 **2026年11月6日**。 [最新价格](https://hostlinku.com/models/gpt-6-luna) 依据服务模式 API 密钥而定。**1 <CreditIcon /> = \$1**。`—` 表示尚未列出价格。价格层级根据提示令牌数量而定。
 
-| 项目 | 单位 | 价格档位 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
+| 项目 | 单位 | 层级 | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
 |---|---|---|---|---|
-| 输入（提示词） | 每100万个Token | 基础 | 0.084 | 0.00535 |
-| 输出 | 每100万个Token | 基础 | 0.42 | 0.02675 |
-| 缓存读取 | 每100万个Token | 基础 | 0.0084 | 0.000535 |
-| 缓存写入（5分钟） | 每100万个Token | 基础 | 0.105 | 0.006688 |
-| 缓存写入（1小时） | 每100万个Token | 基础 | 0.105 | 0.006688 |
-| 网络搜索 | 每1,000次调用 | 基础 | 10.5 | 10.7 |
-| 输入（提示词） | 每100万个Token | 提示词 ≥ 272,000 个Token | 0.168 | 0.0107 |
-| 输出 | 每100万个Token | 提示词 ≥ 272,000 个Token | 0.63 | 0.040125 |
-| 缓存读取 | 每100万个Token | 提示词 ≥ 272,000 个Token | 0.0168 | 0.00107 |
-| 缓存写入（5分钟） | 每100万个Token | 提示词 ≥ 272,000 个Token | 0.21 | 0.013375 |
-| 缓存写入（1小时） | 每100万个Token | 提示词 ≥ 272,000 个Token | 0.21 | 0.013375 |
+| 输入（提示） | 每 100 万个令牌 | 基础 | 0.084 | 0.00535 |
+| 输出（完成） | 每 100 万个令牌 | 基础 | 0.42 | 0.02675 |
+| 缓存读取 | 每 100 万个令牌 | 基础 | 0.0084 | 0.000535 |
+| 缓存写入（5分钟） | 每 100 万个令牌 | 基础 | 0.105 | 0.006688 |
+| 缓存写入（1 小时） | 每 100 万个令牌 | 基础 | 0.105 | 0.006688 |
+| Web搜索 | 每 1K 次调用 | 基础 | 10.5 | 10.7 |
+| 输入（提示） | 每 100 万个令牌 | 提示词 ≥ 272,000 个令牌 | 0.168 | 0.0107 |
+| 输出（完成） | 每 100 万个令牌 | 提示词 ≥ 272,000 个令牌 | 0.63 | 0.040125 |
+| 缓存读取 | 每 100 万个令牌 | 提示词 ≥ 272,000 个令牌 | 0.0168 | 0.00107 |
+| 缓存写入（5分钟） | 每 100 万个令牌 | 提示词 ≥ 272,000 个令牌 | 0.21 | 0.013375 |
+| 缓存写入（1 小时） | 每 100 万个令牌 | 提示词 ≥ 272,000 个令牌 | 0.21 | 0.013375 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## 支持的端点
 
-| Endpoint | Format | 支持情况 |
+| 端点 | 格式 | 支持 |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI Chat Completions | 可用 |
-| `POST /v1/messages` | Anthropic Messages | 适配（桥接） |
-| `POST /v1/responses` | OpenAI Responses | 原生 |
+| `POST /v1/chat/completions` | OpenAI 聊天补全 | 可用 |
+| `POST /v1/messages` | Anthropic 消息 | 改编版（桥接版） |
+| `POST /v1/responses` | OpenAI 响应 | native |
 
-[兼容性限制](/zh/api-reference#模型与工具兼容性)。
+[兼容性限制](/zh/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## 请求示例
 
@@ -60,6 +70,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [{ "role": "user", "content": "Hello!" }]
   }'
 ```
+
+<a id="model-terkait"></a>
 
 ## 相关模型
 

@@ -1,39 +1,47 @@
 ---
 title: "GPT-5.5"
-description: "GPT-5.5 by OpenAI, with a catalog context window of 1,000,000 tokens."
+description: "OpenAI’s GPT-5.5, with a 1,000,000-token catalog context."
 ---
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
-| Property | Value |
+| Properties | Value |
 |---|---|
 | Provider | OpenAI |
 | Slug | `gpt-5-5` |
 | Input | text, image |
 | Output | text |
 | Release | 2026-04-27 |
-| Tags | production |
+| Tag | production |
 | Catalog context | 1,000,000 tokens |
-| Catalog max output | 128,000 tokens |
+| Max catalog output | 128,000 tokens |
 | Service Mode | Performance, Low-Cost |
+
+<a id="kapabilitas"></a>
 
 ## Capabilities
 
 `text`, `vision`, `image-input`, `file-input`, `pdf-input`, `tool-calling`, `function-calling`, `structured-outputs`, `json-mode`, `streaming`, `reasoning`, `extended-thinking`, `code-execution`, `web-search`, `code-generation`, `long-context`, `multilingual`, `multimodal`.
 
-## Pricing
+<a id="harga"></a>
 
-Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/gpt-5-5) follow the API key’s Service Mode. **1 <CreditIcon /> = \$1**. `—` means a rate is not listed. Tiers depend on prompt tokens.
+<a id="pricing"></a>
+
+## Price
+
+Updated **November 6, 2026**. [Current pricing](https://hostlinku.com/models/gpt-5-5) follows the Service Mode API key. **1 <CreditIcon /> = $1**. `—` means the rate is not listed. Tiers are based on the number of prompt tokens.
 
 | Item | Unit | Tier | Performance (<CreditIcon />) | Low-Cost (<CreditIcon />) |
 |---|---|---|---|---|
-| Input (prompt) | per 1M tokens | Base | 4.2 | 0.2675 |
-| Output (completion) | per 1M tokens | Base | 25.2 | 1.605 |
-| Cache read | per 1M tokens | Base | 0.42 | 0.02675 |
-| Web search | per 1K calls | Base | 10.5 | 10.7 |
+| Input (prompt) | per 1M tokens | Basics | 4.2 | 0.2675 |
+| Output (completion) | per 1M tokens | Basics | 25.2 | 1.605 |
+| Cache read | per 1M tokens | Basics | 0.42 | 0.02675 |
+| Web search | per 1K calls | Basics | 10.5 | 10.7 |
 | Input (prompt) | per 1M tokens | Prompt ≥ 272,000 tokens | 8.4 | 0.535 |
 | Output (completion) | per 1M tokens | Prompt ≥ 272,000 tokens | 37.8 | 2.4075 |
 | Cache read | per 1M tokens | Prompt ≥ 272,000 tokens | 0.84 | 0.0535 |
+
+<a id="endpoint-yang-didukung"></a>
 
 ## Supported endpoints
 
@@ -43,7 +51,9 @@ Updated **6 November 2026**. [Current prices](https://hostlinku.com/en/models/gp
 | `POST /v1/messages` | Anthropic Messages | adapted (bridge) |
 | `POST /v1/responses` | OpenAI Responses | native |
 
-[Compatibility limits](/en/api-reference#model-and-tool-compatibility).
+[Compatibility limits](/en/api-reference#kompatibilitas-model-dan-tool).
+
+<a id="contoh-request"></a>
 
 ## Example request
 
@@ -56,6 +66,8 @@ curl https://api.hostlinku.com/v1/chat/completions \
     "messages": [{ "role": "user", "content": "Hello!" }]
   }'
 ```
+
+<a id="model-terkait"></a>
 
 ## Related models
 

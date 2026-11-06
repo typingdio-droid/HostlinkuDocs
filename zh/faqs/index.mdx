@@ -1,117 +1,208 @@
 ---
 title: "常见问题解答"
-description: "关于Hostlinku网关最常被问到的问题"
+description: "关于 Hostlinku 网关的常见问题"
 icon: circle-help
 ---
 
+<a id="apa-itu-hostlinku-playground"></a>
 
-## 什么是Hostlinku Playground？
+<a id="什么是hostlinku-playground"></a>
 
-Playground是[Console](https://console.hostlinku.com/playground)中用于试用可用模型并选择Service Mode的界面。它使用登录会话以及与API共享的组织余额，无需输入API密钥。
+## 什么是 Hostlinku Playground？
 
-## 集成如何工作？
+Playground 是 [Console](https://console.hostlinku.com/playground) 中的一个界面，用于试用可用模型并选择服务模式。Playground 使用与 API 相同的登录会话和组织余额；您无需输入 API 密钥。
 
-将SDK或应用连接到Hostlinku，使用API密钥并指定模型slug。OpenAI Chat Completions与Responses的base URL为`https://api.hostlinku.com/v1`，Anthropic Messages为`https://api.hostlinku.com`。功能取决于模型和协议。参见[集成指南](/zh/integrations/index)。
+<a id="bagaimana-cara-kerja-integrasinya"></a>
 
-## 如何计费？
+<a id="集成如何工作"></a>
 
-为组织余额充值，按模型和Service Mode的价格支付用量费用。输入、输出和缓存分别计价。QRIS/VA通过iPaymu Direct支付，加密货币通过Heleket支付。参见[计费与余额](/zh/billing)。
+## 该集成是如何工作的？
 
-<a id="prompt-storage"></a>
+将 SDK 或应用程序指向 Hostlinku，使用 API 密钥，然后选择模型 slug。 OpenAI 的 Chat Completions 和 Responses 使用基础 URL `https://api.hostlinku.com/v1`；Anthropic Messages 使用 `https://api.hostlinku.com`。功能支持取决于模型和协议。请参阅 [集成](/zh/integrations/index)。
 
-## 我的提示词会被保存吗？
+<a id="bagaimana-sistem-billing-nya"></a>
 
-请求和响应body默认不保存。token数、费用、状态和延迟元数据会被记录。若管理员开启body logging，body默认保留14天；提示词正文中的秘密不会自动被隐藏。参见[隐私政策](/zh/legals/privacy-policy)。
+<a id="如何计费"></a>
 
-## 模型发生故障时会怎样？
+## 计费系统是怎样的？
 
-网关可以按可用的路由配置尝试其他路径。若仍失败，应用会收到`503`等错误；请使用退避并查看[Status](https://status.hostlinku.com)。不保证自动切换到同系列的其他模型。
+先充值组织余额，然后根据定价模型和服务模式支付使用费用。输入、输出和缓存各有相应的费率。可通过 iPaymu Direct 支付 QRIS/VA 费用，通过 Heleket 支付加密货币费用。请参阅 [计费与余额](/zh/billing)。
 
-## Hostlinku可以免费试用吗？
+<a id="apakah-prompt-saya-disimpan"></a>
 
-注册免费，无需信用卡。不提供试用额度；在Playground或API发起付费请求前，请先充值。
+<a id="我的提示词会被保存吗"></a>
+
+## 我的提示语会被保存吗？
+
+请求正文和响应正文默认不会被保存。令牌元数据、费用、状态和延迟仍会被记录。如果管理员启用了正文日志记录，正文的默认保留期为 14 天；提示文本中的机密信息不会被自动过滤。请参阅 [隐私政策](/zh/legals/privacy-policy)。
+
+<a id="apa-yang-terjadi-jika-sebuah-model-mengalami-gangguan"></a>
+
+<a id="模型发生故障时会怎样"></a>
+
+## 如果某个模型出现故障会怎样？
+
+网关可根据可用的路由配置尝试其他路径。如果请求仍然失败，应用程序将收到诸如 `503` 之类的错误；请使用回退机制并检查 [状态](https://status.hostlinku.com)。无法保证会自动切换到同一产品系列中的其他模型。
+
+<a id="apakah-hostlinku-gratis-dicoba"></a>
+
+<a id="hostlinku可以免费试用吗"></a>
+
+## Hostlinku 提供免费试用吗？
+
+注册免费，无需信用卡。不提供试用额度；在 Playground 或 API 中执行付费请求前，请先充值。
+
+<a id="topik"></a>
 
 ## 主题
 
-- [流模式](/zh/faqs/stream-mode)：如何结合 OpenAI SDK、Python `requests` 和 curl 使用 SSE。
-- [常见错误](/zh/faqs/errors)：常见错误的原因和处理方法。
-- [速率限制](/zh/faqs/rate-limits)：配额、`Retry-After`标头和退避策略。
-- [计费与充值](/zh/faqs/billing)：余额、密钥额度和错误代码402。
-- [模型不可用](/zh/faqs/model-unavailable)：404 与 503、已弃用，以及 Service Mode。
-- [账户、计费与政策](/zh/faqs/account-billing)：账户、API 密钥、余额、充值、错误、隐私与法律。
+- [流模式](/zh/faqs/stream-mode)：如何使用 OpenAI SDK、Python `requests` 和 curl 调用 SSE。
+- [常见错误](/zh/faqs/errors)：常见错误的原因及处理措施。
+- [Rate limit](/zh/faqs/rate-limits)：配额、`Retry-After` 标头和回退策略。
+- [计费与充值](/zh/faqs/billing)：余额、限额密钥和 402 错误。
+- [模型不可用](/zh/faqs/model-unavailable)：404 与 503、已弃用以及服务模式。
+- [账户、计费与政策](/zh/faqs/account-billing)：账户、API密钥、余额、充值、错误、隐私和法律。
 
-## OpenAI的官方SDK可以使用吗？
+<a id="apakah-sdk-resmi-openai-bisa-dipakai"></a>
 
-可以。将`base_url`/`baseURL`设为`https://api.hostlinku.com/v1`，并将以`sk-…`开头的Hostlinku API密钥作为`api_key`使用。完整示例请参见[Chat Completions](/zh/chat-completions)。
+<a id="openai的官方sdk可以使用吗"></a>
+
+## 能否使用 OpenAI 的官方 SDK？
+
+可以。将 `base_url`/`baseURL` 指向 `https://api.hostlinku.com/v1`，并
+使用 Hostlinku 的 API 密钥 `sk-…` 作为 `api_key`。完整示例请参见
+[聊天补全](/zh/chat-completions#contoh-python-sdk-resmi-openai)。
+
+<a id="endpoint-apa-saja-yang-tersedia"></a>
 
 ## 有哪些可用端点？
 
-网关端点使用API密钥：
+网关端点接受 API 密钥：
 
-- `POST /v1/chat/completions`：[Chat Completions](/zh/chat-completions)。
+- `POST /v1/chat/completions`：[聊天补全](/zh/chat-completions)。
 - `POST /v1/messages`：[Anthropic Messages](/zh/anthropic-messages)。
-- `POST /v1/messages/count_tokens`：Anthropic格式的token计数。
-- `POST /v1/responses`：无状态的[Responses API](/zh/responses)。
-- `GET /v1/models`：[密钥对应Service Mode的目录](/zh/models)。
+- `POST /v1/messages/count_tokens`：计算 Anthropic 格式的令牌数量。
+- `POST /v1/responses`：[Responses API](/zh/responses)，无状态。
+- `GET /v1/models`：[按服务模式键分类的目录](/zh/models)。
 
-网站目录使用`GET /api/public/models-v2`。Console账户端点`/api/*`使用登录会话。公开网关暂不提供embeddings。
+网站目录使用 `GET /api/public/models-v2`。位于 `/api/*` 的 Console 账户端点使用登录会话。嵌入功能在公共网关上尚不可用。
+
+<a id="model-apa-saja-yang-bisa-saya-pakai"></a>
 
 ## 我可以使用哪些模型？
 
-请查看[模型目录](/zh/models)或Console中的**Models**。`GET /v1/models`返回当前API密钥对应Service Mode可用的模型与价格。
+请参阅 [模型目录](/zh/models) 或 Console 中的 **Models** 菜单。`GET /v1/models` 将显示您所用服务模式 API 密钥可用的模型及其价格。
+
+<a id="kenapa-request-saya-ditolak-401"></a>
 
 ## 为什么我的请求被401拒绝了？
 
-检查API密钥和认证标头。网关接受`Authorization: Bearer sk-...`或`x-api-key`；密钥必须正确、启用且未过期。参见[身份验证](/zh/authentication)。
+请检查 API 密钥和身份验证头。网关接受 `Authorization: Bearer sk-...` 或 `x-api-key`；密钥必须正确、有效且未过期。请参阅 [身份验证](/zh/authentication)。
 
-## 明明我有余额，为什么会显示402？
+<a id="kenapa-muncul-402-padahal-saya-punya-saldo"></a>
 
-请检查错误信息。402 错误有两种原因：**组织余额**不足（`available` 低于请求的预估费用），或者**API 密钥的额度**已用尽。 如果错误信息中提到“API密钥额度”，请等待重置周期（每日/每周/每月）结束，或在控制台中调整额度。详情请参阅 [计费与余额](/zh/billing)。
+<a id="明明我有余额为什么会显示402"></a>
 
-## 一个请求需要多少钱？
+## 明明我有余额，为什么会出现 402 错误？
 
-价格取决于模型、Service Mode以及输入、输出和缓存用量。非流式chat响应包含`hostlinku.cost`；流式费用可在结束后查看Logs/Billing，上游usage缺失时可能采用估算。参见[计费与余额](/zh/billing)。
+请检查错误信息。402 错误有两种原因：**组织余额**不足（`available` 少于
+请求的预估费用），或者 **API 密钥信用额度**已用尽。 如果错误信息中提到“API 密钥
+信用额度限制”，请等待重置周期（每日/每周/每月）结束，或在控制台中调整限制。
+更多详情请参阅 [计费与余额](/zh/billing)。
 
-## 是否有请求频率限制？
+<a id="berapa-biaya-satu-request"></a>
 
-每个Service Mode的配额为 **每分钟 600 次请求、6,500,000 输入 token 和 200,000 输出 token**，由同一组织共享。达到配额时，该组织所有 API 密钥和成员都会受到影响。 配额及 429 处理见[用量与限额](/zh/usage-and-limits)。
+<a id="一个请求需要多少钱"></a>
 
-## 如何发送图片/多媒体消息？
+## 一次请求的费用是多少？
 
-将`messages[].content`填充为OpenAI格式的内容数组 （例如：一个 `image_url` 类型的对象和一个 `text` 类型的对象），并在目录中选择具备 `vision`/`image-input` 功能的支持模型。具体支持程度取决于模型提供商。
+价格取决于所使用的模型、服务模式以及令牌/缓存的维度。非流式聊天响应中包含 `hostlinku.cost`；流式传输的费用可在任务完成后在“日志/计费”中查看，若上游使用量不可用，可使用预估值。请参阅 [计费与余额](/zh/billing)。
 
-## 如何停止使用已泄露的API密钥？
+<a id="apakah-ada-rate-limit"></a>
 
-在Console → **API Keys**中禁用密钥，即可拒绝后续请求。创建替代密钥并更新应用，不再需要旧密钥时将其删除。用量历史仍会保留。
+<a id="是否有请求频率限制"></a>
+
+## 是否有速率限制？
+
+每种服务模式的配额为**每分钟 600 次请求、6,500,000 个输入令牌和 200,000 个输出令牌**，在同一组织内共享。当配额用尽时，所有 API 密钥和组织成员都会受到影响。 配额详情及 429 错误的处理方法请参阅 [使用与限制](/zh/usage-and-limits)。
+
+<a id="bagaimana-cara-mengirim-pesan-gambar--multimodal"></a>
+
+<a id="如何发送图片多媒体消息"></a>
+
+## 如何发送图片/多模态消息？
+
+将 `messages[].content` 填充为 OpenAI 格式的内容数组（例如：一个 `image_url` 类型的对象
+ followed by 一个 `text` 类型的对象），并在
+目录中选择具备 `vision`/`image-input` 能力的模型。支持程度取决于模型提供商。
+
+<a id="bagaimana-cara-menghentikan-pemakaian-api-key-yang-bocor"></a>
+
+<a id="如何停止使用已泄露的api密钥"></a>
+
+## 如何停止使用已泄露的 API 密钥？
+
+在 Console → **API Keys** 中停用密钥，以便后续请求被拒绝。创建替代密钥，更新应用程序，然后在不再需要时删除旧密钥。使用历史记录仍会保留。
+
+<a id="apakah-log-request-menyimpan-isi-percakapan-saya"></a>
 
 ## 请求日志会保存我的对话内容吗？
 
-请参阅[提示词存储说明](#prompt-storage)。
+请参阅 [关于提示词存储的解答](#apakah-prompt-saya-disimpan)。
 
-## 如何理解延迟、TTFT和TPS？
+<a id="bagaimana-membaca-latensi-ttft-dan-tps"></a>
 
-延迟是网关收到请求到响应完成的时间。TTFT是观察到第一个流式token所需的时间。TPS是首个token之后生成阶段的每秒输出token数，使用符合条件的流式样本计算。参见[API Reference](/zh/api-reference#指标与示例数值)。
+<a id="如何理解延迟ttft和tps"></a>
 
-## 动画和模型图表是直接测量结果吗？
+## 如何解读延迟、TTFT 和 TPS？
 
-landing速度动画使用固定示例数值。模型详情中的60根柱由平均/P95延迟和失败次数汇总生成，柱的位置不代表最近60个请求的顺序。汇总数值和Console用量图表来自请求数据。比较性能前请查看时间范围和样本。
+延迟是指网关收到请求到响应完成之间的时间。TTFT是指在流中观察到第一个令牌所需的时间。TPS是指在第一个令牌之后，从符合条件的流样本中，令牌生成阶段的令牌输出速率。 这三者含义不同；请参阅 [API 参考](/zh/api-reference#arti-metrik-dan-contoh-angka)。
 
-## 页脚绿色徽章显示实时状态吗？
+<a id="apakah-animasi-dan-grafik-model-adalah-hasil-pengukuran-langsung"></a>
 
-landing页脚徽章目前使用固定状态值。监控结果和故障请查看[Status页面](https://status.hostlinku.com)。
+<a id="动画和模型图表是直接测量结果吗"></a>
 
-## “reachable”是什么意思？
+## 动画和模型图表是直接测量的结果吗？
 
-端点返回低于500的HTTP响应，包括`401`、`403`或`404`。它表示服务器可访问；登录或推理是否成功，需要检查相应功能的结果。
+着陆速度动画使用固定的示例数值。 模型详情中的 60 根柱状图由平均延迟、P95 和故障次数的汇总数据构成；每根柱状图的位置并不代表最近 60 个请求的顺序。Console 的汇总数据和使用情况图表源自请求数据。在比较性能之前，请核对时间段和样本。
 
-## 为什么历史费用明细可能不同？
+<a id="apakah-indikator-hijau-di-footer-menunjukkan-status-live"></a>
 
-已计费总额保存在交易日志中。analytics中的部分输入、输出和缓存明细按当前价格重新计算，因此可能与历史总额不同。这不会对旧请求再次计费。参见[计费与余额](/zh/billing)。
+<a id="页脚绿色徽章显示实时状态吗"></a>
 
-## probe数据保留多久？
+## 页脚处的绿色指示灯是否表示系统处于运行状态？
 
-原始健康probe记录默认保留30天，并定期清理。它与body的14天保留期以及用量/交易元数据分开处理。参见[用量与限额](/zh/usage-and-limits)。
+当前着陆页页脚徽章使用固定状态值。请访问 [状态页面](https://status.hostlinku.com) 以查看服务监控和事件信息。
 
-## 如何联系客服？
+<a id="apa-arti-status-reachable"></a>
 
-请参阅 [支持](/zh/support)：发送邮件至 **halo@hostlinku.com**，建议在邮件中附上出现问题的回复中的 `x-request-id`。
+<a id="reachable是什么意思"></a>
+
+## “reachable”状态是什么意思？
+
+端点返回的 HTTP 响应代码小于 500，包括 `401`、`403` 或 `404`。这表明服务器可访问；登录成功或相关推断需根据相关函数的检查结果来判断。
+
+<a id="mengapa-rincian-biaya-historis-dapat-berbeda"></a>
+
+<a id="为什么历史费用明细可能不同"></a>
+
+## 为什么历史费用明细可能会有所不同？
+
+已开具的总费用记录在交易日志中。分析中的部分输入/输出/缓存明细会根据当前费率重新计算，因此明细金额可能与历史总计存在差异。这不会对旧请求进行重复计费。请参阅 [计费与余额](/zh/billing)。
+
+<a id="berapa-lama-data-probe-disimpan"></a>
+
+<a id="probe数据保留多久"></a>
+
+## 探针数据会保存多长时间？
+
+健康检查的原始数据默认保存 30 天，之后会定期清理。请求内容有独立的 14 天保留期。使用和交易元数据将持续保存。请参阅 [使用情况与限制](/zh/usage-and-limits)。
+
+<a id="bagaimana-cara-menghubungi-dukungan"></a>
+
+<a id="如何联系客服"></a>
+
+## 如何联系支持团队？
+
+请参阅 [支持](/zh/support)：发送邮件至 **halo@hostlinku.com**，建议附上
+问题响应中的 `x-request-id`。

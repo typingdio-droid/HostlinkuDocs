@@ -1,21 +1,25 @@
 ---
 title: "Integration Overview"
-description: "Choose an integration guide, API format, and URL for your tool."
+description: "Select the integration guide, API format, and URL that are compatible with your tool."
 icon: panels-top-left
 ---
 
-Connect your tool to Hostlinku with an API key and a model from the [catalog](/en/models). Model availability follows the key’s Service Mode. Balance and quotas are shared within the same organization; see [Usage & Limits](/en/usage-and-limits).
+Connect the tool to Hostlinku using the API key and models from the [catalog](/en/models). Available models follow the Service Mode key. Balances and quotas are shared within the same organization; see [Usage & Limits](/en/usage-and-limits).
 
-## Choose your tool
+<a id="pilih-tool"></a>
 
-| Tool | API Format Used | Base URL | Guide |
+<a id="choose-your-tool"></a>
+
+## Choose a tool
+
+| Tool | API format used | Base URL | Guidelines |
 |---|---|---|---|
 | Claude Code (CLI & VS Code/JetBrains extensions) | Anthropic Messages | `https://api.hostlinku.com` | [Claude Code](/en/integrations/claude-code) |
 | Codex CLI | OpenAI Responses | `https://api.hostlinku.com/v1` | [Codex CLI](/en/integrations/codex-cli) |
 | DeepSeek Harness (`dsh`) | Anthropic Messages | `https://api.hostlinku.com` | [DeepSeek Harness](/en/integrations/deepseek-harness) |
 | CC Switch (GUI manager for Claude Code, Codex, OpenCode) | Anthropic Messages / OpenAI Responses | `https://api.hostlinku.com` / `https://api.hostlinku.com/v1` | [CC Switch](/en/integrations/cc-switch) |
 | Cursor | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Cursor](/en/integrations/cursor) |
-| VS Code (built-in Chat & Agent modes) | OpenAI Chat Completions (or Anthropic/Responses) | `https://api.hostlinku.com/v1/chat/completions` (full endpoint URL) | [VS Code](/en/integrations/vscode) |
+| VS Code (Chat & built-in Agent mode) | OpenAI Chat Completions (or Anthropic/Responses) | `https://api.hostlinku.com/v1/chat/completions` (full endpoint URL) | [VS Code](/en/integrations/vscode) |
 | GitHub Copilot CLI & Copilot app | OpenAI Chat Completions (or Anthropic) | `https://api.hostlinku.com/v1` | [GitHub Copilot](/en/integrations/copilot) |
 | Zed (Agent Panel) | OpenAI Chat Completions | `https://api.hostlinku.com/v1` | [Zed](/en/integrations/zed) |
 | Cline, Roo Code | OpenAI Chat Completions (or Anthropic) | `https://api.hostlinku.com/v1` | [Cline & Roo Code](/en/integrations/cline) |
@@ -31,15 +35,21 @@ Connect your tool to Hostlinku with an API key and a model from the [catalog](/e
 
 <a id="compatibility-limits"></a>
 
+<a id="batas-kompatibilitas"></a>
+
 ## Compatibility limits
 
-- **URL formats vary by tool.** Anthropic SDKs generally use `https://api.hostlinku.com`; OpenAI tools use `https://api.hostlinku.com/v1`. VS Code and Junie may require a full endpoint URL. Follow the guide linked in the table.
-- **Codex CLI requires native Responses tools**, including shell and `apply_patch`. A text/function-calling bridge alone is insufficient; see [Codex CLI](/en/integrations/codex-cli).
-- **Features depend on the model and protocol.** Check vision, reasoning, JSON schema, and tool calling on the model page and in the [API reference](/en/api-reference).
-- **FIM/inline autocomplete and embeddings are not served.** These integrations use chat, agent, or editing through Chat Completions, Responses, and Messages.
+- **URL formats vary by tool.** The Anthropic SDK generally uses `https://api.hostlinku.com`; OpenAI tools use `https://api.hostlinku.com/v1`. VS Code and Junie may require the full endpoint URL. Follow the tool-specific guidelines in the table.
+- **Codex CLI requires native tool support for Responses**, including the shell and `apply_patch`. Text bridges or function calls alone are not sufficient; see [Codex CLI](/en/integrations/codex-cli).
+- **Features follow the model and protocol.** Check for support of vision, reasoning, JSON schema, and tool calling on the model page and in the [API reference](/en/api-reference).
+- **FIM/inline autocomplete and embeddings are not yet supported.** This integration uses chat, agents, or editing via Chat Completions, Responses, and Messages.
 
-## API keys and help
+<a id="api-key-dan-bantuan"></a>
 
-Create a separate API key with a credit limit for each tool so it can be revoked individually. Keep the key in an environment variable or the tool’s secret store; do not commit or print its value. See [Authentication](/en/authentication) for key settings.
+<a id="api-keys-and-help"></a>
 
-For failed requests, see the [error code reference](/en/faqs/errors). Each guide in the table covers its tool’s configuration and specific limits.
+## API key and help
+
+Create a separate API key for each tool with a credit limit so it can be easily revoked. Store the key in an environment variable or the tool’s secret store; do not commit or print its value. Key configuration is described in [Authentication](/en/authentication).
+
+For request failures, see the [list of error codes](/en/faqs/errors). Configuration details and tool-specific limits are provided in the guides in the table.

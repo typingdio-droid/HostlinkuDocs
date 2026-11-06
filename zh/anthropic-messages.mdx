@@ -1,15 +1,17 @@
 ---
-title: "Anthropic Messages"
-description: "POST /v1/messages 端点参考（兼容 Anthropic）-请使用 Anthropic SDK、Claude Code 或 Cursor，并配合 Hostlinku API 密钥"
+title: "Anthropic 消息"
+description: "POST /v1/messages 端点参考（与 Anthropic 兼容）——使用 Anthropic SDK、Claude Code 或 Cursor，并配合 Hostlinku 的 API 密钥"
 icon: message-square
 ---
-
 
 import { CreditIcon } from "/snippets/credit-icon.jsx";
 
 import { Callout } from "/snippets/mdx.jsx";
 
-除了 OpenAI 格式外，Hostlinku 还提供了与 [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) 兼容的端点。 官方的 Anthropic SDK、**Claude Code**、Cursor、Cline 以及其他支持 Anthropic 协议的工具，只需更改基础 URL 即可使用-两种格式共用一个 API 密钥和一个 Hostlinku 余额。
+除了 OpenAI 格式外，Hostlinku 还提供与
+[Anthropic Messages API](https://docs.anthropic.com/en/api/messages) 兼容的端点。官方 Anthropic SDK、
+**Claude Code**、Cursor、Cline 以及其他支持 Anthropic 协议的工具，只需
+更换基础 URL 即可使用——一个 API 密钥和一个 Hostlinku 余额即可同时支持这两种格式。
 
 ```http
 POST https://api.hostlinku.com/v1/messages
@@ -18,15 +20,21 @@ anthropic-version: 2023-06-01
 Content-Type: application/json
 ```
 
-身份验证接收 `x-api-key`（Anthropic 样式）**或** `Authorization: Bearer sk-…` 标头。 成功响应包含 `request-id` / `x-request-id`（Hostlinku请求ID，格式为 `msg_…`）；成功的非流式响应还包含 `x-model`。处理器之前的错误可能没有这些ID。
+身份验证接受 `x-api-key` 标头（Anthropic 风格）**或** `Authorization: Bearer sk-…`。
+成功响应包含 `request-id` / `x-request-id` 标头（Hostlinku 请求 ID，格式为 `msg_…`）；非流式传输的成功响应还包含 `x-model`。处理程序之前的错误可能不包含此 ID。
 
-<Callout type="note" title="任何模型，而不仅仅是克劳德">
-`model` 使用与 [模型目录](/zh/models) 相同的公共 slug Hostlinku - 例如 `claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。 非Claude模型仍可通过 Anthropic 格式调用；由网关进行转换。
+<Callout type="note" title="任何模型，不仅限于Claude">
+  `model` 使用与 [模型目录](/zh/models) 相同的 Hostlinku 公共 slug -
+  例如：`claude-sonnet-4-6`、`gpt-5-5`、`deepseek-v4-flash`。非 Claude 模型仍可通过
+  ；由网关负责转换。
 </Callout>
+
+<a id="konfigurasi-cepat"></a>
 
 ## 快速配置
 
-各工具（Claude Code、Cline 等）的分步指南请参见 [IDE 与代理的集成](/zh/integrations)。
+各工具（Claude Code、Cline 等）的分步指南位于
+[IDE 与代理集成](/integrations)。
 
 **Claude Code**
 
@@ -37,7 +45,7 @@ export ANTHROPIC_MODEL=claude-sonnet-4-6
 claude
 ```
 
-**Python（Anthropic官方SDK）**
+**Python（Anthropic 官方 SDK）**
 
 ```python
 import anthropic
@@ -50,7 +58,7 @@ client = anthropic.Anthropic(
 message = client.messages.create(
     model="claude-haiku-4-5",
     max_tokens=256,
-    messages=[{"role": "user", "content": "用两句话解释什么是 API 网关。"}],
+    messages=[{"role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat."}],
 )
 print(message.content[0].text)
 print(message.usage.input_tokens, message.usage.output_tokens)
@@ -69,24 +77,31 @@ const msg = await client.messages.create({
 });
 ```
 
-## body 参数
+<a id="parameter-body"></a>
+
+<a id="body-参数"></a>
+
+## 请求体参数
 
 | 参数 | 类型 | 说明 |
 |---|---|---|
-| `model` | `string` | **必填。** Hostlinku公开模型slug。 |
-| `messages` | `array` | **必选。** `{ role: "user" \| "assistant", content }`；`content` 字符串或数组块（`text`、`image`、`tool_use`、`tool_result`、……）。 |
-| `max_tokens` | `integer` | **必填**（符合Anthropic规范）。若超过模型输出限制，则`400`将被拒绝。 |
+| `model` | `string` | **必填。** Hostlinku 模型的 Slug。 |
+| `messages` | `array` | **必填。** `{ role: "user" \| "assistant", content }`; `content` 为字符串或块数组（`text`、`image`、`tool_use`、`tool_result` 等）。 |
+| `max_tokens` | `integer` | **必填**（根据 Anthropic 规范）。若超过模型输出限制，将返回 `400` 错误。 |
 | `system` | `string` \| `array` | 系统提示；块数组支持 `cache_control`。 |
-| `stream` | `boolean` | `true` 适用于 SSE（见下文）。 |
-| `temperature` | `number` | `0`–`1`. |
-| `top_p`, `top_k` | `number`, `integer` | 替代抽样方法。 |
-| `stop_sequences` | `string[]` | 最多16。 |
-| `tools`, `tool_choice` | `array`, `any` | 工具使用格式 Anthropic（包括 `input_schema`）。 |
-| `thinking` | `object` | 扩展思考，例如 `{ "type": "enabled", "budget_tokens": 1024 }`。 |
+| `stream` | `boolean` | SSE 情况请使用 `true`（见下文）。 |
+| `temperature` | `number` | `0`–`1`。 |
+| `top_p`、`top_k` | `number`、`integer` | 替代译文示例。 |
+| `stop_sequences` | `string[]` | 最多 16 个。 |
+| `tools`, `tool_choice` | `array`、`any` | 工具采用 Anthropic 格式（包括 `input_schema`）。 |
+| `thinking` | `object` | 扩展思考，例如：`{ "type": "enabled", "budget_tokens": 1024 }`。 |
 | `metadata` | `object` | 例如：`{ "user_id": "…" }`。 |
-| `mcp_servers`, `context_management`, `output_format` | - | 原样转发（视模型支持情况而定）。 |
+| `mcp_servers`、`context_management`、`output_format` | - | 原样保留（取决于模型支持情况）。 |
 
-列表外的字段将被丢弃。无效的正文将被拒绝（错误代码 `400 invalid_request_error`），各字段的详细信息请参见 `error.details.issues`。
+列表外的字段将被删除。无效的请求正文将被拒绝，返回 `400 invalid_request_error`，
+具体错误详情按字段列于 `error.details.issues` 中。
+
+<a id="respons-non-streaming"></a>
 
 ## 非流式响应
 
@@ -96,7 +111,7 @@ const msg = await client.messages.create({
   "type": "message",
   "role": "assistant",
   "model": "claude-haiku-4-5",
-  "content": [{ "type": "text", "text": "API 网关是 …" }],
+  "content": [{ "type": "text", "text": "API gateway adalah …" }],
   "stop_reason": "end_turn",
   "stop_sequence": null,
   "usage": {
@@ -110,15 +125,23 @@ const msg = await client.messages.create({
 }
 ```
 
-`id` 和 `model` 始终是 Hostlinku 的公共标识符。 `hostlinku` 块是扩展块（Anthropic 的 SDK 会忽略它），其中包含 <CreditIcon />、Service Mode API key 的费用以及延迟。
+`id` 和 `model` 始终是 Hostlinku 的公共标识符。`hostlinku` 块是扩展部分（Anthropic SDK
+会忽略它），其中包含费用 <CreditIcon />、服务模式 API 密钥和延迟。
 
 <Callout type="note" title="Anthropic 用法规范">
-根据 Anthropic 规范，`input_tokens` **不**包含缓存Token；缓存Token在 `cache_read_input_tokens` / `cache_creation_input_tokens` 中单独报告。 Hostlinku 账单分别按各自的价格计算这三项费用-这与 `/v1/chat/completions` 的计费路径完全一致（参见 [计费](/zh/billing)）。
+  根据 Anthropic 的规范，`input_tokens` **不**包含缓存令牌；缓存令牌在
+  `cache_read_input_tokens` / `cache_creation_input_tokens` 中单独报告。Hostlinku 的账单会计算
+  这三项的费用，其定价方式与 `/v1/chat/completions` 路径
+  完全一致（参见 [计费](/zh/billing)）。
 </Callout>
 
-## 流式传输 (`stream: true`)
+<a id="streaming-stream-true"></a>
 
-网关以 Anthropic（`event:` + `data:`）帧格式转发 SSE 事件：
+<a id="流式传输-stream-true"></a>
+
+## 流式传输（`stream: true`）
+
+网关以 Anthropic 格式（`event:` + `data:`）传输 SSE 事件：
 
 ```text
 event: message_start
@@ -142,19 +165,31 @@ data: {"type":"message_stop"}
 
 注：
 
-- 最终用量记录在`message_delta`中；费用根据`message_stop`之后的实际用量计算。
-- 如果流在传输过程中失败，网关将发送 `event: error` 和 `{"type":"error","error":{"type":…,"message":…}}`，但**不会**发送虚假的 `message_stop`。
-- 第一个字节之前的错误（余额不足、模型不存在、速率限制）将作为常规的 JSON 响应返回，并附带正确的 HTTP 状态码-Anthropic SDK 将其映射为异常 (`AuthenticationError`、`NotFoundError`、`RateLimitError`、……)。
+- 最终使用量记录在 `message_delta` 中；费用根据 `message_stop` 后的实际使用量计算。
+- 如果流在中间失败，网关会发送 `event: error`，格式为
+  `{"type":"error","error":{"type":…,"message":…}}`，并且**不会**发送虚假的 `message_stop`。
+- 在返回第一个字节之前出现的错误（余额不足、模型不存在、速率限制）应作为
+  带有正确 HTTP 状态码的常规 JSON 响应返回——Anthropic SDK 会将其映射为异常
+  （`AuthenticationError`、`NotFoundError`、`RateLimitError` 等）。
 
-## 计算Token
+<a id="hitung-token"></a>
+
+<a id="计算token"></a>
+
+## 计算令牌
 
 ```http
 POST https://api.hostlinku.com/v1/messages/count_tokens
 ```
 
-正文：`model`、`messages`，可选 `system`、`tools`、`tool_choice`、`thinking`。`{ "input_tokens": 15 }` 的回复。不收取费用。
+正文：`model`、`messages`，可选的 `system`、`tools`、`tool_choice`、`thinking`。响应
+`{ "input_tokens": 15 }`。不收取费用。
 
-## 格式错误
+<a id="format-error"></a>
+
+<a id="格式错误"></a>
+
+## 错误格式
 
 ```json
 { "type": "error", "error": { "type": "authentication_error", "message": "The API key is invalid or has been revoked." } }
@@ -162,14 +197,14 @@ POST https://api.hostlinku.com/v1/messages/count_tokens
 
 | HTTP | `error.type` | 常见原因 |
 |---|---|---|
-| 400 | `invalid_request_error` | 正文无效，`max_tokens` 超出模型范围，Service Mode 键中不存在该模型。 |
+| 400 | `invalid_request_error` | Body 无效，`max_tokens` 超出了模型限制，该模型在 Service Mode 键中不可用。 |
 | 401 | `authentication_error` | API密钥错误/已被撤销/已过期。 |
-| 402 | `billing_error` | 余额不足或API密钥的额度已用尽。 |
+| 402 | `billing_error` | 余额不足或API密钥的信用额度已用尽。 |
 | 403 | `permission_error` | 账户已被暂停/访问被拒绝。 |
-| 404 | `not_found_error` | 该模型的Slug未收录在产品目录中。 |
-| 429 | `rate_limit_error` | 已达到请求上限。 |
-| 503 | `overloaded_error` | 模型／上游不可用。请检查目录及替代模型；暂时故障可延迟重试。 |
+| 404 | `not_found_error` | 模型的 Slug 未在目录中出现。 |
+| 429 | `rate_limit_error` | 请求限制已达到。 |
+| 503 | `overloaded_error` | 模型/上游不可用。请检查目录和替代模型；若为临时故障，请间隔一段时间后重试。 |
 
-表格列出协议处理器处理的错误。处理器之前的请求限流或正文解析可能使用通用Hostlinku格式；请参阅 [错误](/zh/errors)。
+表格列出了协议处理的错误。在处理程序之前对请求或请求正文进行限制或解析时，可采用 Hostlinku 的通用格式；请参阅 [错误](/zh/errors)。
 
-错误会处理以隐藏内部标识；部分 upstream 拒绝原因仍可能显示。 [Error](/zh/errors).
+错误消息已进行处理以隐藏内部标识；部分上游拒绝原因仍可能显示。[错误](/zh/errors)。

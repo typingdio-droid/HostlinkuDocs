@@ -1,13 +1,14 @@
 ---
 title: "Chat Completions"
-description: "POST /v1/chat/completions 端点参考，包括参数、SSE 流式传输以及 curl 和 Python 示例"
+description: "POST /v1/chat/completions 端点参考，包括参数、SSE 流式传输以及 curl + Python 示例"
 icon: messages-square
 ---
 
-
 import { Callout } from "/snippets/mdx.jsx";
 
-Hostlinku 的主端点。 请求和响应格式与 [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat) 兼容，因此只需将 `base_url` 替换为 `https://api.hostlinku.com/v1`，即可使用官方的 OpenAI SDK。
+Hostlinku 的主要端点。请求和响应格式与
+[OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat)，因此只需将 `base_url` 替换为 `https://api.hostlinku.com/v1`，
+即可使用官方 OpenAI SDK。
 
 ```http
 POST https://api.hostlinku.com/v1/chat/completions
@@ -15,34 +16,40 @@ Authorization: Bearer sk-your-api-key
 Content-Type: application/json
 ```
 
-成功响应包含 `x-request-id`；成功的非流式响应还包含 `x-model`（公开模型 slug）。
+成功响应包含 `x-request-id`；非流式传输的成功响应还包含 `x-model`（模型的公共 slug）。
 
-请选择 API 密钥 Service Mode 中可用的模型。vision、JSON schema、reasoning 和 tool calling 取决于模型及协议路径。见[兼容性限制](/zh/responses)。
+选择适用于服务模式 API 密钥的可用模型。对 Vision、JSON 模式、推理和工具调用的支持均遵循该模型及其协议路径。请参阅 [兼容性限制](/zh/responses)。
 
-## body 参数
+<a id="parameter-body"></a>
+
+<a id="body-参数"></a>
+
+## 请求体参数
 
 | 参数 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `model` | `string` | 没有 | **必填。** 模型缩写，例如 `gpt-5-5`。参见 [模型](/zh/models)。 |
-| `messages` | `array` | 没有 | **必选。** 至少1条消息。每项需包含：`{ role, content, name? }` 及 `role`，并从 `system`、`developer`、`user`、`assistant`、`tool` 中任选一项。 |
-| `temperature` | `number` | 运营商预装 | 范围为`0`–`2`。数值越高，随机性越强。 |
-| `top_p` | `number` | 运营商预装 | 范围 `0`–`1`。`temperature` 的 _nucleus sampling_ 替代方案。 |
-| `n` | `integer` | `1` | 选项数量，`1`–`8`。 |
-| `stream` | `boolean` | `false` | `true` 用于 SSE 流式响应（见下文）。 |
-| `stop` | `string` \| `string[]` | 没有 | 一个或多个导致生成停止的文本序列。 |
-| `max_tokens` | `integer` | 模型配置 | 输出Token上限（正值）。 |
-| `max_completion_tokens` | `integer` | 没有 | `max_tokens`的现代替代方案（部分提供商采用）。 |
+| `model` | `string` | 无 | **必填。** 模型别名，例如 `gpt-5-5`。参见 [模型](/zh/models)。 |
+| `messages` | `array` | 无 | **必填。** 至少 1 条消息。每条消息格式为：`{ role, content, name? }`，其中 `role` 取值为 `system`、`developer`、`user`、`assistant` 或 `tool` 之一。 |
+| `temperature` | `number` | 提供商默认值 | 范围为 `0`–`2`。数值越高，随机性越强。 |
+| `top_p` | `number` | 提供商默认值 | 范围 `0`–`1`。`temperature` 的替代方案 _nucleus sampling_。 |
+| `n` | `integer` | `1` | 答案选项数量，`1`–`8`。 |
+| `stream` | `boolean` | `false` | SSE 流式响应时使用 `true`（见下文）。 |
+| `stop` | `string` \| `string[]` | 无 | 一个或多个导致生成停止的文本序列。 |
+| `max_tokens` | `integer` | 模型默认值 | 令牌输出限制（正值）。 |
+| `max_completion_tokens` | `integer` | 无 | 现代替代方案 `max_tokens`（部分提供商使用）。 |
 | `presence_penalty` | `number` | `0` | 范围 `-2`–`2`。 |
 | `frequency_penalty` | `number` | `0` | 范围 `-2`–`2`。 |
-| `user` | `string` | 没有 | 用于追踪滥用行为的终端用户标识符。 |
-| `tools` | `array` | 没有 | 工具/函数调用的定义（OpenAI格式）。 |
-| `tool_choice` | `any` | 没有 | 工具选择控制（`"auto"`、`"none"`、`{...}`）。 |
-| `response_format` | `any` | 没有 | 例如：`{ "type": "json_object" }` 用于 JSON 输出（取决于模型是否支持）。 |
-| `seed` | `integer` | 没有 | 种子确定性（尽最大努力，取决于服务提供商）。 |
+| `user` | `string` | 无 | 用于追踪滥用的终端用户标识符。 |
+| `tools` | `array` | 无 | 工具/函数调用的定义（OpenAI 格式）。 |
+| `tool_choice` | `any` | 无 | 工具选择控件（`"auto"`、`"none"`、`{...}`）。 |
+| `response_format` | `any` | 无 | 例如：`{ "type": "json_object" }` 用于 JSON 输出（取决于模型支持情况）。 |
+| `seed` | `integer` | 无 | 种子确定性（尽最大努力，取决于提供商）。 |
 
 <Callout type="note" title="参数验证">
-  表格列出主要参数。schema 还接受 `top_k`、`web_search_options`、`reasoning_effort`、`parallel_tool_calls`、`logprobs`、`top_logprobs`、`logit_bias`、`stream_options`、`metadata`、`thinking`、`verbosity`、`service_tier`、`store`、`prompt_cache_key`、`safety_identifier` 和 `truncation`。未知顶层字段会移除。`messages[]` 中的额外字段（含 `tool_calls`、`tool_call_id`、`function_call` 和 `reasoning_content`）会保留。参数和多模态支持取决于模型及协议。无效请求体返回 `422 VALIDATION_FAILED` 和字段详情。
+  以上列表为主要参数。该架构还支持 `top_k`、`web_search_options`、`reasoning_effort`、`parallel_tool_calls`、`logprobs`、 `top_logprobs`、`logit_bias`、`stream_options`、`metadata`、`thinking`、`verbosity`、`service_tier`、`store`、`prompt_cache_key`、`safety_identifier` 和 `truncation`。未知的一级字段将被丢弃。 `messages[]` 中的附加字段（包括 `tool_calls`、`tool_call_id`、`function_call` 和 `reasoning_content`）将被保留。 对多模态参数和内容的支持仍取决于模型/协议。无效的请求主体将被拒绝，并返回 `422 VALIDATION_FAILED` 状态码及字段详细信息。
 </Callout>
+
+<a id="contoh-request-non-streaming-curl"></a>
 
 ## 示例：非流式请求（curl）
 
@@ -53,7 +60,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   -d '{
     "model": "gpt-5-5",
     "messages": [
-      { "role": "system", "content": "你是一个简洁的助手。" },
+      { "role": "system", "content": "Kamu adalah asisten yang ringkas." },
       { "role": "user", "content": "Jelaskan apa itu API gateway dalam dua kalimat." }
     ],
     "temperature": 0.7,
@@ -72,7 +79,7 @@ curl https://api.hostlinku.com/v1/chat/completions \
   "choices": [
     {
       "index": 0,
-      "message": { "role": "assistant", "content": "API 网关是 …" },
+      "message": { "role": "assistant", "content": "API gateway adalah …" },
       "finish_reason": "stop"
     }
   ],
@@ -84,16 +91,22 @@ curl https://api.hostlinku.com/v1/chat/completions \
 }
 ```
 
-`model` 使用 Hostlinku 公开 slug。成功的非流式响应中，`hostlinku` 包含费用、Service Mode 和延迟。每个 SSE chunk 不保证包含该扩展：
+`model` 包含 Hostlinku 的公共 slug。非流式成功响应中的 `hostlinku` 块包含费用、服务模式和延迟。该块并非每个 SSE 数据块中都保证包含的内容：
 
-| Field | 含义 |
+| 字段 | 含义 |
 |---|---|
-| `cost` | 费用以 🪙 信用计；1 信用 = \$1。 |
+| `cost` | 费用以积分 🪙 计；1 积分 = 1 美元。 |
 | `latencyMs` | 从网关接收请求到请求完成为止的总延迟，单位为毫秒。 |
 
-## 流式传输 (`stream: true`)
+<a id="streaming-stream-true"></a>
 
-收到 `stream: true` 后，网关以 `Content-Type: text/event-stream`（SSE）进行响应，并以 OpenAI 兼容格式传输数据块（每个数据块均使用 `id` 公开的 Hostlinku 及相同的模型标识符）， 随后使用 `data: [DONE]` 关闭流：
+<a id="流式传输-stream-true"></a>
+
+## 流式传输（`stream: true`）
+
+当 `stream: true` 时，网关将以 `Content-Type: text/event-stream`（SSE）响应，
+以 OpenAI 兼容格式流式传输数据块 （每个数据块使用 Hostlinku 的公共 `id`
+和相同的模型 slug），然后通过 `data: [DONE]` 关闭流：
 
 ```bash
 curl https://api.hostlinku.com/v1/chat/completions \
@@ -118,13 +131,16 @@ data: [DONE]
 
 重要说明：
 
-- 请将错误事件和意外断开视为流式失败。仅有 `[DONE]` 标记不能证明请求成功；使用 `x-request-id` 检查错误及请求日志。
-- 最终费用依据 upstream usage/费用；值缺失或为零时可能使用预留估算值。
-- 在流式响应中还会发送 `x-request-id` 标头，以便与控制台日志建立关联。
+- 如果流处理失败，请将错误事件和连接中断视为失败。仅`[DONE]`标记并不能证明请求成功；请检查错误以及包含`x-request-id`的请求日志。
+- 最终费用采用“使用量/上游费用”的表述；若为空或为零，网关可采用预留估计值。
+- `x-request-id` 标头也会在流式响应中发送，以便与
+  Console 中的日志建立关联。
+
+<a id="contoh-python-sdk-resmi-openai"></a>
 
 ## 示例：Python（OpenAI 官方 SDK）
 
-除`base_url`外，代码没有其他变化。OpenAI SDK可直接使用：
+除 `base_url` 外，代码无需任何更改。OpenAI SDK 可直接使用：
 
 ```python
 from openai import OpenAI
@@ -138,7 +154,7 @@ client = OpenAI(
 response = client.chat.completions.create(
     model="gpt-5-5",
     messages=[
-        {"role": "system", "content": "你是一个简洁的助手。"},
+        {"role": "system", "content": "Kamu adalah asisten yang ringkas."},
         {"role": "user", "content": "Halo dari SDK OpenAI!"},
     ],
 )
@@ -156,21 +172,25 @@ for chunk in stream:
         print(delta, end="", flush=True)
 ```
 
-<Callout type="tip" title="在其他库中修改 base_url">
-同样的模式也适用于 `openai-node`（`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`）、LangChain（`baseURL`/`openai_api_base`）以及其他支持 OpenAI 兼容端点的工具。
+<Callout type="tip" title="将其他库中的 base_url 替换为">
+  相同的规则也适用于 `openai-node`（`new OpenAI({ baseURL: 'https://api.hostlinku.com/v1' })`）、
+  LangChain（`baseURL`/`openai_api_base`）以及其他支持
+  。
 </Callout>
+
+<a id="error-yang-umum-di-endpoint-ini"></a>
 
 ## 该端点常见的错误
 
 | 案例 | HTTP | `error.code` |
 |---|---|---|
-| 正文未通过验证（字段错误/类型错误/`messages`为空） | 422 | `VALIDATION_FAILED` |
-| API密钥无效/已过期 | 401 | `UNAUTHORIZED` |
-| API密钥的余额或额度不足 | 402 | `PAYMENT_REQUIRED` |
-| 该模型的Slug未收录在产品目录中 | 404 | `MODEL_NOT_FOUND` |
+| Body 未通过验证（字段错误/类型错误/`messages` 为空） | 422 | `VALIDATION_FAILED` |
+| API密钥无效或已过期 | 401 | `UNAUTHORIZED` |
+| API密钥余额不足或限额已满 | 402 | `PAYMENT_REQUIRED` |
+| 模型的 Slug 在目录中不存在 | 404 | `MODEL_NOT_FOUND` |
 | `max_tokens` 超出了模型的输出限制 | 400 | `BAD_REQUEST` |
-| 该模型已停用/目前不可用 | 503 | `MODEL_UNAVAILABLE` |
-| 组织共享的 Service Mode 配额已超出 | 429 | `RATE_LIMITED` |
-| 上游不可用/暂时故障（可重试） | 503 | `UPSTREAM_ERROR` |
+| 已弃用/暂时不可用的模型 | 503 | `MODEL_UNAVAILABLE` |
+| 组织共享配额已超出 | 429 | `RATE_LIMITED` |
+| 上游不可用/临时故障（可重试） | 503 | `UPSTREAM_ERROR` |
 
-错误信封的完整格式请参见 [错误](/zh/errors)。
+完整的错误封装格式请参见 [Error](/zh/errors)。
